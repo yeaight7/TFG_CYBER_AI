@@ -1,10 +1,7 @@
-import os
 from pathlib import Path
+from typing import List
 
 import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix
 
 from stable_baselines3 import DQN
@@ -16,6 +13,17 @@ from load_nsl_kdd import load_nsl_kdd_binary
 
 MODELS_DIR = Path("models")
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
+
+# --------------------------------------------------------------------------------------
+# Configuración de recompensa para el agente defensor
+# --------------------------------------------------------------------------------------
+REWARD_CONFIG = {
+    "tp": 1.0,     # bloquear ataque
+    "tn": 0.0,     # ya no usamos tn como tal, pero lo dejamos por compatibilidad
+    "fp": -1.0,    # bloquear benigno
+    "fn": -5.0,    # permitir ataque
+    "omission": 0.5,  # permitir benigno
+}
 
 
 def make_env_fn(X: np.ndarray, y: np.ndarray):
@@ -29,9 +37,7 @@ def make_env_fn(X: np.ndarray, y: np.ndarray):
             y=y,
             benign_label=0,
             attack_label=1,
-            correct_reward=1.0,
-            false_positive_penalty=-1.0,
-            false_negative_penalty=-2.0,
+            reward_config=REWARD_CONFIG,
             max_steps_per_episode=min(10_000, len(X)),
             shuffle=True,
         )
@@ -39,19 +45,17 @@ def make_env_fn(X: np.ndarray, y: np.ndarray):
     return _init
 
 
-def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray):
+def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray) -> None:
     """
     Evalúa el agente entrenado sobre un conjunto de test y
-    muestra métricas de clasificación.
+    muestra métricas de clasificación (confusion matrix + classification report).
     """
     env_test = RLDatasetDefenderEnv(
         X=X_test,
         y=y_test,
         benign_label=0,
         attack_label=1,
-        correct_reward=1.0,
-        false_positive_penalty=-1.0,
-        false_negative_penalty=-2.0,
+        reward_config=REWARD_CONFIG,
         max_steps_per_episode=len(X_test),
         shuffle=False,
     )
@@ -59,8 +63,8 @@ def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray):
     obs, info = env_test.reset()
     done = False
 
-    y_true: list[int] = []
-    y_pred: list[int] = []
+    y_true: List[int] = []
+    y_pred: List[int] = []
 
     while not done:
         action, _ = model.predict(obs, deterministic=True)
@@ -78,21 +82,28 @@ def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray):
 
 
 def main():
+    # ------------------------------------------------------------------
+    # 1) Cargar NSL-KDD ya preprocesado (desde KaggleHub)
+    # ------------------------------------------------------------------
     print("Descargando y cargando NSL-KDD vía kagglehub...")
     X_train, y_train, X_test, y_test = load_nsl_kdd_binary(
-        use_20_percent=False  # True uses 20%, False usa todo
+        use_20_percent=True  # pon False cuando quieras entrenar con el dataset completo
     )
 
     print(f"Train shape: X={X_train.shape}, y={y_train.shape}")
     print(f"Test  shape: X={X_test.shape}, y={y_test.shape}")
 
-    # Entorno vectorizado (un solo entorno, pero DummyVecEnv lo envuelve para SB3)
-    env = DummyVecEnv([make_env_fn(X_train, y_train)])
+    # ------------------------------------------------------------------
+    # 2) Crear entorno vectorizado para Stable-Baselines3
+    # ------------------------------------------------------------------
+    vec_env = DummyVecEnv([make_env_fn(X_train, y_train)])
 
-    # Definición del modelo RL (DQN). Puedes ajustar hiperparámetros.
+    # ------------------------------------------------------------------
+    # 3) Definir el modelo RL (DQN)
+    # ------------------------------------------------------------------
     model = DQN(
         "MlpPolicy",
-        env,
+        vec_env,
         learning_rate=1e-3,
         buffer_size=100_000,
         batch_size=64,
@@ -103,15 +114,20 @@ def main():
         verbose=1,
     )
 
-    total_timesteps = 1_000_000
+    total_timesteps = 200_000
     print(f"Entrenando DQN durante {total_timesteps} timesteps...")
     model.learn(total_timesteps=total_timesteps)
 
-    model_path = MODELS_DIR / "rl_defender_dqn"
+    # ------------------------------------------------------------------
+    # 4) Guardar modelo
+    # ------------------------------------------------------------------
+    model_path = MODELS_DIR / "rl_defender_dqn_nslkdd"
     print(f"Guardando modelo en: {model_path}")
     model.save(str(model_path))
 
-    # Evaluación en test
+    # ------------------------------------------------------------------
+    # 5) Evaluación en test
+    # ------------------------------------------------------------------
     print("Evaluando en conjunto de test...")
     evaluate_model(model, X_test, y_test)
 
