@@ -61,8 +61,7 @@ class RLDatasetDefenderEnv(gym.Env):
 
         # Config de recompensa por defecto
         default_reward_config: dict[str, float] = {
-            "tp": 1.0,    # ataque bloqueado
-            "tn": 0.2,    # normal permitido
+            "tp": 1.0,    # ataque bloqueado (TP)
             "fp": -1.0,   # normal bloqueado (FP)
             "fn": -5.0,   # ataque permitido (FN)
             "omission": 0.0,  # término adicional cuando PERMIT
@@ -129,17 +128,15 @@ class RLDatasetDefenderEnv(gym.Env):
                 reward = rc["fn"]   # ataque permitido (FN)
         elif is_benign:
             if action == 0:
-                # Permitir benigno = omisión: recompensa parcial
-                # (omission_reward controla cuánto premio se lleva)
                 reward = rc["omission"]
             else:
                 reward = rc["fp"]   # normal bloqueado (FP)
         else:
-            # Para etiquetas desconocidas, tratamos como benignas por defecto
-            if action == 0:
-                reward = rc["omission"]
+            # Por defecto, las clases desconocidas serán consideradas ATAQUES (más vale prevenir que curar).
+            if action == 1:
+                reward = rc["omission"] # bloqueamos pero no le damos la recompensa completa ya que es una prevención, no un acierto
             else:
-                reward = rc["fp"]
+                reward = rc["fp"]  # desconocido permitido, le castigamos ya que puede comprometer la seguridad
 
         return float(reward)
 

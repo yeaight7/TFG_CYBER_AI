@@ -19,10 +19,9 @@ MODELS_DIR.mkdir(parents=True, exist_ok=True)
 # --------------------------------------------------------------------------------------
 REWARD_CONFIG = {
     "tp": 1.0,     # bloquear ataque
-    "tn": 0.0,     # ya no usamos tn como tal, pero lo dejamos por compatibilidad
     "fp": -1.0,    # bloquear benigno
     "fn": -5.0,    # permitir ataque
-    "omission": 0.5,  # permitir benigno
+    "omission": 0.5,  # no toma acción (pero acierta)
 }
 
 
