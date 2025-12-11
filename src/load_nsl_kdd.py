@@ -41,8 +41,8 @@ def _ensure_dataset_local_dir(target_dir: Path) -> Path:
 
     kaggle_dir = _download_nsl_kdd_via_kagglehub()
 
-    # Copiar todos los .TXT (por si el dataset tiene variantes)
-    for src_path in kaggle_dir.glob("*.TXT"):
+    # Copiar todos los .txt (por si el dataset tiene variantes)
+    for src_path in kaggle_dir.glob("*.txt"):
         if src_path.is_file():
             dest_path = target_dir / src_path.name
             if not dest_path.exists():
@@ -73,11 +73,11 @@ def load_nsl_kdd_binary(
 
     # Elegir ficheros: versión completa o 20%
     if use_20_percent:
-        train_file = base_dir / "KDDTrain+_20Percent.TXT"
+        train_file = base_dir / "KDDTrain+_20Percent.txt"
     else:
-        train_file = base_dir / "KDDTrain+.TXT"
+        train_file = base_dir / "KDDTrain+.txt"
 
-    test_file = base_dir / "KDDTest+.TXT"
+    test_file = base_dir / "KDDTest+.txt"
 
     if not train_file.exists() or not test_file.exists():
         raise FileNotFoundError(

@@ -103,7 +103,7 @@ def main():
         verbose=1,
     )
 
-    total_timesteps = 200_000
+    total_timesteps = 1_000_000
     print(f"Entrenando DQN durante {total_timesteps} timesteps...")
     model.learn(total_timesteps=total_timesteps)
 

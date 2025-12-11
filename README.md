@@ -13,7 +13,7 @@ tfg_cyber_ai/
 ├── src/
 │   ├── rl_defender_env.py
 │   └── train_rl_defender.py
-├── data/
+├── datasets/
 │   └── ** datasets públicos **
 ├── models/
 ├── venv/

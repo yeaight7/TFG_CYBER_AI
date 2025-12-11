@@ -28,8 +28,9 @@ class RLDatasetDefenderEnv(gym.Env):
         benign_label: int = 0,
         attack_label: int = 1,
         correct_reward: float = 1.0,
+        omission_reward: float = 0.5,
         false_positive_penalty: float = -1.0,
-        false_negative_penalty: float = -2.0,
+        false_negative_penalty: float = -5.0,
         max_steps_per_episode: int | None = None,
         shuffle: bool = True,
     ) -> None:
@@ -49,6 +50,7 @@ class RLDatasetDefenderEnv(gym.Env):
         self.attack_label = int(attack_label)
 
         self.correct_reward = float(correct_reward)
+        self.omission_reward = float(omission_reward)
         self.false_positive_penalty = float(false_positive_penalty)
         self.false_negative_penalty = float(false_negative_penalty)
 
@@ -110,7 +112,7 @@ class RLDatasetDefenderEnv(gym.Env):
                 reward = self.false_negative_penalty
         elif is_benign:
             if action == 0:  # permitir benigno
-                reward = self.correct_reward * 0.5
+                reward = self.omission_reward
             else:            # bloquear benigno (FP)
                 reward = self.false_positive_penalty
         else:
