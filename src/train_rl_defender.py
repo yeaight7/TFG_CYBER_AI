@@ -7,42 +7,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix
 
-from stable_baselines3 import DQN  # puedes cambiar a PPO si quieres
+from stable_baselines3 import DQN
 from stable_baselines3.common.vec_env import DummyVecEnv
 
 from rl_defender_env import RLDatasetDefenderEnv
+from load_nsl_kdd import load_nsl_kdd_binary
 
 
-# Ruta a tu dataset (ajústala a tu caso)
-# Se asume un CSV con una columna 'label' y el resto features numéricas.
-DATA_PATH = Path("data/dataset.csv")
 MODELS_DIR = Path("models")
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def load_dataset(path: Path):
-    """
-    Carga un dataset desde CSV.
-
-    - Columna 'label' = etiqueta (0 benigno, 1 ataque).
-    - El resto de columnas se usan como features numéricas.
-    """
-    if not path.exists():
-        raise FileNotFoundError(f"No se encontró el dataset en: {path}")
-
-    df = pd.read_csv(path)
-
-    if "label" not in df.columns:
-        raise ValueError("El CSV debe contener una columna 'label'.")
-
-    y = df["label"].values.astype(np.int64)
-    X = df.drop(columns=["label"]).values.astype(np.float32)
-
-    # Escalado de features
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X).astype(np.float32)
-
-    return X_scaled, y, scaler
 
 
 def make_env_fn(X: np.ndarray, y: np.ndarray):
@@ -59,7 +32,7 @@ def make_env_fn(X: np.ndarray, y: np.ndarray):
             correct_reward=1.0,
             false_positive_penalty=-1.0,
             false_negative_penalty=-2.0,
-            max_steps_per_episode=min(10_000, len(X)),  # por ejemplo
+            max_steps_per_episode=min(10_000, len(X)),
             shuffle=True,
         )
 
@@ -105,17 +78,13 @@ def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray):
 
 
 def main():
-    print(f"Cargando dataset desde: {DATA_PATH}")
-    X, y, scaler = load_dataset(DATA_PATH)
-
-    # Split train/test estratificado
-    X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
-        test_size=0.2,
-        random_state=42,
-        stratify=y,
+    print("Descargando y cargando NSL-KDD vía kagglehub...")
+    X_train, y_train, X_test, y_test = load_nsl_kdd_binary(
+        use_20_percent=False  # True uses 20%, False usa todo
     )
+
+    print(f"Train shape: X={X_train.shape}, y={y_train.shape}")
+    print(f"Test  shape: X={X_test.shape}, y={y_test.shape}")
 
     # Entorno vectorizado (un solo entorno, pero DummyVecEnv lo envuelve para SB3)
     env = DummyVecEnv([make_env_fn(X_train, y_train)])

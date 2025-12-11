@@ -2,21 +2,18 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
 
-
 class RLDatasetDefenderEnv(gym.Env):
     """
     Entorno RL para un defensor que decide PERMIT/BLOCK sobre muestras etiquetadas
-    (por ejemplo, flujos de red).
-
     Cada step:
       - Observación: vector de características de una muestra (X[i])
       - Acción: 0 = PERMIT, 1 = BLOCK
       - Recompensa:
           * Ataque (label == attack_label):
-                BLOCK  -> recompensa positiva
+                BLOCK  -> recompensa
                 PERMIT -> penalización fuerte
           * Benigno (label == benign_label):
-                PERMIT -> recompensa positiva
+                PERMIT -> recompensa muy pequeña
                 BLOCK  -> penalización
 
     Episodio: recorre hasta max_steps_per_episode muestras (o hasta agotar el dataset).
@@ -113,16 +110,16 @@ class RLDatasetDefenderEnv(gym.Env):
                 reward = self.false_negative_penalty
         elif is_benign:
             if action == 0:  # permitir benigno
-                reward = self.correct_reward
+                reward = self.correct_reward * 0.5
             else:            # bloquear benigno (FP)
                 reward = self.false_positive_penalty
         else:
-            # Si hay más clases, aquí puedes extender la lógica.
-            # Por defecto, tratamos las clases desconocidas como benignas.
-            if action == 0:
-                reward = 0.0
-            else:
-                reward = self.false_positive_penalty
+            # **expandir en caso de que haya más clases
+            # Por defecto, las clases desconocidas serán consideradas ATAQUES (más vale prevenir que curar).
+            if action == 1:  # bloquear (suspicious)
+                reward = self.correct_reward
+            else:            # permitir (suspicious) --- risky
+                reward = self.false_negative_penalty
 
         # Avanzar al siguiente índice
         self.current_idx += 1
@@ -145,7 +142,7 @@ class RLDatasetDefenderEnv(gym.Env):
         return obs, float(reward), bool(terminated), bool(truncated), info
 
     def render(self):
-        # Opcional para debug (imprimir algo si quieres)
+        # Opcional para debug
         pass
 
     def close(self):
