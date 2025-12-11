@@ -193,8 +193,8 @@ El script `train_rl_defender.py` realiza:
    - Target network update: cada 10,000 pasos
 
 4. **Entrenamiento**
-   - Total timesteps: 1,000,000
-   - Cada episodio recorre hasta 10,000 muestras
+   - Total timesteps: 1_000_000
+   - Cada episodio recorre hasta 10_000 muestras
    - El agente aprende de interacciones repetidas
 
 5. **Guardado del modelo**
@@ -231,14 +231,14 @@ model = DQN(
 
 ```
                 Predicho PERMIT (0)  Predicho BLOCK (1)
-Real Normal (0)        TP              FP
+Real Normal (0)        TN              FP
 Real Ataque (1)        FN              TP
 ```
 
 ### Métricas Clave
 
-- **Precision**: TP / (TP + FP) - Proporción de bloqueos correctos
-- **Recall**: TP / (TP + FN) - Proporción de ataques detectados
+- **Precision**: TP / (TP + FP) - Proporción de ataques correctamente identificados entre todos los bloqueos
+- **Recall**: TP / (TP + FN) - Proporción de ataques detectados del total de ataques reales
 - **F1-Score**: Media armónica de Precision y Recall
 - **Accuracy**: (TP + TN) / Total - Proporción total de aciertos
 
