@@ -54,7 +54,7 @@ def main():
     # 1) Cargar mismo dataset que usa el RL
     print("Cargando NSL-KDD (20%) para baseline Random Forest...")
     X_train, y_train, X_test, y_test = load_nsl_kdd_binary(
-        use_20_percent=True
+        use_20_percent=False
     )
 
     print(f"Train shape: X={X_train.shape}, y={y_train.shape}")

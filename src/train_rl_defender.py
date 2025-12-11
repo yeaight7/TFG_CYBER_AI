@@ -86,7 +86,7 @@ def main():
     # ------------------------------------------------------------------
     print("Descargando y cargando NSL-KDD vía kagglehub...")
     X_train, y_train, X_test, y_test = load_nsl_kdd_binary(
-        use_20_percent=True  # pon False cuando quieras entrenar con el dataset completo
+        use_20_percent=False  # pon False cuando quieras entrenar con el dataset completo
     )
 
     print(f"Train shape: X={X_train.shape}, y={y_train.shape}")
