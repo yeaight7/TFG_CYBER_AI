@@ -1,0 +1,333 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{csquotes}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{geometry}
+
+\geometry{margin=2.5cm}
+
+\title{Agente autónomo de ciberseguridad basado en aprendizaje por refuerzo}
+\author{Javier Rivero Iglesias}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\chapter{Introducción}
+
+En este Trabajo Fin de Grado se explora el uso de técnicas de aprendizaje por refuerzo
+(\emph{Reinforcement Learning}, RL) para el diseño de agentes defensivos en ciberseguridad.
+El objetivo global es desarrollar un agente capaz de tomar decisiones de defensa
+de forma autónoma y adaptativa frente a tráfico malicioso, partiendo inicialmente
+de datos etiquetados y, en fases posteriores, de entornos de red más dinámicos.
+
+En esta primera versión de la memoria se recoge, sobre todo, la fase experimental
+centrada en la clasificación de ataques utilizando el conjunto de datos NSL-KDD,
+comparando un agente RL con modelos supervisados clásicos.
+
+\chapter{Definición del problema}
+
+El problema que se aborda se puede dividir en dos fases complementarias:
+
+\begin{enumerate}[label=\textbf{F\arabic*.}, leftmargin=*]
+    \item \textbf{Fase 1: clasificación de tráfico malicioso}.\\
+    A partir de un conjunto de datos etiquetado de tráfico de red (NSL-KDD),
+    se plantea la detección binaria \emph{normal} / \emph{ataque}
+    formulada como un problema de decisión para un agente RL.
+    En esta fase se estudia hasta qué punto un agente entrenado por refuerzo
+    puede aproximarse (o no) al rendimiento de modelos supervisados como
+    Random Forest.
+
+    \item \textbf{Fase 2: defensa en un entorno de red simulado}.\\
+    Una vez validada la viabilidad del enfoque y de la infraestructura
+    de entrenamiento, el objetivo es extender el agente al control de
+    mecanismos de defensa (por ejemplo, reglas de cortafuegos, políticas
+    de bloqueo o limitación de conexiones) en un entorno de red emulado,
+    donde las decisiones tienen un efecto secuencial en el tiempo.
+\end{enumerate}
+
+En este documento se desarrolla principalmente la Fase 1, dejando la Fase 2
+como línea de trabajo en curso.
+
+\chapter{Trabajos relacionados}
+
+En esta sección se revisarán trabajos previos sobre:
+\begin{itemize}
+    \item Sistemas de detección de intrusos (IDS) basados en aprendizaje supervisado.
+    \item Aplicación de Deep Reinforcement Learning a la detección de intrusos
+          y a la defensa autónoma en redes.
+    \item Conjuntos de datos de referencia en ciberseguridad (NSL-KDD, UNSW-NB15,
+          CICIDS2017, etc.).
+\end{itemize}
+
+\chapter{Clasificación de ataques con aprendizaje por refuerzo}
+
+\section{Descripción del conjunto de datos NSL-KDD}
+
+Para la fase de clasificación se ha utilizado el conjunto de datos NSL-KDD,
+que es una revisión del dataset KDD'99 clásico, eliminando redundancias y
+problemas de desbalance extremo presentes en la versión original.
+NSL-KDD incluye registros de conexiones de red etiquetados como \emph{normal}
+o distintos tipos de ataque (DoS, probe, R2L, U2R, etc.), junto con
+características estadísticas de cada flujo.
+
+En este trabajo se considera una versión binaria del problema, en la que
+se agrupan todas las variantes de ataque en una única clase \emph{malicious},
+mientras que las conexiones etiquetadas como normales se mantienen
+en la clase \emph{benign}. La motivación es simplificar inicialmente
+la tarea a una decisión de tipo \emph{permitir/bloquear} que resulte
+natural para un agente de defensa.
+
+\subsection{Partición de entrenamiento y prueba}
+
+El preprocesado se realiza en dos etapas:
+
+\begin{enumerate}[label=\arabic*)]
+    \item Se combinan los ficheros de entrenamiento (\texttt{KDDTrain+.TXT})
+          y prueba (\texttt{KDDTest+.TXT}) originales de NSL-KDD.
+    \item Se mantiene la partición que propone el propio dataset:
+          \begin{itemize}
+              \item Conjunto de entrenamiento: aproximadamente 125\,973 instancias.
+              \item Conjunto de prueba: aproximadamente 22\,544 instancias.
+          \end{itemize}
+\end{enumerate}
+
+Durante la fase de iteración rápida se utiliza también la variante reducida
+\texttt{KDDTrain+\_20Percent.TXT} como conjunto de entrenamiento, manteniendo
+el conjunto de prueba completo. Esta configuración reduce el coste de cómputo
+permitiendo explorar distintas funciones de recompensa y arquitecturas
+del agente RL.
+
+\section{Preprocesado y representación de las observaciones}
+
+Cada muestra del dataset incluye características numéricas y categóricas
+(\texttt{protocol\_type}, \texttt{service}, \texttt{flag}, etc.).
+El preprocesado implementado realiza:
+
+\begin{itemize}
+    \item Codificación \emph{one-hot} de las variables categóricas.
+    \item Conversión de la etiqueta textual original (\texttt{normal} frente a tipos
+          de ataque) a una etiqueta binaria:
+          \[
+              y =
+              \begin{cases}
+                  0, & \text{si la conexión es normal (benigna)},\\
+                  1, & \text{si la conexión corresponde a cualquier tipo de ataque}.
+              \end{cases}
+          \]
+    \item Normalización de las características numéricas mediante escalado
+          estándar cuando se utilizan modelos supervisados clásicos.
+\end{itemize}
+
+Tras este preprocesado se obtiene una matriz de características
+\(\mathbf{X} \in \mathbb{R}^{N \times d}\) y un vector de etiquetas
+\(\mathbf{y} \in \{0,1\}^N\), donde \(N\) es el número de muestras y \(d\)
+el número de características tras la codificación.
+
+\section{Formulación RL del problema de clasificación}
+
+En lugar de entrenar un modelo supervisado que aproxime directamente
+la probabilidad \(\mathbb{P}(y \mid \mathbf{x})\), se plantea el problema
+como una tarea de decisión para un agente de aprendizaje por refuerzo
+que interactúa con un entorno de tipo Gym.
+
+\subsection{Definición del entorno \texttt{RLDatasetDefenderEnv}}
+
+Se define un entorno \texttt{RLDatasetDefenderEnv}, implementado en Python
+sobre Gymnasium, donde cada episodio corresponde a un recorrido secuencial
+por una permutación de las muestras del conjunto de entrenamiento.
+
+En este entorno:
+
+\begin{itemize}
+    \item \textbf{Estado (observación)}: el vector de características
+          \(\mathbf{x}_i \in \mathbb{R}^d\) de la muestra \(i\)-ésima.
+    \item \textbf{Acciones}: el agente dispone de dos acciones discretas:
+          \begin{align*}
+              a = 0 &: \text{ PERMIT (permitir el tráfico)} \\
+              a = 1 &: \text{ BLOCK (bloquear el tráfico)}.
+          \end{align*}
+    \item \textbf{Etiqueta real}: la etiqueta binaria asociada a la muestra
+          se denota \(y_i \in \{0,1\}\), donde \(0\) representa tráfico benigno
+          y \(1\) tráfico malicioso.
+\end{itemize}
+
+\subsection{Función de recompensa sensible al coste}
+
+La clave del enfoque RL es definir una función de recompensa que refleje
+el coste operativo de las decisiones del agente. En este trabajo se emplea
+una función de recompensa binaria sensible al coste de los falsos negativos
+y falsos positivos, configurada mediante un diccionario de parámetros:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Parámetro & Significado \\
+\midrule
+\texttt{tp}        & Recompensa por bloquear correctamente un ataque (TP). \\
+\texttt{fp}        & Penalización por bloquear tráfico benigno (FP). \\
+\texttt{fn}        & Penalización por permitir un ataque (FN). \\
+\texttt{omission}  & Recompensa parcial por permitir tráfico benigno. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+En la versión actual se ha trabajado, entre otras, con la siguiente configuración:
+
+\begin{equation}
+\text{reward\_config} =
+\{ \texttt{tp}=1.0,\; \texttt{fp}=-1.0,\; \texttt{fn}=-5.0,\; \texttt{omission}=0.5 \}.
+\end{equation}
+
+Bajo esta configuración, la recompensa instantánea \(r_i\) para la muestra \(i\)
+se define como:
+
+\[
+r_i =
+\begin{cases}
+\texttt{tp}, & \text{si } y_i = 1 \text{ y } a_i = 1 \quad (\text{ataque bloqueado}) \\
+\texttt{fn}, & \text{si } y_i = 1 \text{ y } a_i = 0 \quad (\text{ataque permitido}) \\
+\texttt{omission}, & \text{si } y_i = 0 \text{ y } a_i = 0 \quad (\text{benigno permitido}) \\
+\texttt{fp}, & \text{si } y_i = 0 \text{ y } a_i = 1 \quad (\text{benigno bloqueado}).
+\end{cases}
+\]
+
+Es decir, bloquear un ataque se recompensa con \(+1.0\), permitirlo se castiga
+severamente con \(-5.0\), bloquear tráfico benigno con \(-1.0\) y permitir
+tráfico benigno se considera una \emph{omisión acertada} con una recompensa
+parcial de \(+0.5\).
+
+Esta formulación permite explorar explícitamente el compromiso entre la
+reducción de falsos negativos (seguridad) y la minimización de falsos
+positivos (disponibilidad del servicio).
+
+\section{Agente DQN y modelo Random Forest de referencia}
+
+\subsection{Agente DQN}
+
+El agente de aprendizaje por refuerzo se implementa mediante un algoritmo
+\emph{Deep Q-Network} (DQN), usando la librería Stable-Baselines3.
+Se emplea una política de tipo \texttt{MlpPolicy}, basada en una red
+neuronal totalmente conectada con varias capas ocultas y función de
+activación ReLU.
+
+Los hiperparámetros principales utilizados en los experimentos son:
+
+\begin{itemize}
+    \item Tasa de aprendizaje: \(10^{-3}\).
+    \item Tamaño del \emph{replay buffer}: 100\,000 transiciones.
+    \item Tamaño de lote: 64.
+    \item Factor de descuento \(\gamma = 0.99\).
+    \item Frecuencia de entrenamiento: cada 4 pasos de interacción.
+    \item Actualización de la red objetivo cada 10\,000 pasos.
+\end{itemize}
+
+El entrenamiento se realiza durante entre 200\,000 y 1\,000\,000 pasos
+de interacción, dependiendo del experimento, y se registra tanto la
+evolución de la recompensa promedio como las métricas de clasificación
+sobre el conjunto de prueba.
+
+\subsection{Modelo Random Forest de referencia}
+
+Como referencia supervisada se entrena un clasificador Random Forest
+sobre el mismo preprocesado del conjunto NSL-KDD. El modelo se entrena
+con un número moderado de árboles (por ejemplo, 200 estimadores) y sin
+optimización exhaustiva de hiperparámetros, ya que el objetivo principal
+es disponer de un punto de comparación razonable frente al agente RL.
+
+El Random Forest opera directamente en modo supervisado, minimizando
+el error de clasificación sobre el conjunto de entrenamiento, mientras
+que el agente DQN aprende a partir de señales de recompensa derivadas
+de las decisiones PERMIT/BLOCK.
+
+\section{Resultados experimentales}
+
+En esta sección se resumen los resultados obtenidos para diferentes
+configuraciones del agente DQN y del modelo Random Forest.
+Cada experimento se identifica con un código (\texttt{E01}, \texttt{E02}, \dots)
+y se documenta en detalle en el fichero \texttt{experiments/nslkdd\_experiments.md}
+del repositorio.
+
+\subsection{Métricas de evaluación}
+
+Las métricas que se emplean para evaluar el rendimiento son las habituales
+en problemas de detección de intrusos:
+
+\begin{itemize}
+    \item \textbf{Accuracy} global.
+    \item \textbf{Precision}, \textbf{recall} y \textbf{F1-score} para cada clase.
+    \item Matriz de confusión, con especial atención a:
+          \begin{itemize}
+              \item Falsos negativos (ataques permitidos).
+              \item Falsos positivos (tráfico benigno bloqueado).
+          \end{itemize}
+    \item Tasa de falsos positivos (FP rate), definida como:
+          \[
+              \text{FP rate} = \frac{\text{FP}}{\text{TN} + \text{FP}}.
+          \]
+\end{itemize}
+
+\subsection{Comparación DQN vs Random Forest (resumen cualitativo)}
+
+De forma resumida, los resultados obtenidos muestran que:
+
+\begin{itemize}
+    \item El modelo Random Forest alcanza una \emph{accuracy} en torno al 77\%
+          y un \emph{recall} de la clase de ataque cercano al 0.61, con una
+          tasa de falsos positivos baja (del orden del 2--3\% del tráfico benigno).
+    \item El agente DQN, incluso tras incrementar el castigo por falsos negativos
+          y ajustar la recompensa por omisión, obtiene \emph{accuracies} en el rango
+          71--76\%, con un \emph{recall} de ataques inferior al del Random Forest
+          y una tasa de falsos positivos ligeramente inferior.
+    \item En otras palabras, el agente RL tiende a aprender políticas muy
+          conservadoras respecto a los falsos positivos (bloquea muy poco
+          tráfico benigno), pero a costa de permitir un porcentaje relativamente
+          elevado de ataques, lo que limita su utilidad como IDS principal.
+\end{itemize}
+
+Estos resultados son coherentes con la naturaleza del problema en esta fase:
+se trata de una clasificación estática sobre un conjunto tabular etiquetado,
+donde los modelos supervisados clásicos están muy bien adaptados. El interés
+del enfoque RL aparece cuando se pasa a un entorno dinámico en el que las
+decisiones del agente tienen efectos a más largo plazo, como se plantea en
+la fase siguiente del TFG.
+
+% --------------------------------------------------
+% 5. Conclusiones (esqueleto)
+% --------------------------------------------------
+\chapter{Conclusiones y líneas futuras}
+
+En esta primera versión de la memoria se han presentado los fundamentos
+del TFG y la fase inicial de experimentación basada en NSL-KDD.
+Como líneas futuras inmediatas destacan:
+
+\begin{itemize}
+    \item Completar la comparación cuantitativa entre distintas funciones
+          de recompensa para el agente DQN, documentando el compromiso
+          entre falsos positivos y falsos negativos.
+    \item Extender el enfoque a un entorno de red simulado (por ejemplo,
+          basado en Mininet o máquinas virtuales en red) donde el agente
+          pueda actuar sobre reglas de defensa y observar consecuencias
+          secuenciales de sus decisiones.
+    \item Evaluar estrategias de aprendizaje por refuerzo profundo más
+          avanzadas (PPO, A2C, etc.) y su integración con arquitecturas
+          específicas para tráfico de red.
+\end{itemize}
+
+\bibliographystyle{plain}
+\bibliography{bibliografia} % Ajustar nombre del .bib cuando lo tengas
+
+\end{document}

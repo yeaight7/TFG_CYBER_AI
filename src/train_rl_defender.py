@@ -19,12 +19,13 @@ MODELS_DIR.mkdir(parents=True, exist_ok=True)
 # --------------------------------------------------------------------------------------
 # Configuración de recompensa para el agente defensor
 # --------------------------------------------------------------------------------------
-REWARD_CONFIG = {
-    "tp": 2.0,     # bloquear ataque
-    "fp": -1.0,    # bloquear benigno
-    "fn": -5.0,    # permitir ataque
-    "omission": 1.0,  # no toma acción (pero acierta)
+REWARD_CONFIG = {		# E06
+    "tp": 1.5,
+    "fp": -1.0,
+    "fn": -5.0,
+    "omission": 0.0,  # cero premio por permitir benigno
 }
+
 
 
 def make_env_fn(X: np.ndarray, y: np.ndarray):
@@ -94,7 +95,7 @@ def main():
     # ------------------------------------------------------------------
     print("Descargando y cargando NSL-KDD vía kagglehub...")
     X_train, y_train, X_test, y_test = load_nsl_kdd_binary(
-        use_20_percent=False  # pon False cuando quieras entrenar con el dataset completo
+        use_20_percent=True  # pon False cuando quieras entrenar con el dataset completo
     )
 
     print(f"Train shape: X={X_train.shape}, y={y_train.shape}")
@@ -122,7 +123,7 @@ def main():
         device="cuda",
     )
 
-    total_timesteps = 1_000_000
+    total_timesteps = 500_000
     print(f"Entrenando DQN durante {total_timesteps} timesteps...")
     model.learn(total_timesteps=total_timesteps)
 
