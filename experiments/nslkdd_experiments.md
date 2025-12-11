@@ -1,6 +1,6 @@
 # Experimentos NSL-KDD – DQN y Random Forest
 
-Este documento recoge todos los experimentos realizados sobre el dataset **NSL-KDD** para comparar diferentes enfoques de detección de intrusiones:
+Este documento recopila todos los experimentos realizados sobre el dataset **NSL-KDD** para comparar diferentes enfoques de detección de intrusiones:
 
 - **Reinforcement Learning**: Agente defensor basado en **DQN** (Deep Q-Network)
 - **Supervised Learning**: Modelo clásico **Random Forest** como baseline
@@ -159,7 +159,7 @@ FP Rate: 0.0267
 **Análisis**:
 - **Supera ligeramente** al DQN baseline en todas las métricas
 - Tiempo de entrenamiento mucho menor (~5 min vs ~45 min)
-- Recall de ataques 1.5% superior (0.615 vs 0.600)
+- Recall de ataques 2.5% superior relativo (0.615 vs 0.600)
 - FP rate ligeramente mejor (0.0267 vs 0.028)
 
 **Ventajas de RF sobre DQN (en esta fase)**:
@@ -196,13 +196,13 @@ total_timesteps = 500_000
 **Resultados**:
 ```
 Accuracy: 0.7563
-Recall (clase 1): 0.5955  # Mejor recall de todos los experimentos DQN
+Recall (clase 1): 0.5955  # Segundo mejor recall de experimentos DQN
 F1-Score: 0.7015
 FP Rate: 0.0313           # Ligeramente mayor FP
 ```
 
 **Análisis**:
-- **Mayor recall** de todos los experimentos DQN (0.5955 vs 0.600 de E01)
+- **Alto recall** comparado con otros experimentos DQN (0.5955, cercano al 0.600 de E01)
 - Trade-off: FP rate aumenta a 3.13% (vs 2.8% de E01)
 - La recompensa alta en TP incentiva al agente a bloquear más agresivamente
 
@@ -348,9 +348,9 @@ Real Ataque          5234              7599       (Recall: 59.2%)
 ## 📚 Referencias y Recursos
 
 ### Papers Relacionados
-- [Playing Atari with Deep Reinforcement Learning (DQN)](https://arxiv.org/abs/1312.5602)
-- [Deep Reinforcement Learning for Cyber Security](https://arxiv.org/abs/1906.05799)
-- [NSL-KDD Dataset Paper](https://dl.acm.org/doi/10.5555/1736481.1736489)
+- Mnih et al. (2013) - [Playing Atari with Deep Reinforcement Learning (DQN)](https://arxiv.org/abs/1312.5602)
+- Nguyen & Reddi (2019) - [Deep Reinforcement Learning for Cyber Security](https://arxiv.org/abs/1906.05799)
+- Tavallaee et al. (2009) - [NSL-KDD Dataset: A Detailed Analysis](https://dl.acm.org/doi/10.5555/1736481.1736489)
 
 ### Código y Configuraciones
 - Código de entrenamiento: `../src/train_rl_defender.py`

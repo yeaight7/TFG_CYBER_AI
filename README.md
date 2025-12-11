@@ -681,7 +681,7 @@ Tiempos aproximados en diferentes configuraciones:
 | GPU (RTX 3070) | Full | 1M | ~30 min | ~72% |
 | GPU (A100) | Full | 1M | ~15 min | ~72% |
 
-**Nota**: Los tiempos varían según hardware, sistema operativo y carga del sistema.
+**Nota sobre Accuracy**: El dataset completo puede mostrar accuracy ligeramente menor debido a mayor variabilidad de ataques y necesidad de más timesteps de entrenamiento. Los tiempos varían según hardware, sistema operativo y carga del sistema.
 
 ## 🤝 Contribuciones
 
@@ -694,7 +694,11 @@ Este es un proyecto académico (TFG), pero se aceptan sugerencias y mejoras:
    - Añade docstrings a funciones nuevas
    - Comenta código complejo
 4. **Prueba tus cambios**: Verifica que funcionen correctamente
-5. **Commit**: `git commit -m "feat: descripción clara del cambio"`
+5. **Commit** siguiendo Conventional Commits:
+   - `feat: añadir nuevo algoritmo PPO`
+   - `fix: corregir cálculo de reward en FN`
+   - `docs: actualizar README con ejemplos`
+   - `refactor: simplificar preprocesamiento de datos`
 6. **Push**: `git push origin feature/nueva-mejora`
 7. **Pull Request**: Abre PR con descripción detallada
 
