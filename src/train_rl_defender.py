@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import List
 
+import torch
+
 import numpy as np
 from sklearn.metrics import classification_report, confusion_matrix
 
@@ -81,6 +83,12 @@ def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray) -> None:
 
 
 def main():
+    
+    if torch.cuda.is_available():
+        print(f"✅ GPU detectada: {torch.cuda.get_device_name(0)}")
+    else:
+        print("⚠️ GPU NO detectada. Se usará CPU (esto será lento).")
+        
     # ------------------------------------------------------------------
     # 1) Cargar NSL-KDD ya preprocesado (desde KaggleHub)
     # ------------------------------------------------------------------
@@ -111,6 +119,7 @@ def main():
         train_freq=4,
         target_update_interval=10_000,
         verbose=1,
+        device="cuda",
     )
 
     total_timesteps = 1_000_000
