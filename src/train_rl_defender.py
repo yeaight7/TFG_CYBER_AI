@@ -18,10 +18,10 @@ MODELS_DIR.mkdir(parents=True, exist_ok=True)
 # Configuración de recompensa para el agente defensor
 # --------------------------------------------------------------------------------------
 REWARD_CONFIG = {
-    "tp": 1.0,     # bloquear ataque
+    "tp": 2.0,     # bloquear ataque
     "fp": -1.0,    # bloquear benigno
     "fn": -5.0,    # permitir ataque
-    "omission": 0.5,  # no toma acción (pero acierta)
+    "omission": 1.0,  # no toma acción (pero acierta)
 }
 
 
