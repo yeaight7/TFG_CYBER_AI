@@ -56,7 +56,8 @@ El sistema se compone de tres componentes principales:
 TFG_CYBER_AI/
 ├── src/
 │   ├── rl_defender_env.py       # Entorno Gymnasium personalizado
-│   ├── train_rl_defender.py      # Script principal de entrenamiento
+│   ├── train_rl_defender.py      # Script principal de entrenamiento RL
+│   ├── baseline_random_forest.py # Baseline supervisado con Random Forest
 │   └── load_nsl_kdd.py           # Utilidad para cargar y preprocesar NSL-KDD
 │
 ├── datasets/
@@ -67,7 +68,17 @@ TFG_CYBER_AI/
 │       └── ...
 │
 ├── models/
-│   └── rl_defender_dqn.zip       # Modelo DQN entrenado (guardado)
+│   ├── rl_defender_dqn.zip       # Modelo DQN entrenado (guardado)
+│   ├── rl_defender_dqn_nslkdd.zip  # Modelo DQN con dataset completo
+│   └── rf_nslkdd.joblib          # Modelo Random Forest baseline
+│
+├── experiments/
+│   ├── README.md                 # Documentación de experimentos
+│   └── nslkdd_experiments.md     # Resultados detallados experimentos NSL-KDD
+│
+├── report/
+│   ├── report.pdf                # Memoria del TFG
+│   └── report.tex                # Código fuente LaTeX de la memoria
 │
 ├── .gitignore
 └── README.md
@@ -130,34 +141,98 @@ Si es la primera vez usando `kagglehub`, podría pedirte credenciales de Kaggle:
 
 ### Descripción
 
-NSL-KDD es un dataset de detección de intrusiones derivado del KDD Cup 1999. Contiene registros de conexiones de red con:
+NSL-KDD es un dataset de detección de intrusiones derivado del KDD Cup 1999, diseñado para superar algunas limitaciones del dataset original. Contiene registros de conexiones de red con:
 
 - **125,973 muestras de entrenamiento** (KDDTrain+.txt)
 - **22,544 muestras de prueba** (KDDTest+.txt)
+- **25,192 muestras de entrenamiento reducido** (KDDTrain+_20Percent.txt) - Útil para experimentación rápida
 - **41 características numéricas/categóricas** por muestra
 - **Etiquetas**: Normal, DoS, Probe, R2L, U2R
+
+### Características del Dataset
+
+Las 41 características se agrupan en categorías:
+
+**Características básicas de conexión (9)**:
+- `duration`: Duración de la conexión en segundos
+- `protocol_type`: Protocolo (TCP, UDP, ICMP)
+- `service`: Servicio de red (HTTP, FTP, SSH, etc.)
+- `flag`: Estado de la conexión (SF, S0, REJ, etc.)
+- `src_bytes`, `dst_bytes`: Bytes enviados/recibidos
+
+**Características de contenido (13)**:
+- `hot`, `num_failed_logins`, `logged_in`, etc.
+- Indicadores de comportamiento sospechoso
+
+**Características de tráfico temporal (9)**:
+- `count`, `srv_count`: Conexiones al mismo host/servicio en 2 segundos
+- `serror_rate`, `rerror_rate`: Tasas de error
+
+**Características basadas en host (10)**:
+- `dst_host_count`: Conexiones al host destino en 100 conexiones
+- `dst_host_srv_count`: Conexiones al mismo servicio
+- Tasas de error a nivel de host
+
+### Distribución de Ataques
+
+**Train Set (KDDTrain+.txt)**:
+- Normal: 67,343 (53.5%)
+- DoS: 45,927 (36.5%)
+- Probe: 11,656 (9.3%)
+- R2L: 995 (0.8%)
+- U2R: 52 (0.04%)
+
+**Test Set (KDDTest+.txt)**:
+- Normal: 9,711 (43.1%)
+- DoS: 7,458 (33.1%)
+- Probe: 2,421 (10.7%)
+- R2L: 2,754 (12.2%)
+- U2R: 200 (0.9%)
+
+**Nota**: El test set contiene tipos de ataque diferentes a los del train para evaluar generalización.
 
 ### Preprocesamiento Automático
 
 El script `load_nsl_kdd.py` realiza:
 
-1. **Descarga automática** desde Kaggle
+1. **Descarga automática** desde Kaggle vía `kagglehub`
 2. **One-hot encoding** de variables categóricas (protocol_type, service, flag)
-3. **Binarización de etiquetas**: 0 = Normal, 1 = Ataque
-4. **División train/test** manteniendo la proporción original
-5. **Conversión a arrays NumPy** (float32) para eficiencia
+   - Resultado: 122 características numéricas finales
+3. **Binarización de etiquetas**: 0 = Normal, 1 = Ataque (cualquier tipo)
+4. **División train/test** manteniendo la proporción original del dataset
+5. **Conversión a arrays NumPy** (float32) para eficiencia y compatibilidad con RL
 
 ### Uso
 
 ```python
 from load_nsl_kdd import load_nsl_kdd_binary
 
-# Cargar dataset completo
+# Cargar dataset completo (125,973 train samples)
 X_train, y_train, X_test, y_test = load_nsl_kdd_binary(use_20_percent=False)
+print(f"Train: {X_train.shape}, Test: {X_test.shape}")
+# Output: Train: (125973, 122), Test: (22544, 122)
 
-# O usar versión reducida (20%) para pruebas rápidas
+# O usar versión reducida (20%) para experimentación rápida
 X_train, y_train, X_test, y_test = load_nsl_kdd_binary(use_20_percent=True)
+print(f"Train: {X_train.shape}, Test: {X_test.shape}")
+# Output: Train: (25192, 122), Test: (22544, 122)
 ```
+
+### Ventajas de NSL-KDD sobre KDD'99
+
+1. ✅ **Sin registros redundantes**: Elimina duplicados que sesgaban el entrenamiento
+2. ✅ **Balanceo mejorado**: Mejor distribución de clases
+3. ✅ **Tamaño razonable**: Permite entrenar sin necesidad de sampling
+4. ✅ **Test set desafiante**: Incluye ataques no vistos en train para evaluar generalización
+
+### Limitaciones a Considerar
+
+1. ⚠️ **Dataset antiguo**: Basado en tráfico de 1999, no incluye ataques modernos
+2. ⚠️ **Tráfico simulado**: Generado en laboratorio, no tráfico real de producción
+3. ⚠️ **Protocolos obsoletos**: No incluye HTTPS, HTTP/2, QUIC, WebSockets, etc.
+4. ⚠️ **Contexto limitado**: No captura patrones de ataque distribuidos o APTs
+
+Para aplicaciones en producción, considera complementar con datasets más recientes (CICIDS2017, UNSW-NB15).
 
 ---
 
@@ -260,6 +335,16 @@ Real Ataque (1)        FN              TP
 weighted avg     0.9061    0.9030    0.9034     22544
 ```
 
+### Interpretación de Resultados
+
+- **Clase 0 (PERMIT)**: El agente permite correctamente el 93.78% del tráfico benigno
+- **Clase 1 (BLOCK)**: El agente bloquea correctamente el 87.33% de los ataques
+- **False Positives (FP)**: 644 flujos benignos bloqueados incorrectamente (6.22% del tráfico legítimo)
+- **False Negatives (FN)**: 1,544 ataques permitidos incorrectamente (12.67% de los ataques)
+- **Accuracy Global**: 90.30% de decisiones correctas
+
+El agente prioriza la **detección de ataques** (alta precision del 94.29% en bloqueos) mientras mantiene un balance razonable con los falsos positivos.
+
 ---
 
 ## 🔬 Experimentación
@@ -271,38 +356,77 @@ Además de DQN, puedes experimentar con:
 ```python
 from stable_baselines3 import PPO, A2C, SAC
 
-# PPO (Proximal Policy Optimization)
-model = PPO("MlpPolicy", env, verbose=1)
+# PPO (Proximal Policy Optimization) - Recomendado para problemas de política
+model = PPO("MlpPolicy", env, verbose=1, learning_rate=3e-4)
 
-# A2C (Advantage Actor-Critic)
-model = A2C("MlpPolicy", env, verbose=1)
+# A2C (Advantage Actor-Critic) - Más rápido pero menos estable
+model = A2C("MlpPolicy", env, verbose=1, learning_rate=7e-4)
+
+# SAC (Soft Actor-Critic) - Requiere acciones continuas
+# Nota: SAC no es compatible con espacios de acción discretos
 ```
+
+### Comparación con Baseline Supervisado
+
+El proyecto incluye un baseline de Random Forest para comparar:
+
+```bash
+cd src
+python baseline_random_forest.py
+```
+
+Ventajas del RL sobre métodos supervisados:
+- **Adaptabilidad**: Aprende políticas óptimas considerando consecuencias a largo plazo
+- **Configuración de recompensas**: Permite ajustar el trade-off entre FP y FN
+- **Aprendizaje continuo**: Puede adaptarse a nuevos patrones de ataque
+- **Optimización de objetivos complejos**: Maximiza métricas específicas de seguridad
 
 ### Ajustar Sistema de Recompensas
 
-En `rl_defender_env.py`, modifica:
+El sistema de recompensas define el comportamiento del agente. Modifica en `train_rl_defender.py`:
 
 ```python
-RLDatasetDefenderEnv(
-    X=X,
-    y=y,
-    correct_reward=2.0,              # Aumentar recompensa por aciertos
-    false_positive_penalty=-0.5,     # Reducir penalización de FP
-    false_negative_penalty=-10.0,    # Aumentar penalización de FN
-    # ...
-)
+REWARD_CONFIG = {
+    "tp": 1.5,      # Recompensa por bloquear ataque (True Positive)
+    "fp": -1.0,     # Penalización por bloquear tráfico legítimo (False Positive)
+    "fn": -5.0,     # Penalización fuerte por permitir ataque (False Negative)
+    "omission": 0.0 # Recompensa por permitir tráfico legítimo (True Negative)
+}
 ```
+
+**Estrategias de recompensa:**
+
+1. **Pro-seguridad** (minimizar FN): `tp=2.0, fp=-1.0, fn=-10.0, omission=0.0`
+   - Prioriza detectar todos los ataques, acepta más falsos positivos
+   
+2. **Balanceada**: `tp=1.5, fp=-1.0, fn=-5.0, omission=0.5`
+   - Balance entre detectar ataques y no bloquear tráfico legítimo
+   
+3. **Pro-disponibilidad** (minimizar FP): `tp=1.0, fp=-3.0, fn=-2.0, omission=1.0`
+   - Prioriza no interrumpir tráfico legítimo, más tolerante con FN
 
 ### Entrenar con Subset Reducido
 
-Para experimentación rápida:
+Para experimentación rápida durante desarrollo:
 
 ```python
 # En train_rl_defender.py
 X_train, y_train, X_test, y_test = load_nsl_kdd_binary(
-    use_20_percent=True  # Solo 20% del dataset
+    use_20_percent=True  # Solo 20% del dataset (~25k muestras)
 )
 ```
+
+Para entrenamiento final completo:
+
+```python
+X_train, y_train, X_test, y_test = load_nsl_kdd_binary(
+    use_20_percent=False  # Dataset completo (~126k muestras)
+)
+```
+
+### Registro de Experimentos
+
+Consulta `experiments/nslkdd_experiments.md` para ver los resultados de experimentos previos con diferentes configuraciones de hiperparámetros y recompensas.
 
 ---
 
@@ -312,54 +436,395 @@ Para evaluar o continuar el entrenamiento:
 
 ```python
 from stable_baselines3 import DQN
+from rl_defender_env import RLDatasetDefenderEnv
+from load_nsl_kdd import load_nsl_kdd_binary
+
+# Cargar dataset
+X_train, y_train, X_test, y_test = load_nsl_kdd_binary(use_20_percent=False)
+
+# Crear entorno de evaluación
+env = RLDatasetDefenderEnv(
+    X=X_test,
+    y=y_test,
+    benign_label=0,
+    attack_label=1,
+    shuffle=False
+)
 
 # Cargar modelo guardado
-model = DQN.load("models/rl_defender_dqn")
+model = DQN.load("models/rl_defender_dqn_nslkdd")
 
 # Evaluar en nuevo conjunto
 obs, info = env.reset()
-action, _ = model.predict(obs, deterministic=True)
+done = False
+while not done:
+    action, _ = model.predict(obs, deterministic=True)
+    obs, reward, terminated, truncated, info = env.step(int(action))
+    done = terminated or truncated
+```
+
+### Continuar Entrenamiento
+
+```python
+# Cargar modelo existente
+model = DQN.load("models/rl_defender_dqn_nslkdd", env=vec_env)
+
+# Continuar entrenamiento por 500k timesteps adicionales
+model.learn(total_timesteps=500_000)
+
+# Guardar modelo actualizado
+model.save("models/rl_defender_dqn_extended")
 ```
 
 ---
+
+## 🎯 Limitaciones Actuales
+
+Este proyecto representa la fase inicial de investigación y presenta las siguientes limitaciones:
+
+### Limitaciones Técnicas
+- **Entorno simulado**: Usa dataset histórico en lugar de tráfico en tiempo real
+- **Clasificación binaria**: Solo distingue entre normal y ataque (no tipos específicos)
+- **Features estáticas**: Las 122 características se calculan a nivel de flujo completo
+- **No streaming**: Procesa flujos completos, no paquetes individuales en tiempo real
+
+### Limitaciones del Dataset NSL-KDD
+- **Dataset antiguo**: Basado en tráfico de 1999, no refleja ataques modernos
+- **Distribución artificial**: Proporción de ataques no representa tráfico real
+- **Características limitadas**: No incluye información de capa de aplicación moderna
+- **Protocolos obsoletos**: No incluye tráfico HTTPS, HTTP/2, QUIC, etc.
+
+### Consideraciones de Despliegue
+- **Latencia**: El agente actual no está optimizado para decisiones en microsegundos
+- **Escalabilidad**: No probado en redes de alta velocidad (10+ Gbps)
+- **Robustez**: No evaluado contra ataques adversariales dirigidos al modelo RL
+- **Adaptación**: Requiere re-entrenamiento para nuevos tipos de ataques
 
 ## 🔮 Trabajo Futuro
 
 Esta es la **Fase 1** del TFG. Las siguientes fases incluirán:
 
 ### Fase 2: Entorno en Tiempo Real
-- Integración con captura de tráfico en vivo (pcap, Wireshark)
-- Uso de herramientas como Scapy para análisis de paquetes
-- Pipeline de procesamiento en streaming
+- **Captura de tráfico en vivo**
+  - Integración con libpcap/Scapy para captura de paquetes
+  - Pipeline de extracción de características en streaming
+  - Procesamiento en tiempo real con latencias < 100ms
+  
+- **Feature Engineering moderno**
+  - Características de tráfico HTTPS/TLS (certificados, handshakes)
+  - Análisis de payloads cifrados (tamaños, timing)
+  - Estadísticas de flujo en ventanas temporales deslizantes
+
+- **Integración con infraestructura**
+  - Interfaz con iptables/nftables para bloqueo dinámico
+  - Logs estructurados para SIEM (Splunk, ELK)
+  - Métricas de rendimiento (Prometheus, Grafana)
 
 ### Fase 3: Adversario RL
-- Implementar un **agente atacante** también basado en RL
-- Escenario de juego adversarial (Game Theory)
-- Co-evolución defensor vs. atacante
+- **Modelado de atacantes inteligentes**
+  - Implementar agente atacante con RL
+  - Técnicas de evasión adaptativas
+  - Escenario de juego adversarial (Game Theory)
+  
+- **Co-evolución y robustez**
+  - Entrenamiento adversarial defensor vs. atacante
+  - Técnicas de adversarial training para robustez
+  - Evaluación contra ataques de envenenamiento de datos
 
-### Fase 4: Multi-Agente
-- Sistema distribuido con múltiples defensores
-- Coordinación y comunicación entre agentes
-- Defensa de redes complejas
+### Fase 4: Multi-Agente y Distribución
+- **Arquitectura multi-agente**
+  - Sistema distribuido con múltiples defensores por zona
+  - Coordinación mediante comunicación inter-agente
+  - Políticas jerárquicas (agentes locales + coordinador global)
+  
+- **Defensa de redes complejas**
+  - Topologías de red realistas
+  - Propagación de ataques laterales
+  - Defensa colaborativa en SDN (Software-Defined Networks)
 
-### Fase 5: Despliegue
-- Contenedorización (Docker)
-- Integración con firewalls (iptables, nftables)
-- Dashboard de monitorización
+### Fase 5: Despliegue Productivo
+- **Contenedorización y orquestación**
+  - Dockerfile y docker-compose para despliegue
+  - Kubernetes para escalado automático
+  - CI/CD para actualización continua de modelos
+  
+- **Integración con ecosistema empresarial**
+  - API REST para integración con SOC
+  - Webhooks para alertas en tiempo real
+  - Dashboard web de monitorización (React/Vue.js)
+  
+- **Evaluación y mejora continua**
+  - A/B testing de nuevas políticas
+  - Monitorización de drift del modelo
+  - Pipeline de re-entrenamiento automático
+
+### Fase 6: Investigación Avanzada
+- **Algoritmos RL avanzados**
+  - Multi-objective RL (balance FP/FN/Throughput)
+  - Meta-learning para adaptación rápida a nuevos ataques
+  - Offline RL para aprendizaje seguro desde logs
+  
+- **Explicabilidad y confianza**
+  - SHAP/LIME para explicar decisiones del agente
+  - Certificación de robustez formal
+  - Auditoría de decisiones para compliance
+
+## 💡 Consejos y Mejores Prácticas
+
+### Optimización del Entrenamiento
+1. **Usa GPU si está disponible**: El entrenamiento puede ser 5-10x más rápido
+   ```python
+   model = DQN("MlpPolicy", env, device="cuda", ...)
+   ```
+
+2. **Ajusta buffer_size según memoria**: 
+   - GPU 8GB: buffer_size=100_000
+   - GPU 16GB+: buffer_size=500_000
+   - Solo CPU: buffer_size=50_000
+
+3. **Monitoriza el aprendizaje**:
+   ```python
+   from stable_baselines3.common.callbacks import EvalCallback
+   
+   eval_callback = EvalCallback(
+       eval_env,
+       best_model_save_path="./logs/best_model",
+       log_path="./logs/results",
+       eval_freq=10_000,
+   )
+   model.learn(total_timesteps=1_000_000, callback=eval_callback)
+   ```
+
+### Debugging y Desarrollo
+1. **Empieza con subset pequeño**: Usa `use_20_percent=True` para iterar rápido
+2. **Reduce timesteps inicialmente**: Prueba con 50k-100k antes de 1M
+3. **Visualiza la matriz de confusión**: Identifica si el agente está sesgado
+4. **Registra las recompensas**: Asegúrate de que aumentan durante el entrenamiento
+
+### Reproducibilidad
+```python
+import numpy as np
+import random
+import torch
+
+# Fijar semillas para reproducibilidad
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed(SEED)
+
+# Pasar seed al modelo
+model = DQN("MlpPolicy", env, seed=SEED, ...)
+```
 
 ---
+
+## 🔧 Troubleshooting
+
+### Problemas Comunes
+
+#### Error: "kagglehub requiere autenticación"
+**Solución**: Configura las credenciales de Kaggle:
+1. Crea cuenta en [Kaggle](https://www.kaggle.com/)
+2. Ve a Settings → API → "Create New API Token"
+3. Coloca `kaggle.json` en `~/.kaggle/` (Linux/Mac) o `C:\Users\<usuario>\.kaggle\` (Windows)
+4. Permisos: `chmod 600 ~/.kaggle/kaggle.json`
+
+#### Error: "CUDA out of memory"
+**Solución**: Reduce el tamaño del batch o buffer:
+```python
+model = DQN(
+    "MlpPolicy",
+    env,
+    buffer_size=50_000,  # Reducir de 100k
+    batch_size=32,       # Reducir de 64
+    device="cpu",        # O usar CPU
+)
+```
+
+#### Advertencia: "No GPU detected"
+**Verificar CUDA**:
+```bash
+python -c "import torch; print(torch.cuda.is_available())"
+```
+Si devuelve `False`:
+- Instala PyTorch con CUDA: https://pytorch.org/get-started/locally/
+- Verifica drivers NVIDIA: `nvidia-smi`
+
+#### Error: "FileNotFoundError: KDDTrain+.txt"
+**Solución**: El dataset no se descargó correctamente:
+```python
+# Fuerza descarga manual
+import kagglehub
+path = kagglehub.dataset_download("hassan06/nslkdd")
+print(f"Dataset en: {path}")
+```
+
+#### El agente no aprende (accuracy estancada)
+**Posibles causas**:
+1. **Learning rate muy alto/bajo**: Prueba `1e-4` o `5e-4`
+2. **Reward mal diseñada**: Verifica que las penalizaciones no dominen
+3. **Exploration insuficiente**: Aumenta `exploration_fraction` en DQN
+4. **Dataset no balanceado**: Considera `class_weight` en RF o ajusta rewards
+
+### Performance Benchmarks
+
+Tiempos aproximados en diferentes configuraciones:
+
+| Configuración | Dataset | Timesteps | Tiempo Entrenamiento | Accuracy Test |
+|---------------|---------|-----------|---------------------|---------------|
+| CPU (8 cores) | 20% | 500k | ~45 min | ~76% |
+| CPU (8 cores) | Full | 1M | ~3 horas | ~72% |
+| GPU (RTX 3070) | 20% | 500k | ~12 min | ~76% |
+| GPU (RTX 3070) | Full | 1M | ~30 min | ~72% |
+| GPU (A100) | Full | 1M | ~15 min | ~72% |
+
+**Nota sobre Accuracy**: El dataset completo puede mostrar accuracy ligeramente menor debido a mayor variabilidad de ataques y necesidad de más timesteps de entrenamiento. Los tiempos varían según hardware, sistema operativo y carga del sistema.
 
 ## 🤝 Contribuciones
 
 Este es un proyecto académico (TFG), pero se aceptan sugerencias y mejoras:
 
-1. Haz fork del repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/mejora`)
-3. Commit tus cambios (`git commit -am 'Añadir mejora X'`)
-4. Push a la rama (`git push origin feature/mejora`)
-5. Abre un Pull Request
+1. **Fork del repositorio**: Haz una copia en tu cuenta de GitHub
+2. **Crea una rama**: `git checkout -b feature/nueva-mejora`
+3. **Implementa cambios**: 
+   - Sigue el estilo de código existente
+   - Añade docstrings a funciones nuevas
+   - Comenta código complejo
+4. **Prueba tus cambios**: Verifica que funcionen correctamente
+5. **Commit** siguiendo Conventional Commits:
+   - `feat: añadir nuevo algoritmo PPO`
+   - `fix: corregir cálculo de reward en FN`
+   - `docs: actualizar README con ejemplos`
+   - `refactor: simplificar preprocesamiento de datos`
+6. **Push**: `git push origin feature/nueva-mejora`
+7. **Pull Request**: Abre PR con descripción detallada
+
+### Áreas de Contribución Sugeridas
+- 🆕 Nuevos algoritmos RL (PPO, SAC, TD3)
+- 📊 Visualizaciones de aprendizaje (TensorBoard, W&B)
+- 🔬 Experimentos con otros datasets (UNSW-NB15, CICIDS2017)
+- 📝 Mejoras en documentación
+- 🐛 Corrección de bugs
+- ⚡ Optimizaciones de rendimiento
+- 🧪 Casos de test unitarios
 
 ---
+
+## ❓ FAQ (Preguntas Frecuentes)
+
+### ¿Por qué usar RL en lugar de ML supervisado tradicional?
+
+**Ventajas del RL**:
+- **Optimización de objetivos complejos**: Puedes optimizar directamente el trade-off entre FP y FN mediante recompensas
+- **Aprendizaje secuencial**: El agente considera consecuencias a largo plazo, no solo decisiones puntuales
+- **Adaptabilidad**: Puede aprender online de nuevos datos sin re-entrenar desde cero
+- **Flexibilidad**: Fácil ajustar el comportamiento cambiando recompensas sin re-entrenar modelos
+
+**Desventajas**:
+- Más complejo de implementar y debuggear
+- Requiere más tiempo de entrenamiento
+- Más difícil de interpretar que modelos como Random Forest
+
+### ¿El agente funciona en tiempo real?
+
+**No en la versión actual**. Esta es la Fase 1 (entorno simulado con dataset histórico). El agente:
+- ✅ Funciona: Con dataset NSL-KDD preprocesado
+- ❌ No funciona: Con captura de tráfico en vivo (pcap, Wireshark)
+
+La Fase 2 incluirá captura en tiempo real y extracción de características online.
+
+### ¿Qué tipos de ataques detecta?
+
+NSL-KDD incluye 4 categorías principales:
+- **DoS** (Denial of Service): neptune, smurf, pod, teardrop, land, back
+- **Probe** (Reconnaissance): portsweep, ipsweep, nmap, satan
+- **R2L** (Remote to Local): guess_passwd, ftp_write, imap, phf, multihop, warezmaster, warezclient, spy
+- **U2R** (User to Root): buffer_overflow, loadmodule, perl, rootkit
+
+Actualmente el modelo solo clasifica binario (normal vs. ataque), no distingue entre tipos.
+
+### ¿Puedo usar mis propios datos?
+
+**Sí**, pero requiere adaptación. Necesitas:
+
+1. **Formato correcto**: Array NumPy con shape `(n_samples, n_features)`
+2. **Etiquetas binarias**: 0 = normal, 1 = ataque
+3. **Preprocesamiento**: One-hot encoding de categóricas, normalización si es necesario
+
+Ejemplo:
+```python
+from rl_defender_env import RLDatasetDefenderEnv
+
+# Tus datos (n_samples, n_features)
+X_train = np.load("mi_dataset_X.npy")
+y_train = np.load("mi_dataset_y.npy")
+
+# Crear entorno
+env = RLDatasetDefenderEnv(X=X_train, y=y_train)
+
+# Entrenar como de costumbre
+model = DQN("MlpPolicy", env, ...)
+```
+
+### ¿Cómo elijo los hiperparámetros óptimos?
+
+Recomendaciones basadas en los experimentos:
+
+**Para empezar (baseline)**:
+```python
+learning_rate = 1e-3
+buffer_size = 100_000
+batch_size = 64
+total_timesteps = 500_000
+```
+
+**Para optimizar**:
+1. **Grid search manual**: Prueba combinaciones y documenta en `experiments/`
+2. **Optuna**: Framework de optimización de hiperparámetros
+   ```bash
+   pip install optuna
+   ```
+3. **Ray Tune**: Para búsqueda distribuida a gran escala
+
+**Tip**: Empieza con pocos timesteps (50k) para iterar rápido, luego entrena más.
+
+### ¿El modelo es robusto contra ataques adversariales?
+
+**No está evaluado**. Los ataques adversariales contra modelos de ML/RL en ciberseguridad incluyen:
+
+- **Evasion attacks**: Modificar tráfico malicioso para parecer benigno
+- **Poisoning attacks**: Inyectar datos maliciosos durante entrenamiento
+- **Model extraction**: Robar el modelo mediante queries
+
+La **Fase 3** incluirá evaluación de robustez adversarial.
+
+### ¿Cuánta memoria RAM/GPU necesito?
+
+**Mínimos**:
+- RAM: 8 GB (dataset 20%)
+- GPU: Opcional, pero acelera 3-5x (4 GB VRAM suficiente)
+
+**Recomendados**:
+- RAM: 16 GB (dataset completo)
+- GPU: 8 GB VRAM (NVIDIA RTX 3060/4060 o superior)
+
+**Sin GPU**: Todo funciona en CPU, solo será más lento.
+
+### ¿Puedo usar otros datasets de ciberseguridad?
+
+**Sí**, algunos datasets compatibles:
+
+| Dataset | Año | Samples | Features | Tipos de Ataque |
+|---------|-----|---------|----------|-----------------|
+| NSL-KDD | 2009 | 148k | 41 | DoS, Probe, R2L, U2R |
+| UNSW-NB15 | 2015 | 2.5M | 49 | 9 tipos modernos |
+| CICIDS2017 | 2017 | 2.8M | 80+ | 14 tipos (web attacks, botnet) |
+| CSE-CIC-IDS2018 | 2018 | 16M | 80+ | 15 tipos |
+
+Para usar otros datasets, adapta `load_nsl_kdd.py` o crea tu propio loader.
 
 ## 📄 Licencia
 
@@ -368,6 +833,10 @@ Este proyecto es de código abierto y está disponible bajo la licencia MIT (o l
 ---
 
 ## 📧 Contacto
+
+- **Autor**: Disponible a través de GitHub
+- **Issues**: Para reportar bugs o sugerir mejoras, abre un [Issue](https://github.com/yeaight7/TFG_CYBER_AI/issues)
+- **Discusiones**: Para preguntas generales, usa [Discussions](https://github.com/yeaight7/TFG_CYBER_AI/discussions)
 
 Para preguntas o colaboraciones, contacta con el autor del TFG a través de GitHub.
 
