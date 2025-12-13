@@ -43,6 +43,17 @@ ________________________________________________________________________________
 | E06 | DQN    | NSL-KDD (20% train)      | 1.5, -1.0, -5.0, 0.0    |  500k   | 0.7555 | 0.5928  | 0.0296  | Sin recompensa por omisión, ligera subida de FP       |
 |_____|________|__________________________|_________________________|_________|________|_________|_________|_______________________________________________________|
 ```
+## ✅ Reproducibilidad
+
+Para cada experimento, registrar:
+
+- **Commit SHA** del repo
+- **Script** ejecutado y comando exacto
+- **Seed** (si aplica) y versión de Python
+- **Stable-Baselines3 / sb3-contrib** (versiones)
+- **GPU/CPU** (device) y SO (WSL/Ubuntu)
+- **Preprocesado** (one-hot, scaler, features finales)
+- **Reward config** (tp, fp, fn, om) y mapeo de acciones (0=PERMIT, 1=BLOCK)
 
 ---
 
@@ -314,6 +325,16 @@ Real Ataque          5234              7599       (Recall: 59.2%)
 ```
 
 ---
+## 🧠 Serie Axx: Ablación de arquitectura e hiperparámetros (NSL-KDD 20% train)
+
+| ID  | Algoritmo | net_arch         | lr   | batch | train_freq | grad_steps | buffer | Steps | Reward (tp,fp,fn,om) | Resultado |
+|-----|----------|------------------|------|-------|-----------|-----------|--------|-------|----------------------|----------|
+| A01 | DQN      | [256, 256]       | 1e-4 | 2048  | 100       | 100       | 200k   | 500k  | ( , , , )            | RUNNING  |
+| A02 | DQN      | [512, 256]       | 1e-4 | 2048  | 100       | 100       | 200k   | 500k  | ( , , , )            | PENDIENTE|
+| A03 | DQN      | [128, 256, 256]    | 1e-4 | 2048  | 100       | 100       | 200k   | 500k  | ( , , , )            | PENDIENTE|
+| A04 | QRDQN    | best-of-above    | 1e-4 | 2048  | 100       | 100       | 200k   | 500k  | ( , , , )            | PENDIENTE|
+
+--- 
 
 ## 🔮 Próximos Experimentos Planificados
 
