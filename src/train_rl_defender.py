@@ -153,7 +153,7 @@ def main():
     model.learn(
         total_timesteps=total_timesteps,
         tb_log_name=RUN_ID,           # Nombre del experimento en TensorBoard
-        reset_num_timesteps=True      # True para nuevo experimento, False para continuar
+        reset_num_timesteps=False      # True para nuevo experimento, False para continuar
     )
 
     # ------------------------------------------------------------------
