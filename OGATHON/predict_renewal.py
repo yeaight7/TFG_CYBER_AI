@@ -219,12 +219,6 @@ def main():
     val_accuracy = accuracy_score(y_val, val_predictions)  # type: ignore[arg-type]
     print(f"  Validation accuracy: {val_accuracy:.4f}")
     
-    # Check if accuracy target is met
-    if val_accuracy >= 0.93:
-        print(f"  ✓ Target accuracy (>93%) achieved!")
-    else:
-        print(f"  Training on full balanced dataset for final model...")
-    
     # Train final model on all balanced data
     print("  Training final model on complete balanced dataset...")
     final_model = train_model(X_train_balanced, y_train_balanced)
