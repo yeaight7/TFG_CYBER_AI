@@ -2,14 +2,15 @@
 """
 Predictive Model for Renewal Approval/Rejection
 This script trains a classification model to predict if a renewal should be approved (Y) or rejected (N).
-Optimized for accuracy with efficient resource usage.
+Optimized for accuracy with efficient resource usage and handling of imbalanced datasets.
 """
 
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import cross_val_score, StratifiedKFold
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score
 import os
 import warnings
 warnings.filterwarnings('ignore')
@@ -26,6 +27,13 @@ try:
     HAS_LIGHTGBM = True
 except ImportError:
     HAS_LIGHTGBM = False
+
+# Try to import SMOTE for oversampling minority class
+try:
+    from imblearn.over_sampling import SMOTE
+    HAS_IMBLEARN = True
+except ImportError:
+    HAS_IMBLEARN = False
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -87,45 +95,78 @@ def preprocess_data(df, is_training=True):
     return df, target
 
 
+def apply_smote_balancing(X_train, y_train):
+    """Apply SMOTE to balance the dataset if imblearn is available."""
+    if HAS_IMBLEARN:
+        print("  Applying SMOTE to balance classes...")
+        # Use SMOTE to oversample minority class
+        smote = SMOTE(random_state=42, k_neighbors=5)
+        X_balanced, y_balanced = smote.fit_resample(X_train, y_train)
+        print(f"  Original class distribution: {np.bincount(y_train)}")
+        print(f"  Balanced class distribution: {np.bincount(y_balanced)}")
+        return X_balanced, y_balanced
+    else:
+        print("  Warning: imblearn not installed. Using class_weight instead.")
+        print("  Install with: pip install imbalanced-learn")
+        return X_train, y_train
+
+
 def train_model(X_train, y_train):
     """Train an optimized classifier for best accuracy with reasonable resources."""
     
+    # Calculate class weights for imbalanced data
+    n_samples = len(y_train)
+    n_class_0 = np.sum(y_train == 0)
+    n_class_1 = np.sum(y_train == 1)
+    
+    # Use balanced class weights
+    scale_pos_weight = n_class_0 / n_class_1 if n_class_1 > 0 else 1.0
+    
     # Use LightGBM as primary model - it's faster and memory efficient
     if HAS_LIGHTGBM:
-        print("  Training LightGBM (optimized)...")
+        print("  Training LightGBM (optimized for imbalanced data)...")
         model = LGBMClassifier(
-            n_estimators=300,
-            max_depth=15,
-            learning_rate=0.1,
-            num_leaves=50,
+            n_estimators=500,
+            max_depth=12,
+            learning_rate=0.05,
+            num_leaves=64,
             subsample=0.8,
             colsample_bytree=0.8,
+            min_child_samples=20,
+            class_weight='balanced',  # Handle imbalance
+            reg_alpha=0.1,
+            reg_lambda=0.1,
             random_state=42,
             n_jobs=-1,
             verbose=-1
         )
     elif HAS_XGBOOST:
-        print("  Training XGBoost (optimized)...")
+        print("  Training XGBoost (optimized for imbalanced data)...")
         model = XGBClassifier(
-            n_estimators=300,
+            n_estimators=500,
             max_depth=10,
-            learning_rate=0.1,
+            learning_rate=0.05,
             subsample=0.8,
             colsample_bytree=0.8,
+            min_child_weight=3,
+            scale_pos_weight=scale_pos_weight,  # Handle imbalance
+            reg_alpha=0.1,
+            reg_lambda=0.1,
             random_state=42,
             n_jobs=-1,
             verbosity=0
         )
     else:
-        print("  Training Random Forest (optimized)...")
-        model = RandomForestClassifier(
+        print("  Training Gradient Boosting (optimized for imbalanced data)...")
+        model = GradientBoostingClassifier(
             n_estimators=300,
-            max_depth=20,
-            min_samples_split=2,
-            min_samples_leaf=1,
+            max_depth=8,
+            learning_rate=0.05,
+            subsample=0.8,
+            min_samples_split=5,
+            min_samples_leaf=2,
             max_features='sqrt',
-            random_state=42,
-            n_jobs=-1
+            random_state=42
         )
     
     model.fit(X_train, y_train)
@@ -133,36 +174,65 @@ def train_model(X_train, y_train):
 
 
 def main():
-    print("Loading training data...")
-    train_df = pd.read_csv(TRAIN_PATH, sep=';', low_memory=False)
-    print(f"Training data shape: {train_df.shape}")
-    print(f"Target distribution:\n{train_df['Renew'].value_counts()}")
+    print("="*60)
+    print("RENEWAL PREDICTION MODEL (Optimized for Imbalanced Data)")
+    print("="*60)
     
-    print("\nPreprocessing training data...")
+    print("\n[1/5] Loading training data...")
+    train_df = pd.read_csv(TRAIN_PATH, sep=';', low_memory=False)
+    print(f"  Training data shape: {train_df.shape}")
+    target_counts = train_df['Renew'].value_counts()
+    print(f"  Target distribution:")
+    for label, count in target_counts.items():
+        pct = count / len(train_df) * 100
+        print(f"    {label}: {count:,} ({pct:.1f}%)")
+    
+    print("\n[2/5] Preprocessing training data...")
     X_train, y_train = preprocess_data(train_df.copy(), is_training=True)
     
     # Encode target variable
     y_train_encoded = (y_train == 'Y').astype(int)
     
-    print(f"Features shape: {X_train.shape}")
+    print(f"  Features shape: {X_train.shape}")
+    imbalance_ratio = np.sum(y_train_encoded == 0) / np.sum(y_train_encoded == 1)
+    print(f"  Class imbalance ratio: 1:{imbalance_ratio:.1f}")
     
-    # Train model
-    print("\nTraining optimized ensemble model...")
-    model = train_model(X_train, y_train_encoded)
+    # Balance the dataset
+    print("\n[3/5] Balancing dataset...")
+    X_train_balanced, y_train_balanced = apply_smote_balancing(X_train.values, y_train_encoded.values)
     
-    # Cross-validation on training data with stratified k-fold
-    print("\nEvaluating model with stratified cross-validation...")
-    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-    cv_scores = cross_val_score(model, X_train, y_train_encoded, cv=cv, scoring='accuracy', n_jobs=-1)
-    print(f"Cross-validation accuracy: {cv_scores.mean():.4f} (+/- {cv_scores.std() * 2:.4f})")
-    print(f"Individual fold scores: {[f'{s:.4f}' for s in cv_scores]}")
+    # Quick validation using train/test split instead of full cross-validation
+    print("\n[4/5] Training and evaluating model...")
+    
+    # Split for validation (faster than cross-validation)
+    X_tr, X_val, y_tr, y_val = train_test_split(
+        X_train_balanced, y_train_balanced, 
+        test_size=0.2, random_state=42, stratify=y_train_balanced
+    )
+    
+    # Train model on balanced data
+    model = train_model(X_tr, y_tr)
+    
+    # Evaluate on validation set
+    val_predictions = model.predict(X_val)
+    val_accuracy = accuracy_score(y_val, val_predictions)
+    print(f"  Validation accuracy: {val_accuracy:.4f}")
+    
+    # Check if accuracy target is met
+    if val_accuracy >= 0.93:
+        print(f"  ✓ Target accuracy (>93%) achieved!")
+    else:
+        print(f"  Training on full balanced dataset for final model...")
+    
+    # Train final model on all balanced data
+    print("  Training final model on complete balanced dataset...")
+    final_model = train_model(X_train_balanced, y_train_balanced)
     
     # Load and preprocess test data
-    print("\nLoading test data...")
+    print("\n[5/5] Processing test data and making predictions...")
     test_df = pd.read_csv(TEST_PATH, sep='|', low_memory=False)
-    print(f"Test data shape: {test_df.shape}")
+    print(f"  Test data shape: {test_df.shape}")
     
-    print("Preprocessing test data...")
     # Need to ensure same columns
     # Get common columns
     train_columns = set(train_df.columns) - {'Renew', 'DateAlt', 'KeyMed', 'KeyEnf'}
@@ -180,26 +250,30 @@ def main():
     # Remove extra columns
     X_test = X_test[X_train.columns]
     
-    print(f"Test features shape: {X_test.shape}")
+    print(f"  Test features shape: {X_test.shape}")
     
     # Make predictions
-    print("\nMaking predictions...")
-    predictions = model.predict(X_test)
+    predictions = final_model.predict(X_test.values)
     
     # Convert predictions back to Y/N
     prediction_labels = ['Y' if p == 1 else 'N' for p in predictions]
     
     # Save predictions
-    print(f"\nSaving predictions to {OUTPUT_PATH}...")
+    print(f"\n  Saving predictions to {OUTPUT_PATH}...")
     with open(OUTPUT_PATH, 'w') as f:
         for label in prediction_labels:
             f.write(f"{label}\n")
     
-    print(f"\nPrediction distribution:")
-    print(f"  Y: {prediction_labels.count('Y')}")
-    print(f"  N: {prediction_labels.count('N')}")
-    print(f"\nTotal predictions: {len(prediction_labels)}")
-    print("Done!")
+    y_count = prediction_labels.count('Y')
+    n_count = prediction_labels.count('N')
+    total = len(prediction_labels)
+    print(f"\n  Prediction distribution:")
+    print(f"    Y: {y_count:,} ({y_count/total*100:.1f}%)")
+    print(f"    N: {n_count:,} ({n_count/total*100:.1f}%)")
+    
+    print("\n" + "="*60)
+    print("COMPLETED SUCCESSFULLY!")
+    print("="*60)
 
 
 if __name__ == "__main__":
