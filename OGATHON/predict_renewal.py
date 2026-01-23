@@ -252,11 +252,11 @@ def main():
     
     # Evaluate on validation set with multiple metrics
     val_predictions = model.predict(X_val)
-    val_proba = model.predict_proba(X_val)[:, 1] if hasattr(model, 'predict_proba') else None
+    val_proba = model.predict_proba(X_val)[:, 1] if hasattr(model, 'predict_proba') else None  # type: ignore[index]
     
-    val_accuracy = accuracy_score(y_val, val_predictions)
-    val_f1 = f1_score(y_val, val_predictions)
-    val_balanced_acc = balanced_accuracy_score(y_val, val_predictions)
+    val_accuracy = accuracy_score(y_val, val_predictions)  # type: ignore[arg-type]
+    val_f1 = f1_score(y_val, val_predictions)  # type: ignore[arg-type]
+    val_balanced_acc = balanced_accuracy_score(y_val, val_predictions)  # type: ignore[arg-type]
     
     print(f"  Validation Accuracy: {val_accuracy:.4f}")
     print(f"  Validation F1-Score: {val_f1:.4f}")
