@@ -44,8 +44,8 @@ def preprocess_data(df, is_training=True):
     # Drop columns that exist
     df = df.drop(columns=[col for col in columns_to_drop if col in df.columns], errors='ignore')
     
-    # Identify categorical and numeric columns
-    categorical_cols = df.select_dtypes(include=['object', 'str']).columns.tolist()
+    # Identify categorical and numeric columns - FIXED LINE
+    categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
     numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
     
     # Clean numeric columns that may have formatting issues
@@ -55,7 +55,7 @@ def preprocess_data(df, is_training=True):
     
     # Recalculate after cleaning
     numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
-    categorical_cols = df.select_dtypes(include=['object', 'str']).columns.tolist()
+    categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
     
     # Encode categorical columns
     label_encoders = {}
