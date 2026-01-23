@@ -32,7 +32,7 @@ except ImportError:
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TRAIN_PATH = os.path.join(BASE_DIR, "ia_data", "training_data.csv")
 TEST_PATH = os.path.join(BASE_DIR, "ia_data", "test_data.csv")
-OUTPUT_PATH = os.path.join(BASE_DIR, "predictions.txt")
+OUTPUT_PATH = os.path.join(BASE_DIR, "predicciones.txt")
 
 # Memory optimization mode
 USE_LIGHTWEIGHT = True  # Set to False if you have 16GB+ RAM
