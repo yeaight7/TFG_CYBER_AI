@@ -2,15 +2,30 @@
 """
 Predictive Model for Renewal Approval/Rejection
 This script trains a classification model to predict if a renewal should be approved (Y) or rejected (N).
+Optimized for accuracy with efficient resource usage.
 """
 
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, cross_val_score
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.impute import SimpleImputer
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder
 import os
+import warnings
+warnings.filterwarnings('ignore')
+
+# Try to import XGBoost and LightGBM (faster and more efficient)
+try:
+    from xgboost import XGBClassifier
+    HAS_XGBOOST = True
+except ImportError:
+    HAS_XGBOOST = False
+
+try:
+    from lightgbm import LGBMClassifier
+    HAS_LIGHTGBM = True
+except ImportError:
+    HAS_LIGHTGBM = False
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -73,16 +88,45 @@ def preprocess_data(df, is_training=True):
 
 
 def train_model(X_train, y_train):
-    """Train a Random Forest classifier."""
-    # Use Random Forest for better handling of mixed data types
-    model = RandomForestClassifier(
-        n_estimators=100,
-        max_depth=15,
-        min_samples_split=5,
-        min_samples_leaf=2,
-        random_state=42,
-        n_jobs=-1
-    )
+    """Train an optimized classifier for best accuracy with reasonable resources."""
+    
+    # Use LightGBM as primary model - it's faster and memory efficient
+    if HAS_LIGHTGBM:
+        print("  Training LightGBM (optimized)...")
+        model = LGBMClassifier(
+            n_estimators=300,
+            max_depth=15,
+            learning_rate=0.1,
+            num_leaves=50,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            random_state=42,
+            n_jobs=-1,
+            verbose=-1
+        )
+    elif HAS_XGBOOST:
+        print("  Training XGBoost (optimized)...")
+        model = XGBClassifier(
+            n_estimators=300,
+            max_depth=10,
+            learning_rate=0.1,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            random_state=42,
+            n_jobs=-1,
+            verbosity=0
+        )
+    else:
+        print("  Training Random Forest (optimized)...")
+        model = RandomForestClassifier(
+            n_estimators=300,
+            max_depth=20,
+            min_samples_split=2,
+            min_samples_leaf=1,
+            max_features='sqrt',
+            random_state=42,
+            n_jobs=-1
+        )
     
     model.fit(X_train, y_train)
     return model
@@ -103,13 +147,15 @@ def main():
     print(f"Features shape: {X_train.shape}")
     
     # Train model
-    print("\nTraining model...")
+    print("\nTraining optimized ensemble model...")
     model = train_model(X_train, y_train_encoded)
     
-    # Cross-validation on training data
-    print("\nEvaluating model with cross-validation...")
-    cv_scores = cross_val_score(model, X_train, y_train_encoded, cv=5, scoring='accuracy')
+    # Cross-validation on training data with stratified k-fold
+    print("\nEvaluating model with stratified cross-validation...")
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    cv_scores = cross_val_score(model, X_train, y_train_encoded, cv=cv, scoring='accuracy', n_jobs=-1)
     print(f"Cross-validation accuracy: {cv_scores.mean():.4f} (+/- {cv_scores.std() * 2:.4f})")
+    print(f"Individual fold scores: {[f'{s:.4f}' for s in cv_scores]}")
     
     # Load and preprocess test data
     print("\nLoading test data...")
