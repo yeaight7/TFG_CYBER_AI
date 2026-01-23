@@ -109,15 +109,17 @@ def preprocess_data(df, is_training=True, feature_encoders=None):
                 le = feature_encoders[col]
                 df[col] = df[col].astype(str).fillna('Unknown')
                 
-                # Handle unseen categories: map to 0 (first class)
-                def safe_transform(val):
-                    if val in le.classes_:
-                        return int(le.transform([val])[0])
-                    else:
-                        # Return 0 for unseen categories
-                        return 0
+                # Vectorized approach: check which values are in classes
+                col_values = df[col].values
+                valid_mask = np.isin(col_values, le.classes_)
                 
-                df[col] = df[col].apply(safe_transform)
+                # Transform valid values
+                result = np.zeros(len(col_values), dtype=int)
+                if valid_mask.any():
+                    result[valid_mask] = le.transform(col_values[valid_mask])
+                # Invalid values already set to 0
+                
+                df[col] = result
             else:
                 # Column not in training encoders, fill with 0
                 df[col] = 0
@@ -183,7 +185,7 @@ def train_model(X_train, y_train):
             learning_rate=0.02,  # Reduced from 0.05 for better generalization
             subsample=0.8,
             colsample_bytree=0.8,
-            min_child_weight=50,  # Increased from 3 to prevent overfitting
+            min_child_weight=10,  # Increased from 3, controls sum of weights (not count)
             scale_pos_weight=scale_pos_weight,  # Handle imbalance
             reg_alpha=1.0,  # Increased from 0.1 for stronger regularization
             reg_lambda=1.0,  # Increased from 0.1 for stronger regularization

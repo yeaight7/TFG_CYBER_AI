@@ -136,7 +136,7 @@ def train_model(X_train, y_train):
                 learning_rate=0.02,  # Reduced from 0.03 for better generalization
                 subsample=0.8,
                 colsample_bytree=0.8,
-                min_child_weight=50,  # Increased from 1 to prevent overfitting
+                min_child_weight=10,  # Increased from 1, controls sum of weights (not count)
                 gamma=0.1,
                 reg_alpha=1.0,  # Increased from 0.1 for stronger regularization
                 reg_lambda=1.0,
