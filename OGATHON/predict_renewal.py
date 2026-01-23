@@ -101,7 +101,8 @@ def apply_smote_balancing(X_train, y_train):
         print("  Applying SMOTE to balance classes...")
         # Use SMOTE to oversample minority class
         smote = SMOTE(random_state=42, k_neighbors=5)
-        X_balanced, y_balanced = smote.fit_resample(X_train, y_train)
+        result = smote.fit_resample(X_train, y_train)
+        X_balanced, y_balanced = result[0], result[1]
         print(f"  Original class distribution: {np.bincount(y_train)}")
         print(f"  Balanced class distribution: {np.bincount(y_balanced)}")
         return X_balanced, y_balanced
