@@ -10,6 +10,7 @@ import numpy as np
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
+from sklearn.base import BaseEstimator
 import os
 import warnings
 warnings.filterwarnings('ignore')
@@ -87,7 +88,9 @@ def preprocess_data(df, is_training=True):
     return df, target
 
 
-def train_model(X_train, y_train):
+from typing import Any
+
+def train_model(X_train, y_train) -> Any:
     """Train an optimized classifier for best accuracy with reasonable resources."""
     
     # Use LightGBM as primary model - it's faster and memory efficient
