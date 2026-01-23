@@ -41,13 +41,30 @@ OUTPUT_PATH = os.path.join(BASE_DIR, "predictions.txt")
 
 
 def detect_and_convert_numeric_strings(df, verbose=False):
-    """Detect columns that look numeric but are stored as strings (costs with dots/commas)."""
+    """
+    Detect columns that look like European-formatted numbers (dots as thousand separators,
+    commas as decimal separators) and convert them to proper numeric values.
+    
+    Examples of detected formats:
+    - "2.591.906" -> 2591906 (thousands with dots)
+    - "246.547.156" -> 246547156
+    - "246,15" -> 246.15 (comma decimal)
+    - "2.591,45" -> 2591.45 (mixed)
+    
+    Numbers like "3.14" (American decimal) are NOT converted since they don't match
+    the pattern (requires 3 digits after dot for thousand separator format).
+    """
     converted = []
     for col in df.select_dtypes(include=['object']).columns:
         sample = df[col].dropna().head(100).astype(str)
-        # Check if values look like numbers with thousand separators (dots) or decimal commas
-        numeric_pattern = sample.str.match(r'^-?\d{1,3}(\.\d{3})*(,\d+)?$|^-?\d+(,\d+)?$')
-        if numeric_pattern.mean() > 0.7:  # More than 70% match
+        # Pattern explanation:
+        # Option 1: -?\d{1,3}(\.\d{3})*(,\d+)?$ - European with thousand separators
+        #   e.g., "1.234.567" or "1.234,56" 
+        # Option 2: -?\d+(,\d+)?$ - Just digits with optional comma decimal
+        #   e.g., "1234" or "1234,56"
+        # We look for 70%+ of sample matching these patterns (excludes "3.14" style)
+        european_pattern = sample.str.match(r'^-?\d{1,3}(\.\d{3})*(,\d+)?$|^-?\d+(,\d+)?$')
+        if european_pattern.mean() > 0.7:
             # Convert: remove dots (thousand sep), replace comma with dot (decimal)
             cleaned = df[col].astype(str).str.replace('.', '', regex=False)
             cleaned = cleaned.str.replace(',', '.', regex=False)
@@ -137,7 +154,13 @@ def find_optimal_threshold(y_true, y_proba):
 
 
 def create_temporal_split(df, y, date_col='DateAlt', val_frac=0.2):
-    """Create temporal split based on date if available."""
+    """
+    Create temporal split based on date if available.
+    
+    Uses the original df (before column dropping) to access date column.
+    Returns indices that can be used with X_full and y_full since they
+    share the same row indices (only columns are dropped, not rows).
+    """
     if date_col not in df.columns:
         return None, None, None, None, False
     
@@ -147,7 +170,7 @@ def create_temporal_split(df, y, date_col='DateAlt', val_frac=0.2):
         if valid.mean() < 0.5:
             return None, None, None, None, False
         
-        # Sort by date
+        # Sort by date and get indices (these indices match X_full/y_full)
         sorted_idx = dates[valid].sort_values().index
         n_val = int(len(sorted_idx) * val_frac)
         train_idx = sorted_idx[:-n_val]
