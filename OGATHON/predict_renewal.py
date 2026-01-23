@@ -10,7 +10,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score, balanced_accuracy_score, roc_auc_score
 import os
 import warnings
 warnings.filterwarnings('ignore')
@@ -52,8 +52,19 @@ def clean_numeric_column(series):
     return series
 
 
-def preprocess_data(df, is_training=True):
-    """Preprocess the dataframe for model training/prediction."""
+def preprocess_data(df, is_training=True, feature_encoders=None):
+    """Preprocess the dataframe for model training/prediction.
+    
+    Args:
+        df: DataFrame to preprocess
+        is_training: Whether this is training data (True) or test data (False)
+        feature_encoders: Dictionary of LabelEncoders for categorical features.
+                         If None and is_training=True, new encoders will be created.
+                         If provided and is_training=False, existing encoders will be reused.
+    
+    Returns:
+        Tuple of (preprocessed_df, target, feature_encoders)
+    """
     
     # Drop non-predictive columns
     columns_to_drop = ['DateAlt', 'KeyMed', 'KeyEnf']  # Date and key columns
@@ -80,19 +91,42 @@ def preprocess_data(df, is_training=True):
     numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
     categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
     
+    # Initialize encoders dictionary if not provided
+    if feature_encoders is None:
+        feature_encoders = {}
+    
     # Encode categorical columns
-    label_encoders = {}
     for col in categorical_cols:
-        le = LabelEncoder()
-        df[col] = df[col].astype(str).fillna('Unknown')
-        df[col] = le.fit_transform(df[col])
-        label_encoders[col] = le
+        if is_training:
+            # Training: create new encoder and fit
+            le = LabelEncoder()
+            df[col] = df[col].astype(str).fillna('Unknown')
+            df[col] = le.fit_transform(df[col])
+            feature_encoders[col] = le
+        else:
+            # Test: reuse existing encoder, handle unseen categories
+            if col in feature_encoders:
+                le = feature_encoders[col]
+                df[col] = df[col].astype(str).fillna('Unknown')
+                
+                # Handle unseen categories: map to 0 (first class)
+                def safe_transform(val):
+                    if val in le.classes_:
+                        return int(le.transform([val])[0])
+                    else:
+                        # Return 0 for unseen categories
+                        return 0
+                
+                df[col] = df[col].apply(safe_transform)
+            else:
+                # Column not in training encoders, fill with 0
+                df[col] = 0
     
     # Fill missing values for numeric columns
     for col in numeric_cols:
         df[col] = df[col].fillna(df[col].median() if not df[col].isna().all() else 0)
     
-    return df, target
+    return df, target, feature_encoders
 
 
 def apply_smote_balancing(X_train, y_train):
@@ -128,15 +162,15 @@ def train_model(X_train, y_train):
         print("  Training LightGBM (optimized for imbalanced data)...")
         model = LGBMClassifier(
             n_estimators=500,
-            max_depth=12,
-            learning_rate=0.05,
-            num_leaves=64,
+            max_depth=8,  # Reduced from 12 to prevent overfitting
+            learning_rate=0.02,  # Reduced from 0.05 for better generalization
+            num_leaves=31,  # Reduced from 64 to prevent overfitting
             subsample=0.8,
             colsample_bytree=0.8,
-            min_child_samples=20,
+            min_child_samples=50,  # Increased from 20 to prevent overfitting
             class_weight='balanced',  # Handle imbalance
-            reg_alpha=0.1,
-            reg_lambda=0.1,
+            reg_alpha=1.0,  # Increased from 0.1 for stronger regularization
+            reg_lambda=1.0,  # Increased from 0.1 for stronger regularization
             random_state=42,
             n_jobs=-1,
             verbose=-1
@@ -145,14 +179,14 @@ def train_model(X_train, y_train):
         print("  Training XGBoost (optimized for imbalanced data)...")
         model = XGBClassifier(
             n_estimators=500,
-            max_depth=10,
-            learning_rate=0.05,
+            max_depth=8,  # Reduced from 10 to prevent overfitting
+            learning_rate=0.02,  # Reduced from 0.05 for better generalization
             subsample=0.8,
             colsample_bytree=0.8,
-            min_child_weight=3,
+            min_child_weight=50,  # Increased from 3 to prevent overfitting
             scale_pos_weight=scale_pos_weight,  # Handle imbalance
-            reg_alpha=0.1,
-            reg_lambda=0.1,
+            reg_alpha=1.0,  # Increased from 0.1 for stronger regularization
+            reg_lambda=1.0,  # Increased from 0.1 for stronger regularization
             random_state=42,
             n_jobs=-1,
             verbosity=0
@@ -189,7 +223,7 @@ def main():
         print(f"    {label}: {count:,} ({pct:.1f}%)")
     
     print("\n[2/5] Preprocessing training data...")
-    X_train, y_train = preprocess_data(train_df.copy(), is_training=True)
+    X_train, y_train, feature_encoders = preprocess_data(train_df.copy(), is_training=True)
     
     # Encode target variable
     y_train_encoded = (y_train == 'Y').astype(int)
@@ -198,29 +232,41 @@ def main():
     imbalance_ratio = np.sum(y_train_encoded == 0) / np.sum(y_train_encoded == 1)
     print(f"  Class imbalance ratio: 1:{imbalance_ratio:.1f}")
     
-    # Balance the dataset
-    print("\n[3/5] Balancing dataset...")
-    X_train_balanced, y_train_balanced = apply_smote_balancing(X_train.values, y_train_encoded.values)
+    # CORRECTED: First split into train/validation, THEN apply SMOTE
+    print("\n[3/5] Splitting data and balancing training set...")
     
-    # Quick validation using train/test split instead of full cross-validation
-    print("\n[4/5] Training and evaluating model...")
-    
-    # Split for validation (faster than cross-validation)
+    # Split for validation (before SMOTE to avoid data leakage)
     X_tr, X_val, y_tr, y_val = train_test_split(
-        X_train_balanced, y_train_balanced, 
-        test_size=0.2, random_state=42, stratify=y_train_balanced  # type: ignore[arg-type]
+        X_train.values, y_train_encoded.values, 
+        test_size=0.2, random_state=42, stratify=y_train_encoded.values
     )
     
-    # Train model on balanced data
-    model = train_model(X_tr, y_tr)
+    # Apply SMOTE only to training set (not validation)
+    X_tr_balanced, y_tr_balanced = apply_smote_balancing(X_tr, y_tr)
     
-    # Evaluate on validation set
+    # Train model on balanced training data
+    print("\n[4/5] Training and evaluating model...")
+    model = train_model(X_tr_balanced, y_tr_balanced)
+    
+    # Evaluate on validation set with multiple metrics
     val_predictions = model.predict(X_val)
-    val_accuracy = accuracy_score(y_val, val_predictions)  # type: ignore[arg-type]
-    print(f"  Validation accuracy: {val_accuracy:.4f}")
+    val_proba = model.predict_proba(X_val)[:, 1] if hasattr(model, 'predict_proba') else None
+    
+    val_accuracy = accuracy_score(y_val, val_predictions)
+    val_f1 = f1_score(y_val, val_predictions)
+    val_balanced_acc = balanced_accuracy_score(y_val, val_predictions)
+    
+    print(f"  Validation Accuracy: {val_accuracy:.4f}")
+    print(f"  Validation F1-Score: {val_f1:.4f}")
+    print(f"  Validation Balanced Accuracy: {val_balanced_acc:.4f}")
+    
+    if val_proba is not None:
+        val_auc = roc_auc_score(y_val, val_proba)
+        print(f"  Validation AUC-ROC: {val_auc:.4f}")
     
     # Train final model on all balanced data
     print("  Training final model on complete balanced dataset...")
+    X_train_balanced, y_train_balanced = apply_smote_balancing(X_train.values, y_train_encoded.values)
     final_model = train_model(X_train_balanced, y_train_balanced)
     
     # Load and preprocess test data
@@ -228,13 +274,8 @@ def main():
     test_df = pd.read_csv(TEST_PATH, sep='|', low_memory=False)
     print(f"  Test data shape: {test_df.shape}")
     
-    # Need to ensure same columns
-    # Get common columns
-    train_columns = set(train_df.columns) - {'Renew', 'DateAlt', 'KeyMed', 'KeyEnf'}
-    test_columns = set(test_df.columns) - {'DateAlt', 'KeyMed', 'KeyEnf'}
-    
-    # Preprocess test data
-    X_test, _ = preprocess_data(test_df.copy(), is_training=False)
+    # Preprocess test data using saved encoders from training
+    X_test, _, _ = preprocess_data(test_df.copy(), is_training=False, feature_encoders=feature_encoders)
     
     # Ensure test has same features as training
     # Add missing columns with 0

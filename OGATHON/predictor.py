@@ -9,6 +9,7 @@ import numpy as np
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import f1_score, balanced_accuracy_score, make_scorer
 import os
 import gc
 import warnings
@@ -113,13 +114,13 @@ def train_model(X_train, y_train):
             print("  Training optimized LightGBM...")
             model = LGBMClassifier(
                 n_estimators=1000,
-                max_depth=12,
-                learning_rate=0.03,
-                num_leaves=50,
+                max_depth=8,  # Reduced from 12 to prevent overfitting
+                learning_rate=0.02,  # Reduced from 0.03 for better generalization
+                num_leaves=31,  # Reduced from 50 to prevent overfitting
                 subsample=0.8,
                 colsample_bytree=0.8,
-                min_child_samples=20,
-                reg_alpha=0.1,
+                min_child_samples=50,  # Increased from 20 to prevent overfitting
+                reg_alpha=1.0,  # Increased from 0.1 for stronger regularization
                 reg_lambda=1.0,
                 class_weight='balanced',
                 random_state=42,
@@ -131,13 +132,13 @@ def train_model(X_train, y_train):
             scale_pos = len(y_train[y_train==0]) / len(y_train[y_train==1])
             model = XGBClassifier(
                 n_estimators=1000,
-                max_depth=12,
-                learning_rate=0.03,
+                max_depth=8,  # Reduced from 12 to prevent overfitting
+                learning_rate=0.02,  # Reduced from 0.03 for better generalization
                 subsample=0.8,
                 colsample_bytree=0.8,
-                min_child_weight=1,
+                min_child_weight=50,  # Increased from 1 to prevent overfitting
                 gamma=0.1,
-                reg_alpha=0.1,
+                reg_alpha=1.0,  # Increased from 0.1 for stronger regularization
                 reg_lambda=1.0,
                 scale_pos_weight=scale_pos,
                 random_state=42,
@@ -258,13 +259,26 @@ def main():
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     
     # Use fewer jobs for CV to save memory
-    cv_scores = cross_val_score(
+    cv_scores_acc = cross_val_score(
         model, X_train, y_train_encoded,  # type: ignore[arg-type]
         cv=cv, scoring='accuracy', n_jobs=1, verbose=0
     )
     
-    print(f"  Mean accuracy: {cv_scores.mean():.4f} (+/- {cv_scores.std() * 2:.4f})")
-    print(f"  Folds: {[f'{s:.4f}' for s in cv_scores]}")
+    cv_scores_f1 = cross_val_score(
+        model, X_train, y_train_encoded,  # type: ignore[arg-type]
+        cv=cv, scoring='f1', n_jobs=1, verbose=0
+    )
+    
+    cv_scores_balanced = cross_val_score(
+        model, X_train, y_train_encoded,  # type: ignore[arg-type]
+        cv=cv, scoring='balanced_accuracy', n_jobs=1, verbose=0
+    )
+    
+    print(f"  Mean Accuracy: {cv_scores_acc.mean():.4f} (+/- {cv_scores_acc.std() * 2:.4f})")
+    print(f"  Mean F1-Score: {cv_scores_f1.mean():.4f} (+/- {cv_scores_f1.std() * 2:.4f})")
+    print(f"  Mean Balanced Accuracy: {cv_scores_balanced.mean():.4f} (+/- {cv_scores_balanced.std() * 2:.4f})")
+    print(f"  Accuracy folds: {[f'{s:.4f}' for s in cv_scores_acc]}")
+    print(f"  F1-Score folds: {[f'{s:.4f}' for s in cv_scores_f1]}")
     
     print("\n[5/6] Processing test data...")
     test_df = pd.read_csv(TEST_PATH, sep='|', low_memory=False)
