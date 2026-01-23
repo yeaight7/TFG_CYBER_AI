@@ -1,39 +1,37 @@
 #!/usr/bin/env python3
 """
-Predictive Model for Renewal Approval/Rejection
-This script trains a classification model to predict if a renewal should be approved (Y) or rejected (N).
-Optimized for accuracy with efficient resource usage and handling of imbalanced datasets.
+Predictive Model for Renewal Approval/Rejection - HACKATHON MODE
+Optimized to MAXIMIZE accuracy on imbalanced test data (Y ≈ 12%, N ≈ 88%).
+Uses threshold optimization, no SMOTE on final model, keeps predictive columns.
 """
 
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import accuracy_score, f1_score, balanced_accuracy_score, roc_auc_score
+from sklearn.ensemble import GradientBoostingClassifier, HistGradientBoostingClassifier
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 import os
 import warnings
 warnings.filterwarnings('ignore')
 
-# Try to import XGBoost and LightGBM (faster and more efficient)
-try:
-    from xgboost import XGBClassifier
-    HAS_XGBOOST = True
-except ImportError:
-    HAS_XGBOOST = False
-
+# Try to import LightGBM (preferred) and XGBoost (fallback)
 try:
     from lightgbm import LGBMClassifier
     HAS_LIGHTGBM = True
 except ImportError:
     HAS_LIGHTGBM = False
 
-# Try to import SMOTE for oversampling minority class
 try:
-    from imblearn.over_sampling import SMOTE  # type: ignore[import-not-found]
-    HAS_IMBLEARN = True
+    from xgboost import XGBClassifier
+    HAS_XGBOOST = True
 except ImportError:
-    HAS_IMBLEARN = False
+    HAS_XGBOOST = False
+
+# Configuration
+RANDOM_STATE = 42
+DROP_COLS = ['DateAlt']  # Only drop date column; keep KeyMed/KeyEnf for signal
+VAL_SIZE = 0.2
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -42,277 +40,344 @@ TEST_PATH = os.path.join(BASE_DIR, "ia_data", "test_data.csv")
 OUTPUT_PATH = os.path.join(BASE_DIR, "predictions.txt")
 
 
-def clean_numeric_column(series):
-    """Clean numeric columns that may have unusual formatting."""
-    if series.dtype == object:
-        # Replace dots used as thousand separators and handle decimal commas
-        cleaned = series.astype(str).str.replace(r'\.(?=\d{3})', '', regex=True)
-        cleaned = cleaned.str.replace(',', '.', regex=False)
-        return pd.to_numeric(cleaned, errors='coerce')
-    return series
-
-
-def preprocess_data(df, is_training=True, feature_encoders=None):
-    """Preprocess the dataframe for model training/prediction.
-    
-    Args:
-        df: DataFrame to preprocess
-        is_training: Whether this is training data (True) or test data (False)
-        feature_encoders: Dictionary of LabelEncoders for categorical features.
-                         If None and is_training=True, new encoders will be created.
-                         If provided and is_training=False, existing encoders will be reused.
-    
-    Returns:
-        Tuple of (preprocessed_df, target, feature_encoders)
+def detect_and_convert_numeric_strings(df, verbose=False):
     """
+    Detect columns that look like European-formatted numbers (dots as thousand separators,
+    commas as decimal separators) and convert them to proper numeric values.
     
-    # Drop non-predictive columns
-    columns_to_drop = ['DateAlt', 'KeyMed', 'KeyEnf']  # Date and key columns
+    Examples of detected formats:
+    - "2.591.906" -> 2591906 (thousands with dots)
+    - "246.547.156" -> 246547156
+    - "246,15" -> 246.15 (comma decimal)
+    - "2.591,45" -> 2591.45 (mixed)
+    
+    Numbers like "3.14" (American decimal) are NOT converted since they don't match
+    the pattern (requires 3 digits after dot for thousand separator format).
+    """
+    converted = []
+    for col in df.select_dtypes(include=['object']).columns:
+        sample = df[col].dropna().head(100).astype(str)
+        # Pattern explanation:
+        # Option 1: -?\d{1,3}(\.\d{3})*(,\d+)?$ - European with thousand separators
+        #   e.g., "1.234.567" or "1.234,56" 
+        # Option 2: -?\d+(,\d+)?$ - Just digits with optional comma decimal
+        #   e.g., "1234" or "1234,56"
+        # We look for 70%+ of sample matching these patterns (excludes "3.14" style)
+        european_pattern = sample.str.match(r'^-?\d{1,3}(\.\d{3})*(,\d+)?$|^-?\d+(,\d+)?$')
+        if european_pattern.mean() > 0.7:
+            # Convert: remove dots (thousand sep), replace comma with dot (decimal)
+            cleaned = df[col].astype(str).str.replace('.', '', regex=False)
+            cleaned = cleaned.str.replace(',', '.', regex=False)
+            df[col] = pd.to_numeric(cleaned, errors='coerce')
+            converted.append(col)
+    if verbose and converted:
+        print(f"  Converted to numeric: {converted}")
+    return df
+
+
+def preprocess_data(df, is_training=True, encoders=None, medians=None, feature_cols=None):
+    """
+    Preprocess dataframe with OrdinalEncoder for robust handling of unknowns.
+    Returns: (X, y, encoders, medians, feature_cols)
+    """
+    df = df.copy()
+    
+    # Extract target
+    target = None
+    if is_training:
+        target = (df['Renew'] == 'Y').astype(int)
+        df = df.drop(columns=['Renew'])
+    
+    # Drop configured columns
+    df = df.drop(columns=[c for c in DROP_COLS if c in df.columns], errors='ignore')
+    
+    # Detect and convert numeric strings
+    df = detect_and_convert_numeric_strings(df, verbose=is_training)
+    
+    # Identify column types
+    cat_cols = df.select_dtypes(include=['object']).columns.tolist()
+    num_cols = df.select_dtypes(include=['number']).columns.tolist()
     
     if is_training:
-        columns_to_drop.append('Renew')
-        target = df['Renew'].copy()
+        # Fit encoders and compute medians
+        encoders = {}
+        medians = {}
+        
+        # Encode categoricals with OrdinalEncoder (handle_unknown=-1)
+        for col in cat_cols:
+            df[col] = df[col].astype(str).fillna('__MISSING__')
+            enc = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
+            df[col] = enc.fit_transform(df[[col]]).ravel()
+            encoders[col] = enc
+        
+        # Fill numeric NaNs with median
+        for col in num_cols:
+            med = df[col].median() if not df[col].isna().all() else 0
+            medians[col] = med
+            df[col] = df[col].fillna(med)
+        
+        feature_cols = df.columns.tolist()
     else:
-        target = None
-    
-    # Drop columns that exist
-    df = df.drop(columns=[col for col in columns_to_drop if col in df.columns], errors='ignore')
-    
-    # Identify categorical and numeric columns - FIXED LINE
-    categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
-    numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
-    
-    # Clean numeric columns that may have formatting issues
-    for col in df.columns:
-        if col not in categorical_cols:
-            df[col] = clean_numeric_column(df[col])
-    
-    # Recalculate after cleaning
-    numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
-    categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
-    
-    # Initialize encoders dictionary if not provided
-    if feature_encoders is None:
-        feature_encoders = {}
-    
-    # Encode categorical columns
-    for col in categorical_cols:
-        if is_training:
-            # Training: create new encoder and fit
-            le = LabelEncoder()
-            df[col] = df[col].astype(str).fillna('Unknown')
-            df[col] = le.fit_transform(df[col])
-            feature_encoders[col] = le
-        else:
-            # Test: reuse existing encoder, handle unseen categories
-            if col in feature_encoders:
-                le = feature_encoders[col]
-                df[col] = df[col].astype(str).fillna('Unknown')
-                
-                # Vectorized approach: check which values are in classes
-                col_values = df[col].values
-                valid_mask = np.isin(col_values, le.classes_)
-                
-                # Transform valid values
-                result = np.zeros(len(col_values), dtype=int)
-                if valid_mask.any():
-                    result[valid_mask] = le.transform(col_values[valid_mask])
-                # Invalid values already set to 0
-                
-                df[col] = result
+        # Apply existing encoders
+        for col in cat_cols:
+            if col in encoders:
+                df[col] = df[col].astype(str).fillna('__MISSING__')
+                df[col] = encoders[col].transform(df[[col]]).ravel()
             else:
-                # Column not in training encoders, fill with 0
+                df[col] = -1  # Unknown column
+        
+        # Fill numeric NaNs with training medians
+        for col in num_cols:
+            med = medians.get(col, 0)
+            df[col] = df[col].fillna(med)
+        
+        # Align columns with training
+        for col in feature_cols:
+            if col not in df.columns:
                 df[col] = 0
+        df = df[feature_cols]
     
-    # Fill missing values for numeric columns
-    for col in numeric_cols:
-        df[col] = df[col].fillna(df[col].median() if not df[col].isna().all() else 0)
-    
-    return df, target, feature_encoders
+    return df, target, encoders, medians, feature_cols
 
 
-def apply_smote_balancing(X_train, y_train):
-    """Apply SMOTE to balance the dataset if imblearn is available."""
-    if HAS_IMBLEARN:
-        print("  Applying SMOTE to balance classes...")
-        # Use SMOTE to oversample minority class
-        smote = SMOTE(random_state=42, k_neighbors=5)
-        result = smote.fit_resample(X_train, y_train)
-        X_balanced, y_balanced = result[0], result[1]
-        print(f"  Original class distribution: {np.bincount(y_train)}")
-        print(f"  Balanced class distribution: {np.bincount(y_balanced)}")
-        return X_balanced, y_balanced
-    else:
-        print("  Warning: imblearn not installed. Using class_weight instead.")
-        print("  Install with: pip install imbalanced-learn")
-        return X_train, y_train
+def find_optimal_threshold(y_true, y_proba):
+    """Find threshold that maximizes accuracy."""
+    best_thresh = 0.5
+    best_acc = 0
+    for thresh in np.arange(0.05, 0.95, 0.01):
+        preds = (y_proba >= thresh).astype(int)
+        acc = accuracy_score(y_true, preds)
+        if acc > best_acc:
+            best_acc = acc
+            best_thresh = thresh
+    return best_thresh, best_acc
 
 
-def train_model(X_train, y_train):
-    """Train an optimized classifier for best accuracy with reasonable resources."""
+def create_temporal_split(df, y, date_col='DateAlt', val_frac=0.2):
+    """
+    Create temporal split based on date if available.
     
-    # Calculate class weights for imbalanced data
-    n_samples = len(y_train)
-    n_class_0 = np.sum(y_train == 0)
-    n_class_1 = np.sum(y_train == 1)
+    Uses the original df (before column dropping) to access date column.
+    Returns indices that can be used with X_full and y_full since they
+    share the same row indices (only columns are dropped, not rows).
+    """
+    if date_col not in df.columns:
+        return None, None, None, None, False
     
-    # Use balanced class weights
+    try:
+        dates = pd.to_datetime(df[date_col], errors='coerce')
+        valid = dates.notna()
+        if valid.mean() < 0.5:
+            return None, None, None, None, False
+        
+        # Sort by date and get indices (these indices match X_full/y_full)
+        sorted_idx = dates[valid].sort_values().index
+        n_val = int(len(sorted_idx) * val_frac)
+        train_idx = sorted_idx[:-n_val]
+        val_idx = sorted_idx[-n_val:]
+        
+        return train_idx, val_idx, df.loc[train_idx], df.loc[val_idx], True
+    except Exception:
+        return None, None, None, None, False
+
+
+def train_model(X, y, use_class_weight=True):
+    """Train the best available model."""
+    n_class_0 = np.sum(y == 0)
+    n_class_1 = np.sum(y == 1)
     scale_pos_weight = n_class_0 / n_class_1 if n_class_1 > 0 else 1.0
     
-    # Use LightGBM as primary model - it's faster and memory efficient
     if HAS_LIGHTGBM:
-        print("  Training LightGBM (optimized for imbalanced data)...")
         model = LGBMClassifier(
             n_estimators=500,
-            max_depth=8,  # Reduced from 12 to prevent overfitting
-            learning_rate=0.02,  # Reduced from 0.05 for better generalization
-            num_leaves=31,  # Reduced from 64 to prevent overfitting
+            max_depth=10,
+            learning_rate=0.03,
+            num_leaves=50,
             subsample=0.8,
             colsample_bytree=0.8,
-            min_child_samples=50,  # Increased from 20 to prevent overfitting
-            class_weight='balanced',  # Handle imbalance
-            reg_alpha=1.0,  # Increased from 0.1 for stronger regularization
-            reg_lambda=1.0,  # Increased from 0.1 for stronger regularization
-            random_state=42,
+            min_child_samples=30,
+            class_weight='balanced' if use_class_weight else None,
+            reg_alpha=0.5,
+            reg_lambda=0.5,
+            random_state=RANDOM_STATE,
             n_jobs=-1,
             verbose=-1
         )
+        model_name = "LightGBM"
     elif HAS_XGBOOST:
-        print("  Training XGBoost (optimized for imbalanced data)...")
         model = XGBClassifier(
             n_estimators=500,
-            max_depth=8,  # Reduced from 10 to prevent overfitting
-            learning_rate=0.02,  # Reduced from 0.05 for better generalization
+            max_depth=10,
+            learning_rate=0.03,
             subsample=0.8,
             colsample_bytree=0.8,
-            min_child_weight=10,  # Increased from 3, controls sum of weights (not count)
-            scale_pos_weight=scale_pos_weight,  # Handle imbalance
-            reg_alpha=1.0,  # Increased from 0.1 for stronger regularization
-            reg_lambda=1.0,  # Increased from 0.1 for stronger regularization
-            random_state=42,
+            min_child_weight=5,
+            scale_pos_weight=scale_pos_weight if use_class_weight else 1.0,
+            reg_alpha=0.5,
+            reg_lambda=0.5,
+            random_state=RANDOM_STATE,
             n_jobs=-1,
             verbosity=0
         )
+        model_name = "XGBoost"
     else:
-        print("  Training Gradient Boosting (optimized for imbalanced data)...")
-        model = GradientBoostingClassifier(
-            n_estimators=300,
-            max_depth=8,
+        model = HistGradientBoostingClassifier(
+            max_iter=300,
+            max_depth=10,
             learning_rate=0.05,
-            subsample=0.8,
-            min_samples_split=5,
-            min_samples_leaf=2,
-            max_features='sqrt',
-            random_state=42
+            min_samples_leaf=30,
+            class_weight='balanced' if use_class_weight else None,
+            random_state=RANDOM_STATE
         )
+        model_name = "HistGradientBoosting"
     
-    model.fit(X_train, y_train)
-    return model
+    model.fit(X, y)
+    return model, model_name
 
 
 def main():
-    print("="*60)
-    print("RENEWAL PREDICTION MODEL (Optimized for Imbalanced Data)")
-    print("="*60)
+    print("=" * 70)
+    print("RENEWAL PREDICTION - HACKATHON MODE (Maximize Accuracy)")
+    print("=" * 70)
     
-    print("\n[1/5] Loading training data...")
+    # ===== LOAD DATA =====
+    print("\n[1/6] Loading data...")
     train_df = pd.read_csv(TRAIN_PATH, sep=';', low_memory=False)
-    print(f"  Training data shape: {train_df.shape}")
+    test_df = pd.read_csv(TEST_PATH, sep='|', low_memory=False)
+    print(f"  Train shape: {train_df.shape}, Test shape: {test_df.shape}")
+    
+    # ===== TARGET DISTRIBUTION =====
     target_counts = train_df['Renew'].value_counts()
-    print(f"  Target distribution:")
+    print(f"\n  Target distribution in training:")
     for label, count in target_counts.items():
         pct = count / len(train_df) * 100
         print(f"    {label}: {count:,} ({pct:.1f}%)")
     
-    print("\n[2/5] Preprocessing training data...")
-    X_train, y_train, feature_encoders = preprocess_data(train_df.copy(), is_training=True)
+    # ===== PREPROCESS FULL TRAIN (for final model) =====
+    print("\n[2/6] Preprocessing data...")
+    X_full, y_full, encoders, medians, feature_cols = preprocess_data(
+        train_df.copy(), is_training=True
+    )
+    print(f"  Features: {len(feature_cols)} columns")
+    print(f"  DROP_COLS: {DROP_COLS}")
     
-    # Encode target variable
-    y_train_encoded = (y_train == 'Y').astype(int)
+    # ===== VALIDATION SPLIT STRATEGY =====
+    print("\n[3/6] Creating validation split and comparing methods...")
     
-    print(f"  Features shape: {X_train.shape}")
-    imbalance_ratio = np.sum(y_train_encoded == 0) / np.sum(y_train_encoded == 1)
-    print(f"  Class imbalance ratio: 1:{imbalance_ratio:.1f}")
+    # Prepare both split methods and compare
+    splits = {}
     
-    # CORRECTED: First split into train/validation, THEN apply SMOTE
-    print("\n[3/5] Splitting data and balancing training set...")
+    # Stratified split (always works)
+    X_str_tr, X_str_val, y_str_tr, y_str_val = train_test_split(
+        X_full.values, y_full.values,
+        test_size=VAL_SIZE, random_state=RANDOM_STATE, stratify=y_full.values
+    )
+    splits['STRATIFIED'] = (X_str_tr, X_str_val, y_str_tr, y_str_val)
     
-    # Split for validation (before SMOTE to avoid data leakage)
-    X_tr, X_val, y_tr, y_val = train_test_split(
-        X_train.values, y_train_encoded.values, 
-        test_size=0.2, random_state=42, stratify=y_train_encoded.values
+    # Try temporal split
+    train_idx, val_idx, _, _, temporal_ok = create_temporal_split(
+        train_df.copy(), y_full, val_frac=VAL_SIZE
     )
     
-    # Apply SMOTE only to training set (not validation)
-    X_tr_balanced, y_tr_balanced = apply_smote_balancing(X_tr, y_tr)
+    if temporal_ok:
+        X_temp_tr = X_full.loc[train_idx].values
+        X_temp_val = X_full.loc[val_idx].values
+        y_temp_tr = y_full.loc[train_idx].values
+        y_temp_val = y_full.loc[val_idx].values
+        splits['TEMPORAL'] = (X_temp_tr, X_temp_val, y_temp_tr, y_temp_val)
     
-    # Train model on balanced training data
-    print("\n[4/5] Training and evaluating model...")
-    model = train_model(X_tr_balanced, y_tr_balanced)
+    # Quick evaluation of both splits
+    print("  Comparing split methods...")
+    split_results = {}
+    for split_name, (X_tr_s, X_val_s, y_tr_s, y_val_s) in splits.items():
+        quick_model, _ = train_model(X_tr_s, y_tr_s, use_class_weight=True)
+        proba = quick_model.predict_proba(X_val_s)[:, 1]
+        thresh, acc = find_optimal_threshold(y_val_s, proba)
+        split_results[split_name] = {'acc': acc, 'thresh': thresh, 'data': (X_tr_s, X_val_s, y_tr_s, y_val_s)}
+        print(f"    {split_name}: acc={acc:.4f}, thresh={thresh:.2f}")
     
-    # Evaluate on validation set with multiple metrics
-    val_predictions = model.predict(X_val)
-    val_proba = model.predict_proba(X_val)[:, 1] if hasattr(model, 'predict_proba') else None  # type: ignore[index]
+    # Pick best split
+    best_split = max(split_results.keys(), key=lambda k: split_results[k]['acc'])
+    X_tr, X_val, y_tr, y_val = split_results[best_split]['data']
+    split_method = f"{best_split} (selected - best val accuracy)"
     
-    val_accuracy = accuracy_score(y_val, val_predictions)  # type: ignore[arg-type]
-    val_f1 = f1_score(y_val, val_predictions)  # type: ignore[arg-type]
-    val_balanced_acc = balanced_accuracy_score(y_val, val_predictions)  # type: ignore[arg-type]
+    print(f"\n  Selected: {split_method}")
+    print(f"  Train: {len(y_tr):,}, Val: {len(y_val):,}")
+    print(f"  Val Y rate: {y_val.mean()*100:.1f}%")
     
-    print(f"  Validation Accuracy: {val_accuracy:.4f}")
-    print(f"  Validation F1-Score: {val_f1:.4f}")
-    print(f"  Validation Balanced Accuracy: {val_balanced_acc:.4f}")
+    # ===== TRAIN VALIDATION MODEL (no SMOTE, use class_weight) =====
+    print("\n[4/6] Training validation model...")
+    val_model, model_name = train_model(X_tr, y_tr, use_class_weight=True)
+    print(f"  Model: {model_name}")
     
-    if val_proba is not None:
-        val_auc = roc_auc_score(y_val, val_proba)
-        print(f"  Validation AUC-ROC: {val_auc:.4f}")
+    # ===== THRESHOLD OPTIMIZATION =====
+    print("\n[5/6] Optimizing threshold for accuracy...")
+    val_proba = val_model.predict_proba(X_val)[:, 1]
     
-    # Train final model on all balanced data
-    print("  Training final model on complete balanced dataset...")
-    X_train_balanced, y_train_balanced = apply_smote_balancing(X_train.values, y_train_encoded.values)
-    final_model = train_model(X_train_balanced, y_train_balanced)
+    # Find best threshold
+    best_thresh, best_val_acc = find_optimal_threshold(y_val, val_proba)
     
-    # Load and preprocess test data
-    print("\n[5/5] Processing test data and making predictions...")
-    test_df = pd.read_csv(TEST_PATH, sep='|', low_memory=False)
-    print(f"  Test data shape: {test_df.shape}")
+    # Compare with default 0.5
+    default_preds = (val_proba >= 0.5).astype(int)
+    default_acc = accuracy_score(y_val, default_preds)
     
-    # Preprocess test data using saved encoders from training
-    X_test, _, _ = preprocess_data(test_df.copy(), is_training=False, feature_encoders=feature_encoders)
+    print(f"  Default threshold (0.50): Accuracy = {default_acc:.4f}")
+    print(f"  Optimal threshold ({best_thresh:.2f}): Accuracy = {best_val_acc:.4f}")
     
-    # Ensure test has same features as training
-    # Add missing columns with 0
-    for col in X_train.columns:
-        if col not in X_test.columns:
-            X_test[col] = 0
+    # Additional metrics for info
+    opt_preds = (val_proba >= best_thresh).astype(int)
+    val_f1 = f1_score(y_val, opt_preds)
+    val_auc = roc_auc_score(y_val, val_proba)
+    print(f"  (Info) F1-Score: {val_f1:.4f}, AUC: {val_auc:.4f}")
     
-    # Remove extra columns
-    X_test = X_test[X_train.columns]
+    # ===== TRAIN FINAL MODEL ON ALL DATA =====
+    print("\n[6/6] Training final model on all training data...")
+    final_model, _ = train_model(X_full.values, y_full.values, use_class_weight=True)
     
-    print(f"  Test features shape: {X_test.shape}")
+    # ===== PREPROCESS TEST DATA =====
+    print("  Preprocessing test data...")
+    X_test, _, _, _, _ = preprocess_data(
+        test_df.copy(), is_training=False, 
+        encoders=encoders, medians=medians, feature_cols=feature_cols
+    )
     
-    # Make predictions
-    predictions = final_model.predict(X_test.values)
-    predictions = np.asarray(predictions)
-    
-    # Convert predictions back to Y/N
+    # ===== MAKE PREDICTIONS WITH OPTIMAL THRESHOLD =====
+    test_proba = final_model.predict_proba(X_test.values)[:, 1]
+    predictions = (test_proba >= best_thresh).astype(int)
     prediction_labels = ['Y' if p == 1 else 'N' for p in predictions]
     
-    # Save predictions
+    # ===== SAVE PREDICTIONS =====
     print(f"\n  Saving predictions to {OUTPUT_PATH}...")
     with open(OUTPUT_PATH, 'w') as f:
         for label in prediction_labels:
             f.write(f"{label}\n")
     
+    # ===== FINAL STATS =====
     y_count = prediction_labels.count('Y')
     n_count = prediction_labels.count('N')
     total = len(prediction_labels)
-    print(f"\n  Prediction distribution:")
-    print(f"    Y: {y_count:,} ({y_count/total*100:.1f}%)")
-    print(f"    N: {n_count:,} ({n_count/total*100:.1f}%)")
+    y_pct = y_count / total * 100
     
-    print("\n" + "="*60)
+    print("\n" + "=" * 70)
+    print("RESULTS SUMMARY")
+    print("=" * 70)
+    print(f"  Model: {model_name}")
+    print(f"  Split: {split_method}")
+    print(f"  Optimal threshold: {best_thresh:.2f}")
+    print(f"  Validation accuracy: {best_val_acc:.4f}")
+    print(f"\n  Test predictions:")
+    print(f"    Y: {y_count:,} ({y_pct:.1f}%)")
+    print(f"    N: {n_count:,} ({100-y_pct:.1f}%)")
+    
+    if y_pct < 5 or y_pct > 20:
+        print(f"\n  ⚠️  WARNING: Y prediction rate ({y_pct:.1f}%) seems unusual!")
+        print("      Expected range: 5-15% based on training distribution")
+    else:
+        print(f"\n  ✓ Y prediction rate ({y_pct:.1f}%) is within expected range")
+    
+    print("\n" + "=" * 70)
     print("COMPLETED SUCCESSFULLY!")
-    print("="*60)
+    print("=" * 70)
 
 
 if __name__ == "__main__":
