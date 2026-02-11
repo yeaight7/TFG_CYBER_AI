@@ -103,9 +103,11 @@ El diseño soporta añadir **N datasets adicionales** mediante adapters:
 
 ## Features Canónicas (FEATURES_CANON)
 
-### Estado Actual: Pendiente de Definición Formal
+### Estado Actual: Definidas Formalmente ✅
 
-Las features canónicas se están definiendo. Criterios de selección:
+**76 features canónicas** definidas en `src/canonical_schema.py`, seleccionadas de las columnas de CICIDS2017 (CICFlowMeter output).
+
+Criterios de selección:
 
 1. **Existen en CICIDS2017** (dataset principal moderno)
 2. **Extraíbles de tráfico real/PCAP** en simulación mediante flow extractors (CICFlowMeter, Zeek, etc.)
@@ -113,29 +115,47 @@ Las features canónicas se están definiendo. Criterios de selección:
 4. **Preferiblemente numéricas**: Facilita el aprendizaje RL
 5. **Estables y robustas**: No dependen de peculiaridades del dataset
 
-### Categorías de Features Canónicas (Borrador)
+### Categorías de Features Canónicas
 
-Basadas en análisis de CICIDS2017:
+Las 76 features se organizan en las siguientes categorías:
 
-- **Estadísticas de flujo**: duración, número de paquetes/bytes (fwd/bwd)
-- **Tasas y velocidades**: pkt/s, bytes/s
-- **Estadísticas de tamaños**: mean, std, min, max de tamaños de paquetes
-- **Estadísticas de tiempos**: inter-arrival times (IAT), tiempos activos/idle
-- **Flags TCP**: contadores de SYN, ACK, FIN, RST, etc.
-- **Ventanas TCP**: inicial, mean, etc.
-- **Estadísticas derivadas**: ratios, entropías, etc.
+- **Estadísticas generales del flujo** (5): flow_duration, total_fwd/bwd_packets, total_length_of_fwd/bwd_packets
+- **Estadísticas de tamaño de paquetes forward** (4): fwd_packet_length_{max, min, mean, std}
+- **Estadísticas de tamaño de paquetes backward** (4): bwd_packet_length_{max, min, mean, std}
+- **Tasas de flujo** (2): flow_bytes_per_s, flow_packets_per_s
+- **Inter-arrival times del flujo** (4): flow_iat_{mean, std, max, min}
+- **Inter-arrival times forward** (5): fwd_iat_{total, mean, std, max, min}
+- **Inter-arrival times backward** (5): bwd_iat_{total, mean, std, max, min}
+- **Flags TCP** (12): fwd/bwd_psh_flags, fwd/bwd_urg_flags, fin/syn/rst/psh/ack/urg/cwe/ece_flag_count
+- **Header length** (2): fwd/bwd_header_length
+- **Paquetes por segundo** (2): fwd/bwd_packets_per_s
+- **Estadísticas de longitud global** (5): min/max/mean/std/variance_packet_length
+- **Ratios y derivadas** (4): down_up_ratio, average_packet_size, avg_fwd/bwd_segment_size
+- **Bulk statistics** (6): fwd/bwd_avg_bytes/packets_per_bulk, fwd/bwd_avg_bulk_rate
+- **Sub-flow statistics** (4): subflow_fwd/bwd_packets, subflow_fwd/bwd_bytes
+- **Ventana TCP** (2): init_win_bytes_forward/backward
+- **Datos activos** (2): act_data_pkt_fwd, min_seg_size_forward
+- **Tiempos activos/idle** (8): active/idle_{mean, std, max, min}
+
+### Implementación
+
+- **Archivo**: `src/canonical_schema.py`
+- **Lista**: `FEATURES_CANON` — lista ordenada de 76 nombres canónicos
+- **Mappings**: `CICIDS2017_TO_CANON` (76/76 presentes), `NSL_KDD_TO_CANON` (3/76 presentes)
+- **Función**: `map_to_canonical(df, column_mapping)` — devuelve `CanonicalResult` con X, mask, combined
+- **Dimensión del vector de observación**: 152 (76 features + 76 máscara de missingness)
 
 ### Máscara de Missingness (Missingness Mask)
 
-**CRÍTICO**: Cuando una feature canónica no existe en un dataset:
+**Implementada** en `src/canonical_schema.py`:
 
-1. **NO** poner simplemente 0 (puede confundirse con un valor real de 0)
-2. **Imputar** con valor razonable (0, media, mediana según contexto)
-3. **Marcar** con máscara de missingness: `m_i = 0` (0 = ausente, 1 = presente)
+- Features ausentes se imputan con `DEFAULT_IMPUTATION_VALUE = 0.0`
+- Se marca con máscara de missingness: `m_i = 0` (0 = ausente, 1 = presente)
+- Valores NaN/Inf en features presentes se imputan y se marcan como ausentes
 
 **Vector de observación final**:
 ```
-obs = [x_1, x_2, ..., x_d, m_1, m_2, ..., m_d]
+obs = [x_1, x_2, ..., x_76, m_1, m_2, ..., m_76]   # 152 dimensiones
 ```
 
 Donde:
@@ -199,11 +219,19 @@ Decisión: **Pendiente de evaluación en Fase 2**. Probablemente CICFlowMeter pa
 
 ### Archivos y Componentes Existentes
 
+#### `src/canonical_schema.py` ← **NUEVO**
+- ✅ Definición formal de `FEATURES_CANON` con 76 features canónicas
+- ✅ Mappings: `CICIDS2017_TO_CANON` (76/76), `NSL_KDD_TO_CANON` (3/76)
+- ✅ Función `map_to_canonical()` con máscara de missingness
+- ✅ `CanonicalResult` dataclass con X, mask, combined, feature_names
+- ✅ Vector de observación: 152 dimensiones (76 features + 76 máscara)
+
 #### `src/load_nsl_kdd.py`
 - ✅ Loader para NSL-KDD desde Kaggle (kagglehub)
-- ✅ Preprocesamiento: one-hot encoding, etiquetas binarias
-- ✅ Retorna: `(X_train, y_train, X_test, y_test)`
-- ⚠️ **Limitación**: No está adaptado al esquema canónico (todavía)
+- ✅ Preprocesamiento: one-hot encoding (legacy) o esquema canónico
+- ✅ Retorna: `(X_train, y_train, X_test, y_test, scaler, feature_names)`
+- ✅ Soporte esquema canónico con `use_canonical=True` (3/76 features mapeadas)
+- ✅ Modo legacy compatible con `use_canonical=False`
 
 #### `src/load_cicids2017.py`
 - ✅ Loader para CICIDS2017 desde Kaggle
@@ -211,11 +239,11 @@ Decisión: **Pendiente de evaluación en Fase 2**. Probablemente CICFlowMeter pa
 - ✅ Manejo de NaNs e infinitos
 - ✅ Split estratificado, scaling opcional
 - ✅ Retorna: `(X_train, y_train, X_test, y_test, scaler, feature_names)`
-- ⚠️ **Limitación**: No está adaptado al esquema canónico (todavía)
+- ✅ Soporte esquema canónico con `use_canonical=True` (76/76 features mapeadas)
 
 #### `src/rl_defender_env.py`
 - ✅ Entorno RL custom (Gymnasium)
-- ✅ Espacio de observación: vector de features (Box)
+- ✅ Espacio de observación: vector de features (Box, 152 dims con esquema canónico)
 - ✅ Espacio de acciones: Discreto(2) — 0=PERMIT, 1=BLOCK
 - ✅ Sistema de recompensas configurable (TP/FP/FN/TN)
 - ✅ Soporte para shuffle y episodios limitados
@@ -223,14 +251,17 @@ Decisión: **Pendiente de evaluación en Fase 2**. Probablemente CICFlowMeter pa
 #### `src/train_rl_defender.py`
 - ✅ Script de entrenamiento DQN con Stable-Baselines3
 - ✅ Generación automática de RUN_ID con timestamp
-- ✅ Logging a TensorBoard (`runs/nslkdd/<RUN_ID>/`)
+- ✅ Logging a TensorBoard (`runs/<dataset>/<RUN_ID>/`)
 - ✅ Evaluación en test con confusion matrix y classification report
 - ✅ Guardado de modelos en `models/<RUN_ID>.zip`
+- ✅ Selección de dataset: CICIDS2017 o NSL-KDD con esquema canónico
+- ✅ Auto-detección de GPU/CPU
 
 #### `src/baseline_random_forest.py`
 - ✅ Baseline supervisado con Random Forest
 - ✅ Evaluación comparable con métricas de clasificación
-- ✅ Guardado de modelo en `models/rf_nslkdd.joblib`
+- ✅ Guardado de modelo con RUN_ID en `models/<RUN_ID>.joblib`
+- ✅ Selección de dataset: CICIDS2017 o NSL-KDD con esquema canónico
 
 ### Directorios y Estructura
 
@@ -238,10 +269,16 @@ Decisión: **Pendiente de evaluación en Fase 2**. Probablemente CICFlowMeter pa
 TFG_CYBER_AI/
 ├── datasets/          — NSL-KDD descargado automáticamente
 ├── docs/              — Documentación, contexto, decisiones
-├── experiments/       — Tracking de experimentos (pendiente)
+├── experiments/       — Tracking de experimentos
 ├── models/            — Modelos guardados (.zip, .joblib)
 ├── runs/              — Resultados con RUN_ID (TensorBoard logs)
 └── src/               — Código fuente Python
+    ├── canonical_schema.py      — Esquema canónico de features (NUEVO)
+    ├── load_cicids2017.py       — Adapter CICIDS2017
+    ├── load_nsl_kdd.py          — Adapter NSL-KDD
+    ├── rl_defender_env.py       — Entorno RL (Gymnasium)
+    ├── train_rl_defender.py     — Entrenamiento DQN
+    └── baseline_random_forest.py — Baseline Random Forest
 ```
 
 ---
@@ -250,24 +287,24 @@ TFG_CYBER_AI/
 
 ### 1. Auditoría de Columnas CICIDS2017
 
-- [ ] Ejecutar `load_cicids2017.py` y listar todas las columnas disponibles
-- [ ] Clasificar columnas en: flow features, metadata, labels
-- [ ] Identificar columnas de leakage (ya eliminadas, verificar)
-- [ ] Documentar significado de cada feature
+- [x] Ejecutar `load_cicids2017.py` y listar todas las columnas disponibles
+- [x] Clasificar columnas en: flow features, metadata, labels
+- [x] Identificar columnas de leakage (ya eliminadas, verificar)
+- [x] Documentar significado de cada feature
 
 ### 2. Definir FEATURES_CANON Formalmente
 
-- [ ] Seleccionar ~30-80 features flow-based de CICIDS2017
-- [ ] Documentar criterio de selección para cada feature
-- [ ] Crear lista `FEATURES_CANON` en código (ej. `src/canonical_schema.py`)
-- [ ] Verificar que todas son extraíbles de PCAP
+- [x] Seleccionar ~30-80 features flow-based de CICIDS2017 → **76 features seleccionadas**
+- [x] Documentar criterio de selección para cada feature
+- [x] Crear lista `FEATURES_CANON` en código → `src/canonical_schema.py`
+- [x] Verificar que todas son extraíbles de PCAP
 
 ### 3. Implementar Adapters con Esquema Canónico
 
-- [ ] Modificar `load_cicids2017.py` para mapear a `FEATURES_CANON`
-- [ ] Implementar máscara de missingness
-- [ ] Modificar `load_nsl_kdd.py` para mapear a `FEATURES_CANON` (o marcarlo como legacy/benchmark)
-- [ ] Vector final: `[x_1..x_d, m_1..m_d]`
+- [x] Modificar `load_cicids2017.py` para mapear a `FEATURES_CANON`
+- [x] Implementar máscara de missingness
+- [x] Modificar `load_nsl_kdd.py` para mapear a `FEATURES_CANON` (con modo legacy)
+- [x] Vector final: `[x_1..x_76, m_1..m_76]` → 152 dimensiones
 
 ### 4. Entrenar Modelos con Esquema Canónico
 
@@ -278,9 +315,9 @@ TFG_CYBER_AI/
 
 ### 5. Preparar para Multi-Dataset Training
 
-- [ ] Validar que adapters producen el mismo formato de salida
+- [x] Validar que adapters producen el mismo formato de salida (152 dims)
 - [ ] Implementar función de "merge" de datasets con esquema canónico
-- [ ] Verificar que la máscara de missingness funciona correctamente
+- [x] Verificar que la máscara de missingness funciona correctamente
 - [ ] Experimentar con entrenamiento combinado (si hay múltiples datasets disponibles)
 
 ---
@@ -294,13 +331,14 @@ TFG_CYBER_AI/
 
 ### 2. Estrategia de Imputación en Máscara de Missingness
 - **Opciones**: 0, media, mediana, forward-fill, modelo de imputación
-- **Decisión**: Pendiente de definir por feature
-- **Recomendación actual**: 0 para contadores, media para estadísticas, según contexto
+- **Decisión**: **0 para todas las features** (`DEFAULT_IMPUTATION_VALUE = 0.0`)
+- **Implementación**: `src/canonical_schema.py`
+- **Nota**: Se puede personalizar por feature en el futuro si es necesario
 
 ### 3. Número Final de Features Canónicas
 - **Rango**: 30-80 features
-- **Decisión**: Pendiente de auditoría de CICIDS2017
-- **Trade-off**: Más features = más información, pero más complejidad y riesgo de overfitting
+- **Decisión**: **76 features canónicas** (definidas en `src/canonical_schema.py`)
+- **Trade-off**: 76 features proporcionan cobertura completa de estadísticas de flujo CICFlowMeter
 
 ### 4. Inclusión de NSL-KDD en Modelo Final
 - **Opciones**: Incluir con adapter, excluir del modelo final
@@ -337,4 +375,4 @@ Actualiza este documento cuando:
 - Cambien decisiones de diseño fundamentales
 - Se añadan nuevos datasets
 
-**Última actualización**: 2026-02-10 (creación de documentación para GitHub Copilot)
+**Última actualización**: 2026-02-11 (definición formal de FEATURES_CANON, implementación de esquema canónico y adapters)
