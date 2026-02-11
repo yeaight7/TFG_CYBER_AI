@@ -158,7 +158,7 @@ def load_nsl_kdd_binary(
 
         X_train = result_train.combined
         X_test = result_test.combined
-        feature_names = result_train.feature_names
+        feature_names = get_observation_feature_names()
 
         y_train = full_df.iloc[:n_train]["label"].to_numpy(dtype="int64")
         y_test = full_df.iloc[n_train:]["label"].to_numpy(dtype="int64")
