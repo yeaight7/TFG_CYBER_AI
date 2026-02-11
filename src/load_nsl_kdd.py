@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import Tuple
+from typing import Optional, Tuple, List
 import shutil
 
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 try:
     import kagglehub 
@@ -11,6 +12,13 @@ except ImportError as e:
     raise ImportError(
         "Instala kagglehub en tu venv: pip install kagglehub"
     ) from e
+
+from canonical_schema import (
+    NSL_KDD_TO_CANON,
+    NUM_OBSERVATION_FEATURES,
+    map_to_canonical,
+    get_observation_feature_names,
+)
 
 
 NSL_KDD_COLUMNS = [
@@ -53,14 +61,17 @@ def _ensure_dataset_local_dir(target_dir: Path) -> Path:
 def load_nsl_kdd_binary(
     use_20_percent: bool = False,
     dataset_dir: Path | str | None = None,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    use_canonical: bool = True,
+    scale: bool = False,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
     """
     Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:
 
-        X_train, y_train, X_test, y_test
+        X_train, y_train, X_test, y_test, scaler, feature_names
 
     - Etiqueta binaria: 0 = normal, 1 = ataque.
-    - Categóricas one-hot: protocol_type, service, flag.
+    - Categóricas one-hot: protocol_type, service, flag (legacy mode).
+    - Si use_canonical=True, mapea al esquema canónico con missingness mask.
     """
     
     if dataset_dir is None:
@@ -108,7 +119,6 @@ def load_nsl_kdd_binary(
             label_col = c
             break
     if label_col is None:
-        # caemos al nombre "attack_or_class" que le dimos, si existe
         if "attack_or_class" in full_df.columns:
             label_col = "attack_or_class"
         else:
@@ -126,7 +136,6 @@ def load_nsl_kdd_binary(
 
     # Crear etiqueta binaria: 0 = normal, 1 = ataque
     label_str = full_df[label_col].astype(str)
-    # robusto a 'normal' o 'normal.' y a mayúsculas
     full_df["label"] = (~label_str.str.contains("normal", case=False)).astype("int64")
 
     # Eliminar columnas de salida originales (string + dificultad)
@@ -135,20 +144,50 @@ def load_nsl_kdd_binary(
         drop_cols.append(diff_col)
     full_df = full_df.drop(columns=drop_cols, errors="ignore")
 
-    # One-hot de categóricas (si existen en esta versión)
-    categorical_cols = [c for c in ["protocol_type", "service", "flag"] if c in full_df.columns]
-    full_df = pd.get_dummies(full_df, columns=categorical_cols)
-
     # Volver a separar train/test respetando el tamaño original del train
     n_train = len(train_df)
-    train_processed = full_df.iloc[:n_train].copy()
-    test_processed = full_df.iloc[n_train:].copy()
 
-    # Separar X/y
-    y_train = train_processed["label"].to_numpy(dtype="int64")
-    X_train = train_processed.drop(columns=["label"]).to_numpy(dtype="float32")
+    if use_canonical:
+        # ── Canonical schema mapping ──
+        # Extraer features (sin label) y mapear al esquema canónico
+        features_df_train = full_df.iloc[:n_train].drop(columns=["label"]).copy()
+        features_df_test = full_df.iloc[n_train:].drop(columns=["label"]).copy()
 
-    y_test = test_processed["label"].to_numpy(dtype="int64")
-    X_test = test_processed.drop(columns=["label"]).to_numpy(dtype="float32")
+        result_train = map_to_canonical(features_df_train, NSL_KDD_TO_CANON)
+        result_test = map_to_canonical(features_df_test, NSL_KDD_TO_CANON)
 
-    return X_train, y_train, X_test, y_test
+        X_train = result_train.combined
+        X_test = result_test.combined
+        feature_names = result_train.feature_names
+
+        y_train = full_df.iloc[:n_train]["label"].to_numpy(dtype="int64")
+        y_test = full_df.iloc[n_train:]["label"].to_numpy(dtype="int64")
+
+        print(
+            f"[NSL-KDD] Canonical mapping: "
+            f"{result_train.n_present}/{result_train.n_present + result_train.n_missing} "
+            f"features present (rest imputed with missingness mask)"
+        )
+    else:
+        # ── Legacy mode: one-hot encoding ──
+        categorical_cols = [c for c in ["protocol_type", "service", "flag"] if c in full_df.columns]
+        full_df = pd.get_dummies(full_df, columns=categorical_cols)
+
+        train_processed = full_df.iloc[:n_train].copy()
+        test_processed = full_df.iloc[n_train:].copy()
+
+        y_train = train_processed["label"].to_numpy(dtype="int64")
+        X_train = train_processed.drop(columns=["label"]).to_numpy(dtype="float32")
+
+        y_test = test_processed["label"].to_numpy(dtype="int64")
+        X_test = test_processed.drop(columns=["label"]).to_numpy(dtype="float32")
+
+        feature_names = [c for c in train_processed.columns if c != "label"]
+
+    scaler: Optional[StandardScaler] = None
+    if scale:
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(X_train).astype(np.float32)
+        X_test = scaler.transform(X_test).astype(np.float32)
+
+    return X_train, y_train, X_test, y_test, scaler, feature_names
