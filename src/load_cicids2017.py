@@ -11,6 +11,13 @@ from sklearn.preprocessing import StandardScaler
 
 import kagglehub
 
+from canonical_schema import (
+    CICIDS2017_TO_CANON,
+    NUM_OBSERVATION_FEATURES,
+    map_to_canonical,
+    get_observation_feature_names,
+)
+
 
 KAGGLE_HANDLE = "chethuhn/network-intrusion-dataset"
 
@@ -32,6 +39,9 @@ class CICIDSLoadConfig:
     # Limpieza / features
     drop_identifier_cols: bool = True   # Flow ID / IPs / Timestamp, etc.
     scale: bool = True                 # StandardScaler (fit solo en train)
+
+    # Canonical schema
+    use_canonical: bool = True          # mapear al esquema canónico con missingness mask
 
     # Split
     test_size: float = 0.2
@@ -146,13 +156,19 @@ def _load_all_csvs(csv_paths: List[Path], cfg: CICIDSLoadConfig) -> pd.DataFrame
     return df
 
 
-def load_cicids2017_binary(cfg: Optional[CICIDSLoadConfig] = None) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
+def load_cicids2017_binary(
+    cfg: Optional[CICIDSLoadConfig] = None,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
     """
+    Carga CICIDS2017 y lo adapta al esquema canónico.
+
     Devuelve:
       X_train, y_train, X_test, y_test, scaler, feature_names
 
-    - y: 0 si Label == BENIGN, 1 en caso contrario
-    - X: float32
+    - X: float32, shape (n_samples, NUM_OBSERVATION_FEATURES) cuando use_canonical=True
+    - y: int64, 0=BENIGN, 1=ATTACK
+    - scaler: StandardScaler ajustado en train (o None si no se escaló)
+    - feature_names: lista de nombres (features canónicas + máscara de missingness)
     """
     cfg = cfg or CICIDSLoadConfig()
 
@@ -174,6 +190,7 @@ def load_cicids2017_binary(cfg: Optional[CICIDSLoadConfig] = None) -> Tuple[np.n
     if cfg.drop_identifier_cols:
         Xdf[label_col] = df[label_col]
         Xdf = _drop_identifier_like_columns(Xdf, label_col=label_col).drop(columns=[label_col])
+
     # Coerción numérica + limpieza
     tmp = Xdf.copy()
     tmp[label_col] = y  # para reutilizar limpieza
@@ -195,13 +212,23 @@ def load_cicids2017_binary(cfg: Optional[CICIDSLoadConfig] = None) -> Tuple[np.n
         idx = np.random.default_rng(cfg.random_state).choice(
             len(X_clean_df),
             size=int(len(X_clean_df) * cfg.sample_frac),
-            replace=False
+            replace=False,
         )
         X_clean_df = X_clean_df.iloc[idx].reset_index(drop=True)
         y_clean = y_clean[idx]
 
-    feature_names = list(X_clean_df.columns)
-    X_clean = X_clean_df.to_numpy(dtype=np.float32)
+    # ── Canonical schema mapping ──
+    if cfg.use_canonical:
+        result = map_to_canonical(X_clean_df, CICIDS2017_TO_CANON)
+        X_clean = result.combined  # shape (n, NUM_OBSERVATION_FEATURES)
+        feature_names = result.feature_names
+        print(
+            f"[CICIDS2017] Canonical mapping: "
+            f"{result.n_present}/{result.n_present + result.n_missing} features present"
+        )
+    else:
+        feature_names = list(X_clean_df.columns)
+        X_clean = X_clean_df.to_numpy(dtype=np.float32)
 
     # Split estratificado
     X_train, X_test, y_train, y_test = train_test_split(
@@ -227,6 +254,6 @@ if __name__ == "__main__":
     X_train, y_train, X_test, y_test, scaler, feats = load_cicids2017_binary(cfg)
     print(f"CICIDS2017: X_train={X_train.shape}, y_train={y_train.shape}")
     print(f"CICIDS2017: X_test ={X_test.shape}, y_test ={y_test.shape}")
-    print(f"Features: {len(feats)}")
+    print(f"Features ({len(feats)}): {feats[:5]} ... {feats[-5:]}")
     benign_rate = (y_train == 0).mean()
     print(f"Train benign rate: {benign_rate:.4f}")

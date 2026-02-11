@@ -1,15 +1,21 @@
 from pathlib import Path
-from typing import Tuple
+from typing import List, Optional, Tuple
+from datetime import datetime
 
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.preprocessing import StandardScaler
 
 from load_nsl_kdd import load_nsl_kdd_binary
+from load_cicids2017 import load_cicids2017_binary, CICIDSLoadConfig
 
 
 MODELS_DIR = Path("models")
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
+
+# Dataset: "nslkdd" o "cicids2017"
+DATASET = "cicids2017"
 
 
 def train_random_forest(
@@ -51,21 +57,38 @@ def evaluate_random_forest(
 
 
 def main():
-    # 1) Cargar mismo dataset que usa el RL
-    print("Cargando NSL-KDD (20%) para baseline Random Forest...")
-    X_train, y_train, X_test, y_test = load_nsl_kdd_binary(
-        use_20_percent=False
-    )
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    RUN_ID = f"rf_{DATASET}_canonical_{timestamp}"
+
+    # 1) Cargar dataset con esquema canónico
+    if DATASET == "cicids2017":
+        print("Cargando CICIDS2017 con esquema canónico para baseline Random Forest...")
+        cfg = CICIDSLoadConfig(
+            max_rows=500_000,
+            use_canonical=True,
+            scale=False,  # RF no necesita scaling
+        )
+        X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_binary(cfg)
+    elif DATASET == "nslkdd":
+        print("Cargando NSL-KDD con esquema canónico para baseline Random Forest...")
+        X_train, y_train, X_test, y_test, scaler, feature_names = load_nsl_kdd_binary(
+            use_20_percent=False,
+            use_canonical=True,
+            scale=False,
+        )
+    else:
+        raise ValueError(f"Dataset no soportado: {DATASET}. Usa 'nslkdd' o 'cicids2017'.")
 
     print(f"Train shape: X={X_train.shape}, y={y_train.shape}")
     print(f"Test  shape: X={X_test.shape}, y={y_test.shape}")
+    print(f"Features: {len(feature_names)}")
 
     # 2) Entrenar Random Forest
     print("Entrenando Random Forest...")
     rf = train_random_forest(X_train, y_train)
 
-    # 3) Guardar modelo (opcional, por si luego quieres cargarlo)
-    model_path = MODELS_DIR / "rf_nslkdd.joblib"
+    # 3) Guardar modelo
+    model_path = MODELS_DIR / f"{RUN_ID}.joblib"
     try:
         import joblib
         joblib.dump(rf, model_path)

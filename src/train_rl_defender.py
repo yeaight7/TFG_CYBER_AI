@@ -13,6 +13,7 @@ from stable_baselines3.common.monitor import Monitor
 
 from rl_defender_env import RLDatasetDefenderEnv
 from load_nsl_kdd import load_nsl_kdd_binary
+from load_cicids2017 import load_cicids2017_binary, CICIDSLoadConfig
 
 
 MODELS_DIR = Path("models")
@@ -21,11 +22,14 @@ MODELS_DIR.mkdir(parents=True, exist_ok=True)
 # --------------------------------------------------------------------------------------
 # Configuración del experimento
 # --------------------------------------------------------------------------------------
-EXP_ID = "A02" 
+EXP_ID = "C01"
+
+# Dataset: "nslkdd" o "cicids2017"
+DATASET = "cicids2017"
 
 # Generar RUN_ID automático con timestamp
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-RUN_ID = f"{EXP_ID}_dqn_arch512x256_lr1e-4_bs2048_t500k_{timestamp}"
+RUN_ID = f"{EXP_ID}_dqn_{DATASET}_canonical_{timestamp}"
 
 print(f"🔬 Experimento: {RUN_ID}")
 
@@ -106,15 +110,29 @@ def main():
         print("⚠️ GPU NO detectada. Se usará CPU (esto será lento).")
         
     # ------------------------------------------------------------------
-    # 1) Cargar NSL-KDD ya preprocesado (desde KaggleHub)
+    # 1) Cargar dataset preprocesado con esquema canónico
     # ------------------------------------------------------------------
-    print("Descargando y cargando NSL-KDD vía kagglehub...")
-    X_train, y_train, X_test, y_test = load_nsl_kdd_binary(
-        use_20_percent=True  # pon False cuando quieras entrenar con el dataset completo
-    )
+    if DATASET == "cicids2017":
+        print("Cargando CICIDS2017 con esquema canónico vía kagglehub...")
+        cfg = CICIDSLoadConfig(
+            max_rows=500_000,
+            use_canonical=True,
+            scale=True,
+        )
+        X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_binary(cfg)
+    elif DATASET == "nslkdd":
+        print("Cargando NSL-KDD con esquema canónico vía kagglehub...")
+        X_train, y_train, X_test, y_test, scaler, feature_names = load_nsl_kdd_binary(
+            use_20_percent=True,
+            use_canonical=True,
+            scale=True,
+        )
+    else:
+        raise ValueError(f"Dataset no soportado: {DATASET}. Usa 'nslkdd' o 'cicids2017'.")
 
     print(f"Train shape: X={X_train.shape}, y={y_train.shape}")
     print(f"Test  shape: X={X_test.shape}, y={y_test.shape}")
+    print(f"Features: {len(feature_names)}")
 
     # ------------------------------------------------------------------
     # 2) Crear entorno vectorizado para Stable-Baselines3
@@ -126,8 +144,11 @@ def main():
     # ------------------------------------------------------------------
     SEED = 42
     vec_env.seed(SEED)
-    policy_kwargs = dict(net_arch=[512, 256])   # o [512, 256]
+    policy_kwargs = dict(net_arch=[512, 256])
     
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    tb_log_dir = f"runs/{DATASET}"
+
     model = DQN(
         "MlpPolicy",
         vec_env,
@@ -142,8 +163,8 @@ def main():
         train_freq=100,
         target_update_interval=10_000,
         verbose=1,
-        device="cuda",
-        tensorboard_log="runs/nslkdd",  # Directorio base para TensorBoard
+        device=device,
+        tensorboard_log=tb_log_dir,
     )
 
     total_timesteps = 500_000
@@ -152,8 +173,8 @@ def main():
     # Entrenar con tb_log_name y reset_num_timesteps
     model.learn(
         total_timesteps=total_timesteps,
-        tb_log_name=RUN_ID,           # Nombre del experimento en TensorBoard
-        reset_num_timesteps=False      # True para nuevo experimento, False para continuar
+        tb_log_name=RUN_ID,
+        reset_num_timesteps=False,
     )
 
     # ------------------------------------------------------------------
