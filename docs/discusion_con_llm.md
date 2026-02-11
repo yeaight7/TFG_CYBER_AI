@@ -324,3 +324,8 @@ Solo necesito que me digas una cosa para fijar el diseño:
 ---
 FIN MENSAJE AGENTE
 ---
+----
+FIN DE LA CONVERSACIÓN
+----
+
+

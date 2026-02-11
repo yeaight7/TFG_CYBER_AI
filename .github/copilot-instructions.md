@@ -16,11 +16,11 @@ Este documento contiene instrucciones globales para GitHub Copilot cuando trabaj
 ```
 TFG_CYBER_AI/
 ├── .github/              — Configuración de GitHub y documentación para Copilot
+│   ├── AGENT_CONTEXT.md  — Contexto del proyecto y estado actual (LEER PRIMERO)
 │   └── copilot-instructions.md  — Este archivo (instrucciones globales)
 ├── datasets/             — Datos (NSL-KDD, CICIDS2017, etc.)
 ├── docs/                 — Documentación del proyecto y decisiones de diseño
-│   ├── AGENT_CONTEXT.md  — Contexto del proyecto y estado actual (LEER PRIMERO)
-│   └── discusion_con_llm.md  — Log de conversaciones y decisiones (NO MODIFICAR)
+│   └── discusion_con_llm.md  — Log de conversaciones y decisiones (Es posible que esté obsoleto o en desuso) (NO MODIFICAR)
 ├── experiments/          — Tracking de experimentos, resultados, métricas
 ├── models/               — Modelos entrenados guardados (.zip, .joblib)
 ├── report/               — Memoria del TFG (LaTeX)
@@ -172,13 +172,12 @@ tensorboard --logdir runs/nslkdd
 
 Antes de hacer cambios significativos, **SIEMPRE** lee:
 
-1. **`docs/AGENT_CONTEXT.md`**: Contexto del proyecto, estado actual, decisiones de diseño, próximos pasos
-2. **`docs/discusion_con_llm.md`**: Conversación histórica con decisiones fundamentales (NO MODIFICAR este archivo, solo leer para contexto)
-3. **`AGENTS.md`**: Checklist específico para coding agents (si trabajas como coding agent autónomo)
+1. **`.github/AGENT_CONTEXT.md`**: Contexto del proyecto, estado actual, decisiones de diseño, próximos pasos
+2. **`AGENTS.md`**: Checklist específico para coding agents (si trabajas como coding agent autónomo)
 
 ## 🔒 Qué NO Hacer
 
-- ❌ NO modificar `docs/discusion_con_llm.md` (es un log histórico de conversaciones)
+- ❌ NO modificar `docs/discusion_con_llm.md` (es un log histórico de conversaciones con un agente)
 - ❌ NO entrenar modelos con vectores de diferentes longitudes o significado de features
 - ❌ NO hardcodear paths absolutos (usar `Path` relativas desde repo root)
 - ❌ NO eliminar experimentos antiguos de `runs/` sin justificación
@@ -201,8 +200,8 @@ El balance entre FP y FN se controla ajustando las recompensas.
 
 ## 🔄 Pipeline de Trabajo Recomendado
 
-1. Lee `docs/AGENT_CONTEXT.md` para entender el estado actual
-2. Si trabajas en un issue/tarea, verifica que está alineado con "Próximos pasos" en AGENT_CONTEXT
+1. Lee `.github/AGENT_CONTEXT.md` para entender el estado actual
+2. Si trabajas en un issue/tarea, verifica que está alineado con "Próximos pasos" en `.github/AGENT_CONTEXT.md`
 3. Escribe código siguiendo las convenciones (type hints, snake_case, pathlib, RUN_ID)
 4. Si añades un nuevo dataset, crea un adapter que mapee al esquema canónico con máscara de missingness
 5. Si modificas el esquema canónico, actualiza TODOS los adapters para mantener consistencia

@@ -321,7 +321,6 @@ TFG_CYBER_AI/
   - Entorno: Gymnasium
   - ML: scikit-learn
 - **Documentación interna**:
-  - `docs/discusion_con_llm.md`: Historial de decisiones (NO MODIFICAR)
   - `.github/copilot-instructions.md`: Convenciones de código
   - `AGENTS.md`: Checklist para coding agents
 
@@ -329,7 +328,7 @@ TFG_CYBER_AI/
 
 ## Notas Finales
 
-Este documento es la **fuente de verdad** del proyecto. Si hay contradicciones con otros documentos, este prevalece (excepto `discusion_con_llm.md` que es histórico).
+Este documento es la **fuente de verdad** del proyecto. Si hay contradicciones con otros documentos, este prevalece.
 
 Actualiza este documento cuando:
 - Se defina formalmente `FEATURES_CANON`

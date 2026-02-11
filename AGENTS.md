@@ -6,9 +6,8 @@ Este documento contiene instrucciones específicas para el **GitHub Copilot Codi
 
 Antes de hacer **cualquier cambio**, debes leer estos documentos en orden:
 
-1. **`docs/AGENT_CONTEXT.md`**: Estado del proyecto, decisiones de diseño, próximos pasos
-2. **`docs/discusion_con_llm.md`**: Historial de conversaciones y decisiones fundamentales (solo para contexto, NO modificar)
-3. **`.github/copilot-instructions.md`**: Convenciones de código y reglas generales
+1. **`.github/AGENT_CONTEXT.md`**: Estado del proyecto, decisiones de diseño, próximos pasos
+2. **`.github/copilot-instructions.md`**: Convenciones de código y reglas generales
 
 Estos documentos son la "verdad oficial" del proyecto. Si hay contradicción entre tu conocimiento general y estos documentos, **siempre prevalecen estos documentos**.
 
@@ -16,13 +15,13 @@ Estos documentos son la "verdad oficial" del proyecto. Si hay contradicción ent
 
 Antes de modificar código o crear archivos nuevos, verifica:
 
-- [ ] He leído `docs/AGENT_CONTEXT.md` completamente
+- [ ] He leído `.github/AGENT_CONTEXT.md` completamente
 - [ ] Entiendo el esquema canónico de features (`FEATURES_CANON`) y por qué existe
 - [ ] Si añado un nuevo dataset, crearé un adapter que mapee al esquema canónico
 - [ ] Si modifico features, actualizaré TODOS los adapters para mantener consistencia
 - [ ] NO incluiré features que causen data leakage (IPs, timestamps, Flow IDs)
 - [ ] Usaré máscara de missingness (`m_i`) para features ausentes, no solo 0
-- [ ] Los cambios están alineados con "Próximos pasos" en `AGENT_CONTEXT.md`
+- [ ] Los cambios están alineados con "Próximos pasos" en `.github/AGENT_CONTEXT.md`
 
 ## 🎯 Reglas Fundamentales
 
@@ -31,7 +30,7 @@ Antes de modificar código o crear archivos nuevos, verifica:
 El proyecto usa un **esquema canónico fijo** para todas las features:
 
 ```python
-# Concepto (ejemplo ilustrativo, la definición real está en AGENT_CONTEXT.md)
+# Concepto (ejemplo ilustrativo, la definición real está en .github/AGENT_CONTEXT.md)
 FEATURES_CANON = [
     "flow_duration",
     "total_fwd_packets",
@@ -144,7 +143,7 @@ REWARD_CONFIG = {
 ## 🚫 Qué NO Hacer
 
 1. **NO modificar `docs/discusion_con_llm.md`**  
-   Es un log histórico de conversaciones. Solo léelo para contexto, nunca lo modifiques.
+   Es un log histórico de conversaciones. Solo léelo para contexto, nunca lo modifiques. Puede que esté obsoleto o en desuso
 
 2. **NO entrenar con diferentes vectores de features**  
    Todos los datasets deben pasar por el esquema canónico. Entrenar con vectores de longitud o significado diferente rompe el modelo.
@@ -191,8 +190,8 @@ Antes de finalizar tu trabajo y abrir un Pull Request, verifica:
 
 ### 3. Documentación
 
-- [ ] Si cambié el esquema canónico, actualicé `docs/AGENT_CONTEXT.md`
-- [ ] Si añadí un dataset, documenté su uso en `AGENT_CONTEXT.md` sección "Datasets"
+- [ ] Si cambié el esquema canónico, actualicé `.github/AGENT_CONTEXT.md`
+- [ ] Si añadí un dataset, documenté su uso en `.github/AGENT_CONTEXT.md` sección "Datasets"
 - [ ] Si hice un experimento, documenté resultados en `experiments/`
 - [ ] Actualicé `README.md` si añadí nuevas funcionalidades visibles para el usuario
 
@@ -209,12 +208,12 @@ Antes de finalizar tu trabajo y abrir un Pull Request, verifica:
 
 ## 🔄 Flujo de Trabajo Recomendado
 
-1. **Lee contexto**: `AGENT_CONTEXT.md` → `discusion_con_llm.md` → `.github/copilot-instructions.md`
-2. **Verifica alineación**: Asegúrate de que tu tarea está en "Próximos pasos" de `AGENT_CONTEXT.md`
+1. **Lee contexto**: `.github/AGENT_CONTEXT.md` → `.github/copilot-instructions.md`
+2. **Verifica alineación**: Asegúrate de que tu tarea está en "Próximos pasos" de `.github/AGENT_CONTEXT.md`
 3. **Planifica**: Antes de codificar, piensa en cómo encaja con el esquema canónico y multi-dataset
 4. **Implementa**: Escribe código siguiendo convenciones (type hints, pathlib, RUN_ID, etc.)
 5. **Valida**: Ejecuta el código, verifica resultados, revisa checklist pre-PR
-6. **Documenta**: Actualiza `AGENT_CONTEXT.md` si cambiaste el estado del proyecto
+6. **Documenta**: Actualiza `.github/AGENT_CONTEXT.md` si cambiaste el estado del proyecto
 7. **Abre PR**: Con descripción clara de qué cambios hiciste y por qué
 
 ## 📊 Estructura de Experimentos
@@ -312,7 +311,7 @@ NSL-KDD tiene features muy diferentes (antiguas, no basadas en flows modernos). 
 ### ¿Puedo cambiar el esquema canónico?
 
 Sí, pero es un cambio mayor que requiere:
-1. Actualizar `docs/AGENT_CONTEXT.md` con la nueva lista
+1. Actualizar `.github/AGENT_CONTEXT.md` con la nueva lista
 2. Actualizar TODOS los adapters existentes para mapear al nuevo esquema
 3. Re-entrenar todos los modelos
 4. Justificar el cambio en la documentación
@@ -327,9 +326,8 @@ Por ahora, validación manual:
 
 ## 📞 Si Tienes Dudas
 
-1. Lee `docs/AGENT_CONTEXT.md` de nuevo
-2. Lee `docs/discusion_con_llm.md` para ver decisiones pasadas
-3. Si aún tienes dudas, documenta el problema en un Issue de GitHub y espera feedback del usuario
+1. Lee `.github/AGENT_CONTEXT.md` de nuevo
+2. Si aún tienes dudas, documenta el problema en un Issue de GitHub y espera feedback del usuario
 
 ---
 
