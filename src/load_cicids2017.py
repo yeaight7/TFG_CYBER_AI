@@ -75,6 +75,8 @@ def _find_label_column(df: pd.DataFrame, preferred: str) -> str:
 
 def _drop_identifier_like_columns(df: pd.DataFrame, label_col: str) -> pd.DataFrame:
     # Mantén label; elimina columnas típicas que generan leakage o no son útiles como features.
+    # Destination Port se elimina porque puede actuar como proxy de la etiqueta
+    # (ciertos ataques usan puertos específicos, causando data leakage).
     drop_exact = {
         "Flow ID", "Timestamp",
         "Source IP", "Destination IP",
@@ -110,7 +112,9 @@ def _clean_rows(df: pd.DataFrame, label_col: str) -> pd.DataFrame:
     out = df.copy()
     # Reemplaza inf por NaN
     out.replace([np.inf, -np.inf], np.nan, inplace=True)
-    # Rellenar NaN con 0 (en lugar de dropna que pierde muchas filas)
+    # Rellenar NaN con 0: apropiado para features de flujo (contadores, bytes, tasas)
+    # donde ausencia de valor indica ausencia de actividad. La máscara de missingness
+    # del esquema canónico complementa esto indicando qué features son confiables.
     feat_cols = [c for c in out.columns if c != label_col]
     out[feat_cols] = out[feat_cols].fillna(0)
     # Eliminar filas donde la etiqueta es NaN

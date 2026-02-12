@@ -216,19 +216,26 @@ def main() -> None:
     policy_kwargs = dict(net_arch=[512, 256])
     tb_log_dir = str(RUNS_DIR / "cicids2017")
 
+    # Hyperparámetros adaptados al modo (smoke vs full)
+    batch_size = 256 if args.smoke else 2048
+    gradient_steps = 10 if args.smoke else 100
+    train_freq = 50 if args.smoke else 100
+    target_update_interval = 1_000 if args.smoke else 10_000
+    lr = 1e-4
+
     model = QRDQN(
         "MlpPolicy",
         vec_env,
         seed=seed,
         policy_kwargs=policy_kwargs,
-        learning_rate=1e-4,
+        learning_rate=lr,
         buffer_size=min(200_000, max(total_timesteps, 10_000)),
-        batch_size=2048 if not args.smoke else 256,
-        gradient_steps=100 if not args.smoke else 10,
+        batch_size=batch_size,
+        gradient_steps=gradient_steps,
         gamma=0.99,
         tau=1.0,
-        train_freq=100 if not args.smoke else 50,
-        target_update_interval=10_000 if not args.smoke else 1_000,
+        train_freq=train_freq,
+        target_update_interval=target_update_interval,
         verbose=1,
         device=device,
         tensorboard_log=tb_log_dir,
@@ -272,8 +279,10 @@ def main() -> None:
         "device": device,
         "smoke": args.smoke,
         "policy_kwargs": {"net_arch": [512, 256]},
-        "learning_rate": 1e-4,
-        "batch_size": 2048 if not args.smoke else 256,
+        "learning_rate": lr,
+        "batch_size": batch_size,
+        "gradient_steps": gradient_steps,
+        "train_freq": train_freq,
     }
 
     config_path = run_dir / "config.json"

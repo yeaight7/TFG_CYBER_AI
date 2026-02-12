@@ -1,5 +1,5 @@
 """
-tune_hparams.py — Optimización de hiperparámetros con Optuna para QRDQN sobre CICIDS2017.
+tune_hparams.py -- Optimizacion de hiperparametros con Optuna para QRDQN sobre CICIDS2017.
 
 Uso:
     python src/tune_hparams.py                    # 10 trials, 50k rows
