@@ -1,0 +1,14 @@
+{
+  "best_value": 0.9939583333333334,
+  "best_params": {
+    "learning_rate": 0.0005220241940352393,
+    "batch_size": 256,
+    "gradient_steps": 10,
+    "net_arch": "256_256",
+    "gamma": 0.9563138432603152,
+    "train_freq": 100
+  },
+  "n_trials": 10,
+  "timesteps_per_trial": 10000,
+  "max_rows": 50000
+}

@@ -1,0 +1,36 @@
+{
+  "run_id": "C01_qrdqn_cicids2017_canonical_smoke_20260212_195959",
+  "algorithm": "QRDQN",
+  "dataset": "CICIDS2017",
+  "use_canonical": true,
+  "max_rows": 50000,
+  "total_timesteps": 5000,
+  "seed": 42,
+  "reward_config": {
+    "tp": 1.5,
+    "fp": -1.0,
+    "fn": -5.0,
+    "omission": 0.0
+  },
+  "train_shape": [
+    40000,
+    152
+  ],
+  "test_shape": [
+    10000,
+    152
+  ],
+  "n_features": 152,
+  "device": "cuda",
+  "smoke": true,
+  "policy_kwargs": {
+    "net_arch": [
+      512,
+      256
+    ]
+  },
+  "learning_rate": 0.0001,
+  "batch_size": 256,
+  "gradient_steps": 10,
+  "train_freq": 50
+}

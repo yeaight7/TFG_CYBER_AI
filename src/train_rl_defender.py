@@ -217,8 +217,8 @@ def main() -> None:
     tb_log_dir = str(RUNS_DIR / "cicids2017")
 
     # Hyperparámetros adaptados al modo (smoke vs full)
-    batch_size = 256 if args.smoke else 2048
-    gradient_steps = 10 if args.smoke else 100
+    batch_size = 256 if args.smoke else 1024
+    gradient_steps = 10 if args.smoke else 20
     train_freq = 50 if args.smoke else 100
     target_update_interval = 1_000 if args.smoke else 10_000
     lr = 1e-4
