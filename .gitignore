@@ -8,3 +8,7 @@ __pycache__/
 *.gz
 .fdb_latexmk
 *.fls
+
+# Training artifacts (new runs only)
+runs/cicids2017/C01_*
+runs/optuna/

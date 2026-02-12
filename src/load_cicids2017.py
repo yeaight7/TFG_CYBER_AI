@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, Optional, Tuple, List
+from typing import Optional, Tuple, List
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-
-import kagglehub
 
 from canonical_schema import (
     CICIDS2017_TO_CANON,
@@ -19,15 +17,15 @@ from canonical_schema import (
 )
 
 
-KAGGLE_HANDLE = "chethuhn/network-intrusion-dataset"
+# Ruta por defecto: datasets/CICIDS2017/ relativa a la raíz del repo
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+_DEFAULT_LOCAL_DIR = _REPO_ROOT / "datasets" / "CICIDS2017"
 
 
 @dataclass(frozen=True)
 class CICIDSLoadConfig:
-    # Descarga/lectura
-    handle: str = KAGGLE_HANDLE
-    force_download: bool = False
-    recursive: bool = True
+    # Directorio local con CSVs de CICIDS2017
+    local_dir: Path = _DEFAULT_LOCAL_DIR
     chunksize: int = 250_000            # para leer CSVs grandes por trozos
     max_rows: Optional[int] = None      # recorta el total cargado (útil para pruebas)
     sample_frac: Optional[float] = None # ej. 0.2 para quedarte con 20% tras cargar
@@ -37,8 +35,8 @@ class CICIDSLoadConfig:
     benign_value: str = "BENIGN"        # CICIDS2017 suele usar "BENIGN"
 
     # Limpieza / features
-    drop_identifier_cols: bool = True   # Flow ID / IPs / Timestamp, etc.
-    scale: bool = True                 # StandardScaler (fit solo en train)
+    drop_identifier_cols: bool = True   # Destination Port, Flow ID, IPs, Timestamp, etc.
+    scale: bool = True                  # StandardScaler (fit solo en train)
 
     # Canonical schema
     use_canonical: bool = True          # mapear al esquema canónico con missingness mask
@@ -48,18 +46,12 @@ class CICIDSLoadConfig:
     random_state: int = 42
 
 
-def _download_dataset(cfg: CICIDSLoadConfig) -> Path:
-    path = kagglehub.dataset_download(cfg.handle, force_download=cfg.force_download)
-    return Path(path)
-
-
-def _list_csv_files(root: Path, recursive: bool = True) -> List[Path]:
-    pattern = "**/*.csv" if recursive else "*.csv"
-    csvs = sorted(root.glob(pattern))
+def _list_csv_files(root: Path) -> List[Path]:
+    csvs = sorted(root.glob("*.csv"))
     if not csvs:
         raise FileNotFoundError(
             f"No se encontraron CSVs en: {root}. "
-            "Comprueba que el dataset descargado contiene archivos .csv."
+            "Comprueba que el directorio contiene archivos .csv de CICIDS2017."
         )
     return csvs
 
@@ -83,10 +75,13 @@ def _find_label_column(df: pd.DataFrame, preferred: str) -> str:
 
 def _drop_identifier_like_columns(df: pd.DataFrame, label_col: str) -> pd.DataFrame:
     # Mantén label; elimina columnas típicas que generan leakage o no son útiles como features.
+    # Destination Port se elimina porque puede actuar como proxy de la etiqueta
+    # (ciertos ataques usan puertos específicos, causando data leakage).
     drop_exact = {
         "Flow ID", "Timestamp",
         "Source IP", "Destination IP",
         "Src IP", "Dst IP",
+        "Source Port", "Destination Port",
         "External IP",
     }
     out = df.copy()
@@ -115,14 +110,15 @@ def _coerce_numeric_features(df: pd.DataFrame, label_col: str) -> pd.DataFrame:
 
 def _clean_rows(df: pd.DataFrame, label_col: str) -> pd.DataFrame:
     out = df.copy()
-    # Reemplaza inf por NaN y elimina filas incompletas
+    # Reemplaza inf por NaN
     out.replace([np.inf, -np.inf], np.nan, inplace=True)
-    out.dropna(axis=0, how="any", inplace=True)
-    # Elimina columnas constantes (opcional, pero suele ayudar)
-    nunique = out.drop(columns=[label_col], errors="ignore").nunique()
-    const_cols = nunique[nunique <= 1].index.tolist()
-    if const_cols:
-        out.drop(columns=const_cols, inplace=True, errors="ignore")
+    # Rellenar NaN con 0: apropiado para features de flujo (contadores, bytes, tasas)
+    # donde ausencia de valor indica ausencia de actividad. La máscara de missingness
+    # del esquema canónico complementa esto indicando qué features son confiables.
+    feat_cols = [c for c in out.columns if c != label_col]
+    out[feat_cols] = out[feat_cols].fillna(0)
+    # Eliminar filas donde la etiqueta es NaN
+    out.dropna(subset=[label_col], inplace=True)
     return out
 
 
@@ -160,7 +156,7 @@ def load_cicids2017_binary(
     cfg: Optional[CICIDSLoadConfig] = None,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
     """
-    Carga CICIDS2017 y lo adapta al esquema canónico.
+    Carga CICIDS2017 desde directorio local y lo adapta al esquema canónico.
 
     Devuelve:
       X_train, y_train, X_test, y_test, scaler, feature_names
@@ -172,8 +168,15 @@ def load_cicids2017_binary(
     """
     cfg = cfg or CICIDSLoadConfig()
 
-    root = _download_dataset(cfg)
-    csvs = _list_csv_files(root, recursive=cfg.recursive)
+    local_dir = Path(cfg.local_dir)
+    if not local_dir.exists():
+        raise FileNotFoundError(
+            f"Directorio de CICIDS2017 no encontrado: {local_dir}. "
+            "Descarga el dataset y colócalo en datasets/CICIDS2017/."
+        )
+
+    csvs = _list_csv_files(local_dir)
+    print(f"[CICIDS2017] Cargando {len(csvs)} archivos CSV desde {local_dir}")
 
     df = _load_all_csvs(csvs, cfg)
 
@@ -249,11 +252,12 @@ def load_cicids2017_binary(
 
 
 if __name__ == "__main__":
-    # Smoke test rápido
-    cfg = CICIDSLoadConfig(max_rows=300_000, sample_frac=None)
+    # Smoke test rápido con datos locales
+    cfg = CICIDSLoadConfig(max_rows=50_000, sample_frac=None)
     X_train, y_train, X_test, y_test, scaler, feats = load_cicids2017_binary(cfg)
     print(f"CICIDS2017: X_train={X_train.shape}, y_train={y_train.shape}")
     print(f"CICIDS2017: X_test ={X_test.shape}, y_test ={y_test.shape}")
     print(f"Features ({len(feats)}): {feats[:5]} ... {feats[-5:]}")
     benign_rate = (y_train == 0).mean()
-    print(f"Train benign rate: {benign_rate:.4f}")
+    attack_rate = (y_train == 1).mean()
+    print(f"Train benign rate: {benign_rate:.4f}, attack rate: {attack_rate:.4f}")
