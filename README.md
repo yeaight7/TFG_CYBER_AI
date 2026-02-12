@@ -1,8 +1,38 @@
 # TFG – Agente de Ciberseguridad con Aprendizaje por Refuerzo
 
-Este repositorio contiene la primera fase de un Trabajo Fin de Grado orientado al diseño de un **agente defensor** basado en **Aprendizaje por Refuerzo (Reinforcement Learning, RL)** para tareas de detección y bloqueo de tráfico malicioso.
+Este repositorio contiene un Trabajo Fin de Grado orientado al diseño de un **agente defensor** basado en **Aprendizaje por Refuerzo (Reinforcement Learning, RL)** para tareas de detección y bloqueo de tráfico malicioso.
 
-En esta fase el entorno es **simulado / tipo dataset**: el agente recibe características de flujos de red (u otras muestras etiquetadas como benignas o maliciosas) y aprende una política para **permitir o bloquear** el tráfico maximizando una función de recompensa.
+**Dataset principal**: CICIDS2017 (tráfico real con features extraíbles de pcap/flows)  
+**Algoritmo**: QRDQN (Quantile Regression DQN) — distributional RL  
+**Esquema canónico**: 76 features de flow + missingness mask (152-dim observation)
+
+## Ejecución rápida
+
+```bash
+# 1. Instalar dependencias
+pip install -r requirements.txt
+
+# 2. Smoke test (~2-5 min, 50k rows, 5k timesteps)
+python src/train_rl_defender.py --smoke
+
+# 3. Entrenamiento completo (~30-60 min, all rows, 500k timesteps)
+python src/train_rl_defender.py
+
+# 4. Entrenamiento con parámetros custom
+python src/train_rl_defender.py --timesteps 200000 --max-rows 500000
+
+# 5. Sin esquema canónico (features raw)
+python src/train_rl_defender.py --smoke --no-canonical
+
+# 6. Optimización de hiperparámetros con Optuna
+python src/tune_hparams.py --n-trials 20 --timesteps 10000
+
+# 7. Ver resultados con TensorBoard
+tensorboard --logdir runs/cicids2017/
+```
+
+Todos los resultados se guardan en `runs/cicids2017/<RUN_ID>/` con config.json y metrics.json.  
+Los modelos se guardan en `models/<RUN_ID>.zip`.
 
 ## 🎯 Objetivo del Proyecto
 
@@ -55,32 +85,22 @@ El sistema se compone de tres componentes principales:
 ```text
 TFG_CYBER_AI/
 ├── src/
-│   ├── rl_defender_env.py       # Entorno Gymnasium personalizado
-│   ├── train_rl_defender.py      # Script principal de entrenamiento RL
-│   ├── baseline_random_forest.py # Baseline supervisado con Random Forest
-│   └── load_nsl_kdd.py           # Utilidad para cargar y preprocesar NSL-KDD
+│   ├── canonical_schema.py        # 76 features canónicas + mappings + missingness mask
+│   ├── load_cicids2017.py         # Loader CICIDS2017 (dataset principal)
+│   ├── load_nsl_kdd.py            # Loader NSL-KDD (benchmark histórico)
+│   ├── rl_defender_env.py         # Entorno Gymnasium personalizado
+│   ├── train_rl_defender.py       # Entrenamiento QRDQN con --smoke + evaluación
+│   ├── tune_hparams.py            # Optimización de hiperparámetros con Optuna
+│   └── baseline_random_forest.py  # Baseline supervisado con Random Forest
 │
 ├── datasets/
-│   └── nsl_kdd/                  # Dataset NSL-KDD (descargado automáticamente)
-│       ├── KDDTrain+.txt         # Conjunto de entrenamiento completo
-│       ├── KDDTrain+_20Percent.txt  # Versión reducida (20%)
-│       ├── KDDTest+.txt          # Conjunto de prueba
-│       └── ...
+│   └── CICIDS2017/                # Dataset CICIDS2017 (8 CSVs, ~2.8M flows)
 │
-├── models/
-│   ├── rl_defender_dqn.zip       # Modelo DQN entrenado (guardado)
-│   ├── rl_defender_dqn_nslkdd.zip  # Modelo DQN con dataset completo
-│   └── rf_nslkdd.joblib          # Modelo Random Forest baseline
-│
-├── experiments/
-│   ├── README.md                 # Documentación de experimentos
-│   └── nslkdd_experiments.md     # Resultados detallados experimentos NSL-KDD
-│
-├── report/
-│   ├── report.pdf                # Memoria del TFG
-│   └── report.tex                # Código fuente LaTeX de la memoria
-│
-├── .gitignore
+├── models/                        # Modelos entrenados (.zip)
+├── runs/                          # Resultados por experimento (config, métricas, TensorBoard)
+├── experiments/                   # Documentación de experimentos
+├── report/                        # Memoria del TFG (LaTeX)
+├── requirements.txt               # Dependencias Python
 └── README.md
 ```
 
@@ -90,50 +110,19 @@ TFG_CYBER_AI/
 
 ### Requisitos Previos
 
-- **Python 3.8+** (recomendado 3.9 o 3.10)
+- **Python 3.10+** (recomendado 3.10 o 3.11)
 - **pip** (gestor de paquetes de Python)
-- Conexión a internet (para descargar el dataset NSL-KDD desde Kaggle)
+- Dataset CICIDS2017 en `datasets/CICIDS2017/` (8 archivos CSV)
 
-### Paso 1: Clonar el Repositorio
+### Instalación
 
 ```bash
 git clone https://github.com/yeaight7/TFG_CYBER_AI.git
 cd TFG_CYBER_AI
-```
-
-### Paso 2: Crear Entorno Virtual
-
-```bash
 python3 -m venv venv
 source venv/bin/activate  # En Windows: venv\Scripts\activate
+pip install -r requirements.txt
 ```
-
-### Paso 3: Instalar Dependencias
-
-```bash
-pip install --upgrade pip
-pip install numpy pandas scikit-learn
-pip install gymnasium
-pip install stable-baselines3
-pip install kagglehub
-```
-
-**Dependencias principales:**
-- `numpy`: Cálculos numéricos
-- `pandas`: Manipulación de datos
-- `scikit-learn`: Preprocesamiento y métricas
-- `gymnasium`: Framework de entornos RL
-- `stable-baselines3`: Implementaciones de algoritmos RL (DQN, PPO, A2C, etc.)
-- `kagglehub`: Descarga automática de datasets de Kaggle
-
-### Paso 4: Configurar Kaggle (Opcional)
-
-Si es la primera vez usando `kagglehub`, podría pedirte credenciales de Kaggle:
-
-1. Crea una cuenta en [Kaggle](https://www.kaggle.com/)
-2. Ve a tu perfil → Settings → API → "Create New API Token"
-3. Descarga el archivo `kaggle.json`
-4. Colócalo en `~/.kaggle/kaggle.json` (Linux/Mac) o `C:\Users\<usuario>\.kaggle\kaggle.json` (Windows)
 
 ---
 

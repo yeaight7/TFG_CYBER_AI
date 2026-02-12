@@ -11,4 +11,5 @@ __pycache__/
 
 # Training artifacts
 runs/cicids2017/C01_*
+runs/optuna/
 models/*.zip
