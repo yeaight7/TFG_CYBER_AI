@@ -251,6 +251,112 @@ def load_cicids2017_binary(
     return X_train, y_train, X_test, y_test, scaler, feature_names
 
 
+def load_cicids2017_csv_split(
+    train_csvs: List[str],
+    test_csvs: List[str],
+    cfg: Optional[CICIDSLoadConfig] = None,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
+    """
+    Carga CICIDS2017 separando por archivos CSV (train vs test).
+
+    En lugar de hacer train_test_split aleatorio, usa CSVs específicos para
+    cada split. Esto es más realista porque los CSVs representan distintos
+    días/tipos de tráfico.
+
+    Parameters
+    ----------
+    train_csvs : list of str
+        Nombres (o substrings) de los CSVs para entrenamiento.
+        Ejemplo: ["Monday", "Tuesday", "Wednesday"]
+    test_csvs : list of str
+        Nombres (o substrings) de los CSVs para test.
+        Ejemplo: ["Thursday", "Friday"]
+    cfg : CICIDSLoadConfig, optional
+        Configuración de carga (se ignoran test_size y random_state del split).
+
+    Returns
+    -------
+    X_train, y_train, X_test, y_test, scaler, feature_names
+    """
+    cfg = cfg or CICIDSLoadConfig()
+    local_dir = Path(cfg.local_dir)
+    if not local_dir.exists():
+        raise FileNotFoundError(
+            f"Directorio de CICIDS2017 no encontrado: {local_dir}. "
+            "Descarga el dataset y colócalo en datasets/CICIDS2017/."
+        )
+
+    all_csvs = _list_csv_files(local_dir)
+
+    def _match_csvs(patterns: List[str]) -> List[Path]:
+        matched: List[Path] = []
+        for p in all_csvs:
+            name = p.name.lower()
+            if any(pat.lower() in name for pat in patterns):
+                matched.append(p)
+        return matched
+
+    train_paths = _match_csvs(train_csvs)
+    test_paths = _match_csvs(test_csvs)
+
+    if not train_paths:
+        raise ValueError(f"Ningun CSV coincide con train_csvs={train_csvs}. Disponibles: {[p.name for p in all_csvs]}")
+    if not test_paths:
+        raise ValueError(f"Ningun CSV coincide con test_csvs={test_csvs}. Disponibles: {[p.name for p in all_csvs]}")
+
+    print(f"[CSV-split] Train CSVs ({len(train_paths)}): {[p.name for p in train_paths]}")
+    print(f"[CSV-split] Test  CSVs ({len(test_paths)}): {[p.name for p in test_paths]}")
+
+    def _load_and_process(csv_paths: List[Path]) -> Tuple[np.ndarray, np.ndarray, List[str]]:
+        """Carga CSVs, limpia, y devuelve X, y, feature_names."""
+        df = _load_all_csvs(csv_paths, cfg)
+        label_col = _find_label_column(df, cfg.label_col)
+
+        labels = df[label_col].astype(str).str.strip().str.upper()
+        y = (labels != cfg.benign_value.upper()).astype(np.int64)
+
+        Xdf = df.drop(columns=[label_col]).copy()
+        if cfg.drop_identifier_cols:
+            Xdf[label_col] = df[label_col]
+            Xdf = _drop_identifier_like_columns(Xdf, label_col=label_col).drop(columns=[label_col])
+
+        tmp = Xdf.copy()
+        tmp[label_col] = y
+        tmp = _coerce_numeric_features(tmp, label_col=label_col)
+        tmp = _clean_rows(tmp, label_col=label_col)
+
+        y_clean = tmp[label_col].to_numpy(dtype=np.int64)
+        X_clean_df = tmp.drop(columns=[label_col])
+
+        non_numeric = [c for c in X_clean_df.columns if not pd.api.types.is_numeric_dtype(X_clean_df[c])]
+        if non_numeric:
+            X_clean_df = X_clean_df.drop(columns=non_numeric)
+
+        if cfg.use_canonical:
+            result = map_to_canonical(X_clean_df, CICIDS2017_TO_CANON)
+            X_arr = result.combined
+            feat_names = result.feature_names
+        else:
+            feat_names = list(X_clean_df.columns)
+            X_arr = X_clean_df.to_numpy(dtype=np.float32)
+
+        return X_arr, y_clean, feat_names
+
+    X_train, y_train, feature_names = _load_and_process(train_paths)
+    X_test, y_test, _ = _load_and_process(test_paths)
+
+    scaler: Optional[StandardScaler] = None
+    if cfg.scale:
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(X_train).astype(np.float32)
+        X_test = scaler.transform(X_test).astype(np.float32)
+
+    print(f"[CSV-split] Train: {X_train.shape} (benign={int((y_train==0).sum())}, attack={int((y_train==1).sum())})")
+    print(f"[CSV-split] Test:  {X_test.shape} (benign={int((y_test==0).sum())}, attack={int((y_test==1).sum())})")
+
+    return X_train, y_train, X_test, y_test, scaler, feature_names
+
+
 if __name__ == "__main__":
     # Smoke test rápido con datos locales
     cfg = CICIDSLoadConfig(max_rows=50_000, sample_frac=None)
