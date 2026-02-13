@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Tuple, List
+from typing import Any, Dict, Optional, Tuple, List
 
 import numpy as np
 import pandas as pd
@@ -355,6 +355,115 @@ def load_cicids2017_csv_split(
     print(f"[CSV-split] Test:  {X_test.shape} (benign={int((y_test==0).sum())}, attack={int((y_test==1).sum())})")
 
     return X_train, y_train, X_test, y_test, scaler, feature_names
+
+
+# ──────────────────────────────────────────────────────────────
+# Unified split API
+# ──────────────────────────────────────────────────────────────
+
+DEFAULT_TRAIN_DAYS: List[str] = ["Monday", "Tuesday", "Wednesday"]
+DEFAULT_TEST_DAYS: List[str] = ["Thursday", "Friday"]
+
+# Preset defaults for max_rows when the user does not provide --max-rows
+_PRESET_MAX_ROWS: Dict[str, Dict[str, Optional[int]]] = {
+    "fast": {"random": 50_000, "day": 50_000},
+    "full": {"random": None, "day": None},
+}
+
+
+def load_cicids2017_split(
+    split_mode: str = "random",
+    preset: str = "fast",
+    seed: int = 42,
+    max_rows: Optional[int] = None,
+    train_days: Optional[List[str]] = None,
+    test_days: Optional[List[str]] = None,
+    scale: bool = True,
+    use_canonical: bool = True,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str], Dict[str, Any]]:
+    """
+    Unified CICIDS2017 loader with split-mode and preset support.
+
+    Parameters
+    ----------
+    split_mode : ``"random"`` | ``"day"``
+        ``"random"`` — stratified 80/20 train-test split (current default behaviour).
+        ``"day"`` — group split by CSV / day.
+    preset : ``"fast"`` | ``"full"``
+        ``"fast"`` — lightweight defaults (capped rows) for quick iteration.
+        ``"full"`` — load all available rows for the chosen split.
+    seed : int
+        Random seed for reproducibility.
+    max_rows : int or None
+        Explicit cap on rows loaded.  When *None*, the preset default is used.
+    train_days : list[str] or None
+        Day patterns for training (only used when *split_mode="day"*).
+        Defaults to ``["Monday", "Tuesday", "Wednesday"]``.
+    test_days : list[str] or None
+        Day patterns for testing (only used when *split_mode="day"*).
+        Defaults to ``["Thursday", "Friday"]``.
+    scale : bool
+        Whether to fit a ``StandardScaler`` on the train split.
+    use_canonical : bool
+        Whether to map features to the canonical schema (76 + 76 mask = 152).
+
+    Returns
+    -------
+    X_train, y_train, X_test, y_test, scaler, feature_names, metadata
+        ``metadata`` is a plain dict with counts, rates, and split info that
+        can be serialised straight to JSON.
+    """
+    if split_mode not in ("random", "day"):
+        raise ValueError(f"split_mode must be 'random' or 'day', got '{split_mode}'")
+    if preset not in ("fast", "full"):
+        raise ValueError(f"preset must be 'fast' or 'full', got '{preset}'")
+
+    # Resolve effective max_rows
+    effective_max_rows = max_rows if max_rows is not None else _PRESET_MAX_ROWS[preset][split_mode]
+
+    cfg = CICIDSLoadConfig(
+        max_rows=effective_max_rows,
+        use_canonical=use_canonical,
+        scale=scale,
+        random_state=seed,
+    )
+
+    if split_mode == "random":
+        X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_binary(cfg)
+        day_info: Dict[str, Any] = {}
+    else:
+        effective_train_days = train_days or DEFAULT_TRAIN_DAYS
+        effective_test_days = test_days or DEFAULT_TEST_DAYS
+        X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_csv_split(
+            train_csvs=effective_train_days,
+            test_csvs=effective_test_days,
+            cfg=cfg,
+        )
+        day_info = {
+            "train_days": effective_train_days,
+            "test_days": effective_test_days,
+        }
+
+    # Build metadata dict (JSON-safe)
+    metadata: Dict[str, Any] = {
+        "split_mode": split_mode,
+        "preset": preset,
+        "seed": seed,
+        "max_rows": effective_max_rows,
+        "n_train": int(len(y_train)),
+        "n_test": int(len(y_test)),
+        "train_benign": int((y_train == 0).sum()),
+        "train_attack": int((y_train == 1).sum()),
+        "test_benign": int((y_test == 0).sum()),
+        "test_attack": int((y_test == 1).sum()),
+        "train_benign_rate": float((y_train == 0).mean()),
+        "train_attack_rate": float((y_train == 1).mean()),
+        "test_benign_rate": float((y_test == 0).mean()),
+        "test_attack_rate": float((y_test == 1).mean()),
+        **day_info,
+    }
+
+    return X_train, y_train, X_test, y_test, scaler, feature_names, metadata
 
 
 if __name__ == "__main__":
