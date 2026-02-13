@@ -1,0 +1,28 @@
+{
+  "A": {
+    "check": "A",
+    "description": "Direct eval without env info['true_label']",
+    "confusion_matrix": [
+      [
+        5167,
+        60
+      ],
+      [
+        1,
+        4772
+      ]
+    ],
+    "tp": 4772,
+    "fp": 60,
+    "fn": 1,
+    "tn": 5167,
+    "accuracy": 0.9939,
+    "precision_attack": 0.9875827814569537,
+    "recall_attack": 0.9997904881625812,
+    "f1_attack": 0.9936491410723581,
+    "precision_benign": 0.9998065015479877,
+    "recall_benign": 0.9885211402334034,
+    "f1_benign": 0.9941317941317941,
+    "n_samples": 10000
+  }
+}

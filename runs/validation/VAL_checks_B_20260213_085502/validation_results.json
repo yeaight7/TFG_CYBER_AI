@@ -1,0 +1,32 @@
+{
+  "B": {
+    "check": "B",
+    "description": "Shuffled labels test (anti-leakage)",
+    "timesteps": 2000,
+    "shuffled_accuracy": 0.4773,
+    "baseline_accuracy": 0.5227,
+    "leakage_threshold": 0.5727000000000001,
+    "leakage_detected": false,
+    "confusion_matrix": [
+      [
+        0,
+        5227
+      ],
+      [
+        0,
+        4773
+      ]
+    ],
+    "tp": 4773,
+    "fp": 5227,
+    "fn": 0,
+    "tn": 0,
+    "precision_attack": 0.4773,
+    "recall_attack": 1.0,
+    "f1_attack": 0.6461788397752657,
+    "n_train": 40000,
+    "n_test": 10000,
+    "test_benign_rate": 0.5227,
+    "test_attack_rate": 0.4773
+  }
+}
