@@ -2,11 +2,12 @@
 train_rl_defender.py — Entrenamiento de agente defensor RL sobre CICIDS2017.
 
 Uso:
-    python src/train_rl_defender.py                        # Fast preset, random split (default)
+    python src/train_rl_defender.py                        # Fast preset (default), random split
     python src/train_rl_defender.py --smoke                # Alias for --preset fast
-    python src/train_rl_defender.py --preset full          # Full training (~30-60 min)
-    python src/train_rl_defender.py --split-mode day       # Day/CSV group split
+    python src/train_rl_defender.py --preset full          # Full training, all rows (~30-60 min)
+    python src/train_rl_defender.py --split-mode day       # Day/CSV group split, fast preset
     python src/train_rl_defender.py --split-mode day --train-days Monday Tuesday --test-days Friday
+    python src/train_rl_defender.py --preset full --split-mode day  # Full day split
     python src/train_rl_defender.py --timesteps 200000     # Custom timesteps
 """
 from __future__ import annotations
