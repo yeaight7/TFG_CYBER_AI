@@ -2,9 +2,13 @@
 train_rl_defender.py — Entrenamiento de agente defensor RL sobre CICIDS2017.
 
 Uso:
-    python src/train_rl_defender.py --smoke        # Smoke test (~2-5 min)
-    python src/train_rl_defender.py                # Entrenamiento completo (~30-60 min)
-    python src/train_rl_defender.py --timesteps 200000  # Custom timesteps
+    python src/train_rl_defender.py                        # Fast preset (default), random split
+    python src/train_rl_defender.py --smoke                # Alias for --preset fast
+    python src/train_rl_defender.py --preset full          # Full training, all rows (~30-60 min)
+    python src/train_rl_defender.py --split-mode day       # Day/CSV group split, fast preset
+    python src/train_rl_defender.py --split-mode day --train-days Monday Tuesday --test-days Friday
+    python src/train_rl_defender.py --preset full --split-mode day  # Full day split
+    python src/train_rl_defender.py --timesteps 200000     # Custom timesteps
 """
 from __future__ import annotations
 
@@ -23,7 +27,13 @@ from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.monitor import Monitor
 
 from rl_defender_env import RLDatasetDefenderEnv
-from load_cicids2017 import load_cicids2017_binary, CICIDSLoadConfig
+from load_cicids2017 import (
+    CICIDSLoadConfig,
+    DEFAULT_TRAIN_DAYS,
+    DEFAULT_TEST_DAYS,
+    load_cicids2017_binary,
+    load_cicids2017_split,
+)
 
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -122,15 +132,31 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train RL Defender on CICIDS2017")
     parser.add_argument(
         "--smoke", action="store_true",
-        help="Smoke test: 50k rows, 5k timesteps (~2-5 min)",
+        help="Smoke test: alias for --preset fast (backward compat)",
+    )
+    parser.add_argument(
+        "--preset", type=str, default="fast", choices=["fast", "full"],
+        help="Preset: fast (lightweight, capped rows) or full (all rows). Default: fast",
+    )
+    parser.add_argument(
+        "--split-mode", type=str, default="random", choices=["random", "day"],
+        help="Split mode: random (stratified 80/20) or day (CSV/day group split). Default: random",
+    )
+    parser.add_argument(
+        "--train-days", nargs="+", default=None,
+        help="Day patterns for training (split-mode=day). Default: Monday Tuesday Wednesday",
+    )
+    parser.add_argument(
+        "--test-days", nargs="+", default=None,
+        help="Day patterns for testing (split-mode=day). Default: Thursday Friday",
     )
     parser.add_argument(
         "--timesteps", type=int, default=None,
-        help="Total timesteps for training (default: 500k normal, 5k smoke)",
+        help="Total timesteps for training (default: 500k full, 5k fast)",
     )
     parser.add_argument(
         "--max-rows", type=int, default=None,
-        help="Max rows to load from dataset (default: all normal, 10k smoke)",
+        help="Max rows to load from dataset (overrides preset default)",
     )
     parser.add_argument(
         "--no-canonical", action="store_true",
@@ -146,23 +172,22 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    # ── Smoke vs normal defaults ──
-    if args.smoke:
-        max_rows = args.max_rows or 50_000
-        total_timesteps = args.timesteps or 5_000
-        exp_tag = "smoke"
-    else:
-        max_rows = args.max_rows  # None = load all
-        total_timesteps = args.timesteps or 500_000
-        exp_tag = "full"
+    # ── Resolve preset (--smoke is an alias for --preset fast) ──
+    preset = "fast" if args.smoke else args.preset
+    is_fast = preset == "fast"
+
+    # ── Smoke / fast vs full defaults ──
+    total_timesteps = args.timesteps or (5_000 if is_fast else 500_000)
 
     use_canonical = not args.no_canonical
     seed = args.seed
+    split_mode = args.split_mode
 
     # ── RUN_ID único ──
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     algo_tag = "qrdqn"
     canon_tag = "canonical" if use_canonical else "raw"
+    exp_tag = f"{preset}_{split_mode}"
     RUN_ID = f"C01_{algo_tag}_cicids2017_{canon_tag}_{exp_tag}_{timestamp}"
 
     # ── Directorios de salida ──
@@ -172,8 +197,9 @@ def main() -> None:
 
     print(f"{'='*60}")
     print(f"  Experimento: {RUN_ID}")
-    print(f"  Mode: {'SMOKE TEST' if args.smoke else 'FULL TRAINING'}")
-    print(f"  Max rows: {max_rows or 'ALL'}")
+    print(f"  Preset: {preset.upper()}")
+    print(f"  Split mode: {split_mode}")
+    print(f"  Max rows: {args.max_rows or '(preset default)'}")
     print(f"  Timesteps: {total_timesteps}")
     print(f"  Canonical: {use_canonical}")
     print(f"  Output: {run_dir}")
@@ -186,16 +212,19 @@ def main() -> None:
         print("GPU NO detectada. Se usara CPU.")
 
     # ------------------------------------------------------------------
-    # 1) Cargar dataset CICIDS2017
+    # 1) Cargar dataset CICIDS2017 (unified split API)
     # ------------------------------------------------------------------
     print("\nCargando CICIDS2017...")
-    cfg = CICIDSLoadConfig(
-        max_rows=max_rows,
-        use_canonical=use_canonical,
+    X_train, y_train, X_test, y_test, scaler, feature_names, split_meta = load_cicids2017_split(
+        split_mode=split_mode,
+        preset=preset,
+        seed=seed,
+        max_rows=args.max_rows,
+        train_days=args.train_days,
+        test_days=args.test_days,
         scale=True,
-        random_state=seed,
+        use_canonical=use_canonical,
     )
-    X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_binary(cfg)
 
     print(f"Train: X={X_train.shape}, y={y_train.shape} "
           f"(benign={int((y_train==0).sum())}, attack={int((y_train==1).sum())})")
@@ -216,11 +245,11 @@ def main() -> None:
     policy_kwargs = dict(net_arch=[512, 256])
     tb_log_dir = str(RUNS_DIR / "cicids2017")
 
-    # Hyperparámetros adaptados al modo (smoke vs full)
-    batch_size = 256 if args.smoke else 1024
-    gradient_steps = 10 if args.smoke else 20
-    train_freq = 50 if args.smoke else 100
-    target_update_interval = 1_000 if args.smoke else 10_000
+    # Hyperparámetros adaptados al modo (fast vs full)
+    batch_size = 256 if is_fast else 1024
+    gradient_steps = 10 if is_fast else 20
+    train_freq = 50 if is_fast else 100
+    target_update_interval = 1_000 if is_fast else 10_000
     lr = 1e-4
 
     model = QRDQN(
@@ -268,8 +297,10 @@ def main() -> None:
         "run_id": RUN_ID,
         "algorithm": "QRDQN",
         "dataset": "CICIDS2017",
+        "split_mode": split_mode,
+        "preset": preset,
         "use_canonical": use_canonical,
-        "max_rows": max_rows,
+        "max_rows": split_meta["max_rows"],
         "total_timesteps": total_timesteps,
         "seed": seed,
         "reward_config": REWARD_CONFIG,
@@ -277,7 +308,7 @@ def main() -> None:
         "test_shape": list(X_test.shape),
         "n_features": len(feature_names),
         "device": device,
-        "smoke": args.smoke,
+        "split_metadata": split_meta,
         "policy_kwargs": {"net_arch": [512, 256]},
         "learning_rate": lr,
         "batch_size": batch_size,

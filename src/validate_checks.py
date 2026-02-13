@@ -46,8 +46,11 @@ from stable_baselines3.common.callbacks import BaseCallback
 from rl_defender_env import RLDatasetDefenderEnv
 from load_cicids2017 import (
     CICIDSLoadConfig,
+    DEFAULT_TRAIN_DAYS,
+    DEFAULT_TEST_DAYS,
     load_cicids2017_binary,
     load_cicids2017_csv_split,
+    load_cicids2017_split,
 )
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -62,12 +65,6 @@ REWARD_CONFIG: Dict[str, float] = {
     "fn": -5.0,
     "omission": 0.0,
 }
-
-# CSV-split por defecto para Check C:
-# Train: lunes a miércoles (tráfico más variado, incluye ataques)
-# Test: jueves y viernes (diferentes tipos de ataque)
-DEFAULT_TRAIN_CSVS = ["Monday", "Tuesday", "Wednesday"]
-DEFAULT_TEST_CSVS = ["Thursday", "Friday"]
 
 
 class ProgressCallback(BaseCallback):
@@ -279,6 +276,7 @@ def check_c_csv_split(
     test_csvs: List[str],
     timesteps: int = 50_000,
     max_rows: Optional[int] = None,
+    preset: str = "fast",
     seed: int = SEED,
     device: str = "cuda",
 ) -> Dict:
@@ -292,19 +290,18 @@ def check_c_csv_split(
     print("=" * 60)
     print(f"  Train CSVs: {train_csvs}")
     print(f"  Test  CSVs: {test_csvs}")
+    print(f"  Preset:     {preset}")
     print(f"  Timesteps:  {timesteps}")
 
-    cfg = CICIDSLoadConfig(
+    X_train, y_train, X_test, y_test, scaler, feature_names, split_meta = load_cicids2017_split(
+        split_mode="day",
+        preset=preset,
+        seed=seed,
         max_rows=max_rows,
-        use_canonical=True,
+        train_days=train_csvs,
+        test_days=test_csvs,
         scale=True,
-        random_state=seed,
-    )
-
-    X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_csv_split(
-        train_csvs=train_csvs,
-        test_csvs=test_csvs,
-        cfg=cfg,
+        use_canonical=True,
     )
 
     print(f"\nTrain: {X_train.shape} (benign={int((y_train==0).sum())}, attack={int((y_train==1).sum())})")
@@ -372,7 +369,9 @@ def check_c_csv_split(
         "description": "CSV-split evaluation (train/test on different CSVs)",
         "train_csvs": train_csvs,
         "test_csvs": test_csvs,
+        "preset": preset,
         "timesteps": timesteps,
+        "split_metadata": split_meta,
         "confusion_matrix": cm.tolist(),
         "tp": int(tp),
         "fp": int(fp),
@@ -414,8 +413,16 @@ def parse_args() -> argparse.Namespace:
         help="Which checks to run (default: all)",
     )
     parser.add_argument(
+        "--preset", type=str, default="fast", choices=["fast", "full"],
+        help="Preset: fast (lightweight, capped rows) or full (all rows). Default: fast",
+    )
+    parser.add_argument(
+        "--split-mode", type=str, default="random", choices=["random", "day"],
+        help="Split mode for Check A/B data loading: random or day. Default: random",
+    )
+    parser.add_argument(
         "--max-rows", type=int, default=None,
-        help="Max rows to load from dataset (default: all for C, 250k for A/B)",
+        help="Max rows to load from dataset (overrides preset default)",
     )
     parser.add_argument(
         "--timesteps-b", type=int, default=10_000,
@@ -426,11 +433,11 @@ def parse_args() -> argparse.Namespace:
         help="Timesteps for Check C CSV-split training (default: 30000)",
     )
     parser.add_argument(
-        "--train-csvs", nargs="+", default=DEFAULT_TRAIN_CSVS,
+        "--train-csvs", nargs="+", default=DEFAULT_TRAIN_DAYS,
         help="CSV name patterns for training in Check C (default: Monday Tuesday Wednesday)",
     )
     parser.add_argument(
-        "--test-csvs", nargs="+", default=DEFAULT_TEST_CSVS,
+        "--test-csvs", nargs="+", default=DEFAULT_TEST_DAYS,
         help="CSV name patterns for testing in Check C (default: Thursday Friday)",
     )
     parser.add_argument(
@@ -453,26 +460,28 @@ def main() -> None:
     print(f"{'=' * 60}")
     print(f"  Validation Checks: {checks}")
     print(f"  RUN_ID: {RUN_ID}")
+    print(f"  Preset: {args.preset}")
+    print(f"  Split mode (A/B): {args.split_mode}")
     print(f"  Output: {run_dir}")
     print(f"  Device: {device}")
     print(f"{'=' * 60}")
 
     results: Dict[str, Dict] = {}
 
-    # ── Cargar datos para Check A y B ──
-    need_random_split = "A" in checks or "B" in checks
+    # ── Cargar datos para Check A y B (uses unified split API) ──
+    need_ab_data = "A" in checks or "B" in checks
     X_train = y_train = X_test = y_test = None
 
-    if need_random_split:
-        max_rows_ab = args.max_rows or 250_000
-        print(f"\nCargando CICIDS2017 (random split, max_rows={max_rows_ab})...")
-        cfg = CICIDSLoadConfig(
-            max_rows=max_rows_ab,
-            use_canonical=True,
+    if need_ab_data:
+        print(f"\nCargando CICIDS2017 (split_mode={args.split_mode}, preset={args.preset})...")
+        X_train, y_train, X_test, y_test, _, _, ab_meta = load_cicids2017_split(
+            split_mode=args.split_mode,
+            preset=args.preset,
+            seed=args.seed,
+            max_rows=args.max_rows,
             scale=True,
-            random_state=args.seed,
+            use_canonical=True,
         )
-        X_train, y_train, X_test, y_test, _, _ = load_cicids2017_binary(cfg)
         print(f"Train: {X_train.shape}, Test: {X_test.shape}")
 
     # ── Check A ──
@@ -507,6 +516,7 @@ def main() -> None:
             test_csvs=args.test_csvs,
             timesteps=args.timesteps_c,
             max_rows=args.max_rows,
+            preset=args.preset,
             seed=args.seed,
             device=device,
         )
@@ -520,6 +530,8 @@ def main() -> None:
     config = {
         "run_id": RUN_ID,
         "checks": checks,
+        "preset": args.preset,
+        "split_mode": args.split_mode,
         "model_path": args.model,
         "max_rows": args.max_rows,
         "timesteps_b": args.timesteps_b,
