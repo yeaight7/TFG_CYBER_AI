@@ -1,0 +1,27 @@
+{
+  "run_id": "VAL_checks_B_20260212_235736",
+  "checks": [
+    "B"
+  ],
+  "model_path": null,
+  "max_rows": 50000,
+  "timesteps_b": 2000,
+  "timesteps_c": 100000,
+  "train_csvs_c": [
+    "Monday",
+    "Tuesday",
+    "Wednesday"
+  ],
+  "test_csvs_c": [
+    "Thursday",
+    "Friday"
+  ],
+  "seed": 42,
+  "device": "cpu",
+  "reward_config": {
+    "tp": 1.5,
+    "fp": -1.0,
+    "fn": -5.0,
+    "omission": 0.0
+  }
+}

@@ -41,6 +41,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sb3_contrib import QRDQN
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.monitor import Monitor
+from stable_baselines3.common.callbacks import BaseCallback
 
 from rl_defender_env import RLDatasetDefenderEnv
 from load_cicids2017 import (
@@ -67,6 +68,18 @@ REWARD_CONFIG: Dict[str, float] = {
 # Test: jueves y viernes (diferentes tipos de ataque)
 DEFAULT_TRAIN_CSVS = ["Monday", "Tuesday", "Wednesday"]
 DEFAULT_TEST_CSVS = ["Thursday", "Friday"]
+
+
+class ProgressCallback(BaseCallback):
+    """Callback para mostrar progreso cada log_freq timesteps."""
+    def __init__(self, log_freq: int = 10_000, verbose: int = 0):
+        super().__init__(verbose)
+        self.log_freq = log_freq
+        
+    def _on_step(self) -> bool:
+        if self.num_timesteps % self.log_freq == 0:
+            print(f"  → Timesteps: {self.num_timesteps}/{self.model._total_timesteps}")
+        return True
 
 
 # ──────────────────────────────────────────────────────────────
@@ -138,7 +151,7 @@ def check_b_shuffled_labels(
     y_test: np.ndarray,
     timesteps: int = 10_000,
     seed: int = SEED,
-    device: str = "cpu",
+    device: str = "cuda",
 ) -> Dict:
     """
     Baraja y_train y entrena brevemente. Si el modelo aún obtiene accuracy
@@ -264,10 +277,10 @@ def check_b_shuffled_labels(
 def check_c_csv_split(
     train_csvs: List[str],
     test_csvs: List[str],
-    timesteps: int = 100_000,
+    timesteps: int = 50_000,
     max_rows: Optional[int] = None,
     seed: int = SEED,
-    device: str = "cpu",
+    device: str = "cuda",
 ) -> Dict:
     """
     Entrena en unos CSVs de CICIDS2017 y testea en otros.
@@ -321,18 +334,19 @@ def check_c_csv_split(
         policy_kwargs=dict(net_arch=[512, 256]),
         learning_rate=1e-4,
         buffer_size=min(200_000, max(timesteps, 10_000)),
-        batch_size=1024,
+        batch_size=512,
         gradient_steps=20,
         gamma=0.99,
         tau=1.0,
         train_freq=100,
         target_update_interval=10_000,
-        verbose=1,
+        verbose=0,
         device=device,
     )
 
     print(f"\nEntrenando QRDQN con split por CSV ({timesteps} timesteps)...")
-    model.learn(total_timesteps=timesteps)
+    progress_callback = ProgressCallback(log_freq=10_000)
+    model.learn(total_timesteps=timesteps, callback=progress_callback)
 
     # Evaluación directa
     n = len(X_test)
@@ -408,8 +422,8 @@ def parse_args() -> argparse.Namespace:
         help="Timesteps for Check B shuffled training (default: 10000)",
     )
     parser.add_argument(
-        "--timesteps-c", type=int, default=100_000,
-        help="Timesteps for Check C CSV-split training (default: 100000)",
+        "--timesteps-c", type=int, default=30_000,
+        help="Timesteps for Check C CSV-split training (default: 30000)",
     )
     parser.add_argument(
         "--train-csvs", nargs="+", default=DEFAULT_TRAIN_CSVS,

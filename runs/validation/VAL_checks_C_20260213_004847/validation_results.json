@@ -1,0 +1,43 @@
+{
+  "C": {
+    "check": "C",
+    "description": "CSV-split evaluation (train/test on different CSVs)",
+    "train_csvs": [
+      "Monday",
+      "Tuesday",
+      "Wednesday"
+    ],
+    "test_csvs": [
+      "Thursday",
+      "Friday"
+    ],
+    "timesteps": 30000,
+    "confusion_matrix": [
+      [
+        823660,
+        47414
+      ],
+      [
+        136970,
+        154169
+      ]
+    ],
+    "tp": 154169,
+    "fp": 47414,
+    "fn": 136970,
+    "tn": 823660,
+    "accuracy": 0.8413509399739979,
+    "precision_attack": 0.764791673901073,
+    "recall_attack": 0.5295374374439701,
+    "f1_attack": 0.6257849253737402,
+    "precision_benign": 0.8574164870970092,
+    "recall_benign": 0.945568344365691,
+    "f1_benign": 0.8993374475351913,
+    "n_train": 1668530,
+    "n_test": 1162213,
+    "train_benign": 1402023,
+    "train_attack": 266507,
+    "test_benign": 871074,
+    "test_attack": 291139
+  }
+}
