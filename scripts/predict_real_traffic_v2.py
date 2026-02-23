@@ -339,7 +339,8 @@ def main() -> None:
         p_low: np.ndarray = percs["p_low"]
         p_high: np.ndarray = percs["p_high"]
         X_feat = X[:, :_N_CANON]
-        X_feat_clipped = apply_percentile_clipping(X_feat, p_low, p_high)
+        # FIX: slice percentiles to match feature-only dims (first _N_CANON)
+        X_feat_clipped = apply_percentile_clipping(X_feat, p_low[:_N_CANON], p_high[:_N_CANON])
         X = np.concatenate([X_feat_clipped, X[:, _N_CANON:]], axis=1)
         print("[clip] Percentile clipping applied (p0.5 / p99.5).")
 

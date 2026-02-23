@@ -37,6 +37,9 @@ from load_cicids2017 import (
     load_cicids2017_split,
 )
 
+from canonical_schema import FEATURES_CANON
+_N_CANON = len(FEATURES_CANON)
+
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 MODELS_DIR = _REPO_ROOT / "models"
@@ -229,8 +232,8 @@ def main() -> None:
     )
 
     # Calcular percentiles p0.5 y p99.5 sobre X_train sin escalar
-    p_low = np.percentile(X_train, 0.5, axis=0)
-    p_high = np.percentile(X_train, 99.5, axis=0)
+    p_low = np.percentile(X_train[:, :_N_CANON], 0.5, axis=0)   # shape (76,)
+    p_high = np.percentile(X_train[:, :_N_CANON], 99.5, axis=0)
 
     # Ajustar y aplicar StandardScaler manualmente para persistirlo
     scaler = StandardScaler()
