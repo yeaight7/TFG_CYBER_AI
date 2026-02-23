@@ -114,6 +114,18 @@ META_COLS = ["src_ip", "dst_ip", "src_port", "dst_port", "protocol", "timestamp"
 
 TIME_COLS_HINTS = ("duration", "iat", "active", "idle")
 
+from load_cicids2017 import load_cicids2017_split
+
+# pon aquí los valores que usaste para entrenar el modelo C01
+X_train, y_train, X_test, y_test, scaler, feat_names, meta = load_cicids2017_split(
+    split_mode="random",
+    preset="full",
+    seed=42,
+    max_rows=250_000,
+    scale=True,
+    use_canonical=True,
+)
+
 def maybe_convert_time_units(df: pd.DataFrame) -> pd.DataFrame:
     # If flow_duration median is < 1, it's probably seconds; CICIDS typically uses microseconds.
     if "flow_duration" in df.columns:
@@ -174,7 +186,9 @@ def main():
     canon = map_to_canonical(df, FLOWMETER_PY_TO_CANON)
     print(f"[canonical] present={canon.n_present} missing={canon.n_missing}")
 
-    X = canon.combined  # shape (n, 152) ya incluye máscara correcta
+    # X = canon.combined  # shape (n, 152) ya incluye máscara correcta
+    X = canon.combined.astype(np.float32)          # (n,152)
+    X = scaler.transform(X).astype(np.float32) 
 
     model = load_model(model_zip)
     y_pred = batched_predict(model, X, batch_size=4096)
