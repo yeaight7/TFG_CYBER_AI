@@ -366,7 +366,7 @@ DEFAULT_TEST_DAYS: List[str] = ["Thursday", "Friday"]
 
 # Preset defaults for max_rows when the user does not provide --max-rows
 _PRESET_MAX_ROWS: Dict[str, Dict[str, Optional[int]]] = {
-    "fast": {"random": 50_000, "day": 50_000},
+    "fast": {"random": 100_000, "day": 100_000},
     "full": {"random": None, "day": None},
 }
 

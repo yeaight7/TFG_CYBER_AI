@@ -179,7 +179,7 @@ def main() -> None:
     is_fast = preset == "fast"
 
     # ── Smoke / fast vs full defaults ──
-    total_timesteps = args.timesteps or (5_000 if is_fast else 500_000)
+    total_timesteps = args.timesteps or (10_000 if is_fast else 100_000)
 
     use_canonical = not args.no_canonical
     seed = args.seed

@@ -1,0 +1,55 @@
+{
+  "run_id": "C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122",
+  "algorithm": "QRDQN",
+  "dataset": "CICIDS2017",
+  "split_mode": "random",
+  "preset": "fast",
+  "use_canonical": true,
+  "max_rows": 100000,
+  "total_timesteps": 10000,
+  "seed": 42,
+  "reward_config": {
+    "tp": 1.5,
+    "fp": -1.0,
+    "fn": -5.0,
+    "omission": 0.0
+  },
+  "train_shape": [
+    80000,
+    152
+  ],
+  "test_shape": [
+    20000,
+    152
+  ],
+  "n_features": 152,
+  "device": "cuda",
+  "split_metadata": {
+    "split_mode": "random",
+    "preset": "fast",
+    "seed": 42,
+    "max_rows": 100000,
+    "n_train": 80000,
+    "n_test": 20000,
+    "train_benign": 31045,
+    "train_attack": 48955,
+    "test_benign": 7761,
+    "test_attack": 12239,
+    "train_benign_rate": 0.3880625,
+    "train_attack_rate": 0.6119375,
+    "test_benign_rate": 0.38805,
+    "test_attack_rate": 0.61195
+  },
+  "policy_kwargs": {
+    "net_arch": [
+      512,
+      256
+    ]
+  },
+  "learning_rate": 0.0001,
+  "batch_size": 256,
+  "gradient_steps": 10,
+  "train_freq": 50,
+  "scaler_path": "/home/yeaight/tfg_cyber_ai/runs/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/scaler.joblib",
+  "percentiles_path": "/home/yeaight/tfg_cyber_ai/runs/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/train_percentiles.npz"
+}

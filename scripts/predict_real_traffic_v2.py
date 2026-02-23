@@ -14,9 +14,9 @@ Key improvements over v1:
 Usage:
     python scripts/predict_real_traffic_v2.py \\
         --flows pcaps/flows.csv \\
-        --model models/C02_qrdqn_cicids2017_canonical_fast_random_<ts>.zip \\
-        --scaler runs/cicids2017/<RUN_ID>/scaler.joblib \\
-        --percentiles runs/cicids2017/<RUN_ID>/train_percentiles.npz \\
+        --model models/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122.zip \\
+        --scaler runs/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/scaler.joblib \\
+        --percentiles runs/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/train_percentiles.npz \\
         --clip-z 10.0 \\
         --export-diagnostics
 """
