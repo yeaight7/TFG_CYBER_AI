@@ -1,0 +1,9 @@
+{
+  "accuracy": 0.99859,
+  "precision_attack": 0.9980603410273139,
+  "recall_attack": 0.999452606300325,
+  "f1_attack": 0.9987559884598078,
+  "precision_benign": 0.9992838827415741,
+  "recall_benign": 0.9974635676074525,
+  "f1_benign": 0.9983728954383374
+}

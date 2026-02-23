@@ -1,0 +1,83 @@
+{
+  "z_abs_max": 10.0,
+  "z_abs_mean": 1.1148942708969116,
+  "z_gt10_count": 0,
+  "z_gt10_pct": 0.0,
+  "top_features": [
+    {
+      "feature": "init_win_bytes_backward",
+      "max_abs_z": 10.0,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "syn_flag_count",
+      "max_abs_z": 10.0,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "ack_flag_count",
+      "max_abs_z": 10.0,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "fin_flag_count",
+      "max_abs_z": 10.0,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "psh_flag_count",
+      "max_abs_z": 10.0,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "rst_flag_count",
+      "max_abs_z": 10.0,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "fwd_psh_flags",
+      "max_abs_z": 10.0,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "init_win_bytes_forward",
+      "max_abs_z": 4.513704776763916,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "bwd_psh_flags",
+      "max_abs_z": 4.0,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "min_packet_length",
+      "max_abs_z": 3.60359263420105,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "bwd_packet_length_min",
+      "max_abs_z": 0.9407479166984558,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "flow_bytes_per_s",
+      "max_abs_z": 0.9404793381690979,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "bwd_packets_per_s",
+      "max_abs_z": 0.8967390060424805,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "min_seg_size_forward",
+      "max_abs_z": 0.749513566493988,
+      "count_gt_10": 0
+    },
+    {
+      "feature": "flow_packets_per_s",
+      "max_abs_z": 0.6280847787857056,
+      "count_gt_10": 0
+    }
+  ]
+}

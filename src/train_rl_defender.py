@@ -51,7 +51,7 @@ RUNS_DIR = _REPO_ROOT / "runs"
 # --------------------------------------------------------------------------------------
 REWARD_CONFIG: Dict[str, float] = {
     "tp": 1.5,
-    "fp": -1.0,
+    "fp": -2.0,
     "fn": -5.0,
     "omission": 0.0,
 }
@@ -182,7 +182,7 @@ def main() -> None:
     is_fast = preset == "fast"
 
     # ── Smoke / fast vs full defaults ──
-    total_timesteps = args.timesteps or (10_000 if is_fast else 100_000)
+    total_timesteps = args.timesteps or (25_000 if is_fast else 100_000)
 
     use_canonical = not args.no_canonical
     seed = args.seed
@@ -193,7 +193,7 @@ def main() -> None:
     algo_tag = "qrdqn"
     canon_tag = "canonical" if use_canonical else "raw"
     exp_tag = f"{preset}_{split_mode}"
-    RUN_ID = f"C02_{algo_tag}_cicids2017_{canon_tag}_{exp_tag}_{timestamp}"
+    RUN_ID = f"C03_{algo_tag}_cicids2017_{canon_tag}_{exp_tag}_{timestamp}"
 
     # ── Directorios de salida ──
     run_dir = RUNS_DIR / "cicids2017" / RUN_ID
@@ -260,7 +260,7 @@ def main() -> None:
     tb_log_dir = str(RUNS_DIR / "cicids2017")
 
     # Hyperparámetros adaptados al modo (fast vs full)
-    batch_size = 256 if is_fast else 1024
+    batch_size = 512 if is_fast else 2048
     gradient_steps = 10 if is_fast else 20
     train_freq = 50 if is_fast else 100
     target_update_interval = 1_000 if is_fast else 10_000

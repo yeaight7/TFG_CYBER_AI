@@ -1,0 +1,11 @@
+{
+  "run_id": "P2v2_pred_20260224_004242",
+  "flows_csv": "pcaps/flows_scan.csv",
+  "model_zip": "models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip",
+  "scaler": "runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/scaler.joblib",
+  "percentiles": null,
+  "clip_z": 10.0,
+  "no_scale": false,
+  "mask_semantics": "1=present,0=missing",
+  "note": "Robust Phase 2 offline inference (v2) on extracted flows.csv"
+}

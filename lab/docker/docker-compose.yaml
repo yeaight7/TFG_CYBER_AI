@@ -1,0 +1,22 @@
+services:
+  web:
+    image: nginx:alpine
+    container_name: tfg_web
+    networks:
+      - labnet
+    # No ports published to host -> only reachable inside labnet
+
+  generator:
+    image: python:3.12-slim
+    container_name: tfg_generator
+    networks:
+      - labnet
+    volumes:
+      - ./generator:/app
+    working_dir: /app
+    entrypoint: ["python", "gen_traffic.py"]
+
+networks:
+  labnet:
+    driver: bridge
+    internal: true   # isolates containers from reaching the internet
