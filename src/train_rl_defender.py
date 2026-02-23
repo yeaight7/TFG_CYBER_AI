@@ -18,9 +18,11 @@ from pathlib import Path
 from typing import Dict, List
 from datetime import datetime
 
+import joblib
 import torch
 import numpy as np
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.preprocessing import StandardScaler
 
 from sb3_contrib import QRDQN
 from stable_baselines3.common.vec_env import DummyVecEnv
@@ -212,19 +214,28 @@ def main() -> None:
         print("GPU NO detectada. Se usara CPU.")
 
     # ------------------------------------------------------------------
-    # 1) Cargar dataset CICIDS2017 (unified split API)
+    # 1) Cargar dataset CICIDS2017 (sin escalar, para poder persistir scaler)
     # ------------------------------------------------------------------
     print("\nCargando CICIDS2017...")
-    X_train, y_train, X_test, y_test, scaler, feature_names, split_meta = load_cicids2017_split(
+    X_train, y_train, X_test, y_test, _scaler_unused, feature_names, split_meta = load_cicids2017_split(
         split_mode=split_mode,
         preset=preset,
         seed=seed,
         max_rows=args.max_rows,
         train_days=args.train_days,
         test_days=args.test_days,
-        scale=True,
+        scale=False,
         use_canonical=use_canonical,
     )
+
+    # Calcular percentiles p0.5 y p99.5 sobre X_train sin escalar
+    p_low = np.percentile(X_train, 0.5, axis=0)
+    p_high = np.percentile(X_train, 99.5, axis=0)
+
+    # Ajustar y aplicar StandardScaler manualmente para persistirlo
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train).astype(np.float32)
+    X_test = scaler.transform(X_test).astype(np.float32)
 
     print(f"Train: X={X_train.shape}, y={y_train.shape} "
           f"(benign={int((y_train==0).sum())}, attack={int((y_train==1).sum())})")
@@ -291,6 +302,17 @@ def main() -> None:
     metrics = evaluate_model(model, X_test, y_test, REWARD_CONFIG)
 
     # ------------------------------------------------------------------
+    # 5b) Persistir artefactos de preprocesamiento
+    # ------------------------------------------------------------------
+    scaler_path = run_dir / "scaler.joblib"
+    joblib.dump(scaler, scaler_path)
+    print(f"\nScaler guardado en: {scaler_path}")
+
+    percentiles_path = run_dir / "train_percentiles.npz"
+    np.savez(percentiles_path, p_low=p_low, p_high=p_high)
+    print(f"Percentiles guardados en: {percentiles_path}")
+
+    # ------------------------------------------------------------------
     # 6) Guardar config + métricas
     # ------------------------------------------------------------------
     config = {
@@ -314,6 +336,8 @@ def main() -> None:
         "batch_size": batch_size,
         "gradient_steps": gradient_steps,
         "train_freq": train_freq,
+        "scaler_path": str(scaler_path),
+        "percentiles_path": str(percentiles_path),
     }
 
     config_path = run_dir / "config.json"
