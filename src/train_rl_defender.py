@@ -188,7 +188,7 @@ def main() -> None:
     algo_tag = "qrdqn"
     canon_tag = "canonical" if use_canonical else "raw"
     exp_tag = f"{preset}_{split_mode}"
-    RUN_ID = f"C01_{algo_tag}_cicids2017_{canon_tag}_{exp_tag}_{timestamp}"
+    RUN_ID = f"C02_{algo_tag}_cicids2017_{canon_tag}_{exp_tag}_{timestamp}"
 
     # ── Directorios de salida ──
     run_dir = RUNS_DIR / "cicids2017" / RUN_ID

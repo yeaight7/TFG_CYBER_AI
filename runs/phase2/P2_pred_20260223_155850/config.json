@@ -1,0 +1,7 @@
+{
+  "run_id": "P2_pred_20260223_155850",
+  "flows_csv": "/home/yeaight/tfg_cyber_ai/pcaps/flows.csv",
+  "model_zip": "/home/yeaight/tfg_cyber_ai/models/C01_qrdqn_cicids2017_canonical_full_20260212_200218.zip",
+  "mask_semantics": "1=present,0=missing",
+  "note": "Offline Phase2 inference on extracted flows.csv"
+}
