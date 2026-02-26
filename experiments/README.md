@@ -6,16 +6,22 @@ Esta carpeta recopila la documentación detallada de todos los experimentos real
 
 ### Experimentos por Dataset
 
-- **`nslkdd_experiments.md`**: Experimentos sobre el dataset NSL-KDD
+- **`nslkdd_experiments.md`**: Experimentos sobre el dataset NSL-KDD (Phase 1)
   - Agente RL basado en DQN (entorno `RLDatasetDefenderEnv`)
   - Comparativa con baselines supervisados (Random Forest)
   - Análisis de diferentes configuraciones de recompensas
   - Evaluación de hiperparámetros
 
+### Resultados Consolidados
+
+- **[`docs/results.md`](../docs/results.md)**: Métricas consolidadas de TODOS los experimentos
+  - Runs de entrenamiento CICIDS2017 (C01, C02, C03)
+  - Validation Checks (A, B, C)
+  - Optuna hyperparameter study
+  - Phase 2 inference runs (lab-captured traffic)
+
 ### Futuros Experimentos (Planificados)
 
-- **`unsw_experiments.md`**: Experimentos con UNSW-NB15 (dataset más reciente, 2015)
-- **`cicids_experiments.md`**: Experimentos con CICIDS2017 (ataques modernos)
 - **`cross_dataset.md`**: Evaluación de generalización entre datasets
 - **`algorithms_comparison.md`**: Comparativa exhaustiva de algoritmos RL (DQN, PPO, A2C, SAC)
 
@@ -24,9 +30,11 @@ Esta carpeta recopila la documentación detallada de todos los experimentos real
 Para mantener un registro organizado, cada experimento tiene un ID único siguiendo esta nomenclatura:
 
 ### Prefijos por Dataset
-- **`E01`, `E02`, ...**: Experimentos con NSL-KDD
-- **`U01`, `U02`, ...**: Experimentos con UNSW-NB15 (futuro)
-- **`C01`, `C02`, ...**: Experimentos con CICIDS2017 (futuro)
+- **`E01`, `E02`, ...**: Experimentos con NSL-KDD (Phase 1)
+- **`C01`, `C02`, ...**: Experimentos con CICIDS2017 (Phase 1 — dataset principal)
+- **`P2_*`, `P2v2_*`**: Runs de inferencia Phase 2 (lab-captured traffic)
+- **`VAL_*`**: Validation checks (A, B, C)
+- **`study_*`**: Optuna hyperparameter studies
 - **`X01`, `X02`, ...**: Experimentos cross-dataset (futuro)
 
 ### Sufijos Opcionales (para variantes)
@@ -68,30 +76,37 @@ Para experimentos destacados, se incluye:
 ## 🎯 Objetivos de los Experimentos
 
 ### Fase 1: Baseline y Proof of Concept
-✅ **Completado**: Experimentos E01-E06
-- Establecer baseline de RL (DQN) y supervisado (RF)
+✅ **Completado**: Experimentos E01-E06 (NSL-KDD), C01-C03 (CICIDS2017)
+- Establecer baseline de RL (DQN/QRDQN) y supervisado (RF)
 - Explorar diferentes configuraciones de recompensas
 - Validar que el agente RL puede aprender políticas efectivas
+- Mejor modelo: C03 full (QRDQN, 500k rows, accuracy 0.9986, F1 attack 0.9988)
 
 ### Fase 2: Optimización de Hiperparámetros
-🔄 **En progreso**: 
-- Grid search sistemático de learning_rate, buffer_size, batch_size
-- Comparativa de arquitecturas de red neuronal (MLP profunda vs shallow)
-- Evaluación de exploration strategies
+✅ **Completado**: Optuna study con 10 trials
+- Grid search de learning_rate, batch_size, gradient_steps, gamma, train_freq
+- Mejor resultado: accuracy 0.9939 (lr=5.2e-4, batch=256, grad_steps=10)
+- Resultados en `runs/optuna/study_20260212_222134.json`
 
-### Fase 3: Comparativa de Algoritmos RL
+### Fase 3: Validación y Anti-Leakage
+✅ **Completado**: Checks A, B, C
+- Check A: Evaluación directa sin entorno → accuracy 0.9939
+- Check B: Labels barajados → accuracy 0.4773 (confirma NO leakage)
+- Check C: Split por día (Mon-Wed train, Thu-Fri test) → accuracy 0.8414
+
+### Fase 4: Inferencia sobre Tráfico Real (Phase 2)
+🔶 **En progreso**: Runs P2 y P2v2
+- Inferencia offline sobre PCAPs capturados en lab privado
+- Pipeline v2 con z-score clipping para robustez ante distribución shift
+- Resultados preliminares muestran necesidad de calibración/fine-tuning
+
+### Fase 5: Comparativa de Algoritmos RL
 📅 **Planificado**:
 - DQN vs PPO vs A2C vs SAC
 - On-policy vs Off-policy en este dominio
 - Análisis de sample efficiency
 
-### Fase 4: Generalización
-📅 **Planificado**:
-- Evaluación cross-dataset (entrenar en NSL-KDD, evaluar en CICIDS2017)
-- Robustez contra concept drift
-- Transfer learning entre datasets
-
-### Fase 5: Adversarial Robustness
+### Fase 6: Adversarial Robustness
 📅 **Planificado**:
 - Evaluación contra evasion attacks
 - Adversarial training

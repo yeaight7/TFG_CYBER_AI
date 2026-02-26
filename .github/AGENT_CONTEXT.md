@@ -219,7 +219,7 @@ Decisión: **Pendiente de evaluación en Fase 2**. Probablemente CICFlowMeter pa
 
 ### Archivos y Componentes Existentes
 
-#### `src/canonical_schema.py` ← **NUEVO**
+#### `src/canonical_schema.py`
 - ✅ Definición formal de `FEATURES_CANON` con 76 features canónicas
 - ✅ Mappings: `CICIDS2017_TO_CANON` (76/76), `NSL_KDD_TO_CANON` (3/76)
 - ✅ Función `map_to_canonical()` con máscara de missingness
@@ -237,9 +237,10 @@ Decisión: **Pendiente de evaluación en Fase 2**. Probablemente CICFlowMeter pa
 - ✅ Loader para CICIDS2017 desde Kaggle
 - ✅ Limpieza de datos: eliminación de IPs, timestamps, Flow IDs
 - ✅ Manejo de NaNs e infinitos
-- ✅ Split estratificado, scaling opcional
+- ✅ Split estratificado y split por día (CSV-split)
 - ✅ Retorna: `(X_train, y_train, X_test, y_test, scaler, feature_names)`
 - ✅ Soporte esquema canónico con `use_canonical=True` (76/76 features mapeadas)
+- ✅ API unificada `load_cicids2017_split()` con modo random y day
 
 #### `src/rl_defender_env.py`
 - ✅ Entorno RL custom (Gymnasium)
@@ -249,35 +250,89 @@ Decisión: **Pendiente de evaluación en Fase 2**. Probablemente CICFlowMeter pa
 - ✅ Soporte para shuffle y episodios limitados
 
 #### `src/train_rl_defender.py`
-- ✅ Script de entrenamiento DQN con Stable-Baselines3
+- ✅ Script de entrenamiento QRDQN con Stable-Baselines3 / sb3-contrib
 - ✅ Generación automática de RUN_ID con timestamp
 - ✅ Logging a TensorBoard (`runs/<dataset>/<RUN_ID>/`)
 - ✅ Evaluación en test con confusion matrix y classification report
 - ✅ Guardado de modelos en `models/<RUN_ID>.zip`
-- ✅ Selección de dataset: CICIDS2017 o NSL-KDD con esquema canónico
+- ✅ CLI con argparse (--smoke, --preset, --split-mode, --timesteps, --max-rows)
+- ✅ Persistencia de scaler y train_percentiles (para inferencia Phase 2)
 - ✅ Auto-detección de GPU/CPU
+
+#### `src/validate_checks.py`
+- ✅ Framework de validación con Checks A, B, C
+- ✅ Check A: evaluación directa model.predict vs y_test
+- ✅ Check B: shuffled-labels anti-leakage test
+- ✅ Check C: CSV-split day generalization (train Mon-Wed, test Thu-Fri)
+
+#### `src/tune_hparams.py`
+- ✅ Optimización de hiperparámetros con Optuna
+- ✅ Grid search de learning_rate, batch_size, gradient_steps, gamma, train_freq
+
+#### `src/scaling_utils.py`
+- ✅ Utilidades de escalado de features (StandardScaler helpers)
 
 #### `src/baseline_random_forest.py`
 - ✅ Baseline supervisado con Random Forest
 - ✅ Evaluación comparable con métricas de clasificación
 - ✅ Guardado de modelo con RUN_ID en `models/<RUN_ID>.joblib`
-- ✅ Selección de dataset: CICIDS2017 o NSL-KDD con esquema canónico
+
+#### `scripts/predict_real_traffic.py` (v1, legacy)
+- ✅ Script de inferencia Phase 2 sobre flows extraídos de PCAPs
+- ⚠️ Producía predicciones extremas (all-block o all-allow)
+
+#### `scripts/predict_real_traffic_v2.py` (v2, robusta)
+- ✅ Pipeline de inferencia Phase 2 robusto
+- ✅ Z-score clipping para manejar distribución shift
+- ✅ Soporte de percentile clipping (features raw) y z-score clipping (scaled)
+- ✅ CLI con argparse (--flows, --model, --scaler, --percentiles, --clip-z)
+- ✅ Guardado de config.json, metrics.json, diagnostics.json, predictions.csv
+
+#### `lab/docker/`
+- ✅ Docker Compose para lab privado (nginx target + generador de tráfico)
+- ✅ Red aislada (internal: true, sin acceso a internet)
+
+### Modelos Entrenados
+
+| Modelo | Tipo | Dataset | Accuracy |
+|--------|------|---------|----------|
+| C01 smoke (.zip) | QRDQN | CICIDS2017 50k | 0.9697 |
+| C01 full (.zip) | QRDQN | CICIDS2017 250k | 0.9962 |
+| C02 fast (.zip) | QRDQN | CICIDS2017 100k | 0.9766 |
+| **C03 full (.zip)** | **QRDQN** | **CICIDS2017 500k** | **0.9986** |
+| rf_nslkdd.joblib | Random Forest | NSL-KDD | 0.7693 |
+| A01, A02 (.zip) | DQN | NSL-KDD | Phase 1 ablation |
+| rl_defender_dqn.zip | DQN | NSL-KDD | Early prototype |
 
 ### Directorios y Estructura
 
 ```
 TFG_CYBER_AI/
-├── datasets/          — NSL-KDD descargado automáticamente
+├── datasets/          — CICIDS2017 descargado automáticamente
 ├── docs/              — Documentación, contexto, decisiones
 ├── experiments/       — Tracking de experimentos
+├── lab/               — Docker Compose para lab privado
+│   └── docker/        — Compose file + generador de tráfico
 ├── models/            — Modelos guardados (.zip, .joblib)
+├── pcaps/             — PCAPs capturados y CSVs de flows extraídos
 ├── runs/              — Resultados con RUN_ID (TensorBoard logs)
+│   ├── cicids2017/    — Runs entrenamiento QRDQN (C01, C02, C03)
+│   ├── validation/    — Runs validation checks (A, B, C)
+│   ├── phase2/        — Runs inferencia Phase 2 (P2, P2v2)
+│   ├── optuna/        — Estudios de hiperparámetros
+│   └── nslkdd/        — Runs Phase 1 (NSL-KDD benchmark)
+├── scripts/           — Scripts de inferencia Phase 2
+│   ├── predict_real_traffic.py     — v1 (legacy)
+│   └── predict_real_traffic_v2.py  — v2 (robusta)
 └── src/               — Código fuente Python
-    ├── canonical_schema.py      — Esquema canónico de features (NUEVO)
+    ├── canonical_schema.py      — Esquema canónico de features
     ├── load_cicids2017.py       — Adapter CICIDS2017
     ├── load_nsl_kdd.py          — Adapter NSL-KDD
     ├── rl_defender_env.py       — Entorno RL (Gymnasium)
-    ├── train_rl_defender.py     — Entrenamiento DQN
+    ├── train_rl_defender.py     — Entrenamiento QRDQN
+    ├── validate_checks.py       — Checks A/B/C de validación
+    ├── tune_hparams.py          — Optuna hyperparameter tuning
+    ├── scaling_utils.py         — Utilidades de escalado
     └── baseline_random_forest.py — Baseline Random Forest
 ```
 
@@ -308,12 +363,24 @@ TFG_CYBER_AI/
 
 ### 4. Entrenar Modelos con Esquema Canónico
 
-- [ ] Re-entrenar Random Forest sobre CICIDS2017 con esquema canónico
-- [ ] Re-entrenar DQN sobre CICIDS2017 con esquema canónico
-- [ ] Comparar métricas (accuracy, precision, recall, F1)
-- [ ] Documentar resultados en `experiments/cicids2017_canonical.md`
+- [x] Entrenar QRDQN sobre CICIDS2017 con esquema canónico (C01 smoke, C01 full)
+- [x] Entrenar con más datos (C02 fast 100k, C03 full 500k) → **Mejor modelo: C03 full, accuracy 0.9986**
+- [x] Validar métricas (Check A: accuracy 0.9939, Check B: no leakage, Check C: day-split 0.8414)
+- [x] Documentar resultados en `docs/results.md`
 
-### 5. Preparar para Multi-Dataset Training
+### 5. Optimización de Hiperparámetros
+
+- [x] Optuna study con 10 trials → mejor accuracy 0.9939 (lr=5.2e-4, batch=256)
+- [x] Resultados en `runs/optuna/study_20260212_222134.json`
+
+### 6. Inferencia Phase 2 (Lab Traffic)
+
+- [x] Implementar script v1 de inferencia (`scripts/predict_real_traffic.py`)
+- [x] Implementar script v2 robusto con z-clipping (`scripts/predict_real_traffic_v2.py`)
+- [x] Ejecutar inferencia sobre PCAPs capturados en lab privado
+- [ ] Calibrar/fine-tune para reducir FP en tráfico benigno real (distribución shift detectado)
+
+### 7. Preparar para Multi-Dataset Training
 
 - [x] Validar que adapters producen el mismo formato de salida (152 dims)
 - [ ] Implementar función de "merge" de datasets con esquema canónico
@@ -355,9 +422,10 @@ TFG_CYBER_AI/
   - NSL-KDD: `hassan06/nslkdd` (Kaggle)
   - CICIDS2017: `chethuhn/network-intrusion-dataset` (Kaggle)
 - **Frameworks**:
-  - RL: Stable-Baselines3 (DQN, PPO, A2C)
+  - RL: Stable-Baselines3, sb3-contrib (QRDQN)
   - Entorno: Gymnasium
   - ML: scikit-learn
+  - Hyperparameter tuning: Optuna
 - **Documentación interna**:
   - `.github/copilot-instructions.md`: Convenciones de código
   - `AGENTS.md`: Checklist para coding agents
@@ -375,4 +443,4 @@ Actualiza este documento cuando:
 - Cambien decisiones de diseño fundamentales
 - Se añadan nuevos datasets
 
-**Última actualización**: 2026-02-11 (definición formal de FEATURES_CANON, implementación de esquema canónico y adapters)
+**Última actualización**: 2026-02-26 (actualización de estado: nuevos runs C02/C03, Phase 2 inference, Optuna, validaciones, best model C03 full)

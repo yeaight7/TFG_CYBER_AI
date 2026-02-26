@@ -329,10 +329,12 @@ Real Ataque          5234              7599       (Recall: 59.2%)
 
 | ID  | Algoritmo | net_arch         | lr   | batch | train_freq | grad_steps | buffer | Steps | Reward (tp,fp,fn,om) | Resultado |
 |-----|----------|------------------|------|-------|-----------|-----------|--------|-------|----------------------|----------|
-| A01 | DQN      | [256, 256]       | 1e-4 | 2048  | 100       | 100       | 200k   | 500k  | ( , , , )            | RUNNING  |
-| A02 | DQN      | [512, 256]       | 1e-4 | 2048  | 100       | 100       | 200k   | 500k  | ( , , , )            | PENDIENTE|
+| A01 | DQN      | [256, 256]       | 1e-4 | 2048  | 100       | 100       | 200k   | 500k  | ( , , , )            | ✅ Completado |
+| A02 | DQN      | [512, 256]       | 1e-4 | 2048  | 100       | 100       | 200k   | 500k  | ( , , , )            | ✅ Completado |
 | A03 | DQN      | [128, 256, 256]    | 1e-4 | 2048  | 100       | 100       | 200k   | 500k  | ( , , , )            | PENDIENTE|
 | A04 | QRDQN    | best-of-above    | 1e-4 | 2048  | 100       | 100       | 200k   | 500k  | ( , , , )            | PENDIENTE|
+
+**Nota**: La serie Axx fue reemplazada por los experimentos C01-C03 sobre CICIDS2017, que utilizan el esquema canónico y QRDQN (ver [`docs/results.md`](../docs/results.md)).
 
 --- 
 

@@ -84,7 +84,7 @@ Examples:
 | `C*` | `runs/cicids2017/` | CICIDS2017 training runs |
 | `E*` | `runs/nslkdd/` | NSL-KDD Phase 1 experiments |
 | `VAL_*` | `runs/validation/` | Validation checks (A, B, C) |
-| `P2_*` | `runs/phase2/` | Phase 2 lab evaluation runs |
+| `P2_*`, `P2v2_*` | `runs/phase2/` | Phase 2 lab evaluation runs |
 | `study_*` | `runs/optuna/` | Hyperparameter tuning studies |
 
 ### JSON Schema (minimum fields)
@@ -118,11 +118,13 @@ Examples:
 
 | Field | Value |
 |-------|-------|
-| RUN_ID | `C01_qrdqn_cicids2017_canonical_full_20260212_200218` |
-| Accuracy | 0.9962 |
-| F1 (attack) | 0.9963 |
-| Recall (attack) | 0.9998 |
-| Model file | `models/C01_qrdqn_cicids2017_canonical_full_20260212_200218.zip` |
+| RUN_ID | `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` |
+| Accuracy | 0.9986 |
+| F1 (attack) | 0.9988 |
+| Recall (attack) | 0.9995 |
+| Model file | `models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip` |
+
+Previous best was C01 full (accuracy 0.9962). C03 full achieves higher accuracy (0.9986) trained on 500k rows with stronger FP penalty (−2.0 vs −1.0).
 
 Validation checks A and B confirmed: no leakage, metrics reproducible via direct prediction.
 
