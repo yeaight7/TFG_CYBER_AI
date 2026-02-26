@@ -61,8 +61,8 @@ class RLDatasetDefenderEnv(gym.Env):
 
         # Config de recompensa por defecto
         default_reward_config: dict[str, float] = {
-            "tp": 1.0,    # ataque bloqueado (TP)
-            "fp": -1.0,   # normal bloqueado (FP)
+            "tp": 1.5,    # ataque bloqueado (TP)
+            "fp": -1.5,   # normal bloqueado (FP)
             "fn": -5.0,   # ataque permitido (FN)
             "omission": 0.0,  # término adicional cuando PERMIT
         }

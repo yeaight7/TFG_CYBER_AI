@@ -30,7 +30,7 @@ RUNS_DIR = _REPO_ROOT / "runs"
 
 REWARD_CONFIG: Dict[str, float] = {
     "tp": 1.5,
-    "fp": -1.0,
+    "fp": -1.5,
     "fn": -5.0,
     "omission": 0.0,
 }
