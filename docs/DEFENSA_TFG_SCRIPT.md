@@ -1,7 +1,7 @@
 # Defensa TFG — Script de Presentación Oral
 
 **Autor**: Javier Rivero Iglesias  
-**Duración estimada**: 20–25 minutos  
+**Duración estimada**: 20 a 30 minutos  
 **Nota**: Este script está alineado sección por sección con `DEFENSA_TFG_PROGRESO.md`.  
 
 ---

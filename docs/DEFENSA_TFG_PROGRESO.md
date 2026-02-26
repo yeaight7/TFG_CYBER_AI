@@ -2,7 +2,7 @@
 
 **Autor**: Javier Rivero Iglesias  
 **Fecha de defensa**: Febrero 2026  
-**Duración estimada**: 20–30 minutos  
+**Duración estimada**: 20 a 30 minutos  
 
 ---
 
