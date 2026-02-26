@@ -7,7 +7,7 @@ Este repositorio contiene un Trabajo Fin de Grado orientado al diseño de un **a
 | **Dataset principal** | CICIDS2017 (~2.8 M flows, tráfico moderno con features extraíbles de PCAP) |
 | **Algoritmo** | QRDQN (Quantile Regression DQN) — distributional RL via `sb3-contrib` |
 | **Esquema canónico** | 76 flow features + 76 missingness mask → **152-dim observation** |
-| **Mejor modelo** | Accuracy 0.9962, Recall ataque 0.9998 ([resultados completos](docs/results.md)) |
+| **Mejor modelo** | Accuracy 0.9986, Recall ataque 0.9995, F1 0.9988 ([resultados completos](docs/results.md)) |
 | **Validación** | Check A (direct eval), Check B (shuffled-labels anti-leakage), Check C (CSV-split day generalization) |
 
 ---
@@ -60,18 +60,29 @@ TFG_CYBER_AI/
 │   ├── train_rl_defender.py       # Entrenamiento QRDQN con --smoke / --preset full
 │   ├── validate_checks.py        # Checks A/B/C de validación
 │   ├── tune_hparams.py           # Optimización de hiperparámetros con Optuna
+│   ├── scaling_utils.py          # Utilidades de escalado de features
 │   └── baseline_random_forest.py # Baseline supervisado con Random Forest
+│
+├── scripts/
+│   ├── predict_real_traffic.py    # Inferencia Phase 2 (v1, legacy)
+│   └── predict_real_traffic_v2.py # Inferencia Phase 2 (v2, robusta con z-clipping)
+│
+├── lab/
+│   └── docker/                    # Docker Compose para lab privado (nginx + generador)
+│
+├── pcaps/                         # PCAPs capturados y CSVs de flows extraídos
 │
 ├── datasets/
 │   └── CICIDS2017/                # Dataset CICIDS2017 (8 CSVs, ~2.8M flows)
 │
 ├── models/                        # Modelos entrenados (.zip, .joblib)
 ├── runs/                          # Resultados por experimento
-│   ├── cicids2017/                #   Runs de entrenamiento QRDQN
+│   ├── cicids2017/                #   Runs de entrenamiento QRDQN (C01, C02, C03)
 │   ├── validation/                #   Runs de validation checks (A, B, C)
+│   ├── phase2/                    #   Runs de inferencia Phase 2 (lab traffic)
 │   ├── nslkdd/                    #   Runs Phase 1 (NSL-KDD benchmark)
 │   └── optuna/                    #   Estudios de hiperparámetros
-├── experiments/                   # Documentación de experimentos (NSL-KDD Phase 1)
+├── experiments/                   # Documentación de experimentos
 ├── docs/                          # Documentación adicional
 │   ├── results.md                 #   Métricas consolidadas (extraídas de JSON)
 │   ├── phase2_plan.md             #   Plan paso a paso para Phase 2
@@ -161,6 +172,8 @@ Los resultados completos con métricas extraídas de los JSON de cada run están
 |-----|------|-----------|----------|------------|--------|
 | C01 smoke | 50k | 5k | 0.9697 | 0.9996 | 0.9692 |
 | C01 full | 250k | 100k | 0.9962 | 0.9998 | 0.9963 |
+| C02 fast | 100k | 10k | 0.9766 | 0.9996 | 0.9812 |
+| **C03 full** | **500k** | **100k** | **0.9986** | **0.9995** | **0.9988** |
 
 ### Validation Check Highlights
 
