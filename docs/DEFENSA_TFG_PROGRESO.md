@@ -30,44 +30,44 @@ Buenos días, miembros del tribunal. Mi Trabajo de Fin de Grado aborda un proble
  ─────────────────────────────────────────────────────────────────────
 
  ┌───────────┐    ┌──────────────┐    ┌──────────────────┐
- │  Dataset   │───→│  Adapter +   │───→│  Esquema canónico│
- │ (CSV/PCAP) │    │  Limpieza    │    │  76 features     │
+ │  Dataset  │───→│  Adapter +   │───→│  Esquema canónico│
+ │ (CSV/PCAP)│    │  Limpieza    │    │  76 features     │
  └───────────┘    └──────────────┘    └────────┬─────────┘
                                                │
                                                ▼
                                     ┌──────────────────┐
-                                    │ Missingness mask  │
-                                    │ 76 dims (0/1)     │
+                                    │ Missingness mask │
+                                    │ 76 dims (0/1)    │
                                     └────────┬─────────┘
-                                               │
-                                               ▼
+                                             │
+                                             ▼
                                     ┌──────────────────┐
                                     │ obs = [x₁…x₇₆ |  │
                                     │        m₁…m₇₆]   │
-                                    │ (152 dimensiones) │
+                                    │    (152 dims)    │
                                     └────────┬─────────┘
-                                               │
-                                               ▼
+                                             │
+                                             ▼
                    ┌──────────────┐  ┌──────────────────┐
-                   │ StandardScaler│─→│ Entorno RL       │
-                   │ (fit on train)│  │ (Gymnasium)      │
+                   │StandardScaler│─→│ Entorno RL       │
+                   │(fit on train)│  │ (Gymnasium)      │
                    └──────────────┘  │ obs → agente     │
                                      │ acción ← agente  │
                                      └────────┬─────────┘
                                                │
                                                ▼
                                     ┌──────────────────┐
-                                    │ Agente QRDQN      │
-                                    │ MLP [512, 256]    │
-                                    │ Acción: 0=PERMIT  │
-                                    │         1=BLOCK   │
+                                    │ Agente QRDQN     │
+                                    │ MLP [512, 256]   │
+                                    │ Acción: 0=PERMIT │
+                                    │         1=BLOCK  │
                                     └────────┬─────────┘
                                                │
                                                ▼
                                     ┌──────────────────┐
-                                    │ Evaluación:       │
-                                    │ Accuracy, F1,     │
-                                    │ Confusion Matrix  │
+                                    │ Evaluación:      │
+                                    │ Accuracy, F1,    │
+                                    │ Confusion Matrix │
                                     └──────────────────┘
 ```
 
@@ -114,7 +114,7 @@ El esquema canónico es una de las decisiones de diseño más importantes del pr
   ──────────────────────────────────────────────────────────
   ┌─────────────────────────────┬─────────────────────────────┐
   │      Features (76 dims)     │    Missingness Mask (76)    │
-  │  x_1  x_2  ...  x_75  x_76 │  m_1  m_2  ...  m_75  m_76 │
+  │  x_1  x_2  ...  x_75  x_76  │  m_1  m_2  ...  m_75  m_76  │
   │ (valores numéricos, float32)│   (0 = imputado, 1 = real)  │
   └─────────────────────────────┴─────────────────────────────┘
 
@@ -300,11 +300,11 @@ La comparación entre fases es contundente. Pasamos de una accuracy de 0.76 con 
   TOPOLOGÍA DEL LABORATORIO PRIVADO
   ──────────────────────────────────────────────────────────
 
-  ┌──────────────────── Private VPC (10.0.0.0/24) ────────────────────┐
+  ┌──────────────────── Private VPC (10.0.0.0/24) ─────────────────────┐
   │                                                                    │
   │  ┌────────────────┐                    ┌────────────────────────┐  │
   │  │  attacker VM   │   eth0 ←→ eth0     │  defender VM           │  │
-  │  │  Kali Linux    │───────────────────→ │  Ubuntu 22.04          │  │
+  │  │  Kali Linux    │───────────────────→│  Ubuntu 22.04          │  │
   │  │  10.0.0.10     │                    │  10.0.0.20             │  │
   │  │                │  Genera tráfico:   │  - Docker (nginx, ssh, │  │
   │  │  nmap, hping3, │  benigno + ataques │    ftp, mysql)         │  │

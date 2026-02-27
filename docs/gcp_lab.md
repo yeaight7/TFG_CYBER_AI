@@ -10,19 +10,19 @@ Instructions for deploying a minimal private lab to generate and evaluate networ
 
 ```
 ┌─────────────────────────────── Private VPC (10.0.0.0/24) ──────────────────────────────┐
-│                                                                                         │
-│   ┌──────────────────┐          eth0 ←→ eth0          ┌──────────────────────────┐      │
-│   │  attacker VM     │ ───────────────────────────────→│  defender VM             │      │
-│   │  Kali Linux      │                                 │  Ubuntu 22.04            │      │
-│   │                  │  generates benign + attack       │  - Docker (nginx, ssh,   │      │
-│   │  hping3, nmap,   │  traffic towards defender        │    ftp, mysql targets)   │      │
-│   │  hydra, sqlmap,  │                                 │  - tcpdump / tshark      │      │
-│   │  curl, wget      │                                 │  - CICFlowMeter          │      │
-│   │                  │                                 │  - Python + QRDQN model  │      │
-│   └──────────────────┘                                 └──────────────────────────┘      │
-│        10.0.0.10                                              10.0.0.20                  │
-│                                                                                         │
-└─────────────────────────────────────────────────────────────────────────────────────────┘
+│                                                                                        │
+│   ┌──────────────────┐          eth0 ←→ eth0          ┌──────────────────────────┐     │
+│   │  attacker VM     │ ──────────────────────────────→│  defender VM             │     │
+│   │  Kali Linux      │                                │  Ubuntu 22.04            │     │
+│   │                  │  generates benign + attack     │  - Docker (nginx, ssh,   │     │
+│   │  hping3, nmap,   │  traffic towards defender      │    ftp, mysql targets)   │     │
+│   │  hydra, sqlmap,  │                                │  - tcpdump / tshark      │     │
+│   │  curl, wget      │                                │  - CICFlowMeter          │     │
+│   │                  │                                │  - Python + QRDQN model  │     │
+│   └──────────────────┘                                └──────────────────────────┘     │
+│        10.0.0.10                                              10.0.0.20                │
+│                                                                                        │
+└────────────────────────────────────────────────────────────────────────────────────────┘
                                          │
                                     SSH only from
                                     your IP (bastion)
