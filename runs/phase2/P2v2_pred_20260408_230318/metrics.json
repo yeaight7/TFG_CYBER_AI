@@ -1,0 +1,9 @@
+{
+  "n_flows": 5327,
+  "block_rate": 0.0,
+  "allow_rate": 1.0,
+  "z_abs_max": 10.0,
+  "z_abs_mean": 0.6870886087417603,
+  "z_gt10_count": 0,
+  "z_gt10_pct": 0.0
+}
