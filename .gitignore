@@ -10,3 +10,4 @@ __pycache__/
 *.fls
 .vscode/
 flows_simulated_*
+untrustworthy*
