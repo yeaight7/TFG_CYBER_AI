@@ -126,6 +126,7 @@ FLOWMETER_PY_TO_CANON: Dict[str, str] = {
 }
 
 META_COLS: List[str] = ["src_ip", "dst_ip", "src_port", "dst_port", "protocol", "timestamp"]
+TRUTH_COLS: List[str] = ["truth_label", "truth_y", "source_label"]
 
 _TIME_COL_HINTS: Tuple[str, ...] = ("duration", "iat", "active", "idle")
 
@@ -254,6 +255,58 @@ def compute_diagnostics(
     }
 
 
+def compute_truth_metrics(df: pd.DataFrame, y_pred: np.ndarray) -> Optional[Dict[str, float]]:
+    """
+    Compute evaluation metrics when ground-truth columns are present in the flows CSV.
+    """
+    truth_series: Optional[pd.Series] = None
+
+    if "truth_y" in df.columns:
+        truth_series = pd.to_numeric(df["truth_y"], errors="coerce")
+    elif "truth_label" in df.columns:
+        truth_series = (
+            df["truth_label"]
+            .astype(str)
+            .str.strip()
+            .str.upper()
+            .map({"BENIGN": 0, "ATTACK": 1, "MALICIOUS": 1})
+        )
+
+    if truth_series is None:
+        return None
+
+    valid_mask = truth_series.isin([0, 1]).to_numpy()
+    if not valid_mask.any():
+        return None
+
+    y_true = truth_series.to_numpy(dtype=np.float32)[valid_mask].astype(np.int64)
+    y_pred_valid = y_pred[valid_mask].astype(np.int64)
+
+    tp = int(((y_true == 1) & (y_pred_valid == 1)).sum())
+    tn = int(((y_true == 0) & (y_pred_valid == 0)).sum())
+    fp = int(((y_true == 0) & (y_pred_valid == 1)).sum())
+    fn = int(((y_true == 1) & (y_pred_valid == 0)).sum())
+
+    def safe_div(num: float, den: float) -> float:
+        return float(num / den) if den else 0.0
+
+    precision_attack = safe_div(tp, tp + fp)
+    recall_attack = safe_div(tp, tp + fn)
+    f1_attack = safe_div(2 * precision_attack * recall_attack, precision_attack + recall_attack)
+
+    return {
+        "n_labeled_flows": int(valid_mask.sum()),
+        "accuracy": safe_div(tp + tn, tp + tn + fp + fn),
+        "precision_attack": precision_attack,
+        "recall_attack": recall_attack,
+        "f1_attack": f1_attack,
+        "tp": tp,
+        "tn": tn,
+        "fp": fp,
+        "fn": fn,
+    }
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -320,7 +373,7 @@ def main() -> None:
     print(f"[load] Loaded {len(df)} flows from {args.flows}")
 
     # ── Step 2: Separate metadata ───────────────────────────────────────
-    present_meta_cols = [c for c in META_COLS if c in df.columns]
+    present_meta_cols = [c for c in META_COLS + TRUTH_COLS if c in df.columns]
     meta = df[present_meta_cols].copy() if present_meta_cols else None
 
     # ── Step 3: Time-unit harmonisation ────────────────────────────────
@@ -386,6 +439,10 @@ def main() -> None:
         "z_gt10_count": diag["z_gt10_count"],
         "z_gt10_pct": diag["z_gt10_pct"],
     }
+
+    truth_metrics = compute_truth_metrics(df, y_pred)
+    if truth_metrics is not None:
+        metrics.update(truth_metrics)
 
     config = {
         "run_id": run_id,
