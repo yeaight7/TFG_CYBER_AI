@@ -1,174 +1,166 @@
-# Phase 2 Plan — Simulated Environment with Real Traffic
+# Phase 2 Plan
 
-This document describes the step-by-step plan for **Phase 2** of the TFG, where the RL defender agent transitions from offline dataset evaluation to a simulated lab environment with generated network traffic.
+This document describes the intended operational workflow for Phase 2: evaluating the trained defender on flow features extracted from traffic captured in a private lab.
 
----
+## Objective
 
-## Overview
+Move from offline dataset evaluation to a realistic, but still controlled, traffic-evaluation workflow:
 
-| Item | Detail |
-|------|--------|
-| **Goal** | Evaluate the trained QRDQN agent on live-captured traffic in a controlled lab |
-| **Input** | PCAPs from a private virtual network (GCP or local VMs) |
-| **Output** | Agent decisions (PERMIT / BLOCK) evaluated against ground-truth labels |
-| **Primary dataset** | CICIDS2017 canonical schema (76 features + 76 missingness mask = 152 dims) |
-| **Feature extractor** | CICFlowMeter (preferred) or Zeek |
+1. generate labelled traffic in an isolated lab
+2. capture PCAPs
+3. extract flow features
+4. map flows to the canonical schema
+5. run offline inference
+6. review metrics and diagnostics
 
----
+## Current Baseline
 
-## Step-by-Step Plan
+Phase 2 is currently **offline inference only**.
 
-### Step 1 — Set Up the Lab Environment
+The maintained inference entry point is:
 
-Deploy a minimal 2-VM private network (see [`docs/gcp_lab.md`](gcp_lab.md)):
+- `scripts/predict_real_traffic_v2.py`
 
-| VM | Role | OS |
-|----|------|----|
-| **attacker** | Generate benign + malicious traffic | Kali Linux |
-| **defender** | Run target services, capture traffic, run the agent | Ubuntu 22.04 |
+This baseline does **not** yet include real-time active blocking.
 
-Safety guardrails:
-- Private VPC only, no external connectivity except SSH from a single IP.
-- No scanning or exploitation of resources outside the lab.
+## Inputs and Outputs
 
-### Step 2 — Generate Traffic
+### Inputs
 
-Produce labelled traffic with known ground-truth:
+- captured PCAPs or already extracted flow CSVs
+- trained QRDQN model
+- persisted scaler from the training run
+- optional training percentiles for raw-feature clipping
 
-| Traffic Type | Tool / Method | Label |
-|-------------|---------------|-------|
-| Benign web | `curl`, `wget`, browser scripts | 0 (BENIGN) |
-| Benign SSH | `ssh` commands, `scp` transfers | 0 |
-| DDoS / DoS | `hping3`, `slowloris`, LOIC | 1 (ATTACK) |
-| Port scan | `nmap -sS`, `nmap -sV` | 1 |
-| Brute force | `hydra`, `medusa` | 1 |
-| Web attacks | `sqlmap`, `nikto`, manual payloads | 1 |
+### Outputs
 
-Each traffic session is logged with start/end timestamps and a label file so that ground-truth can be joined to flows afterwards.
+- predictions per flow
+- summary metrics such as block rate / allow rate
+- optional diagnostics highlighting feature-distribution shift
 
-### Step 3 — Capture Traffic (PCAP)
+## Execution Steps
 
-On the **defender** VM:
+### 1. Prepare the Private Lab
+
+Use the isolated topology described in [gcp_lab.md](gcp_lab.md).
+
+At minimum:
+
+- one attacker VM
+- one defender VM
+- only controlled SSH access
+- no external scanning
+
+### 2. Generate Labelled Traffic
+
+Traffic categories should include:
+
+- benign HTTP
+- benign SSH or file transfer
+- scans
+- DoS / DDoS bursts
+- web attacks if suitable targets are present
+
+Ground-truth must be logged outside the model itself.
+
+### 3. Capture Traffic
+
+Typical commands:
 
 ```bash
-sudo tcpdump -i eth0 -w /data/captures/session_YYYYMMDD_HHMMSS.pcap
+sudo tcpdump -i eth0 -w /data/captures/session_$(date +%Y%m%d_%H%M%S).pcap
 ```
 
-Alternatively use `tshark` for live rotation:
+or:
 
 ```bash
 tshark -i eth0 -b duration:300 -w /data/captures/session.pcap
 ```
 
-### Step 4 — Extract Flow Features
+### 4. Extract Flow Features
 
-Convert raw PCAPs to flow-level feature vectors using **CICFlowMeter** (or Zeek + custom post-processing):
+Use CICFlowMeter or a compatible extractor.
+
+Example:
 
 ```bash
-# CICFlowMeter CLI (Java)
 java -jar CICFlowMeter.jar -i /data/captures/ -o /data/flows/
 ```
 
-Output: one CSV per PCAP with ~80 columns matching the CICIDS2017 schema.
+### 5. Map to the Canonical Schema
 
-### Step 5 — Map to Canonical Schema
+Use the mapping implemented in:
 
-Use the existing `canonical_schema.py` adapter to convert flow CSVs into the 152-dim observation vector:
+- `src/canonical_schema.py`
+- `scripts/predict_real_traffic_v2.py` via `FLOWMETER_PY_TO_CANON`
 
-```python
-from canonical_schema import FEATURES_CANON, CICIDS2017_TO_CANON, map_to_canonical
-import pandas as pd
+Expected observation shape:
 
-df = pd.read_csv("/data/flows/session_flows.csv")
-result = map_to_canonical(df, CICIDS2017_TO_CANON)
-X = result.combined  # shape (n_flows, 152)
+- 76 canonical feature values
+- 76 missingness-mask values
+- total `152`
+
+### 6. Run Robust Offline Inference
+
+Example:
+
+```bash
+python scripts/predict_real_traffic_v2.py \
+  --flows pcaps/flows.csv \
+  --model models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip \
+  --scaler runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/scaler.joblib \
+  --percentiles runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/train_percentiles.npz \
+  --clip-z 10.0 \
+  --export-diagnostics
 ```
 
-Apply the same `StandardScaler` that was fitted during training (saved alongside the model) to ensure consistent scaling.
+### 7. Store Run Artifacts
 
-### Step 6 — Inference Loop
+Every Phase 2 run should write to:
 
-Load the trained QRDQN model and predict on each flow:
-
-```python
-from sb3_contrib import QRDQN
-import numpy as np
-
-model = QRDQN.load("models/C01_qrdqn_cicids2017_canonical_full_20260212_200218.zip")
-
-actions = []
-for i in range(len(X)):
-    action, _ = model.predict(X[i], deterministic=True)
-    actions.append(int(action))  # 0 = PERMIT, 1 = BLOCK
-```
-
-### Step 7 — Evaluate Against Ground-Truth
-
-Join agent decisions with ground-truth labels from the traffic generation log:
-
-```python
-from sklearn.metrics import classification_report, confusion_matrix
-
-y_true = ground_truth_labels   # from step 2 log
-y_pred = np.array(actions)
-
-print(confusion_matrix(y_true, y_pred))
-print(classification_report(y_true, y_pred, target_names=["BENIGN", "ATTACK"]))
-```
-
-Save results following the run-tracking convention:
-
-```
+```text
 runs/phase2/<RUN_ID>/
 ├── config.json
 ├── metrics.json
-├── flows.csv           # extracted features
-├── predictions.csv     # flow_id, y_true, y_pred
-└── capture_metadata.json
+├── predictions.csv
+└── diagnostics.json   # optional
 ```
 
-### Step 8 — (Optional) Active Blocking
+### 8. Review the Results
 
-Once inference accuracy is validated, optionally integrate with `iptables` / `nftables` for real-time blocking:
+Review:
 
-```bash
-# Example: block an IP that the agent flags
-sudo iptables -A INPUT -s <attacker_ip> -j DROP
-```
+- block rate
+- allow rate
+- z-score diagnostics
+- suspicious features with large z-scores
+- consistency across benign-only, attack-only, and mixed captures
 
-This step is **not required** for the TFG evaluation and should only be attempted after inference-only evaluation is complete.
+## What Good Phase 2 Evidence Looks Like
 
----
+- inference runs complete without errors
+- artifact folders are reproducible and self-describing
+- metrics are tied to specific run IDs
+- benign traffic and attack traffic are evaluated separately
+- diagnostics explain extreme behaviour instead of hiding it
 
-## Success Criteria
+## Known Risks
 
-| Criterion | Threshold |
-|-----------|-----------|
-| The agent runs inference without errors on lab-captured flows | Must pass |
-| Accuracy on lab test set | ≥ 0.80 |
-| Recall (attack) on lab test set | ≥ 0.70 |
-| No data leakage (Check B equivalent on lab data) | Shuffled accuracy ≈ chance |
-| Reproducible run with `RUN_ID`, `config.json`, `metrics.json` | Must pass |
+| Risk | Why it matters | Current mitigation |
+|------|----------------|--------------------|
+| Domain shift | CICIDS2017 and lab traffic differ | scaler persistence, percentile clipping, z clipping, diagnostics |
+| Feature mismatch | extractor naming may differ | explicit flowmeter-to-canonical mapping |
+| Overclaiming results | Phase 2 behaviour changes across runs | tie every claim to a concrete run artifact |
 
----
+## Non-Goals for the Current Baseline
 
-## Risks & Mitigations
+- active inline blocking
+- adversarial attacker training
+- production deployment
+- schema redesign
 
-| Risk | Mitigation |
-|------|------------|
-| CICFlowMeter output columns differ from CICIDS2017 version | Map columns via `CICIDS2017_TO_CANON`; test with a small capture first |
-| Feature distribution shift (lab ≠ dataset) | Fine-tune model on a small labelled lab subset if needed |
-| Missing features in extractor output | Handled by missingness mask (`m_i = 0`) |
-| GPU not available in lab VM | Agent inference is CPU-friendly; training can stay on local GPU |
+## Next Useful Milestones
 
----
-
-## Timeline (Estimated)
-
-| Week | Milestone |
-|------|-----------|
-| 1 | Lab setup (VMs, VPC, services) |
-| 2 | Traffic generation scripts + PCAP capture |
-| 3 | Feature extraction pipeline + canonical mapping validation |
-| 4 | Inference loop + evaluation + documentation |
-| 5 | (Optional) Active blocking experiment |
+1. Re-run benign, scan, and mixed traffic with the current v2 defaults and compare artifacts.
+2. Decide whether lab-specific calibration is needed.
+3. Only after stable offline evidence, consider a controlled active-blocking prototype.

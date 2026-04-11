@@ -1,328 +1,200 @@
-# Consolidated Experiment Results
+# Consolidated Results Snapshot
 
-This document is auto-generated from run artifacts stored under `runs/`.
-All metrics are extracted directly from JSON files — no hardcoded values.
+This document summarises **artifact-backed** results currently present under `runs/` and `models/`.
 
----
+## Rules for Reading This Page
 
-## CICIDS2017 — QRDQN Training Runs
+- If a metric comes from a committed artifact, it is presented as a measured result.
+- If a behaviour changed across runs, the result is tied to the exact `RUN_ID`.
+- Historical run metadata must not be confused with the **current code defaults**.
 
-### Summary Table
+## Current Code Defaults vs Historical Run Settings
 
-| Run | Preset | Rows | Timesteps | Split | Accuracy | Recall atk | F1 atk |
-|-----|--------|------|-----------|-------|----------|------------|--------|
-| C01 smoke | fast | 50k | 5k | random | 0.9697 | 0.9996 | 0.9692 |
-| C01 full | full | 250k | 100k | random | 0.9962 | 0.9998 | 0.9963 |
-| C02 fast | fast | 100k | 10k | random | 0.9766 | 0.9996 | 0.9812 |
-| **C03 full** | **full** | **500k** | **100k** | **random** | **0.9986** | **0.9995** | **0.9988** |
+The **current codebase defaults** for training and validation are:
 
-> **Best model**: C03 full (accuracy 0.9986, F1 attack 0.9988)
+```python
+REWARD_CONFIG = {
+    "tp": 1.5,
+    "fp": -1.5,
+    "fn": -5.0,
+    "omission": 0.0,
+}
+```
 
----
+Important: several committed historical runs used different reward values. For example, the best historical CICIDS2017 run below used `fp = -2.0`.
 
-### C01 Smoke Test
+## CICIDS2017 Training Runs
 
-| Field | Value |
-|-------|-------|
-| **RUN_ID** | `C01_qrdqn_cicids2017_canonical_smoke_20260212_195959` |
-| **Algorithm** | QRDQN |
-| **Dataset** | CICIDS2017 (canonical, 50 000 rows) |
-| **Observation dim** | 152 (76 features + 76 missingness mask) |
-| **Timesteps** | 5 000 |
-| **Device** | cuda |
-| **Net arch** | [512, 256] |
-| **Learning rate** | 1 × 10⁻⁴ |
-| **Batch size** | 256 |
-| **Train / Test** | 40 000 / 10 000 |
+### Summary
 
-**Metrics (random split)**
+| Run | Rows | Timesteps | Split | Accuracy | Recall attack | F1 attack | Reward config |
+|-----|------|-----------|-------|----------|---------------|-----------|---------------|
+| C01 smoke | 50,000 | 5,000 | random | 0.9697 | 0.9996 | 0.9692 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
+| C01 full | 250,000 | 100,000 | random | 0.9962 | 0.9998 | 0.9963 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
+| C02 fast | 100,000 | 10,000 | random | 0.9766 | 0.9996 | 0.9812 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
+| C03 full | 500,000 | 100,000 | random | **0.99859** | **0.99945** | **0.99876** | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` |
 
-| Metric | Value |
-|--------|-------|
-| Accuracy | 0.9697 |
-| Precision (attack) | 0.9407 |
-| Recall (attack) | 0.9996 |
-| F1 (attack) | 0.9692 |
-| Precision (benign) | 0.9996 |
-| Recall (benign) | 0.9424 |
-| F1 (benign) | 0.9702 |
-
-> Source: `runs/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/metrics.json`
-
----
-
-### C01 Full Training
+### Best Committed Historical Run
 
 | Field | Value |
 |-------|-------|
-| **RUN_ID** | `C01_qrdqn_cicids2017_canonical_full_20260212_200218` |
-| **Algorithm** | QRDQN |
-| **Dataset** | CICIDS2017 (canonical, 250 000 rows) |
-| **Observation dim** | 152 |
-| **Timesteps** | 100 000 |
-| **Device** | cuda |
-| **Net arch** | [512, 256] |
-| **Learning rate** | 1 × 10⁻⁴ |
-| **Batch size** | 2 048 |
-| **Train / Test** | 200 000 / 50 000 |
+| RUN_ID | `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` |
+| Algorithm | QRDQN |
+| Dataset | CICIDS2017 |
+| Observation size | 152 |
+| Train / test | 400,000 / 100,000 |
+| Device | `cuda` |
+| Learning rate | `1e-4` |
+| Batch size | `2048` |
+| Gradient steps | `20` |
+| Reward config | `tp=1.5, fp=-2.0, fn=-5.0, omission=0.0` |
 
-**Metrics (random split)**
-
-| Metric | Value |
-|--------|-------|
-| Accuracy | 0.9962 |
-| Precision (attack) | 0.9928 |
-| Recall (attack) | 0.9998 |
-| F1 (attack) | 0.9963 |
-| Precision (benign) | 0.9998 |
-| Recall (benign) | 0.9924 |
-| F1 (benign) | 0.9961 |
-
-> Source: `runs/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/metrics.json`
-
----
-
-### C02 Fast Training (Random Split)
-
-| Field | Value |
-|-------|-------|
-| **RUN_ID** | `C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122` |
-| **Algorithm** | QRDQN |
-| **Dataset** | CICIDS2017 (canonical, 100 000 rows) |
-| **Observation dim** | 152 |
-| **Timesteps** | 10 000 |
-| **Device** | cuda |
-| **Net arch** | [512, 256] |
-| **Learning rate** | 1 × 10⁻⁴ |
-| **Batch size** | 256 |
-| **Gradient steps** | 10 |
-| **Train freq** | 50 |
-| **Train / Test** | 80 000 / 20 000 |
-| **Reward** | tp=1.5, fp=−1.0, fn=−5.0, om=0.0 |
-
-**Metrics (random split)**
+Metrics from `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/metrics.json`:
 
 | Metric | Value |
 |--------|-------|
-| Accuracy | 0.9766 |
-| Precision (attack) | 0.9635 |
-| Recall (attack) | 0.9996 |
-| F1 (attack) | 0.9812 |
-| Precision (benign) | 0.9993 |
-| Recall (benign) | 0.9403 |
-| F1 (benign) | 0.9689 |
+| Accuracy | `0.99859` |
+| Precision attack | `0.99806` |
+| Recall attack | `0.99945` |
+| F1 attack | `0.99876` |
+| Precision benign | `0.99928` |
+| Recall benign | `0.99746` |
+| F1 benign | `0.99837` |
 
-> Source: `runs/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/metrics.json`
-
----
-
-### C03 Full Training (Random Split) — ⭐ Best Model
-
-| Field | Value |
-|-------|-------|
-| **RUN_ID** | `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` |
-| **Algorithm** | QRDQN |
-| **Dataset** | CICIDS2017 (canonical, 500 000 rows) |
-| **Observation dim** | 152 |
-| **Timesteps** | 100 000 |
-| **Device** | cuda |
-| **Net arch** | [512, 256] |
-| **Learning rate** | 1 × 10⁻⁴ |
-| **Batch size** | 2 048 |
-| **Gradient steps** | 20 |
-| **Train freq** | 100 |
-| **Train / Test** | 400 000 / 100 000 |
-| **Reward** | tp=1.5, fp=−2.0, fn=−5.0, om=0.0 |
-
-**Metrics (random split)**
-
-| Metric | Value |
-|--------|-------|
-| Accuracy | **0.9986** |
-| Precision (attack) | 0.9981 |
-| Recall (attack) | **0.9995** |
-| F1 (attack) | **0.9988** |
-| Precision (benign) | 0.9993 |
-| Recall (benign) | 0.9975 |
-| F1 (benign) | 0.9984 |
-
-Key differences from C01 full: 500k rows (vs 250k), gradient_steps=20 (vs default), fp penalty=−2.0 (vs −1.0).
-
-> Source: `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/metrics.json`
-
----
-
-## Validation Checks
-
-Three validation checks verify that the reported metrics are genuine:
-
-| Check | Purpose |
-|-------|---------|
-| **A** | Direct `model.predict(X_test[i])` vs `y_test[i]` without relying on the env's `info["true_label"]` |
-| **B** | Shuffled-labels anti-leakage test — train with randomly permuted labels and confirm accuracy drops to chance |
-| **C** | CSV-split evaluation — train on Monday–Wednesday CSVs, test on Thursday–Friday (unseen days/attacks) |
+## Validation Artifacts
 
 ### Check A — Direct Evaluation
 
-| Field | Value |
-|-------|-------|
-| **RUN_ID** | `VAL_checks_A_20260212_235443` |
-| **Model** | `C01_qrdqn_cicids2017_canonical_full_20260212_200218.zip` |
-| **Samples** | 10 000 (50 000 rows, random split) |
+Artifact:
+
+- `runs/validation/VAL_checks_A_20260212_235443/validation_results.json`
 
 | Metric | Value |
 |--------|-------|
-| Accuracy | 0.9939 |
-| Precision (attack) | 0.9876 |
-| Recall (attack) | 0.9998 |
-| F1 (attack) | 0.9936 |
-| TP | 4 772 |
-| FP | 60 |
-| FN | 1 |
-| TN | 5 167 |
+| Accuracy | `0.9939` |
+| Precision attack | `0.98758` |
+| Recall attack | `0.99979` |
+| F1 attack | `0.99365` |
+| TP / FP / FN / TN | `4772 / 60 / 1 / 5167` |
 
-> Source: `runs/validation/VAL_checks_A_20260212_235443/validation_results.json`
+### Check B — Shuffled Labels
 
----
+Artifact:
 
-### Check B — Shuffled Labels (Anti-Leakage)
-
-| Field | Value |
-|-------|-------|
-| **RUN_ID** | `VAL_checks_B_20260212_235736` |
-| **Timesteps** | 2 000 |
-| **Train / Test** | 40 000 / 10 000 |
+- `runs/validation/VAL_checks_B_20260212_235736/validation_results.json`
 
 | Metric | Value |
 |--------|-------|
-| Shuffled accuracy | 0.4773 |
-| Baseline (majority class) | 0.5227 |
-| Leakage threshold | 0.5727 |
-| **Leakage detected** | ✅ **NO** |
+| Shuffled accuracy | `0.4773` |
+| Majority-class baseline | `0.5227` |
+| Leakage detected | `false` |
 
-Interpretation: accuracy with shuffled labels is *below* the majority-class baseline, confirming no data leakage.
+Interpretation:
 
-> Source: `runs/validation/VAL_checks_B_20260212_235736/validation_results.json`
+- this historical artifact supports the no-leakage claim
+- the model collapsed to one class under shuffled labels, which is acceptable for this anti-leakage test because performance did not stay artificially high
 
----
+### Check C — Hard CSV/Day Split
 
-### Check C — CSV-Split Evaluation (Day-Level Generalization)
+Artifact:
 
-| Field | Value |
-|-------|-------|
-| **RUN_ID** | `VAL_checks_C_20260213_004847` |
-| **Train CSVs** | Monday, Tuesday, Wednesday |
-| **Test CSVs** | Thursday, Friday |
-| **Timesteps** | 30 000 |
-| **Device** | cuda |
-| **Train** | 1 668 530 rows (1 402 023 benign, 266 507 attack) |
-| **Test** | 1 162 213 rows (871 074 benign, 291 139 attack) |
+- `runs/validation/VAL_checks_C_20260213_004847/validation_results.json`
 
 | Metric | Value |
 |--------|-------|
-| Accuracy | 0.8414 |
-| Precision (attack) | 0.7648 |
-| Recall (attack) | 0.5295 |
-| F1 (attack) | 0.6258 |
-| Precision (benign) | 0.8574 |
-| Recall (benign) | 0.9456 |
-| F1 (benign) | 0.8993 |
-| TP | 154 169 |
-| FP | 47 414 |
-| FN | 136 970 |
-| TN | 823 660 |
+| Accuracy | `0.8413509399739979` |
+| Precision attack | `0.764791673901073` |
+| Recall attack | `0.5295374374439701` |
+| F1 attack | `0.6257849253737402` |
+| TP / FP / FN / TN | `154169 / 47414 / 136970 / 823660` |
+| Train rows | `1,668,530` |
+| Test rows | `1,162,213` |
 
-Note: Check C uses a much harder split (unseen days with different attack types) and only 30 000 training timesteps, so lower metrics are expected. A longer training run would improve generalization.
+This remains the hardest committed generalisation artifact in the repository.
 
-> Source: `runs/validation/VAL_checks_C_20260213_004847/validation_results.json`
+### Leave-One-Exact-CSV-Out
 
----
+Status:
 
-## Optuna Hyperparameter Study
+- implemented in `src/validate_leave_one_csv_out.py`
+- no committed full artifact currently exists under `runs/validation/`
+
+Because there is no committed run folder for this validation yet, no measured metrics are reported here.
+
+## Phase 2 Offline Inference
+
+Phase 2 results must always be read per artifact because behaviour changed over time.
+
+### Early v2 Benign-Only Artifact
+
+Artifact:
+
+- `runs/phase2/P2v2_pred_20260224_004121/`
 
 | Field | Value |
 |-------|-------|
-| **Study** | `study_20260212_222134.json` |
-| **Trials** | 10 |
-| **Timesteps per trial** | 10 000 |
-| **Max rows** | 50 000 |
+| Flows CSV | `pcaps/flows_benign.csv` |
+| Block rate | `1.0` |
+| Allow rate | `0.0` |
+| z abs max | `10.0` |
+| z abs mean | `1.1148942708969116` |
 
-**Best trial result**: Accuracy 0.9939
+This artifact documents a strong domain-shift problem on benign real traffic.
 
-| Hyperparameter | Best Value |
-|----------------|------------|
-| Learning rate | 5.2 × 10⁻⁴ |
-| Batch size | 256 |
-| Gradient steps | 10 |
-| Gamma | 0.956 |
-| Train freq | 100 |
+### Later v2 Benign-Only Artifact
 
-> Source: `runs/optuna/study_20260212_222134.json`
+Artifact:
 
----
+- `runs/phase2/P2v2_pred_20260408_230318/`
 
-## Phase 2 — Offline Inference on Lab-Captured Traffic
+| Field | Value |
+|-------|-------|
+| Flows CSV | `pcaps/flows_benign.csv` |
+| Block rate | `0.0` |
+| Allow rate | `1.0` |
+| z abs max | `10.0` |
+| z abs mean | `0.6870886087417603` |
 
-Phase 2 runs evaluate the trained QRDQN model on flow features extracted from real PCAPs captured in a private lab environment. The v2 inference script (`scripts/predict_real_traffic_v2.py`) applies z-score clipping to handle out-of-distribution features.
+This later artifact shows that Phase 2 behaviour is sensitive to configuration and run conditions, which is exactly why documentation must cite the specific run artifact.
 
-### v2 Prediction Runs (Robust Inference)
+## NSL-KDD Historical Benchmark
 
-All v2 runs use the **C03 full model** with the matching scaler and z-score clipping at 10.0.
+The maintained historical summary lives in [../experiments/nslkdd_experiments.md](../experiments/nslkdd_experiments.md).
 
-| Run ID | Flows CSV | Flows | Block Rate | Allow Rate | z-abs max | z-abs mean |
-|--------|-----------|-------|------------|------------|-----------|------------|
-| P2v2\_…235033 | flows.csv | 1 261 | 20.7 % | 79.3 % | 10.0 | 0.714 |
-| P2v2\_…004121 | flows\_benign.csv | 5 327 | 100 % | 0 % | 10.0 | 1.115 |
-| P2v2\_…004242 | flows\_scan.csv | 8 721 | 59.7 % | 40.3 % | 10.0 | 0.991 |
-| P2v2\_…004306 | flows\_mix.csv | 5 511 | 95.5 % | 4.5 % | 10.0 | 1.107 |
+Short version:
 
-**Observations**:
-- `flows_benign.csv` (pure benign traffic): 100 % block rate indicates distribution shift between lab-captured benign traffic and CICIDS2017 training data. Further calibration or fine-tuning is needed.
-- `flows_mix.csv` (mixed traffic): 95.5 % block rate — agent is aggressive, consistent with the strong FN penalty in the reward config.
-- `flows_scan.csv` (port scans): 59.7 % block rate — partial detection of scan traffic.
-- `flows.csv` (general lab traffic): 20.7 % block rate — more conservative predictions.
+| Experiment | Model | Accuracy | Recall attack | FP rate |
+|------------|-------|----------|---------------|---------|
+| E01 | DQN | `0.7602` | `0.600` | `0.028` |
+| E02 | Random Forest | `0.7693` | `0.615` | `0.0267` |
+| E05 | DQN | `0.7563` | `0.5955` | `0.0313` |
 
-### v1 Prediction Runs (Legacy)
+NSL-KDD remains historical benchmarking material only.
 
-| Run ID | Flows CSV | Model | Block Rate | Allow Rate |
-|--------|-----------|-------|------------|------------|
-| P2\_pred\_20260223\_155850 | flows.csv | C01 full | 0 % | 100 % |
-| P2\_pred\_20260223\_163318 | flows.csv | C01 full | 100 % | 0 % |
+## Artifact Locations
 
-v1 runs showed extreme predictions (all-block or all-allow), which motivated the development of the v2 robust inference pipeline with proper scaling and z-score clipping.
+### Training
 
-> Source: `runs/phase2/P2v2_pred_*/metrics.json`
+- `runs/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/`
+- `runs/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/`
+- `runs/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/`
+- `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/`
 
----
+### Validation
 
-## NSL-KDD — Phase 1 Benchmark (Historical)
+- `runs/validation/VAL_checks_A_20260212_235443/`
+- `runs/validation/VAL_checks_B_20260212_235736/`
+- `runs/validation/VAL_checks_C_20260213_004847/`
 
-Phase 1 experiments on NSL-KDD are documented in [`experiments/nslkdd_experiments.md`](../experiments/nslkdd_experiments.md). Summary of key runs:
+### Phase 2
 
-| ID | Model | Dataset | Reward (tp, fp, fn, om) | Steps | Acc | Recall atk | FP rate |
-|----|-------|---------|-------------------------|-------|-----|------------|---------|
-| E01 | DQN | NSL-KDD 20% | 1.0, −1.0, −2.0, 0.0 | 200k | 0.7602 | 0.600 | 0.028 |
-| E02 | RF | NSL-KDD 20% | — | — | 0.7693 | 0.615 | 0.027 |
-| E05 | DQN | NSL-KDD 20% | 2.0, −1.0, −6.0, 0.2 | 500k | 0.7563 | 0.596 | 0.031 |
+- `runs/phase2/P2v2_pred_20260224_004121/`
+- `runs/phase2/P2v2_pred_20260408_230318/`
 
-NSL-KDD is used solely as a Phase 1 benchmark and is **not** part of the final simulation model.
+### Models
 
----
+- `models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip`
 
-## Run Artifact Locations
+## Open Documentation Gap
 
-| Run | Path |
-|-----|------|
-| C01 smoke | `runs/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/` |
-| C01 full | `runs/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/` |
-| C02 fast | `runs/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/` |
-| **C03 full** | `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/` |
-| Val A | `runs/validation/VAL_checks_A_20260212_235443/` |
-| Val B | `runs/validation/VAL_checks_B_20260212_235736/` |
-| Val C | `runs/validation/VAL_checks_C_20260213_004847/` |
-| Optuna | `runs/optuna/study_20260212_222134.json` |
-| P2v2 (flows.csv) | `runs/phase2/P2v2_pred_20260223_235033/` |
-| P2v2 (benign) | `runs/phase2/P2v2_pred_20260224_004121/` |
-| P2v2 (scan) | `runs/phase2/P2v2_pred_20260224_004242/` |
-| P2v2 (mix) | `runs/phase2/P2v2_pred_20260224_004306/` |
-| NSL-KDD A02 | `runs/nslkdd/A02_dqn_arch512x256_lr1e-4_bs2048_t500k_20251214_184003_0/` |
+The repository now includes code for leave-one-exact-CSV-out validation, but the documentation cannot yet report aggregate metrics for it until a full committed run is added under `runs/validation/`.

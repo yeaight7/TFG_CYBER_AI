@@ -1,270 +1,154 @@
-# TFG – Agente de Ciberseguridad con Aprendizaje por Refuerzo
+# TFG_CYBER_AI
 
-Este repositorio contiene un Trabajo Fin de Grado orientado al diseño de un **agente defensor** basado en **Aprendizaje por Refuerzo (Reinforcement Learning, RL)** para tareas de detección y bloqueo de tráfico malicioso.
+RL-based cybersecurity defender for binary `PERMIT` / `BLOCK` decisions on network flows.
 
-| Item | Detail |
+The project is organised in two phases:
+
+- **Phase 1**: offline training and validation on historical datasets.
+- **Phase 2**: offline inference on flow features extracted from traffic captured in a private lab.
+
+The current repository uses **CICIDS2017** as the main dataset, a **fixed canonical schema** of 76 flow features, and a **152-dimensional observation vector** once the missingness mask is appended.
+
+## Current Status
+
+| Area | Status |
 |------|--------|
-| **Dataset principal** | CICIDS2017 (~2.8 M flows, tráfico moderno con features extraíbles de PCAP) |
-| **Algoritmo** | QRDQN (Quantile Regression DQN) — distributional RL via `sb3-contrib` |
-| **Esquema canónico** | 76 flow features + 76 missingness mask → **152-dim observation** |
-| **Mejor modelo** | Accuracy 0.9986, Recall ataque 0.9995, F1 0.9988 ([resultados completos](docs/results.md)) |
-| **Validación** | Check A/B/C + leave-one-exact-CSV-out sobre los 8 CSVs reales de CICIDS2017 |
+| Canonical schema | Implemented and frozen at 76 features |
+| CICIDS2017 adapter | Implemented |
+| NSL-KDD adapter | Implemented for historical Phase 1 benchmarking |
+| RL algorithm | QRDQN |
+| Validation suite | Checks A, B, C + leave-one-exact-CSV-out script |
+| Phase 2 inference | Robust offline pipeline available (`predict_real_traffic_v2.py`) |
+| Active blocking | Not implemented |
 
----
+## Documentation Map
 
-## Ejecución rápida
+- [docs/README.md](docs/README.md): documentation index and document roles
+- [.github/AGENT_CONTEXT.md](.github/AGENT_CONTEXT.md): project-wide technical source of truth
+- [docs/results.md](docs/results.md): artifact-backed results snapshot
+- [docs/AGENT_CONTEXT.md](docs/AGENT_CONTEXT.md): Phase 2 scope and guardrails
+- [docs/phase2_plan.md](docs/phase2_plan.md): execution plan for the lab workflow
+- [docs/gcp_lab.md](docs/gcp_lab.md): private lab deployment guide
+- [experiments/README.md](experiments/README.md): experiment archive index
+- [docs/DEFENSA_TFG_PROGRESO.md](docs/DEFENSA_TFG_PROGRESO.md): Spanish defense notes
+- [docs/DEFENSA_TFG_SCRIPT.md](docs/DEFENSA_TFG_SCRIPT.md): Spanish defense script
 
-```bash
-# 1. Instalar dependencias
-pip install -r requirements.txt
-
-# 2. Smoke test (~2-5 min, 50k rows, 5k timesteps)
-python src/train_rl_defender.py --smoke
-
-# 3. Entrenamiento completo (~30-60 min, 250k rows, 100k timesteps)
-python src/train_rl_defender.py --preset full
-
-# 4. Entrenamiento con parámetros custom
-python src/train_rl_defender.py --timesteps 200000 --max-rows 500000
-
-# 5. Split por día (train Mon-Wed, test Thu-Fri)
-python src/train_rl_defender.py --split-mode day
-
-# 6. Sin esquema canónico (features raw)
-python src/train_rl_defender.py --smoke --no-canonical
-
-# 7. Optimización de hiperparámetros con Optuna
-python src/tune_hparams.py --n-trials 20 --timesteps 10000
-
-# 8. Validation checks (A=direct eval, B=shuffled labels, C=CSV split)
-python src/validate_checks.py --model models/<MODEL>.zip --checks A B C
-
-# 9. Leave-one-exact-CSV-out sobre los CSVs reales de CICIDS2017
-python src/validate_leave_one_csv_out.py --timesteps 30000
-
-# 10. Smoke/dev run de leave-one-exact-CSV-out
-python src/validate_leave_one_csv_out.py --timesteps 5000 --max-rows-per-csv 10000
-
-# 11. Ver logs de entrenamiento con TensorBoard
-tensorboard --logdir runs/cicids2017/
-
-# La validación leave-one-exact-CSV-out no genera logs de TensorBoard;
-# sus resultados se guardan como JSON en runs/validation/
-```
-
-Los entrenamientos guardan sus resultados en `runs/<category>/<RUN_ID>/` con
-`config.json` y `metrics.json` (por ejemplo, `runs/cicids2017/`).
-Las validaciones leave-one-exact-CSV-out guardan sus resultados en
-`runs/validation/<RUN_ID>/` con `config.json` y `validation_results.json`.
-Los modelos se guardan en `models/<RUN_ID>.zip`.
-
----
-
-## 📁 Estructura del Proyecto
+## Repository Structure
 
 ```text
 TFG_CYBER_AI/
-├── src/
-│   ├── canonical_schema.py        # 76 features canónicas + mappings + missingness mask
-│   ├── load_cicids2017.py         # Adapter CICIDS2017 (dataset principal)
-│   ├── load_nsl_kdd.py            # Adapter NSL-KDD (benchmark histórico)
-│   ├── rl_defender_env.py         # Entorno Gymnasium custom (152-dim obs, Discrete(2))
-│   ├── train_rl_defender.py       # Entrenamiento QRDQN con --smoke / --preset full
-│   ├── validate_checks.py        # Checks A/B/C de validación
-│   ├── validate_leave_one_csv_out.py # Validación leave-one-exact-CSV-out
-│   ├── tune_hparams.py           # Optimización de hiperparámetros con Optuna
-│   ├── scaling_utils.py          # Utilidades de escalado de features
-│   └── baseline_random_forest.py # Baseline supervisado con Random Forest
-│
-├── scripts/
-│   ├── predict_real_traffic.py    # Inferencia Phase 2 (v1, legacy)
-│   └── predict_real_traffic_v2.py # Inferencia Phase 2 (v2, robusta con z-clipping)
-│
-├── lab/
-│   └── docker/                    # Docker Compose para lab privado (nginx + generador)
-│
-├── pcaps/                         # PCAPs capturados y CSVs de flows extraídos
-│
-├── datasets/
-│   └── CICIDS2017/                # Dataset CICIDS2017 (8 CSVs, ~2.8M flows)
-│
-├── models/                        # Modelos entrenados (.zip, .joblib)
-├── runs/                          # Resultados por experimento
-│   ├── cicids2017/                #   Runs de entrenamiento QRDQN (C01, C02, C03)
-│   ├── validation/                #   Runs de validation checks (A, B, C)
-│   ├── phase2/                    #   Runs de inferencia Phase 2 (lab traffic)
-│   ├── nslkdd/                    #   Runs Phase 1 (NSL-KDD benchmark)
-│   └── optuna/                    #   Estudios de hiperparámetros
-├── experiments/                   # Documentación de experimentos
-├── docs/                          # Documentación adicional
-│   ├── results.md                 #   Métricas consolidadas (extraídas de JSON)
-│   ├── phase2_plan.md             #   Plan paso a paso para Phase 2
-│   ├── AGENT_CONTEXT.md           #   Contexto Phase 2 para coding agents
-│   └── gcp_lab.md                 #   Instrucciones de lab privado (GCP)
-├── report/                        # Memoria del TFG (LaTeX)
-├── requirements.txt               # Dependencias Python
-└── README.md
+├── .github/                 # Agent guidance and project-wide source of truth
+├── datasets/                # Local datasets (not tracked in git)
+├── docs/                    # Documentation, results, Phase 2 guides, defense material
+├── experiments/             # Historical experiment notes
+├── lab/                     # Lab-related assets
+├── models/                  # Trained model files
+├── pcaps/                   # Extracted flows and captures used for Phase 2 work
+├── report/                  # Thesis report sources
+├── runs/                    # Run artifacts: config.json, metrics.json, validation_results.json, etc.
+├── scripts/                 # Phase 2 and utility scripts
+└── src/                     # Training, validation, adapters, environment, utilities
 ```
 
----
+## Core Technical Invariants
 
-## 🚀 Instalación y Configuración
+- `FEATURES_CANON` contains **76 flow-based features**.
+- The observation vector is always **152 dimensions**:
+  - 76 canonical feature values
+  - 76 missingness-mask values
+- The missingness mask uses:
+  - `1` for present/valid features
+  - `0` for imputed or unavailable features
+- Labels are binary:
+  - `0 = BENIGN`
+  - `1 = ATTACK`
+- Leakage-prone fields must not enter the model:
+  - IP addresses
+  - absolute timestamps
+  - Flow IDs or unique identifiers
+  - ports used directly as label proxies
 
-### Requisitos Previos
+## Quickstart
 
-- **Python 3.10+** (recomendado 3.10 o 3.11)
-- **pip** (gestor de paquetes de Python)
-- Dataset CICIDS2017 en `datasets/CICIDS2017/` (8 archivos CSV)
-
-### Instalación
+Install dependencies:
 
 ```bash
-git clone https://github.com/yeaight7/TFG_CYBER_AI.git
-cd TFG_CYBER_AI
-python3 -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
----
+Train the RL model on CICIDS2017:
 
-## 🏗️ Arquitectura del Sistema
-
-### Esquema Canónico de Features
-
-El proyecto usa un **esquema canónico fijo** de 76 features flow-based (definidas en `src/canonical_schema.py`) que:
-
-1. Existen en CICIDS2017 (dataset principal)
-2. Son extraíbles de tráfico real/PCAP con CICFlowMeter/Zeek
-3. No causan data leakage (sin IPs, timestamps, Flow IDs)
-
-Cada observación del agente es un vector de **152 dimensiones**:
-
-```
-obs = [x_1, x_2, ..., x_76, m_1, m_2, ..., m_76]
+```bash
+python src/train_rl_defender.py --smoke
+python src/train_rl_defender.py --preset full
+python src/train_rl_defender.py --split-mode day
 ```
 
-Donde `x_i` es el valor de la feature (imputado con 0 si falta) y `m_i` indica si estaba presente (1) o ausente (0).
+Run the validation suite:
 
-### Entorno RL (Gymnasium)
-
-- **Espacio de observación**: `Box(152,)` — vector de features + máscara de missingness
-- **Espacio de acciones**: `Discrete(2)` — 0 = PERMIT, 1 = BLOCK
-- **Sistema de recompensas** (configurable):
-  - TP (bloquear ataque): +1.5
-  - FP (bloquear benigno): −1.0
-  - FN (permitir ataque): −5.0
-  - TN (permitir benigno): 0.0
-
-### Agente RL (QRDQN)
-
-- **Algoritmo**: Quantile Regression DQN (`sb3-contrib`)
-- **Red**: MLP [512, 256]
-- **Learning rate**: 1 × 10⁻⁴
-- **Batch size**: 2 048 (full) / 256 (smoke)
-
-### Validation Checks
-
-| Check | Descripción |
-|-------|-------------|
-| **A** | Evaluación directa `model.predict(X_test[i])` vs `y_test[i]`, sin depender del entorno |
-| **B** | Entrena con labels barajados → confirma que accuracy cae a nivel aleatorio (sin leakage) |
-| **C** | Split por CSV: entrena en Mon–Wed, testea en Thu–Fri (generalización real) |
-| **Leave-One-CSV-Out** | Entrena 8 folds dejando fuera 1 CSV exacto en cada run y agregando métricas por fold |
-
-Ver resultados reales en [`docs/results.md`](docs/results.md).
-
----
-
-## 📊 Resultados Actuales
-
-Los resultados completos con métricas extraídas de los JSON de cada run están en [`docs/results.md`](docs/results.md).
-
-### Resumen (CICIDS2017 — QRDQN)
-
-| Run | Rows | Timesteps | Accuracy | Recall atk | F1 atk |
-|-----|------|-----------|----------|------------|--------|
-| C01 smoke | 50k | 5k | 0.9697 | 0.9996 | 0.9692 |
-| C01 full | 250k | 100k | 0.9962 | 0.9998 | 0.9963 |
-| C02 fast | 100k | 10k | 0.9766 | 0.9996 | 0.9812 |
-| **C03 full** | **500k** | **100k** | **0.9986** | **0.9995** | **0.9988** |
-
-### Validation Check Highlights
-
-| Check | Key Result |
-|-------|------------|
-| A (direct eval) | Accuracy 0.9939 — TP=4772, FP=60, FN=1 |
-| B (anti-leakage) | Shuffled acc 0.4773 vs baseline 0.5227 → ✅ no leakage |
-| C (CSV-split) | Accuracy 0.8414 (30k timesteps, unseen days) |
-
----
-
-## 🔬 Experimentación
-
-### Experiments Phase 1 (NSL-KDD)
-
-Consulta [`experiments/nslkdd_experiments.md`](experiments/nslkdd_experiments.md) para los resultados de Phase 1 con DQN y Random Forest sobre NSL-KDD.
-
-### Ajustar Sistema de Recompensas
-
-```python
-REWARD_CONFIG = {
-    "tp": 1.5,      # Recompensa por bloquear ataque (True Positive)
-    "fp": -1.0,     # Penalización por bloquear tráfico legítimo (False Positive)
-    "fn": -5.0,     # Penalización fuerte por permitir ataque (False Negative)
-    "omission": 0.0  # Recompensa por permitir tráfico legítimo (True Negative)
-}
+```bash
+python src/validate_checks.py --model models/<MODEL>.zip --checks A B C
 ```
 
-### Registro de Runs
+Run leave-one-exact-CSV-out validation:
 
-Cada run produce:
-```
-runs/<category>/<RUN_ID>/
-├── config.json      # configuración completa
-├── metrics.json     # métricas finales
-└── ...              # TensorBoard logs, etc.
+```bash
+python src/validate_leave_one_csv_out.py --timesteps 30000
+python src/validate_leave_one_csv_out.py --timesteps 5000 --max-rows-per-csv 10000
 ```
 
----
+Run robust Phase 2 offline inference:
 
-## 🔮 Trabajo Futuro
+```bash
+python scripts/predict_real_traffic_v2.py \
+  --flows pcaps/flows.csv \
+  --model models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip \
+  --scaler runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/scaler.joblib \
+  --percentiles runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/train_percentiles.npz \
+  --clip-z 10.0 \
+  --export-diagnostics
+```
 
-### Phase 2: Entorno Simulado con Tráfico Real
+## Validation Overview
 
-Plan detallado en [`docs/phase2_plan.md`](docs/phase2_plan.md). Instrucciones de lab en [`docs/gcp_lab.md`](docs/gcp_lab.md).
+The repository currently includes four validation workflows:
 
-1. Desplegar lab privado (2 VMs: Kali attacker + Ubuntu defender)
-2. Generar tráfico labelled (benigno + ataques)
-3. Capturar PCAPs y extraer flow features con CICFlowMeter
-4. Mapear al esquema canónico (152 dims)
-5. Inference loop con el modelo QRDQN entrenado
-6. Evaluar contra ground-truth
+| Validation | Purpose |
+|------------|---------|
+| Check A | Direct prediction on `X_test` vs `y_test` without relying on the environment |
+| Check B | Shuffled-label anti-leakage test |
+| Check C | Hard CSV/day split generalisation test |
+| Leave-one-exact-CSV-out | One held-out CICIDS2017 CSV per fold, train on the remaining seven |
 
-### Phase 3+
+The leave-one-exact-CSV-out workflow is implemented in code, but this repository does not currently contain a committed full run artifact for it under `runs/validation/`.
 
-- Adversario RL (attacker agent)
-- Multi-agente y defensa distribuida
-- Despliegue productivo (Docker, CI/CD)
+## Results Snapshot
 
----
+Artifact-backed historical results are summarised in [docs/results.md](docs/results.md). Highlights:
 
-## 🤝 Contribuciones
+- Best committed CICIDS2017 run:
+  - `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439`
+  - accuracy `0.99859`
+  - attack recall `0.99945`
+  - attack F1 `0.99876`
+- Validation Check C historical artifact:
+  - accuracy `0.84135`
+  - train on Monday–Wednesday patterns
+  - test on Thursday–Friday patterns
+- Phase 2:
+  - robust offline inference pipeline exists
+  - latest committed benign-only v2 artifact shows that behaviour changed over time, so Phase 2 claims must always be tied to the exact run artifact
 
-Este es un proyecto académico (TFG), pero se aceptan sugerencias y mejoras:
+## Notes for Submission and Defense
 
-1. Fork del repositorio
-2. Crea una rama: `git checkout -b feature/nueva-mejora`
-3. Implementa cambios siguiendo las convenciones en [`.github/copilot-instructions.md`](.github/copilot-instructions.md)
-4. Abre PR con descripción detallada
+- English is the default language for repository documentation.
+- The two defense-support documents remain in Spanish by design:
+  - [docs/DEFENSA_TFG_PROGRESO.md](docs/DEFENSA_TFG_PROGRESO.md)
+  - [docs/DEFENSA_TFG_SCRIPT.md](docs/DEFENSA_TFG_SCRIPT.md)
+- Historical results are preserved, but they must not be confused with the **current code defaults**.
 
----
+## Safety and Reproducibility
 
-## 📚 Referencias
-
-- [CICIDS2017 Dataset](https://www.unb.ca/cic/datasets/ids-2017.html)
-- [NSL-KDD Dataset](https://www.unb.ca/cic/datasets/nsl.html)
-- [Stable-Baselines3 Documentation](https://stable-baselines3.readthedocs.io/)
-- [sb3-contrib (QRDQN)](https://sb3-contrib.readthedocs.io/)
-- [Gymnasium Documentation](https://gymnasium.farama.org/)
-- [Quantile Regression DQN Paper](https://arxiv.org/abs/1710.10044)
+- Do not commit datasets, PCAPs, credentials, or large generated artifacts.
+- Every training or evaluation workflow should persist a `RUN_ID` and write artifacts under `runs/<category>/<RUN_ID>/`.
+- If documentation describes a result, it should reference an artifact that exists in `runs/` or be clearly marked as planned or historical.

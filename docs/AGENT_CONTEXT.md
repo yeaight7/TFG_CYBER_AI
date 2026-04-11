@@ -1,139 +1,64 @@
-# Agent Context — Phase 2 Scope
+# Phase 2 Context
 
-This document provides additional context for coding agents and contributors working on Phase 2 of the TFG. It complements `.github/AGENT_CONTEXT.md` (project-wide source of truth) with Phase 2-specific scope, non-goals, guardrails, and run-tracking conventions.
+This document covers **Phase 2 only**: the transition from offline dataset work to offline inference on traffic captured in a private lab.
 
----
+Project-wide architecture, invariants, datasets, and current capabilities live in [../.github/AGENT_CONTEXT.md](../.github/AGENT_CONTEXT.md).
 
-## Phase 2 Scope
+## Scope
 
-Phase 2 transitions the RL defender from offline dataset evaluation to a **simulated lab environment** with real (generated) traffic. Detailed steps are in [`docs/phase2_plan.md`](phase2_plan.md).
+Phase 2 is currently scoped to:
 
-### In Scope
+- capturing traffic in a private lab
+- extracting flow-level features
+- mapping extracted flows to the canonical schema
+- running offline inference with the trained RL model
+- storing reproducible run artifacts under `runs/phase2/`
 
-- Set up a private lab (GCP or local VMs) with attacker + defender topology.
-- Generate labelled traffic (benign + attacks) with ground-truth logs.
-- Capture PCAPs and extract flow features with CICFlowMeter / Zeek.
-- Map extracted features to the **canonical schema** (76 features + 76 mask = 152 dims).
-- Run inference with the trained QRDQN model and evaluate against ground-truth.
-- Save all results following `runs/phase2/<RUN_ID>/` convention.
+## Out of Scope
 
-### Non-Goals (Phase 2)
+The following are not part of the current Phase 2 baseline:
 
-The following are explicitly **out of scope** for Phase 2:
+- active packet or flow blocking in production
+- public internet exposure of the lab
+- adversarial multi-agent RL
+- large-scale operational deployment
+- schema redesign
 
-- **Real-time packet-level blocking** — Phase 2 is inference-only; active `iptables` integration is optional.
-- **Adversarial RL agent** — training an attacker agent is reserved for Phase 3.
-- **Multi-agent or distributed defence** — single-agent only.
-- **Re-training in the lab** — use the model trained on CICIDS2017; fine-tuning is optional.
-- **Production deployment** — no containerization, CI/CD, or monitoring stack.
-- **Changing the canonical schema** — the 76-feature schema is frozen for Phase 2.
-- **Changing model hyperparameters** — use the existing QRDQN configuration.
-
----
-
-## Guardrails
+## Operational Guardrails
 
 ### Lab Safety
 
-| Rule | Detail |
-|------|--------|
-| Private VPC only | No public IPs except a single SSH bastion with allowlisted source IP |
-| No external scanning | All attack traffic must stay inside the private network |
-| Ephemeral VMs | Destroy lab VMs when not in use to avoid costs and exposure |
-| No credentials in code | Use environment variables or GCP metadata for secrets |
+- keep the lab private and isolated
+- only allow SSH access from controlled sources
+- do not scan targets outside the lab
+- avoid committing credentials or environment secrets
 
-### Code & Data Safety
+### Data and Repo Safety
 
-| Rule | Detail |
-|------|--------|
-| Never commit `venv/` | Already in `.gitignore`; double-check before pushing |
-| Never commit datasets | Large CSVs / PCAPs stay in `datasets/` (gitignored) or cloud storage |
-| Never commit model weights > 50 MB | Use Git LFS or external storage if needed |
-| No absolute paths in code | Use `pathlib.Path` relative to repo root |
-| No data leakage features | IPs, timestamps, Flow IDs are prohibited in the observation vector |
+- do not commit datasets or PCAPs
+- do not commit generated large artifacts by accident
+- do not document unverifiable claims as facts
 
----
+## Run Tracking
 
-## Run-Tracking Conventions
+Every Phase 2 inference run should create:
 
-Every experiment or evaluation **must** produce a run folder:
-
-```
-runs/<category>/<RUN_ID>/
-├── config.json            # full configuration (hyperparams, dataset, seed, device, …)
-├── metrics.json           # final evaluation metrics
-├── validation_results.json  # (if validation check)
-└── …                       # TensorBoard logs, predictions, etc.
+```text
+runs/phase2/<RUN_ID>/
+├── config.json
+├── metrics.json
+├── predictions.csv
+└── diagnostics.json   # optional, when exported
 ```
 
-### RUN_ID Format
+## Maintained Entry Point
 
-```
-<PREFIX>_<descriptor>_<YYYYMMDD_HHMMSS>
-```
+Use:
 
-Examples:
-- `C01_qrdqn_cicids2017_canonical_full_20260212_200218`
-- `VAL_checks_A_20260213_085434`
-- `P2_lab_eval_20260301_143000`
+- `scripts/predict_real_traffic_v2.py`
 
-### Categories
+and do not document `predict_real_traffic.py` as the recommended path except when discussing legacy behaviour.
 
-| Prefix | Directory | Purpose |
-|--------|-----------|---------|
-| `C*` | `runs/cicids2017/` | CICIDS2017 training runs |
-| `E*` | `runs/nslkdd/` | NSL-KDD Phase 1 experiments |
-| `VAL_*` | `runs/validation/` | Validation checks (A, B, C) |
-| `P2_*`, `P2v2_*` | `runs/phase2/` | Phase 2 lab evaluation runs |
-| `study_*` | `runs/optuna/` | Hyperparameter tuning studies |
+## Current Open Risk
 
-### JSON Schema (minimum fields)
-
-**config.json**:
-```json
-{
-  "run_id": "...",
-  "algorithm": "QRDQN",
-  "dataset": "CICIDS2017",
-  "use_canonical": true,
-  "seed": 42,
-  "device": "cuda",
-  "reward_config": { "tp": 1.5, "fp": -1.0, "fn": -5.0, "omission": 0.0 }
-}
-```
-
-**metrics.json**:
-```json
-{
-  "accuracy": 0.0,
-  "precision_attack": 0.0,
-  "recall_attack": 0.0,
-  "f1_attack": 0.0
-}
-```
-
----
-
-## Current Best Model
-
-| Field | Value |
-|-------|-------|
-| RUN_ID | `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` |
-| Accuracy | 0.9986 |
-| F1 (attack) | 0.9988 |
-| Recall (attack) | 0.9995 |
-| Model file | `models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip` |
-
-Previous best was C01 full (accuracy 0.9962). C03 full achieves higher accuracy (0.9986) trained on 500k rows with stronger FP penalty (−2.0 vs −1.0).
-
-Validation checks A and B confirmed: no leakage, metrics reproducible via direct prediction.
-
----
-
-## Key References
-
-- [`.github/AGENT_CONTEXT.md`](../.github/AGENT_CONTEXT.md) — project-wide source of truth
-- [`docs/phase2_plan.md`](phase2_plan.md) — step-by-step Phase 2 execution plan
-- [`docs/gcp_lab.md`](gcp_lab.md) — lab setup instructions
-- [`docs/results.md`](results.md) — consolidated experiment results
-- [`src/canonical_schema.py`](../src/canonical_schema.py) — canonical feature definitions
+Phase 2 still shows sensitivity to distribution shift between CICIDS2017 and real lab traffic. When documenting or analysing Phase 2 performance, always tie the claim to the exact run artifact because behaviour changed across committed runs.
