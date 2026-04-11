@@ -457,6 +457,8 @@ def load_cicids2017_exact_csv_split(
     max_rows_per_csv : int or None
         Límite opcional de filas por CSV. Si se indica, se aplica de forma
         independiente a cada archivo para evitar sesgo por orden de lectura.
+        No puede usarse a la vez que ``cfg.max_rows``; en ese caso se lanza
+        ``ValueError`` para evitar ignorar límites de forma silenciosa.
     """
     cfg = cfg or CICIDSLoadConfig()
     local_dir = Path(cfg.local_dir)
@@ -473,6 +475,12 @@ def load_cicids2017_exact_csv_split(
     overlap = {path.name for path in train_paths} & {path.name for path in test_paths}
     if overlap:
         raise ValueError(f"Train y test no pueden compartir CSVs exactos: {sorted(overlap)}")
+
+    if max_rows_per_csv is not None and cfg.max_rows is not None:
+        raise ValueError(
+            "max_rows_per_csv y cfg.max_rows no pueden usarse simultáneamente; "
+            "elige solo uno de los dos límites."
+        )
 
     effective_cfg = replace(cfg, max_rows=None) if max_rows_per_csv is not None else cfg
 

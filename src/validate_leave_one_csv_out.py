@@ -152,15 +152,10 @@ def evaluate_model_direct(
     y_test: np.ndarray,
     reward_config: Dict[str, float],
 ) -> Dict[str, Any]:
-    """Evalúa con `model.predict(X_test[i])` frente a `y_test[i]`."""
+    """Evalúa el modelo sobre `X_test` en batch frente a `y_test`."""
     eval_start = time.perf_counter()
-    n_samples = len(X_test)
-    y_pred = np.empty(n_samples, dtype=np.int64)
-
-    for i in range(n_samples):
-        action, _ = model.predict(X_test[i], deterministic=True)
-        y_pred[i] = int(action)
-
+    actions, _ = model.predict(X_test, deterministic=True)
+    y_pred = np.asarray(actions, dtype=np.int64).reshape(-1)
     evaluation_time_sec = time.perf_counter() - eval_start
 
     cm = confusion_matrix(y_test, y_pred, labels=[0, 1])

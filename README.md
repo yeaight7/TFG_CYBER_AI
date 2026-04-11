@@ -52,8 +52,10 @@ tensorboard --logdir runs/cicids2017/
 # sus resultados se guardan como JSON en runs/validation/
 ```
 
-Todos los resultados se guardan en `runs/<category>/<RUN_ID>/` con `config.json` y `metrics.json`
-(por ejemplo, `runs/cicids2017/` para entrenamiento y `runs/validation/` para validaciones).
+Los entrenamientos guardan sus resultados en `runs/<category>/<RUN_ID>/` con
+`config.json` y `metrics.json` (por ejemplo, `runs/cicids2017/`).
+Las validaciones leave-one-exact-CSV-out guardan sus resultados en
+`runs/validation/<RUN_ID>/` con `config.json` y `validation_results.json`.
 Los modelos se guardan en `models/<RUN_ID>.zip`.
 
 ---
