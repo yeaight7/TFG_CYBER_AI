@@ -22,6 +22,21 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_LOCAL_DIR = _REPO_ROOT / "datasets" / "CICIDS2017"
 
 
+# Nombres oficiales de los 8 CSVs reales de CICIDS2017 (CICFlowMeter CSV exports).
+_OFFICIAL_CICIDS2017_CSV_NAMES: Tuple[str, ...] = (
+    "Monday-WorkingHours.pcap_ISCX.csv",
+    "Tuesday-WorkingHours.pcap_ISCX.csv",
+    "Wednesday-workingHours.pcap_ISCX.csv",
+    "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+    "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+    "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+    "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+    "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+)
+_OFFICIAL_CICIDS2017_CSV_NAMES_LOWER = {name.lower() for name in _OFFICIAL_CICIDS2017_CSV_NAMES}
+_OFFICIAL_CICIDS2017_CSV_ORDER = {name.lower(): idx for idx, name in enumerate(_OFFICIAL_CICIDS2017_CSV_NAMES)}
+
+
 @dataclass(frozen=True)
 class CICIDSLoadConfig:
     # Directorio local con CSVs de CICIDS2017
@@ -58,7 +73,7 @@ def _list_csv_files(root: Path) -> List[Path]:
 
 def list_cicids2017_csv_files(local_dir: Optional[Path] = None) -> List[Path]:
     """
-    Lista los CSVs reales de CICIDS2017 en orden determinista.
+    Lista únicamente los 8 CSVs oficiales de CICIDS2017 en orden determinista.
 
     Parameters
     ----------
@@ -66,7 +81,18 @@ def list_cicids2017_csv_files(local_dir: Optional[Path] = None) -> List[Path]:
         Directorio que contiene los CSVs. Si es ``None``, usa
         ``datasets/CICIDS2017/`` relativo a la raíz del repo.
     """
-    return _list_csv_files(local_dir or _DEFAULT_LOCAL_DIR)
+    csvs = _list_csv_files(local_dir or _DEFAULT_LOCAL_DIR)
+
+    official_csvs = [path for path in csvs if path.name.lower() in _OFFICIAL_CICIDS2017_CSV_NAMES_LOWER]
+    if len(official_csvs) != len(_OFFICIAL_CICIDS2017_CSV_NAMES):
+        available_names = {path.name.lower() for path in csvs}
+        missing = [name for name in _OFFICIAL_CICIDS2017_CSV_NAMES if name.lower() not in available_names]
+        raise FileNotFoundError(
+            "No se encontraron los 8 CSVs oficiales de CICIDS2017. "
+            f"Faltan: {missing}. Directorio: {local_dir or _DEFAULT_LOCAL_DIR}"
+        )
+
+    return sorted(official_csvs, key=lambda path: _OFFICIAL_CICIDS2017_CSV_ORDER[path.name.lower()])
 
 
 def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
