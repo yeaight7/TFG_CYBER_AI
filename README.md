@@ -8,7 +8,7 @@ Este repositorio contiene un Trabajo Fin de Grado orientado al diseño de un **a
 | **Algoritmo** | QRDQN (Quantile Regression DQN) — distributional RL via `sb3-contrib` |
 | **Esquema canónico** | 76 flow features + 76 missingness mask → **152-dim observation** |
 | **Mejor modelo** | Accuracy 0.9986, Recall ataque 0.9995, F1 0.9988 ([resultados completos](docs/results.md)) |
-| **Validación** | Check A (direct eval), Check B (shuffled-labels anti-leakage), Check C (CSV-split day generalization) |
+| **Validación** | Check A/B/C + leave-one-exact-CSV-out sobre los 8 CSVs reales de CICIDS2017 |
 
 ---
 
@@ -39,11 +39,23 @@ python src/tune_hparams.py --n-trials 20 --timesteps 10000
 # 8. Validation checks (A=direct eval, B=shuffled labels, C=CSV split)
 python src/validate_checks.py --model models/<MODEL>.zip --checks A B C
 
-# 9. Ver resultados con TensorBoard
+# 9. Leave-one-exact-CSV-out sobre los CSVs reales de CICIDS2017
+python src/validate_leave_one_csv_out.py --timesteps 30000
+
+# 10. Smoke/dev run de leave-one-exact-CSV-out
+python src/validate_leave_one_csv_out.py --timesteps 5000 --max-rows-per-csv 10000
+
+# 11. Ver logs de entrenamiento con TensorBoard
 tensorboard --logdir runs/cicids2017/
+
+# La validación leave-one-exact-CSV-out no genera logs de TensorBoard;
+# sus resultados se guardan como JSON en runs/validation/
 ```
 
-Todos los resultados se guardan en `runs/<category>/<RUN_ID>/` con `config.json` y `metrics.json`.
+Los entrenamientos guardan sus resultados en `runs/<category>/<RUN_ID>/` con
+`config.json` y `metrics.json` (por ejemplo, `runs/cicids2017/`).
+Las validaciones leave-one-exact-CSV-out guardan sus resultados en
+`runs/validation/<RUN_ID>/` con `config.json` y `validation_results.json`.
 Los modelos se guardan en `models/<RUN_ID>.zip`.
 
 ---
@@ -59,6 +71,7 @@ TFG_CYBER_AI/
 │   ├── rl_defender_env.py         # Entorno Gymnasium custom (152-dim obs, Discrete(2))
 │   ├── train_rl_defender.py       # Entrenamiento QRDQN con --smoke / --preset full
 │   ├── validate_checks.py        # Checks A/B/C de validación
+│   ├── validate_leave_one_csv_out.py # Validación leave-one-exact-CSV-out
 │   ├── tune_hparams.py           # Optimización de hiperparámetros con Optuna
 │   ├── scaling_utils.py          # Utilidades de escalado de features
 │   └── baseline_random_forest.py # Baseline supervisado con Random Forest
@@ -157,6 +170,7 @@ Donde `x_i` es el valor de la feature (imputado con 0 si falta) y `m_i` indica s
 | **A** | Evaluación directa `model.predict(X_test[i])` vs `y_test[i]`, sin depender del entorno |
 | **B** | Entrena con labels barajados → confirma que accuracy cae a nivel aleatorio (sin leakage) |
 | **C** | Split por CSV: entrena en Mon–Wed, testea en Thu–Fri (generalización real) |
+| **Leave-One-CSV-Out** | Entrena 8 folds dejando fuera 1 CSV exacto en cada run y agregando métricas por fold |
 
 Ver resultados reales en [`docs/results.md`](docs/results.md).
 

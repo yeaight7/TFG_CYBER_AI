@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, List
 
@@ -20,6 +20,21 @@ from canonical_schema import (
 # Ruta por defecto: datasets/CICIDS2017/ relativa a la raíz del repo
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_LOCAL_DIR = _REPO_ROOT / "datasets" / "CICIDS2017"
+
+
+# Nombres oficiales de los 8 CSVs reales de CICIDS2017 (CICFlowMeter CSV exports).
+_OFFICIAL_CICIDS2017_CSV_NAMES: Tuple[str, ...] = (
+    "Monday-WorkingHours.pcap_ISCX.csv",
+    "Tuesday-WorkingHours.pcap_ISCX.csv",
+    "Wednesday-workingHours.pcap_ISCX.csv",
+    "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+    "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+    "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+    "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+    "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+)
+_OFFICIAL_CICIDS2017_CSV_NAMES_LOWER = {name.lower() for name in _OFFICIAL_CICIDS2017_CSV_NAMES}
+_OFFICIAL_CICIDS2017_CSV_ORDER = {name.lower(): idx for idx, name in enumerate(_OFFICIAL_CICIDS2017_CSV_NAMES)}
 
 
 @dataclass(frozen=True)
@@ -54,6 +69,30 @@ def _list_csv_files(root: Path) -> List[Path]:
             "Comprueba que el directorio contiene archivos .csv de CICIDS2017."
         )
     return csvs
+
+
+def list_cicids2017_csv_files(local_dir: Optional[Path] = None) -> List[Path]:
+    """
+    Lista únicamente los 8 CSVs oficiales de CICIDS2017 en orden determinista.
+
+    Parameters
+    ----------
+    local_dir : Path or None
+        Directorio que contiene los CSVs. Si es ``None``, usa
+        ``datasets/CICIDS2017/`` relativo a la raíz del repo.
+    """
+    csvs = _list_csv_files(local_dir or _DEFAULT_LOCAL_DIR)
+
+    official_csvs = [path for path in csvs if path.name.lower() in _OFFICIAL_CICIDS2017_CSV_NAMES_LOWER]
+    if len(official_csvs) != len(_OFFICIAL_CICIDS2017_CSV_NAMES):
+        available_names = {path.name.lower() for path in csvs}
+        missing = [name for name in _OFFICIAL_CICIDS2017_CSV_NAMES if name.lower() not in available_names]
+        raise FileNotFoundError(
+            "No se encontraron los 8 CSVs oficiales de CICIDS2017. "
+            f"Faltan: {missing}. Directorio: {local_dir or _DEFAULT_LOCAL_DIR}"
+        )
+
+    return sorted(official_csvs, key=lambda path: _OFFICIAL_CICIDS2017_CSV_ORDER[path.name.lower()])
 
 
 def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -152,6 +191,131 @@ def _load_all_csvs(csv_paths: List[Path], cfg: CICIDSLoadConfig) -> pd.DataFrame
     return df
 
 
+def _load_csv_with_row_limit(path: Path, cfg: CICIDSLoadConfig, row_limit: Optional[int] = None) -> pd.DataFrame:
+    """Carga un CSV individual con límite opcional de filas por archivo."""
+    frames: List[pd.DataFrame] = []
+    loaded = 0
+
+    for chunk in pd.read_csv(path, chunksize=cfg.chunksize, low_memory=True, encoding_errors="ignore"):
+        chunk = _normalize_columns(chunk)
+
+        if row_limit is not None:
+            remaining = row_limit - loaded
+            if remaining <= 0:
+                break
+            if len(chunk) > remaining:
+                chunk = chunk.iloc[:remaining].copy()
+
+        frames.append(chunk)
+        loaded += len(chunk)
+
+        if row_limit is not None and loaded >= row_limit:
+            break
+
+    if not frames:
+        return pd.DataFrame()
+
+    return pd.concat(frames, ignore_index=True)
+
+
+def _prepare_cicids_features(
+    df: pd.DataFrame,
+    cfg: CICIDSLoadConfig,
+) -> Tuple[np.ndarray, np.ndarray, List[str]]:
+    """Limpia CICIDS2017 y devuelve X, y y nombres de features."""
+    label_col = _find_label_column(df, cfg.label_col)
+
+    labels = df[label_col].astype(str).str.strip().str.upper()
+    y = (labels != cfg.benign_value.upper()).astype(np.int64)
+
+    Xdf = df.drop(columns=[label_col]).copy()
+
+    if cfg.drop_identifier_cols:
+        Xdf[label_col] = df[label_col]
+        Xdf = _drop_identifier_like_columns(Xdf, label_col=label_col).drop(columns=[label_col])
+
+    tmp = Xdf.copy()
+    tmp[label_col] = y
+    tmp = _coerce_numeric_features(tmp, label_col=label_col)
+    tmp = _clean_rows(tmp, label_col=label_col)
+
+    y_clean = tmp[label_col].to_numpy(dtype=np.int64)
+    X_clean_df = tmp.drop(columns=[label_col])
+
+    non_numeric = [c for c in X_clean_df.columns if not pd.api.types.is_numeric_dtype(X_clean_df[c])]
+    if non_numeric:
+        X_clean_df = X_clean_df.drop(columns=non_numeric)
+
+    if cfg.sample_frac is not None:
+        if not (0.0 < cfg.sample_frac <= 1.0):
+            raise ValueError("sample_frac debe estar en (0, 1].")
+        idx = np.random.default_rng(cfg.random_state).choice(
+            len(X_clean_df),
+            size=int(len(X_clean_df) * cfg.sample_frac),
+            replace=False,
+        )
+        X_clean_df = X_clean_df.iloc[idx].reset_index(drop=True)
+        y_clean = y_clean[idx]
+
+    if cfg.use_canonical:
+        result = map_to_canonical(X_clean_df, CICIDS2017_TO_CANON)
+        X_clean = result.combined
+        feature_names = result.feature_names
+        print(
+            f"[CICIDS2017] Canonical mapping: "
+            f"{result.n_present}/{result.n_present + result.n_missing} features present"
+        )
+    else:
+        feature_names = list(X_clean_df.columns)
+        X_clean = X_clean_df.to_numpy(dtype=np.float32)
+
+    return X_clean, y_clean, feature_names
+
+
+def _load_and_process_csv_paths(
+    csv_paths: List[Path],
+    cfg: CICIDSLoadConfig,
+    max_rows_per_csv: Optional[int] = None,
+) -> Tuple[np.ndarray, np.ndarray, List[str]]:
+    """Carga una lista de CSVs, aplica preprocesado y devuelve X, y y features."""
+    if not csv_paths:
+        raise ValueError(
+            "No se han proporcionado archivos CSV para cargar en CICIDS2017. "
+            "Verifica la ruta del dataset o la selección de CSVs."
+        )
+
+    if max_rows_per_csv is not None and max_rows_per_csv <= 0:
+        raise ValueError("max_rows_per_csv debe ser > 0.")
+
+    if max_rows_per_csv is None:
+        df = _load_all_csvs(csv_paths, cfg)
+    else:
+        frames = [_load_csv_with_row_limit(path, cfg, row_limit=max_rows_per_csv) for path in csv_paths]
+        df = pd.concat(frames, ignore_index=True)
+
+    return _prepare_cicids_features(df, cfg)
+
+
+def _resolve_exact_csv_names(csv_names: List[str], all_csvs: List[Path]) -> List[Path]:
+    """Resuelve nombres exactos de CSV a rutas reales, preservando el orden de entrada."""
+    csv_map = {path.name.lower(): path for path in all_csvs}
+    resolved: List[Path] = []
+    seen: set[str] = set()
+
+    for csv_name in csv_names:
+        key = csv_name.strip().lower()
+        if key not in csv_map:
+            raise ValueError(
+                f"CSV '{csv_name}' no encontrado. Disponibles: {[path.name for path in all_csvs]}"
+            )
+        if key in seen:
+            raise ValueError(f"CSV duplicado en la selección exacta: '{csv_name}'")
+        resolved.append(csv_map[key])
+        seen.add(key)
+
+    return resolved
+
+
 def load_cicids2017_binary(
     cfg: Optional[CICIDSLoadConfig] = None,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
@@ -179,59 +343,7 @@ def load_cicids2017_binary(
     print(f"[CICIDS2017] Cargando {len(csvs)} archivos CSV desde {local_dir}")
 
     df = _load_all_csvs(csvs, cfg)
-
-    label_col = _find_label_column(df, cfg.label_col)
-
-    # Etiqueta binaria
-    labels = df[label_col].astype(str).str.strip().str.upper()
-    y = (labels != cfg.benign_value.upper()).astype(np.int64)
-
-    # Features
-    Xdf = df.drop(columns=[label_col]).copy()
-
-    # Quita IDs / timestamps / IPs si procede
-    if cfg.drop_identifier_cols:
-        Xdf[label_col] = df[label_col]
-        Xdf = _drop_identifier_like_columns(Xdf, label_col=label_col).drop(columns=[label_col])
-
-    # Coerción numérica + limpieza
-    tmp = Xdf.copy()
-    tmp[label_col] = y  # para reutilizar limpieza
-    tmp = _coerce_numeric_features(tmp, label_col=label_col)
-    tmp = _clean_rows(tmp, label_col=label_col)
-
-    y_clean = tmp[label_col].to_numpy(dtype=np.int64)
-    X_clean_df = tmp.drop(columns=[label_col])
-
-    # Si quedan columnas no numéricas por algún motivo, las eliminamos
-    non_numeric = [c for c in X_clean_df.columns if not pd.api.types.is_numeric_dtype(X_clean_df[c])]
-    if non_numeric:
-        X_clean_df = X_clean_df.drop(columns=non_numeric)
-
-    # Submuestreo opcional (después de limpiar, para no sesgar por NaNs)
-    if cfg.sample_frac is not None:
-        if not (0.0 < cfg.sample_frac <= 1.0):
-            raise ValueError("sample_frac debe estar en (0, 1].")
-        idx = np.random.default_rng(cfg.random_state).choice(
-            len(X_clean_df),
-            size=int(len(X_clean_df) * cfg.sample_frac),
-            replace=False,
-        )
-        X_clean_df = X_clean_df.iloc[idx].reset_index(drop=True)
-        y_clean = y_clean[idx]
-
-    # ── Canonical schema mapping ──
-    if cfg.use_canonical:
-        result = map_to_canonical(X_clean_df, CICIDS2017_TO_CANON)
-        X_clean = result.combined  # shape (n, NUM_OBSERVATION_FEATURES)
-        feature_names = result.feature_names
-        print(
-            f"[CICIDS2017] Canonical mapping: "
-            f"{result.n_present}/{result.n_present + result.n_missing} features present"
-        )
-    else:
-        feature_names = list(X_clean_df.columns)
-        X_clean = X_clean_df.to_numpy(dtype=np.float32)
+    X_clean, y_clean, feature_names = _prepare_cicids_features(df, cfg)
 
     # Split estratificado
     X_train, X_test, y_train, y_test = train_test_split(
@@ -306,44 +418,8 @@ def load_cicids2017_csv_split(
 
     print(f"[CSV-split] Train CSVs ({len(train_paths)}): {[p.name for p in train_paths]}")
     print(f"[CSV-split] Test  CSVs ({len(test_paths)}): {[p.name for p in test_paths]}")
-
-    def _load_and_process(csv_paths: List[Path]) -> Tuple[np.ndarray, np.ndarray, List[str]]:
-        """Carga CSVs, limpia, y devuelve X, y, feature_names."""
-        df = _load_all_csvs(csv_paths, cfg)
-        label_col = _find_label_column(df, cfg.label_col)
-
-        labels = df[label_col].astype(str).str.strip().str.upper()
-        y = (labels != cfg.benign_value.upper()).astype(np.int64)
-
-        Xdf = df.drop(columns=[label_col]).copy()
-        if cfg.drop_identifier_cols:
-            Xdf[label_col] = df[label_col]
-            Xdf = _drop_identifier_like_columns(Xdf, label_col=label_col).drop(columns=[label_col])
-
-        tmp = Xdf.copy()
-        tmp[label_col] = y
-        tmp = _coerce_numeric_features(tmp, label_col=label_col)
-        tmp = _clean_rows(tmp, label_col=label_col)
-
-        y_clean = tmp[label_col].to_numpy(dtype=np.int64)
-        X_clean_df = tmp.drop(columns=[label_col])
-
-        non_numeric = [c for c in X_clean_df.columns if not pd.api.types.is_numeric_dtype(X_clean_df[c])]
-        if non_numeric:
-            X_clean_df = X_clean_df.drop(columns=non_numeric)
-
-        if cfg.use_canonical:
-            result = map_to_canonical(X_clean_df, CICIDS2017_TO_CANON)
-            X_arr = result.combined
-            feat_names = result.feature_names
-        else:
-            feat_names = list(X_clean_df.columns)
-            X_arr = X_clean_df.to_numpy(dtype=np.float32)
-
-        return X_arr, y_clean, feat_names
-
-    X_train, y_train, feature_names = _load_and_process(train_paths)
-    X_test, y_test, _ = _load_and_process(test_paths)
+    X_train, y_train, feature_names = _load_and_process_csv_paths(train_paths, cfg)
+    X_test, y_test, _ = _load_and_process_csv_paths(test_paths, cfg)
 
     scaler: Optional[StandardScaler] = None
     if cfg.scale:
@@ -353,6 +429,91 @@ def load_cicids2017_csv_split(
 
     print(f"[CSV-split] Train: {X_train.shape} (benign={int((y_train==0).sum())}, attack={int((y_train==1).sum())})")
     print(f"[CSV-split] Test:  {X_test.shape} (benign={int((y_test==0).sum())}, attack={int((y_test==1).sum())})")
+
+    return X_train, y_train, X_test, y_test, scaler, feature_names
+
+
+def load_cicids2017_exact_csv_split(
+    train_csv_names: List[str],
+    test_csv_names: List[str],
+    cfg: Optional[CICIDSLoadConfig] = None,
+    max_rows_per_csv: Optional[int] = None,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
+    """
+    Carga CICIDS2017 separando por nombres exactos de archivo CSV.
+
+    A diferencia de ``load_cicids2017_csv_split()``, aquí los nombres deben
+    corresponder exactamente a archivos reales del dataset. Este modo está
+    pensado para validaciones leave-one-CSV-out.
+
+    Parameters
+    ----------
+    train_csv_names : list of str
+        Nombres exactos de los CSVs para entrenamiento.
+    test_csv_names : list of str
+        Nombres exactos de los CSVs para test.
+    cfg : CICIDSLoadConfig, optional
+        Configuración de carga y preprocesado.
+    max_rows_per_csv : int or None
+        Límite opcional de filas por CSV. Si se indica, se aplica de forma
+        independiente a cada archivo para evitar sesgo por orden de lectura.
+        No puede usarse a la vez que ``cfg.max_rows``; en ese caso se lanza
+        ``ValueError`` para evitar ignorar límites de forma silenciosa.
+    """
+    cfg = cfg or CICIDSLoadConfig()
+    local_dir = Path(cfg.local_dir)
+    if not local_dir.exists():
+        raise FileNotFoundError(
+            f"Directorio de CICIDS2017 no encontrado: {local_dir}. "
+            "Descarga el dataset y colócalo en datasets/CICIDS2017/."
+        )
+
+    all_csvs = list_cicids2017_csv_files(local_dir)
+    train_paths = _resolve_exact_csv_names(train_csv_names, all_csvs)
+    test_paths = _resolve_exact_csv_names(test_csv_names, all_csvs)
+
+    overlap = {path.name for path in train_paths} & {path.name for path in test_paths}
+    if overlap:
+        raise ValueError(f"Train y test no pueden compartir CSVs exactos: {sorted(overlap)}")
+
+    if max_rows_per_csv is not None and cfg.max_rows is not None:
+        raise ValueError(
+            "max_rows_per_csv y cfg.max_rows no pueden usarse simultáneamente; "
+            "elige solo uno de los dos límites."
+        )
+
+    effective_cfg = replace(cfg, max_rows=None) if max_rows_per_csv is not None else cfg
+
+    print(f"[Exact-CSV-split] Train CSVs ({len(train_paths)}): {[p.name for p in train_paths]}")
+    print(f"[Exact-CSV-split] Test  CSVs ({len(test_paths)}): {[p.name for p in test_paths]}")
+    if max_rows_per_csv is not None:
+        print(f"[Exact-CSV-split] Max rows per CSV: {max_rows_per_csv}")
+
+    X_train, y_train, feature_names = _load_and_process_csv_paths(
+        train_paths,
+        effective_cfg,
+        max_rows_per_csv=max_rows_per_csv,
+    )
+    X_test, y_test, _ = _load_and_process_csv_paths(
+        test_paths,
+        effective_cfg,
+        max_rows_per_csv=max_rows_per_csv,
+    )
+
+    scaler: Optional[StandardScaler] = None
+    if cfg.scale:
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(X_train).astype(np.float32)
+        X_test = scaler.transform(X_test).astype(np.float32)
+
+    print(
+        f"[Exact-CSV-split] Train: {X_train.shape} "
+        f"(benign={int((y_train==0).sum())}, attack={int((y_train==1).sum())})"
+    )
+    print(
+        f"[Exact-CSV-split] Test:  {X_test.shape} "
+        f"(benign={int((y_test==0).sum())}, attack={int((y_test==1).sum())})"
+    )
 
     return X_train, y_train, X_test, y_test, scaler, feature_names
 
