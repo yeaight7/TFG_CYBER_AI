@@ -238,6 +238,8 @@ Decisión: **Pendiente de evaluación en Fase 2**. Probablemente CICFlowMeter pa
 - ✅ Limpieza de datos: eliminación de IPs, timestamps, Flow IDs
 - ✅ Manejo de NaNs e infinitos
 - ✅ Split estratificado y split por día (CSV-split)
+- ✅ Helper público para listar los 8 CSVs reales de CICIDS2017 en orden determinista
+- ✅ Split exacto por nombre de CSV (`load_cicids2017_exact_csv_split`) para validaciones leave-one-CSV-out
 - ✅ Retorna: `(X_train, y_train, X_test, y_test, scaler, feature_names)`
 - ✅ Soporte esquema canónico con `use_canonical=True` (76/76 features mapeadas)
 - ✅ API unificada `load_cicids2017_split()` con modo random y day
@@ -264,6 +266,12 @@ Decisión: **Pendiente de evaluación en Fase 2**. Probablemente CICFlowMeter pa
 - ✅ Check A: evaluación directa model.predict vs y_test
 - ✅ Check B: shuffled-labels anti-leakage test
 - ✅ Check C: CSV-split day generalization (train Mon-Wed, test Thu-Fri)
+
+#### `src/validate_leave_one_csv_out.py`
+- ✅ Validación separada leave-one-exact-CSV-out sobre los 8 CSVs reales de CICIDS2017
+- ✅ Entrena QRDQN una vez por fold dejando 1 CSV exacto como test y 7 como train
+- ✅ Persistencia en `runs/validation/VAL_leave_one_csv_out_<timestamp>/`
+- ✅ Métricas por fold + agregados globales (accuracy, balanced accuracy, specificity, FPR/FNR, reward)
 
 #### `src/tune_hparams.py`
 - ✅ Optimización de hiperparámetros con Optuna
@@ -366,6 +374,7 @@ TFG_CYBER_AI/
 - [x] Entrenar QRDQN sobre CICIDS2017 con esquema canónico (C01 smoke, C01 full)
 - [x] Entrenar con más datos (C02 fast 100k, C03 full 500k) → **Mejor modelo: C03 full, accuracy 0.9986**
 - [x] Validar métricas (Check A: accuracy 0.9939, Check B: no leakage, Check C: day-split 0.8414)
+- [x] Implementar validación leave-one-exact-CSV-out por CSV real de CICIDS2017
 - [x] Documentar resultados en `docs/results.md`
 
 ### 5. Optimización de Hiperparámetros
@@ -443,4 +452,4 @@ Actualiza este documento cuando:
 - Cambien decisiones de diseño fundamentales
 - Se añadan nuevos datasets
 
-**Última actualización**: 2026-02-26 (actualización de estado: nuevos runs C02/C03, Phase 2 inference, Optuna, validaciones, best model C03 full)
+**Última actualización**: 2026-04-11 (actualización de estado: validación leave-one-exact-CSV-out añadida, sin modificar resultados históricos existentes)
