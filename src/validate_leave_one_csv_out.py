@@ -151,11 +151,21 @@ def evaluate_model_direct(
     X_test: np.ndarray,
     y_test: np.ndarray,
     reward_config: Dict[str, float],
+    predict_batch_size: int = 8192,
 ) -> Dict[str, Any]:
-    """Evalúa el modelo sobre `X_test` en batch frente a `y_test`."""
+    """Evalúa el modelo sobre `X_test` frente a `y_test` en inferencia por lotes."""
+    if predict_batch_size <= 0:
+        raise ValueError("predict_batch_size debe ser > 0")
+
     eval_start = time.perf_counter()
-    actions, _ = model.predict(X_test, deterministic=True)
-    y_pred = np.asarray(actions, dtype=np.int64).reshape(-1)
+    n_samples = int(X_test.shape[0])
+    y_pred = np.empty(n_samples, dtype=np.int64)
+
+    for start_idx in range(0, n_samples, predict_batch_size):
+        end_idx = min(start_idx + predict_batch_size, n_samples)
+        actions, _ = model.predict(X_test[start_idx:end_idx], deterministic=True)
+        y_pred[start_idx:end_idx] = np.asarray(actions, dtype=np.int64).reshape(-1)
+
     evaluation_time_sec = time.perf_counter() - eval_start
 
     cm = confusion_matrix(y_test, y_pred, labels=[0, 1])
@@ -289,6 +299,12 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Cap opcional de filas por CSV para smoke/dev runs",
     )
+    parser.add_argument(
+        "--predict-batch-size",
+        type=int,
+        default=8192,
+        help="Tamaño de lote para inferencia en evaluación (default: 8192)",
+    )
     return parser.parse_args()
 
 
@@ -311,6 +327,7 @@ def main() -> None:
     print(f"  Device:            {device}")
     print(f"  Timesteps/fold:    {args.timesteps}")
     print(f"  Max rows per CSV:  {args.max_rows_per_csv if args.max_rows_per_csv is not None else 'ALL'}")
+    print(f"  Predict batch sz:  {args.predict_batch_size}")
     print(f"  Folds a ejecutar:  {len(holdout_csvs)}")
     print(f"  Output:            {run_dir}")
     print(f"{'=' * 72}")
@@ -365,7 +382,13 @@ def main() -> None:
         model.learn(total_timesteps=args.timesteps)
         training_time_sec = time.perf_counter() - train_start
 
-        eval_result = evaluate_model_direct(model, X_test, y_test, REWARD_CONFIG)
+        eval_result = evaluate_model_direct(
+            model,
+            X_test,
+            y_test,
+            REWARD_CONFIG,
+            predict_batch_size=args.predict_batch_size,
+        )
         total_time_sec = training_time_sec + float(eval_result["evaluation_time_sec"])
 
         fold_result: Dict[str, Any] = {
@@ -410,6 +433,7 @@ def main() -> None:
         "timesteps": args.timesteps,
         "seed": args.seed,
         "max_rows_per_csv": args.max_rows_per_csv,
+        "predict_batch_size": args.predict_batch_size,
         "device": device,
         "reward_config": REWARD_CONFIG,
         "policy_kwargs": {"net_arch": [512, 256]},
