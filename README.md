@@ -45,11 +45,15 @@ python src/validate_leave_one_csv_out.py --timesteps 30000
 # 10. Smoke/dev run de leave-one-exact-CSV-out
 python src/validate_leave_one_csv_out.py --timesteps 5000 --max-rows-per-csv 10000
 
-# 11. Ver resultados con TensorBoard
+# 11. Ver logs de entrenamiento con TensorBoard
 tensorboard --logdir runs/cicids2017/
+
+# La validación leave-one-exact-CSV-out no genera logs de TensorBoard;
+# sus resultados se guardan como JSON en runs/validation/
 ```
 
-Todos los resultados se guardan en `runs/<category>/<RUN_ID>/` con `config.json` y `metrics.json`.
+Todos los resultados se guardan en `runs/<category>/<RUN_ID>/` con `config.json` y `metrics.json`
+(por ejemplo, `runs/cicids2017/` para entrenamiento y `runs/validation/` para validaciones).
 Los modelos se guardan en `models/<RUN_ID>.zip`.
 
 ---

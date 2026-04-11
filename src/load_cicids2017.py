@@ -252,6 +252,12 @@ def _load_and_process_csv_paths(
     max_rows_per_csv: Optional[int] = None,
 ) -> Tuple[np.ndarray, np.ndarray, List[str]]:
     """Carga una lista de CSVs, aplica preprocesado y devuelve X, y y features."""
+    if not csv_paths:
+        raise ValueError(
+            "No se han proporcionado archivos CSV para cargar en CICIDS2017. "
+            "Verifica la ruta del dataset o la selección de CSVs."
+        )
+
     if max_rows_per_csv is not None and max_rows_per_csv <= 0:
         raise ValueError("max_rows_per_csv debe ser > 0.")
 
@@ -442,7 +448,7 @@ def load_cicids2017_exact_csv_split(
     if overlap:
         raise ValueError(f"Train y test no pueden compartir CSVs exactos: {sorted(overlap)}")
 
-    effective_cfg = replace(cfg, max_rows=None)
+    effective_cfg = replace(cfg, max_rows=None) if max_rows_per_csv is not None else cfg
 
     print(f"[Exact-CSV-split] Train CSVs ({len(train_paths)}): {[p.name for p in train_paths]}")
     print(f"[Exact-CSV-split] Test  CSVs ({len(test_paths)}): {[p.name for p in test_paths]}")
