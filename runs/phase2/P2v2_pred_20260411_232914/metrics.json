@@ -1,0 +1,18 @@
+{
+  "n_flows": 4000,
+  "block_rate": 0.36625,
+  "allow_rate": 0.63375,
+  "z_abs_max": 10.0,
+  "z_abs_mean": 0.3766881823539734,
+  "z_gt10_count": 0,
+  "z_gt10_pct": 0.0,
+  "n_labeled_flows": 4000,
+  "accuracy": 0.86625,
+  "precision_attack": 1.0,
+  "recall_attack": 0.7325,
+  "f1_attack": 0.8455988455988457,
+  "tp": 1465,
+  "tn": 2000,
+  "fp": 0,
+  "fn": 535
+}

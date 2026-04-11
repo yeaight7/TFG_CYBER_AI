@@ -9,3 +9,4 @@ __pycache__/
 .fdb_latexmk
 *.fls
 .vscode/
+flows_simulated_*
