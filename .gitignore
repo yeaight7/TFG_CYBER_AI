@@ -13,5 +13,8 @@ flows_simulated_*
 untrustworthy*
 graphify-out/cache
 .graphify_*.json
+graphify-out/obsidian/.obsidian/
+
+# big CSV files
 runs/phase2/P2v2_pred_20260412_004102/predictions.csv
 runs/phase2/P2v2_pred_20260412_004624/predictions.csv
