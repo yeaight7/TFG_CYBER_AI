@@ -1,71 +1,71 @@
-"""
-train_rl_defender.py — Entrenamiento de agente defensor RL sobre CICIDS2017.
+""" 
+train_rl_defender.py — Entrenamiento de agente defensor RL sobre CICIDS2017. 
+ 
+Uso: 
+    python src/train_rl_defender.py                        # Fast preset (default), random split 
+    python src/train_rl_defender.py --smoke                # Alias for --preset fast 
+    python src/train_rl_defender.py --preset full          # Full training, all rows (~30-60 min) 
+    python src/train_rl_defender.py --split-mode day       # Day/CSV group split, fast preset 
+    python src/train_rl_defender.py --split-mode day --train-days Monday Tuesday --test-days Friday 
+    python src/train_rl_defender.py --preset full --split-mode day  # Full day split 
+    python src/train_rl_defender.py --timesteps 200000     # Custom timesteps 
+""" 
+from __future__ import annotations 
 
-Uso:
-    python src/train_rl_defender.py                        # Fast preset (default), random split
-    python src/train_rl_defender.py --smoke                # Alias for --preset fast
-    python src/train_rl_defender.py --preset full          # Full training, all rows (~30-60 min)
-    python src/train_rl_defender.py --split-mode day       # Day/CSV group split, fast preset
-    python src/train_rl_defender.py --split-mode day --train-days Monday Tuesday --test-days Friday
-    python src/train_rl_defender.py --preset full --split-mode day  # Full day split
-    python src/train_rl_defender.py --timesteps 200000     # Custom timesteps
-"""
-from __future__ import annotations
-
-import argparse
-import json
-from pathlib import Path
-from typing import Dict, List
-from datetime import datetime
-
-import joblib
-import torch
-import numpy as np
-from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.preprocessing import StandardScaler
-
-from sb3_contrib import QRDQN
-from stable_baselines3.common.vec_env import DummyVecEnv
-from stable_baselines3.common.monitor import Monitor
-
-from rl_defender_env import RLDatasetDefenderEnv
-from load_cicids2017 import (
-    CICIDSLoadConfig,
-    DEFAULT_TRAIN_DAYS,
-    DEFAULT_TEST_DAYS,
-    load_cicids2017_binary,
-    load_cicids2017_split,
-)
-
-from canonical_schema import FEATURES_CANON
-_N_CANON = len(FEATURES_CANON)
-
-
-_REPO_ROOT = Path(__file__).resolve().parent.parent
-MODELS_DIR = _REPO_ROOT / "models"
-RUNS_DIR = _REPO_ROOT / "runs"
-
-
-# --------------------------------------------------------------------------------------
-# Configuración de recompensa para el agente defensor
-# --------------------------------------------------------------------------------------
-REWARD_CONFIG: Dict[str, float] = {
-    "tp": 1.5,
-    "fp": -1.5,
-    "fn": -5.0,
-    "omission": 0.0,
-}
-
-
-def make_env_fn(
-    X: np.ndarray, y: np.ndarray, reward_config: Dict[str, float], max_steps: int
-):
-    """Devuelve una función creadora de entornos para DummyVecEnv."""
-
-    def _init():
+import argparse 
+import json 
+from pathlib import Path 
+from typing import Dict, List 
+from datetime import datetime 
+ 
+import joblib 
+import torch 
+import numpy as np 
+from sklearn.metrics import classification_report, confusion_matrix 
+from sklearn.preprocessing import StandardScaler 
+ 
+from sb3_contrib import QRDQN 
+from stable_baselines3.common.vec_env import DummyVecEnv 
+from stable_baselines3.common.monitor import Monitor 
+ 
+from rl_defender_env import RLDatasetDefenderEnv 
+from load_cicids2017 import ( 
+    CICIDSLoadConfig, 
+    DEFAULT_TRAIN_DAYS, 
+    DEFAULT_TEST_DAYS, 
+    load_cicids2017_binary, 
+    load_cicids2017_split, 
+) 
+ 
+from canonical_schema import FEATURES_CANON 
+_N_CANON = len(FEATURES_CANON) 
+ 
+ 
+_REPO_ROOT = Path(__file__).resolve().parent.parent 
+MODELS_DIR = _REPO_ROOT / "models" 
+RUNS_DIR = _REPO_ROOT / "runs" 
+ 
+ 
+# -------------------------------------------------------------------------------------- 
+# Configuración de recompensa para el agente defensor 
+# -------------------------------------------------------------------------------------- 
+REWARD_CONFIG: Dict[str, float] = { 
+    "tp": 1.5, 
+    "fp": -1.5, 
+    "fn": -5.0, 
+    "omission": 0.0, 
+} 
+ 
+ 
+def make_env_fn( 
+    X: np.ndarray, y: np.ndarray, reward_config: Dict[str, float], max_steps: int 
+): 
+    """Devuelve una función creadora de entornos para DummyVecEnv.""" 
+ 
+    def _init(): 
         env = RLDatasetDefenderEnv(
-            X=X,
-            y=y,
+            X=X, 
+            y=y, 
             benign_label=0,
             attack_label=1,
             reward_config=reward_config,
