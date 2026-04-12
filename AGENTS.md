@@ -88,9 +88,12 @@ Rules:
   - `Canonical Flow Schema`
   - `CICIDSLoadConfig`
   - `RLDatasetDefenderEnv`
-  - `Phase 2 Offline Inference`
-  - `Robust v2 Inference Pipeline`
+- `Phase 2 Offline Inference`
+- `Robust v2 Inference Pipeline`
 - Remember that the NSL-KDD branch is historical. Do not let graph links from `Historical NSL-KDD Branch` override the current CICIDS2017 + Phase 2 baseline without explicit evidence in current code or run artifacts.
-- When a task changes architecture, data loading, validation flow, or Phase 2 inference behavior across files, refresh the graph with `graphify .` after the change.
+- Local git hooks auto-refresh `graphify-out/graph.json` and `graphify-out/GRAPH_REPORT.md` only for structural code changes such as added/removed/renamed files, import changes, class/function signature changes, and schema/mapping definition changes.
+- Small edits such as comments, docstrings, formatting, reward-value tweaks, and run artifacts under `runs/` do not trigger an automatic rebuild.
+- If `graphify-out/needs_update` exists, semantic sources changed and the graph may be stale. Run `graphify .` for a full refresh before relying on the graph for architecture, documentation, or review work.
+- The automatic hook does not fully regenerate higher-cost semantic outputs. Re-run `graphify .` after important documentation, PDF, image, or broader semantic changes.
 - For narrow single-file edits, using the graph is optional if the report already makes the location obvious.
 - The Obsidian export lives in `graphify-out/obsidian/` if a note-first or canvas view is useful.
