@@ -78,6 +78,19 @@ If preprocessing, clipping, scaling, reward values, or split logic changes, docu
 This project has a graphify knowledge graph at graphify-out/.
 
 Rules:
-- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
-- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
-- After modifying code files in this session, run `python3 -c "from graphify.watch import _rebuild_code; from pathlib import Path; _rebuild_code(Path('.'))"` to keep the graph current
+- Start repo-orientation, architecture, and multi-file tasks with `graphify-out/GRAPH_REPORT.md`.
+- If the report is not enough, prefer Graphify traversal over broad raw-file reading:
+  - `graphify query "<question>"`
+  - `graphify path "<node A>" "<node B>"`
+  - `graphify explain "<node>"`
+- Treat `INFERRED` and `semantically_similar_to` edges as hypotheses, not facts. Verify them in code or maintained docs before relying on them for edits or documentation claims.
+- Use the current high-value bridge nodes as likely entry points:
+  - `Canonical Flow Schema`
+  - `CICIDSLoadConfig`
+  - `RLDatasetDefenderEnv`
+  - `Phase 2 Offline Inference`
+  - `Robust v2 Inference Pipeline`
+- Remember that the NSL-KDD branch is historical. Do not let graph links from `Historical NSL-KDD Branch` override the current CICIDS2017 + Phase 2 baseline without explicit evidence in current code or run artifacts.
+- When a task changes architecture, data loading, validation flow, or Phase 2 inference behavior across files, refresh the graph with `graphify .` after the change.
+- For narrow single-file edits, using the graph is optional if the report already makes the location obvious.
+- The Obsidian export lives in `graphify-out/obsidian/` if a note-first or canvas view is useful.
