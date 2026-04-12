@@ -30,8 +30,10 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 - [docs/phase2_plan.md](docs/phase2_plan.md): execution plan for the lab workflow
 - [docs/gcp_lab.md](docs/gcp_lab.md): private lab deployment guide
 - [experiments/README.md](experiments/README.md): experiment archive index
+- [experiments/cicids2017_qrdqn_experiments.md](experiments/cicids2017_qrdqn_experiments.md): maintained CICIDS2017 + QRDQN run history
 - [docs/DEFENSA_TFG_PROGRESO.md](docs/DEFENSA_TFG_PROGRESO.md): Spanish defense notes
 - [docs/DEFENSA_TFG_SCRIPT.md](docs/DEFENSA_TFG_SCRIPT.md): Spanish defense script
+- [report/report.tex](report/report.tex): thesis report source draft
 
 ## Repository Structure
 
@@ -40,7 +42,7 @@ TFG_CYBER_AI/
 ├── .github/                 # Agent guidance and project-wide source of truth
 ├── datasets/                # Local datasets (not tracked in git)
 ├── docs/                    # Documentation, results, Phase 2 guides, defense material
-├── experiments/             # Historical experiment notes
+├── experiments/             # Experiment archive notes: historical and maintained timelines
 ├── lab/                     # Lab-related assets
 ├── models/                  # Trained model files
 ├── pcaps/                   # Extracted flows and captures used for Phase 2 work
@@ -138,6 +140,8 @@ Artifact-backed historical results are summarised in [docs/results.md](docs/resu
 - Phase 2:
   - robust offline inference pipeline exists
   - latest committed benign-only v2 artifact shows that behaviour changed over time, so Phase 2 claims must always be tied to the exact run artifact
+
+The longer experiment-by-experiment narrative now lives in [experiments/cicids2017_qrdqn_experiments.md](experiments/cicids2017_qrdqn_experiments.md) for CICIDS2017 and [experiments/nslkdd_experiments.md](experiments/nslkdd_experiments.md) for the older NSL-KDD branch.
 
 ## Notes for Submission and Defense
 
