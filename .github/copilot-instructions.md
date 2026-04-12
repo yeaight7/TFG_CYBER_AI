@@ -1,82 +1,53 @@
 # GitHub Copilot Instructions — TFG_CYBER_AI
 
-This file contains repository-level guidance for GitHub Copilot and related coding agents.
+This file contains the repository-level guidance for GitHub Copilot when editing or explaining code.
 
-## Project Summary
-
-`TFG_CYBER_AI` is a thesis project focused on an RL-based defender that classifies network flows and decides whether to permit or block them.
-
-The repository currently centres on:
-
-- CICIDS2017 as the main modern dataset
-- a 76-feature canonical schema
-- a 152-dimensional observation vector after adding the missingness mask
-- QRDQN as the main RL algorithm
+Review-specific guidance lives in `.github/instructions/copilot-review.instructions.md`.
 
 ## Read First
 
-Before making changes, read:
+Before changing code or documentation, use this order:
 
-1. [.github/AGENT_CONTEXT.md](AGENT_CONTEXT.md)
-2. [../AGENTS.md](../AGENTS.md)
+1. `AGENTS.md`
+2. `.github/AGENT_CONTEXT.md`
+3. `docs/AGENT_CONTEXT.md`
+4. `docs/results.md`
 
-## Repository Conventions
+If `graphify-out/GRAPH_REPORT.md` exists and the task is architectural, cross-file, or review-oriented, read it first and use Graphify context before broad raw-file exploration.
 
-### Code Style
+## Current Baseline
 
-- Python 3.10+
-- Type hints for non-trivial functions
-- `snake_case` for functions and variables
-- `PascalCase` for classes
-- `UPPER_SNAKE_CASE` for constants
-- prefer `pathlib.Path` over string paths
+- CICIDS2017 is the main modern dataset.
+- NSL-KDD is historical benchmark material unless the task explicitly targets the historical branch.
+- The canonical schema is fixed at 76 flow features.
+- The final observation size is 152: 76 feature values plus a 76-value missingness mask.
+- Missingness-mask semantics are `1 = present / valid` and `0 = missing / imputed`.
+- The maintained Phase 2 inference entry point is `scripts/predict_real_traffic_v2.py`.
 
-### Reproducibility
+## Coding Expectations
 
-- Use seeded workflows where possible (`42` by default in current scripts)
-- Keep run artifacts under `runs/<category>/<RUN_ID>/`
-- Training and evaluation documentation should cite the exact run artifact when describing measured results
+- Prefer Python type hints for non-trivial functions.
+- Prefer `pathlib.Path` over hardcoded path strings.
+- Keep changes local, reversible, and aligned with current code plus committed run artifacts.
+- Use the narrowest meaningful validation first and do not claim validation you did not run.
 
-### Scripts and Entry Points
+## Data and Modeling Guardrails
 
-| Purpose | File |
-|---------|------|
-| Train CICIDS2017 QRDQN | `src/train_rl_defender.py` |
-| Validation checks A/B/C | `src/validate_checks.py` |
-| Leave-one-exact-CSV-out validation | `src/validate_leave_one_csv_out.py` |
-| Robust Phase 2 inference | `scripts/predict_real_traffic_v2.py` |
+- Never introduce IP addresses, absolute timestamps, Flow IDs, unique identifiers, or direct port proxies as model features.
+- Dataset adapters should preserve the shared return contract:
+  `(X_train, y_train, X_test, y_test, scaler, feature_names)`.
+- Preserve `X` as `float32`, `y` as `int64`, and labels as `0 = BENIGN`, `1 = ATTACK`.
+- New datasets require an adapter that maps into the shared canonical schema.
 
-## Design Rules
+## Documentation and Reproducibility
 
-### Canonical Schema
+- English is the default documentation language; `docs/DEFENSA_*` stays in Spanish.
+- Historical settings or results must be labeled clearly as historical.
+- Meaningful training and evaluation changes should keep artifacts under `runs/<category>/<RUN_ID>/`.
+- If behavior changes, keep documentation and artifact references aligned with the current implementation.
 
-- The canonical schema is fixed.
-- Do not train models with variable-length or semantically inconsistent feature vectors.
-- Missing canonical features must be handled through imputation plus the missingness mask.
+## Graphify
 
-### Anti-Leakage
-
-Never introduce:
-
-- IP addresses
-- absolute timestamps
-- Flow IDs
-- port fields as direct label proxies
-
-### Multi-Dataset Support
-
-Each dataset should have its own adapter and map into the shared canonical schema.
-
-## Documentation Rules
-
-- English is the default for repository documentation.
-- `docs/DEFENSA_*` stays in Spanish.
-- Historical run-specific settings must not be presented as current defaults.
-- Avoid stale references to scripts or flags that no longer exist.
-
-## What Not to Do
-
-- Do not modify `docs/discusion_con_llm.md` if it appears later.
-- Do not hardcode absolute local paths.
-- Do not delete historical runs without explicit reason.
-- Do not claim success for validations you did not actually run.
+- If `graphify-out/` is present, use it for repo orientation and architectural context.
+- Start with `graphify-out/GRAPH_REPORT.md`.
+- Treat `INFERRED` graph edges as hints that must be checked in code or maintained docs before relying on them.
