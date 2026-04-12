@@ -11,10 +11,14 @@
             "id": "46a6bb9554c852b1",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Vista gráfica"
+              "type": "markdown",
+              "state": {
+                "file": "_COMMUNITY_Environment and Tuning.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "_COMMUNITY_Environment and Tuning"
             }
           }
         ]
@@ -179,6 +183,7 @@
   },
   "active": "46a6bb9554c852b1",
   "lastOpenFiles": [
+    "CICIDSLoadConfig.md",
     "graph.canvas"
   ]
 }
