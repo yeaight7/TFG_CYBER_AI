@@ -11,10 +11,10 @@
             "id": "268f504e27035469",
             "type": "leaf",
             "state": {
-              "type": "empty",
+              "type": "graph",
               "state": {},
-              "icon": "lucide-file",
-              "title": "Nueva pestaña"
+              "icon": "lucide-git-fork",
+              "title": "Vista gráfica"
             }
           }
         ]
@@ -74,7 +74,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "74a4b46ac4ee1e28",
@@ -163,7 +164,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -178,10 +180,11 @@
   },
   "active": "268f504e27035469",
   "lastOpenFiles": [
+    "graph.canvas",
+    "Sin título.canvas",
     "Sin título.base",
     "Sin nombre",
     "_COMMUNITY_Environment and Tuning.md",
-    "CICIDSLoadConfig.md",
-    "graph.canvas"
+    "CICIDSLoadConfig.md"
   ]
 }
