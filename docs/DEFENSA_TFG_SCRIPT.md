@@ -1,7 +1,7 @@
 # Defensa TFG — Guion oral actualizado
 
-**Autor**: Javier Rivero Iglesias  
-**Idioma**: español  
+**Autor**: Javier Rivero Iglesias
+**Idioma**: español
 **Objetivo**: guion de presentación oral alineado con el estado real del repositorio.
 
 ---
@@ -149,7 +149,7 @@ El mejor artefacto comprometido en el repositorio es:
 Con resultados de:
 
 - accuracy: **0.99859**
-- recall de ataque: **0.99945**
+- recall de ataque: **0.99945** (sensitivity)
 - F1 de ataque: **0.99876**
 
 Es decir, en el dataset offline el rendimiento es extremadamente alto.
