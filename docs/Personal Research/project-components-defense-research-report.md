@@ -6,7 +6,7 @@ Este informe **no repite**:
 - `docs/Personal Research/data-structure-and-canonical-schema-research-report.md`
 - `docs/Personal Research/qrdqn-research-report.md`
 
-Aquí documento lo que faltaba de cara al tribunal: componentes históricos, baseline clásico, tuning, scripts auxiliares, laboratorio y automatización de conocimiento del repo.
+Aquí documento lo que faltaba de cara al tribunal: componentes históricos, baseline clásico, tuning, scripts auxiliares y laboratorio.
 
 ---
 
@@ -20,7 +20,6 @@ Aquí documento lo que faltaba de cara al tribunal: componentes históricos, bas
 | Inferencia Fase 2 (legacy) | `scripts/predict_real_traffic.py` | Versión antigua del pipeline | Sirve para explicar por qué existe `v2` como ruta mantenida |
 | Utilidades de robustez | `src/scaling_utils.py` | Clipping por percentiles y por z-score | Explica mitigación práctica de outliers/domain shift |
 | Generación de tráfico de laboratorio | `lab/docker/docker-compose.yaml`, `lab/docker/generator/gen_traffic.py` | Mini-lab aislado + generador de flujos | Demuestra estrategia de experimentación segura |
-| Automatización de grafo de conocimiento | `scripts/graphify_auto_update.py`, `graphify-out/` | Hook inteligente para refrescar grafo | Justifica trazabilidad arquitectónica y documentación viva |
 | Archivo de experimentos | `experiments/README.md`, `experiments/cicids2017_qrdqn_experiments.md` | Historial mantenido vs histórico | Ayuda a separar evidencia actual de contexto histórico |
 
 ---
@@ -117,18 +116,18 @@ Qué hace:
 Por qué es defendible:
 - Es la pieza que conserva continuidad histórica del proyecto, pero separada del camino final de Fase 2.
 
-## 4.2 `decide_and_run()` en Graphify auto-update
+## 4.2 `compute_truth_metrics()` en inferencia v2
 
-**Archivo**: `scripts/graphify_auto_update.py`
+**Archivo**: `scripts/predict_real_traffic_v2.py`
 
 Qué hace:
-- Inspecciona cambios git entre revisiones.
-- Distingue cambios **estructurales de código** vs cambios **semánticos de documentación**.
-- Si detecta cambio estructural, intenta rebuild del grafo de código.
-- Si detecta cambio semántico, crea `graphify-out/needs_update` para pedir refresco completo.
+- Detecta columnas de verdad-terreno (`truth_y`, `truth_label`) cuando existen.
+- Normaliza etiquetas a binario (`0/1`) y descarta filas no válidas.
+- Calcula métricas de clasificación (`accuracy`, `precision/recall/f1`, `tp/tn/fp/fn`).
+- Integra estas métricas en el `metrics.json` final de la ejecución.
 
 Por qué importa:
-- Te permite defender que la base documental y arquitectónica no depende de revisión manual ad-hoc.
+- Te permite defender evaluación controlada en Fase 2 cuando el CSV lleva etiquetas de referencia.
 
 ## 4.3 `gen_traffic.py` (laboratorio)
 
@@ -192,7 +191,7 @@ Cómo responder si preguntan por ambas:
 2. “Mantengo un baseline clásico (Random Forest) para comparación metodológica, no solo para maximizar métrica.”
 3. “Tengo **tuning reproducible** con Optuna y búsqueda declarada de hiperparámetros.”
 4. “La Fase 2 se apoya en un mini-lab aislado y scripts de tráfico controlado, no en pruebas opacas.”
-5. “El repositorio integra automatización de documentación arquitectónica (Graphify) para mantener trazabilidad entre código y narrativa técnica.”
+5. “La inferencia v2 puede incluir métricas con verdad-terreno cuando existen etiquetas, mejorando la trazabilidad experimental.”
 
 ---
 
@@ -207,11 +206,11 @@ Porque un baseline clásico ancla la comparación y evita conclusiones sin refer
 **¿Qué aporta leave-one-exact-CSV-out frente a métricas agregadas?**
 Mide robustez por archivo real específico y reduce optimismo por mezcla de patrones entre train/test.
 
-**¿Qué garantiza Graphify auto-update?**
-No garantiza verdad semántica total, pero sí disciplina de actualización arquitectónica y aviso explícito cuando el grafo necesita refresh completo.
+**¿Qué pasa si en Fase 2 no hay `truth_label` o `truth_y`?**
+La pipeline sigue funcionando en modo no supervisado operativo y reporta tasas de `block/allow`; las métricas supervisadas solo se añaden cuando hay verdad-terreno válida.
 
 ---
 
 ## 10) Conclusión de esta investigación complementaria
 
-Tus dos investigaciones cubren bien el núcleo (contrato de datos + QRDQN). Lo que faltaba para una defensa sólida era demostrar dominio del **ecosistema completo**: baseline clásico, tuning, validación avanzada por fold, tooling de laboratorio, distinción legacy/mantenido y trazabilidad documental/arquitectónica. Ese “resto” es exactamente lo que completa el relato técnico ante tribunal.
+Tus dos investigaciones cubren bien el núcleo (contrato de datos + QRDQN). Lo que faltaba para una defensa sólida era demostrar dominio del **ecosistema completo**: baseline clásico, tuning, validación avanzada por fold, tooling de laboratorio y distinción legacy/mantenido. Ese “resto” es exactamente lo que completa el relato técnico ante tribunal.
