@@ -16,7 +16,7 @@ El sistema está dividido en dos fases:
 
 1. **Fase 1 (offline entrenamiento/validación)**
    - Carga y limpieza de dataset (`src/load_cicids2017.py`)
-   - Entorno RL tabular para decisiones binarias (`src/rl_defender_env.py`)
+   - Entorno Gymnasium sobre dataset (secuencial) para decisiones binarias `PERMIT/BLOCK` (`src/rl_defender_env.py`)
    - Entrenamiento (`src/train_rl_defender.py`)
    - Validación A/B/C y leave-one-exact-CSV-out (`src/validate_checks.py`, `src/validate_leave_one_csv_out.py`)
 
@@ -97,7 +97,7 @@ Referencia: `src/rl_defender_env.py` (constructor, `_compute_reward`, `step`).
 
 ### 5.1 Flujo operativo (main)
 1. Lee CSV de flujos reales
-2. Separa metadatos (`src_ip`, `dst_ip`, puertos, `timestamp`, y columnas truth si existen)
+2. Separa metadatos (`src_ip`, `dst_ip`, `protocol`, puertos, `timestamp`, y columnas truth si existen)
 3. Armoniza unidades temporales (`maybe_convert_time_units`): segundos -> microsegundos si detecta mediana `<1`
 4. Mapea al espacio canónico (`map_to_canonical`)
 5. Aplica clipping percentilar opcional en features crudas (`--percentiles`)

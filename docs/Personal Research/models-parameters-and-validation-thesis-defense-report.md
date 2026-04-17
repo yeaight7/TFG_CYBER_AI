@@ -30,9 +30,9 @@ Uso en defensa: baseline no-RL para comparar la estrategia RL contra un método 
 Archivo: `scripts/predict_real_traffic_v2.py` (`load_model`).
 
 - Intenta cargar con `sb3_contrib.QRDQN`
-- Si falla, hace fallback a `stable_baselines3.DQN`
+- Si ocurre una excepción durante esa carga, hace fallback a `stable_baselines3.DQN`
 
-Esto da robustez operativa de inferencia incluso cuando no está disponible `sb3_contrib`.
+Esto da robustez operativa de inferencia cuando falla la carga de `QRDQN`; la ausencia de `sb3_contrib` es un caso posible, pero no el único.
 
 ## 2.3 Búsqueda de hiperparámetros con Optuna
 Archivo: `src/tune_hparams.py`.
