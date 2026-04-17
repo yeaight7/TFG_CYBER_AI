@@ -75,7 +75,10 @@ def _is_semantic_source(path: str) -> bool:
         return False
     if norm in KEY_DOC_PATHS:
         return True
-    if Path(norm).suffix.lower() in SEMANTIC_EXTS:
+    ext = Path(norm).suffix.lower()
+    if ext == ".md":
+        return False
+    if ext in SEMANTIC_EXTS:
         return norm.startswith(("docs/", "experiments/", "report/", ".github/"))
     return False
 
