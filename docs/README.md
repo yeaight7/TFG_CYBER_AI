@@ -12,6 +12,7 @@ This directory contains the maintained project documentation used for developmen
 | [results.md](results.md) | Evaluators, author, reviewers | Artifact-backed results snapshot | Maintained |
 | [phase2_plan.md](phase2_plan.md) | Author, contributors | Execution plan for the Phase 2 workflow | Maintained |
 | [gcp_lab.md](gcp_lab.md) | Author, contributors | Private lab setup guide | Maintained |
+| [Personal Research/deep-defense-research/README.md](Personal%20Research/deep-defense-research/README.md) | Author | Deep multi-file defense research pack (Spanish) | Maintained |
 | [../experiments/README.md](../experiments/README.md) | Author, reviewers | Historical experiment archive index | Maintained |
 | [DEFENSA_TFG_PROGRESO.md](DEFENSA_TFG_PROGRESO.md) | Author | Spanish defense preparation notes | Maintained, Spanish by design |
 | [DEFENSA_TFG_SCRIPT.md](DEFENSA_TFG_SCRIPT.md) | Author | Spanish defense script | Maintained, Spanish by design |
