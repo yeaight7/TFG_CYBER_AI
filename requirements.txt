@@ -8,3 +8,4 @@ sb3-contrib>=2.3
 tensorboard>=2.14
 matplotlib>=3.7
 optuna>=3.4
+graphifyy>=0.4.30
