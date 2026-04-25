@@ -155,6 +155,5 @@ The longer experiment-by-experiment narrative now lives in [experiments/cicids20
 
 ## Safety and Reproducibility
 
-- Do not commit datasets, PCAPs, credentials, or large generated artifacts.
 - Every training or evaluation workflow should persist a `RUN_ID` and write artifacts under `runs/<category>/<RUN_ID>/`.
 - If documentation describes a result, it should reference an artifact that exists in `runs/` or be clearly marked as planned or historical.
