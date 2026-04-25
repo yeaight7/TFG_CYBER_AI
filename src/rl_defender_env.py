@@ -23,7 +23,7 @@ class RLDatasetDefenderEnv(gym.Env):
 
     Ejemplo de reward_config:
         {
-            "tp": 1.0,
+            "tp": 1.5,
             "fp": -2.0,
             "fn": -5.0,
             "omission": 0.0,
@@ -59,10 +59,10 @@ class RLDatasetDefenderEnv(gym.Env):
 
         # Config de recompensa por defecto
         default_reward_config: dict[str, float] = {
-            "tp": 1.0,    # ataque bloqueado (TP)
+            "tp": 1.5,    # ataque bloqueado (TP)
             "fp": -2.0,   # normal bloqueado (FP)
             "fn": -5.0,   # ataque permitido (FN)
-            "omission": 0.0,  # término adicional cuando PERMIT
+            "omission": 0.0,  # término adicional cuando PERMIT (cubre el caso de tn y también aplica al caso de bloquear un evento desconocido)
         }
         reward_config = reward_config or {}
         self.reward_config: dict[str, float] = {**default_reward_config, **reward_config}
@@ -126,7 +126,7 @@ class RLDatasetDefenderEnv(gym.Env):
                 reward = rc["fn"]   # ataque permitido (FN)
         elif is_benign:
             if action == 0:
-                reward = rc["omission"]
+                reward = rc["omission"] # la recompensa por omission, en este caso, sería equivalente a tn (true negative)
             else:
                 reward = rc["fp"]   # normal bloqueado (FP)
         else:
