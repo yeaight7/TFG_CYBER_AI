@@ -59,7 +59,6 @@ If you cannot run heavy training locally, do not fabricate results. Limit yourse
 - English is the default language for repo documentation.
 - Exception:
   - `docs/DEFENSA_*` stays in Spanish.
-- Do not edit `docs/discusion_con_llm.md` if it appears in the future; treat it as a historical log.
 - When a documented claim is historical, label it clearly as historical.
 - When a documented claim reflects the current implementation, it must match the current codebase.
 
