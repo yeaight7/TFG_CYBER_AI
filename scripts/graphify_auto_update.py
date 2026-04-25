@@ -36,6 +36,9 @@ KEY_DOC_PATHS = {
     "experiments/nslkdd_experiments.md",
 }
 SEMANTIC_EXTS = {".md", ".pdf", ".png", ".jpg", ".jpeg", ".webp", ".svg"}
+# Prefixes must keep trailing "/" so startswith checks stay path-segment scoped.
+# `.github/` is included for maintained project docs (for example AGENT_CONTEXT),
+# while `.github/skills/` is explicitly excluded as tooling metadata.
 SEMANTIC_MD_PREFIXES = ("docs/", "experiments/", ".github/")
 EXCLUDED_SEMANTIC_MD_PREFIXES = ("docs/Personal Research/", ".github/skills/")
 
@@ -75,6 +78,7 @@ def _is_semantic_source(path: str) -> bool:
     norm = _normalize(path)
     if _is_ignored(norm):
         return False
+    # Exclusions intentionally take precedence over broader markdown include prefixes.
     if any(norm.startswith(prefix) for prefix in EXCLUDED_SEMANTIC_MD_PREFIXES):
         return False
     if norm in KEY_DOC_PATHS:
