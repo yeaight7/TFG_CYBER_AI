@@ -40,7 +40,7 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 ```text
 TFG_CYBER_AI/
 ├── .github/                 # Agent guidance and project-wide source of truth
-├── datasets/                # Local datasets (not tracked in git)
+├── datasets/                # Local datasets (also tracked via git lfs)
 ├── docs/                    # Documentation, results, Phase 2 guides, defense material
 ├── experiments/             # Experiment archive notes: historical and maintained timelines
 ├── lab/                     # Lab-related assets
