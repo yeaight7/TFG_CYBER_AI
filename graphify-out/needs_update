@@ -1,0 +1,5 @@
+timestamp: 2026-04-25T20:26:40.758017+00:00
+reason: semantic sources changed - run `graphify .` for a full refresh
+paths:
+- AGENTS.md
+- README.md
