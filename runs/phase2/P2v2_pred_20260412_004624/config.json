@@ -1,9 +1,9 @@
 {
   "run_id": "P2v2_pred_20260412_004624",
-  "flows_csv": "pcaps\\untrustworthy_torbrowser_site.csv",
-  "model_zip": "models\\C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip",
-  "scaler": "runs\\cicids2017\\C03_qrdqn_cicids2017_canonical_full_random_20260223_232439\\scaler.joblib",
-  "percentiles": "runs\\cicids2017\\C03_qrdqn_cicids2017_canonical_full_random_20260223_232439\\train_percentiles.npz",
+  "flows_csv": "pcaps/untrustworthy_torbrowser_site.csv",
+  "model_zip": "models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip",
+  "scaler": "runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/scaler.joblib",
+  "percentiles": "runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/train_percentiles.npz",
   "clip_z": 10.0,
   "no_scale": false,
   "mask_semantics": "1=present,0=missing",
