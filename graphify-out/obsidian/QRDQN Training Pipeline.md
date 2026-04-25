@@ -1,20 +1,22 @@
 ---
-source_file: "docs\results.md"
+source_file: "README.md"
 type: "document"
-community: "Project Docs and Phase Plan"
+community: "Community 2"
+location: "Quickstart"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Project_Docs_and_Phase_Plan
+  - community/Community_2
 ---
 
 # QRDQN Training Pipeline
 
 ## Connections
-- [[Phase 1 Offline Training]] - `conceptually_related_to` [EXTRACTED]
-- [[requirements.txt]] - `references` [EXTRACTED]
-- [[results]] - `references` [EXTRACTED]
-- [[train_rl_defender.py]] - `implements` [EXTRACTED]
-- [[tune_hparams.py]] - `conceptually_related_to` [INFERRED]
+- [[CICIDS2017 Primary Dataset]] - `conceptually_related_to` [EXTRACTED]
+- [[Current Reward Configuration]] - `conceptually_related_to` [EXTRACTED]
+- [[Python Runtime Dependencies]] - `references` [EXTRACTED]
+- [[RLDatasetDefenderEnv]] - `references` [EXTRACTED]
+- [[main()_4]] - `references` [EXTRACTED]
+- [[train_rl_defender.py]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Project_Docs_and_Phase_Plan
+#graphify/document #graphify/EXTRACTED #community/Community_2

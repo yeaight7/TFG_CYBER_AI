@@ -1,12 +1,12 @@
 ---
-source_file: "src\load_cicids2017.py"
+source_file: "src/load_cicids2017.py"
 type: "code"
-community: "CICIDS2017 Loader"
+community: "Community 0"
 location: "L275"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/CICIDS2017_Loader
+  - community/Community_0
 ---
 
 # _load_and_process_csv_paths()
@@ -20,4 +20,4 @@ tags:
 - [[load_cicids2017_csv_split()]] - `calls` [EXTRACTED]
 - [[load_cicids2017_exact_csv_split()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/CICIDS2017_Loader
+#graphify/code #graphify/EXTRACTED #community/Community_0

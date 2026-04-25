@@ -1,12 +1,12 @@
 ---
-source_file: "src\train_rl_defender.py"
+source_file: "src/train_rl_defender.py"
 type: "rationale"
-community: "QRDQN Training"
+community: "Community 2"
 location: "L63"
 tags:
   - graphify/rationale
   - graphify/INFERRED
-  - community/QRDQN_Training
+  - community/Community_2
 ---
 
 # Devuelve una función creadora de entornos para DummyVecEnv.
@@ -16,4 +16,4 @@ tags:
 - [[RLDatasetDefenderEnv]] - `uses` [INFERRED]
 - [[make_env_fn()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/INFERRED #community/QRDQN_Training
+#graphify/rationale #graphify/INFERRED #community/Community_2

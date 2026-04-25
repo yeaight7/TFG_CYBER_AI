@@ -1,17 +1,17 @@
 ---
-source_file: "docs\phase2_plan.md"
+source_file: ".github/AGENT_CONTEXT.md"
 type: "document"
-community: "Project Docs and Phase Plan"
+community: "Community 1"
+location: "Not Implemented"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Project_Docs_and_Phase_Plan
+  - community/Community_1
 ---
 
 # Active Blocking Future Work
 
 ## Connections
-- [[Phase 2 Offline Inference]] - `rationale_for` [EXTRACTED]
-- [[phase2_plan]] - `references` [EXTRACTED]
+- [[Phase 2 Offline Inference]] - `conceptually_related_to` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Project_Docs_and_Phase_Plan
+#graphify/document #graphify/EXTRACTED #community/Community_1

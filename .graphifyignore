@@ -1,0 +1,23 @@
+# Runtime environments and local tool state
+.venv/
+venv/
+.codex/
+
+# Generated graph artifacts
+graphify-out/
+.graphify_*.json
+
+# Data, captures, model artifacts, and experiment outputs
+datasets/
+runs/
+models/
+experiments/
+pcaps/
+lab/
+
+# Build/report artifacts that are not maintained source context
+report/
+
+# Personal notes and reusable skill metadata are intentionally outside the corpus
+docs/Personal Research/
+.github/skills/

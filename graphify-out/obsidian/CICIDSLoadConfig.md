@@ -1,18 +1,19 @@
 ---
-source_file: "src\load_cicids2017.py"
+source_file: "src/load_cicids2017.py"
 type: "code"
-community: "CICIDS2017 Loader"
+community: "Community 0"
 location: "L41"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/CICIDS2017_Loader
+  - community/Community_0
 ---
 
 # CICIDSLoadConfig
 
 ## Connections
 - [[Baraja y_train y entrena brevemente. Si el modelo aún obtiene accuracy     alta]] - `uses` [INFERRED]
+- [[CICIDS2017 Primary Dataset]] - `references` [EXTRACTED]
 - [[Callback para mostrar progreso cada log_freq timesteps.]] - `uses` [INFERRED]
 - [[Devuelve una función creadora de entornos para DummyVecEnv.]] - `uses` [INFERRED]
 - [[Devuelve una función creadora de entornos para DummyVecEnv._1]] - `uses` [INFERRED]
@@ -30,9 +31,12 @@ tags:
 - [[load_cicids2017_csv_split()]] - `calls` [EXTRACTED]
 - [[load_cicids2017_exact_csv_split()]] - `calls` [EXTRACTED]
 - [[load_cicids2017_split()]] - `calls` [EXTRACTED]
+- [[main()_3]] - `calls` [INFERRED]
+- [[main()_5]] - `calls` [INFERRED]
+- [[main()_7]] - `calls` [INFERRED]
 - [[train_rl_defender.py — Entrenamiento de agente defensor RL sobre CICIDS2017.]] - `uses` [INFERRED]
 - [[tune_hparams.py -- Optimizacion de hiperparametros con Optuna para QRDQN sobre C]] - `uses` [INFERRED]
 - [[validate_checks.py — Validación de resultados experimentales del agente RL.  I]] - `uses` [INFERRED]
 - [[validate_leave_one_csv_out.py — Validación leave-one-exact-CSV-out para CICIDS20]] - `uses` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/CICIDS2017_Loader
+#graphify/code #graphify/INFERRED #community/Community_0

@@ -1,12 +1,12 @@
 ---
-source_file: "src\tune_hparams.py"
+source_file: "src/tune_hparams.py"
 type: "rationale"
-community: "Environment and Tuning"
+community: "Community 2"
 location: "L40"
 tags:
   - graphify/rationale
   - graphify/INFERRED
-  - community/Environment_and_Tuning
+  - community/Community_2
 ---
 
 # Evaluate model and return F1 score for attack class.
@@ -16,4 +16,4 @@ tags:
 - [[RLDatasetDefenderEnv]] - `uses` [INFERRED]
 - [[_evaluate_f1()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/INFERRED #community/Environment_and_Tuning
+#graphify/rationale #graphify/INFERRED #community/Community_2

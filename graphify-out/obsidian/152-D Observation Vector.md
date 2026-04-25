@@ -1,19 +1,19 @@
 ---
-source_file: "docs\AGENT_CONTEXT.md"
+source_file: ".github/AGENT_CONTEXT.md"
 type: "document"
-community: "Canonical Schema Guardrails"
+community: "Community 3"
+location: "Canonical Observation Space"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Canonical_Schema_Guardrails
+  - community/Community_3
 ---
 
 # 152-D Observation Vector
 
 ## Connections
-- [[AGENTS]] - `references` [EXTRACTED]
-- [[Canonical Flow Schema]] - `shares_data_with` [EXTRACTED]
+- [[76 Canonical Flow Features]] - `conceptually_related_to` [EXTRACTED]
 - [[Missingness Mask]] - `conceptually_related_to` [EXTRACTED]
-- [[canonical_schema.py]] - `implements` [EXTRACTED]
+- [[get_observation_feature_names()]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Canonical_Schema_Guardrails
+#graphify/document #graphify/EXTRACTED #community/Community_3

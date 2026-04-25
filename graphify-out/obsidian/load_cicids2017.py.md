@@ -1,21 +1,19 @@
 ---
-source_file: "src\load_cicids2017.py"
+source_file: "src/load_cicids2017.py"
 type: "code"
-community: "CICIDS2017 Loader"
+community: "Community 0"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/CICIDS2017_Loader
+  - community/Community_0
 ---
 
 # load_cicids2017.py
 
 ## Connections
-- [[Anti-Leakage Policy]] - `implements` [EXTRACTED]
-- [[CICIDS2017 Dataset]] - `implements` [EXTRACTED]
+- [[CICIDS2017 Primary Dataset]] - `references` [EXTRACTED]
 - [[CICIDSLoadConfig]] - `contains` [EXTRACTED]
-- [[Canonical Flow Schema]] - `implements` [EXTRACTED]
 - [[_clean_rows()]] - `contains` [EXTRACTED]
 - [[_coerce_numeric_features()]] - `contains` [EXTRACTED]
 - [[_drop_identifier_like_columns()]] - `contains` [EXTRACTED]
@@ -33,4 +31,4 @@ tags:
 - [[load_cicids2017_exact_csv_split()]] - `contains` [EXTRACTED]
 - [[load_cicids2017_split()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/CICIDS2017_Loader
+#graphify/code #graphify/EXTRACTED #community/Community_0

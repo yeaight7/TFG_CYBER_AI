@@ -1,12 +1,12 @@
 ---
-source_file: "src\load_cicids2017.py"
+source_file: "src/load_cicids2017.py"
 type: "code"
-community: "CICIDS2017 Loader"
+community: "Community 0"
 location: "L436"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/CICIDS2017_Loader
+  - community/Community_0
 ---
 
 # load_cicids2017_exact_csv_split()
@@ -18,5 +18,6 @@ tags:
 - [[_resolve_exact_csv_names()]] - `calls` [EXTRACTED]
 - [[list_cicids2017_csv_files()]] - `calls` [EXTRACTED]
 - [[load_cicids2017.py]] - `contains` [EXTRACTED]
+- [[main()_7]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/CICIDS2017_Loader
+#graphify/code #graphify/EXTRACTED #community/Community_0

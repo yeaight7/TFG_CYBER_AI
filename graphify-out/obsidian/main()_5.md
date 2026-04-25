@@ -1,19 +1,21 @@
 ---
-source_file: "src\tune_hparams.py"
+source_file: "src/tune_hparams.py"
 type: "code"
-community: "Environment and Tuning"
+community: "Community 2"
 location: "L132"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Environment_and_Tuning
+  - community/Community_2
 ---
 
 # main()
 
 ## Connections
+- [[CICIDSLoadConfig]] - `calls` [INFERRED]
+- [[load_cicids2017_binary()]] - `calls` [INFERRED]
 - [[objective()]] - `calls` [EXTRACTED]
 - [[parse_args()_2]] - `calls` [EXTRACTED]
 - [[tune_hparams.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Environment_and_Tuning
+#graphify/code #graphify/EXTRACTED #community/Community_2

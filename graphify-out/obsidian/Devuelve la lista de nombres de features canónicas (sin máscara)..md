@@ -1,12 +1,12 @@
 ---
-source_file: "src\canonical_schema.py"
+source_file: "src/canonical_schema.py"
 type: "rationale"
-community: "Canonical Schema Guardrails"
+community: "Community 3"
 location: "L347"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Canonical_Schema_Guardrails
+  - community/Community_3
 ---
 
 # Devuelve la lista de nombres de features canónicas (sin máscara).
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[get_canonical_feature_names()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Canonical_Schema_Guardrails
+#graphify/rationale #graphify/EXTRACTED #community/Community_3

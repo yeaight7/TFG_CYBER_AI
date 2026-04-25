@@ -1,11 +1,12 @@
 ---
-source_file: "docs\AGENT_CONTEXT.md"
+source_file: ".github/AGENT_CONTEXT.md"
 type: "document"
-community: "Canonical Schema Guardrails"
+community: "Community 3"
+location: "Canonical Observation Space"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Canonical_Schema_Guardrails
+  - community/Community_3
 ---
 
 # Missingness Mask
@@ -13,6 +14,5 @@ tags:
 ## Connections
 - [[152-D Observation Vector]] - `conceptually_related_to` [EXTRACTED]
 - [[Canonical Flow Schema]] - `conceptually_related_to` [EXTRACTED]
-- [[canonical_schema.py]] - `implements` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Canonical_Schema_Guardrails
+#graphify/document #graphify/EXTRACTED #community/Community_3

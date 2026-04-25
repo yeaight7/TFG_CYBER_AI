@@ -1,12 +1,12 @@
 ---
-source_file: "src\canonical_schema.py"
+source_file: "src/canonical_schema.py"
 type: "rationale"
-community: "Canonical Schema Guardrails"
+community: "Community 3"
 location: "L352"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Canonical_Schema_Guardrails
+  - community/Community_3
 ---
 
 # Devuelve la lista completa de nombres: features + máscara de missingness.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[get_observation_feature_names()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Canonical_Schema_Guardrails
+#graphify/rationale #graphify/EXTRACTED #community/Community_3

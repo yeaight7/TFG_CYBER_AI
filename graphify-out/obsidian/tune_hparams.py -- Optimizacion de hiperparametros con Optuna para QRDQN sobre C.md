@@ -1,12 +1,12 @@
 ---
-source_file: "src\tune_hparams.py"
+source_file: "src/tune_hparams.py"
 type: "rationale"
-community: "Environment and Tuning"
+community: "Community 2"
 location: "L1"
 tags:
   - graphify/rationale
   - graphify/INFERRED
-  - community/Environment_and_Tuning
+  - community/Community_2
 ---
 
 # tune_hparams.py -- Optimizacion de hiperparametros con Optuna para QRDQN sobre C
@@ -16,4 +16,4 @@ tags:
 - [[RLDatasetDefenderEnv]] - `uses` [INFERRED]
 - [[tune_hparams.py]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/INFERRED #community/Environment_and_Tuning
+#graphify/rationale #graphify/INFERRED #community/Community_2

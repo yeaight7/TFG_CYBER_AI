@@ -5,6 +5,13 @@
       "input_tokens": 0,
       "output_tokens": 0,
       "files": 38
+    },
+    {
+      "date": "2026-04-25T21:10:15.946197+00:00",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "files": 24,
+      "note": "Filtered full refresh from fresh AST plus maintained-doc semantic layer; no LLM subagents used."
     }
   ],
   "total_input_tokens": 0,

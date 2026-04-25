@@ -1,12 +1,12 @@
 ---
-source_file: "src\load_cicids2017.py"
+source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "CICIDS2017 Loader"
+community: "Community 0"
 location: "L75"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/CICIDS2017_Loader
+  - community/Community_0
 ---
 
 # Lista únicamente los 8 CSVs oficiales de CICIDS2017 en orden determinista.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[list_cicids2017_csv_files()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/CICIDS2017_Loader
+#graphify/rationale #graphify/EXTRACTED #community/Community_0

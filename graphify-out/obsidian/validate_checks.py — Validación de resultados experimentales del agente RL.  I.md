@@ -1,12 +1,12 @@
 ---
-source_file: "src\validate_checks.py"
+source_file: "src/validate_checks.py"
 type: "rationale"
-community: "Environment and Tuning"
+community: "Community 4"
 location: "L1"
 tags:
   - graphify/rationale
   - graphify/INFERRED
-  - community/Environment_and_Tuning
+  - community/Community_4
 ---
 
 # validate_checks.py — Validación de resultados experimentales del agente RL.  I
@@ -16,4 +16,4 @@ tags:
 - [[RLDatasetDefenderEnv]] - `uses` [INFERRED]
 - [[validate_checks.py]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/INFERRED #community/Environment_and_Tuning
+#graphify/rationale #graphify/INFERRED #community/Community_4

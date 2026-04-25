@@ -1,19 +1,19 @@
 ---
-source_file: "lab\docker\generator\gen_traffic.py"
+source_file: "scripts/graphify_auto_update.py"
 type: "code"
-community: "Lab Traffic Generator"
-location: "L43"
+community: "Community 5"
+location: "L231"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Lab_Traffic_Generator
+  - community/Community_5
 ---
 
 # main()
 
 ## Connections
-- [[gen_traffic.py]] - `contains` [EXTRACTED]
-- [[http_get()]] - `calls` [EXTRACTED]
-- [[tcp_connect()]] - `calls` [EXTRACTED]
+- [[decide_and_run()]] - `calls` [EXTRACTED]
+- [[graphify_auto_update.py]] - `contains` [EXTRACTED]
+- [[parse_args()_4]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Lab_Traffic_Generator
+#graphify/code #graphify/EXTRACTED #community/Community_5

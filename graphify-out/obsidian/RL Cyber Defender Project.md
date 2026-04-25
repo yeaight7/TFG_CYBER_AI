@@ -1,22 +1,22 @@
 ---
-source_file: "README.md"
+source_file: ".github/AGENT_CONTEXT.md"
 type: "document"
-community: "Project Docs and Phase Plan"
+community: "Community 6"
+location: "Project Goal"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Project_Docs_and_Phase_Plan
+  - community/Community_6
 ---
 
 # RL Cyber Defender Project
 
 ## Connections
-- [[Artifact-Backed Results]] - `conceptually_related_to` [EXTRACTED]
-- [[DEFENSA_TFG_PROGRESO]] - `references` [EXTRACTED]
-- [[DEFENSA_TFG_SCRIPT]] - `references` [EXTRACTED]
-- [[Phase 1 Offline Training]] - `conceptually_related_to` [EXTRACTED]
+- [[Binary PERMITBLOCK Defender Actions]] - `conceptually_related_to` [EXTRACTED]
+- [[Canonical Flow Schema]] - `conceptually_related_to` [EXTRACTED]
+- [[Phase 1 Offline Training and Validation]] - `conceptually_related_to` [EXTRACTED]
 - [[Phase 2 Offline Inference]] - `conceptually_related_to` [EXTRACTED]
-- [[README]] - `references` [EXTRACTED]
-- [[Validation Suite]] - `conceptually_related_to` [EXTRACTED]
+- [[Project-Wide Technical Source of Truth]] - `references` [EXTRACTED]
+- [[Public README Project Overview]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Project_Docs_and_Phase_Plan
+#graphify/document #graphify/EXTRACTED #community/Community_6

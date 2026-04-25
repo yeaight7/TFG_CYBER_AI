@@ -1,12 +1,12 @@
 ---
-source_file: "src\load_nsl_kdd.py"
+source_file: "src/load_nsl_kdd.py"
 type: "code"
-community: "NSL-KDD Loader"
+community: "Community 6"
 location: "L46"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/NSL-KDD_Loader
+  - community/Community_6
 ---
 
 # _ensure_dataset_local_dir()
@@ -16,4 +16,4 @@ tags:
 - [[load_nsl_kdd.py]] - `contains` [EXTRACTED]
 - [[load_nsl_kdd_binary()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/NSL-KDD_Loader
+#graphify/code #graphify/EXTRACTED #community/Community_6

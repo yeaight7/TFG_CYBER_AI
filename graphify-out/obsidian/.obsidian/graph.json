@@ -1,100 +1,60 @@
 {
-  "collapse-filter": true,
-  "search": "",
-  "showTags": false,
-  "showAttachments": false,
-  "hideUnresolved": false,
-  "showOrphans": true,
-  "collapse-color-groups": false,
   "colorGroups": [
     {
-      "query": "tag:#community/Environment_and_Tuning",
+      "query": "tag:#community/Community_0",
       "color": {
         "a": 1,
         "rgb": 5142951
       }
     },
     {
-      "query": "tag:#community/Project_Docs_and_Phase_Plan",
+      "query": "tag:#community/Community_1",
       "color": {
         "a": 1,
         "rgb": 15896107
       }
     },
     {
-      "query": "tag:#community/CICIDS2017_Loader",
+      "query": "tag:#community/Community_2",
       "color": {
         "a": 1,
         "rgb": 14767961
       }
     },
     {
-      "query": "tag:#community/NSL-KDD_History_and_Assets",
+      "query": "tag:#community/Community_3",
       "color": {
         "a": 1,
         "rgb": 7780274
       }
     },
     {
-      "query": "tag:#community/Phase_2_Inference_Scripts",
+      "query": "tag:#community/Community_4",
       "color": {
         "a": 1,
         "rgb": 5873999
       }
     },
     {
-      "query": "tag:#community/Canonical_Schema_Guardrails",
+      "query": "tag:#community/Community_5",
       "color": {
         "a": 1,
         "rgb": 15583560
       }
     },
     {
-      "query": "tag:#community/Leave-One-CSV_Validation",
+      "query": "tag:#community/Community_6",
       "color": {
         "a": 1,
         "rgb": 11565729
       }
     },
     {
-      "query": "tag:#community/QRDQN_Training",
+      "query": "tag:#community/Community_7",
       "color": {
         "a": 1,
         "rgb": 16752039
       }
-    },
-    {
-      "query": "tag:#community/Random_Forest_Baseline",
-      "color": {
-        "a": 1,
-        "rgb": 10253663
-      }
-    },
-    {
-      "query": "tag:#community/NSL-KDD_Loader",
-      "color": {
-        "a": 1,
-        "rgb": 12234924
-      }
-    },
-    {
-      "query": "tag:#community/Lab_Traffic_Generator",
-      "color": {
-        "a": 1,
-        "rgb": 5142951
-      }
     }
-  ],
-  "collapse-display": false,
-  "showArrow": false,
-  "textFadeMultiplier": 0,
-  "nodeSizeMultiplier": 1,
-  "lineSizeMultiplier": 1,
-  "collapse-forces": true,
-  "centerStrength": 0.518713248970312,
-  "repelStrength": 10,
-  "linkStrength": 1,
-  "linkDistance": 250,
-  "scale": 0.18462326225857884,
-  "close": false
+  ]
 }

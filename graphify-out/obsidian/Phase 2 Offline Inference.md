@@ -1,27 +1,23 @@
 ---
-source_file: "docs\AGENT_CONTEXT.md"
+source_file: "docs/AGENT_CONTEXT.md"
 type: "document"
-community: "Project Docs and Phase Plan"
+community: "Community 1"
+location: "Scope"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Project_Docs_and_Phase_Plan
+  - community/Community_1
 ---
 
 # Phase 2 Offline Inference
 
 ## Connections
-- [[AGENTS]] - `references` [EXTRACTED]
-- [[AGENT_CONTEXT]] - `references` [EXTRACTED]
-- [[Active Blocking Future Work]] - `rationale_for` [EXTRACTED]
-- [[Domain Shift Diagnostics]] - `conceptually_related_to` [EXTRACTED]
+- [[Active Blocking Future Work]] - `conceptually_related_to` [EXTRACTED]
+- [[Domain Shift Risk]] - `conceptually_related_to` [EXTRACTED]
+- [[Phase 2 Context and Guardrails]] - `references` [EXTRACTED]
 - [[Private Lab Workflow]] - `conceptually_related_to` [EXTRACTED]
-- [[README]] - `references` [EXTRACTED]
-- [[README_1]] - `references` [EXTRACTED]
 - [[RL Cyber Defender Project]] - `conceptually_related_to` [EXTRACTED]
+- [[Reproducible Run Artifacts]] - `conceptually_related_to` [EXTRACTED]
 - [[Robust v2 Inference Pipeline]] - `conceptually_related_to` [EXTRACTED]
-- [[gcp_lab]] - `references` [EXTRACTED]
-- [[phase2_plan]] - `references` [EXTRACTED]
-- [[predict_real_traffic_v2.py]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Project_Docs_and_Phase_Plan
+#graphify/document #graphify/EXTRACTED #community/Community_1

@@ -1,12 +1,12 @@
 ---
-source_file: "src\scaling_utils.py"
+source_file: "src/scaling_utils.py"
 type: "rationale"
-community: "Project Docs and Phase Plan"
+community: "Community 1"
 location: "L52"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Project_Docs_and_Phase_Plan
+  - community/Community_1
 ---
 
 # Clamp scaled features to [-max_z, +max_z].      Applied to scaled features **a
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[apply_z_clipping()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Project_Docs_and_Phase_Plan
+#graphify/rationale #graphify/EXTRACTED #community/Community_1

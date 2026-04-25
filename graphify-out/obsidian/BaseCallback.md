@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "Environment and Tuning"
+community: "Community 4"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Environment_and_Tuning
+  - community/Community_4
 ---
 
 # BaseCallback
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ProgressCallback]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Environment_and_Tuning
+#graphify/code #graphify/EXTRACTED #community/Community_4

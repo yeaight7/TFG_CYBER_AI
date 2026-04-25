@@ -1,24 +1,24 @@
 ---
-source_file: "docs\AGENT_CONTEXT.md"
+source_file: ".github/AGENT_CONTEXT.md"
 type: "document"
-community: "Canonical Schema Guardrails"
+community: "Community 3"
+location: "Canonical Observation Space"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Canonical_Schema_Guardrails
+  - community/Community_3
 ---
 
 # Canonical Flow Schema
 
 ## Connections
-- [[152-D Observation Vector]] - `shares_data_with` [EXTRACTED]
-- [[AGENTS]] - `references` [EXTRACTED]
-- [[Anti-Leakage Policy]] - `rationale_for` [EXTRACTED]
-- [[CICIDS2017 Dataset]] - `conceptually_related_to` [EXTRACTED]
+- [[76 Canonical Flow Features]] - `conceptually_related_to` [EXTRACTED]
+- [[Anti-Leakage Policy]] - `conceptually_related_to` [EXTRACTED]
+- [[CICIDS2017 Primary Dataset]] - `conceptually_related_to` [EXTRACTED]
+- [[Dataset Adapter Contract]] - `conceptually_related_to` [EXTRACTED]
 - [[Missingness Mask]] - `conceptually_related_to` [EXTRACTED]
-- [[NSL-KDD Dataset]] - `conceptually_related_to` [INFERRED]
-- [[README]] - `references` [EXTRACTED]
-- [[canonical_schema.py]] - `implements` [EXTRACTED]
-- [[load_cicids2017.py]] - `implements` [EXTRACTED]
+- [[RL Cyber Defender Project]] - `conceptually_related_to` [EXTRACTED]
+- [[canonical_schema.py]] - `references` [EXTRACTED]
+- [[map_to_canonical()]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Canonical_Schema_Guardrails
+#graphify/document #graphify/EXTRACTED #community/Community_3

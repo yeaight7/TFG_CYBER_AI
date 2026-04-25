@@ -1,12 +1,12 @@
 ---
-source_file: "src\train_rl_defender.py"
+source_file: "src/train_rl_defender.py"
 type: "rationale"
-community: "QRDQN Training"
+community: "Community 2"
 location: "L83"
 tags:
   - graphify/rationale
   - graphify/INFERRED
-  - community/QRDQN_Training
+  - community/Community_2
 ---
 
 # Evalúa el agente sobre test set.     Devuelve dict con métricas clave.
@@ -16,4 +16,4 @@ tags:
 - [[RLDatasetDefenderEnv]] - `uses` [INFERRED]
 - [[evaluate_model()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/INFERRED #community/QRDQN_Training
+#graphify/rationale #graphify/INFERRED #community/Community_2

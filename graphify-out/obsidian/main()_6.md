@@ -1,12 +1,12 @@
 ---
-source_file: "src\validate_checks.py"
+source_file: "src/validate_checks.py"
 type: "code"
-community: "Environment and Tuning"
+community: "Community 4"
 location: "L450"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Environment_and_Tuning
+  - community/Community_4
 ---
 
 # main()
@@ -15,7 +15,8 @@ tags:
 - [[check_a_direct_eval()]] - `calls` [EXTRACTED]
 - [[check_b_shuffled_labels()]] - `calls` [EXTRACTED]
 - [[check_c_csv_split()]] - `calls` [EXTRACTED]
+- [[load_cicids2017_split()]] - `calls` [INFERRED]
 - [[parse_args()_3]] - `calls` [EXTRACTED]
 - [[validate_checks.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Environment_and_Tuning
+#graphify/code #graphify/EXTRACTED #community/Community_4

@@ -1,12 +1,12 @@
 ---
-source_file: "src\validate_checks.py"
+source_file: "src/validate_checks.py"
 type: "rationale"
-community: "Environment and Tuning"
+community: "Community 4"
 location: "L91"
 tags:
   - graphify/rationale
   - graphify/INFERRED
-  - community/Environment_and_Tuning
+  - community/Community_4
 ---
 
 # Evaluación directa: model.predict(X_test[i]) vs y_test[i].     No pasa por el e
@@ -16,4 +16,4 @@ tags:
 - [[RLDatasetDefenderEnv]] - `uses` [INFERRED]
 - [[check_a_direct_eval()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/INFERRED #community/Environment_and_Tuning
+#graphify/rationale #graphify/INFERRED #community/Community_4

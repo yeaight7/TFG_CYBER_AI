@@ -1,19 +1,17 @@
 ---
-source_file: "src\rl_defender_env.py"
+source_file: "src/rl_defender_env.py"
 type: "code"
-community: "NSL-KDD History and Assets"
+community: "Community 2"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/NSL-KDD_History_and_Assets
+  - community/Community_2
 ---
 
 # rl_defender_env.py
 
 ## Connections
 - [[RLDatasetDefenderEnv]] - `contains` [EXTRACTED]
-- [[RLDatasetDefenderEnv_1]] - `implements` [EXTRACTED]
-- [[Reward Shaping]] - `implements` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/NSL-KDD_History_and_Assets
+#graphify/code #graphify/EXTRACTED #community/Community_2

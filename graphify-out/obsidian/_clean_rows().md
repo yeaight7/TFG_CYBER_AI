@@ -1,12 +1,12 @@
 ---
-source_file: "src\load_cicids2017.py"
+source_file: "src/load_cicids2017.py"
 type: "code"
-community: "CICIDS2017 Loader"
+community: "Community 0"
 location: "L150"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/CICIDS2017_Loader
+  - community/Community_0
 ---
 
 # _clean_rows()
@@ -15,4 +15,4 @@ tags:
 - [[_prepare_cicids_features()]] - `calls` [EXTRACTED]
 - [[load_cicids2017.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/CICIDS2017_Loader
+#graphify/code #graphify/EXTRACTED #community/Community_0

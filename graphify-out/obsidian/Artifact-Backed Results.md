@@ -1,22 +1,19 @@
 ---
-source_file: "docs\results.md"
+source_file: "docs/results.md"
 type: "document"
-community: "Project Docs and Phase Plan"
+community: "Community 6"
+location: "Rules for Reading This Page"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Project_Docs_and_Phase_Plan
+  - community/Community_6
 ---
 
 # Artifact-Backed Results
 
 ## Connections
-- [[DEFENSA_TFG_PROGRESO]] - `references` [EXTRACTED]
-- [[DEFENSA_TFG_SCRIPT]] - `references` [EXTRACTED]
-- [[Domain Shift Diagnostics]] - `conceptually_related_to` [EXTRACTED]
-- [[README_1]] - `references` [EXTRACTED]
-- [[RL Cyber Defender Project]] - `conceptually_related_to` [EXTRACTED]
-- [[Robust v2 Inference Pipeline]] - `conceptually_related_to` [INFERRED]
-- [[results]] - `references` [EXTRACTED]
+- [[Artifact-Backed Results Snapshot]] - `references` [EXTRACTED]
+- [[C03 Best Historical CICIDS2017 Run]] - `conceptually_related_to` [EXTRACTED]
+- [[Validation Suite]] - `conceptually_related_to` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Project_Docs_and_Phase_Plan
+#graphify/document #graphify/EXTRACTED #community/Community_6

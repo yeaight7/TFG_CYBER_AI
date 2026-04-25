@@ -1,12 +1,12 @@
 ---
-source_file: "src\load_cicids2017.py"
+source_file: "src/load_cicids2017.py"
 type: "code"
-community: "CICIDS2017 Loader"
+community: "Community 0"
 location: "L319"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/CICIDS2017_Loader
+  - community/Community_0
 ---
 
 # load_cicids2017_binary()
@@ -19,5 +19,7 @@ tags:
 - [[_prepare_cicids_features()]] - `calls` [EXTRACTED]
 - [[load_cicids2017.py]] - `contains` [EXTRACTED]
 - [[load_cicids2017_split()]] - `calls` [EXTRACTED]
+- [[main()_3]] - `calls` [INFERRED]
+- [[main()_5]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/CICIDS2017_Loader
+#graphify/code #graphify/EXTRACTED #community/Community_0

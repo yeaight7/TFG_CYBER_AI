@@ -1,21 +1,20 @@
 ---
-source_file: "docs\gcp_lab.md"
+source_file: "docs/phase2_plan.md"
 type: "document"
-community: "Project Docs and Phase Plan"
+community: "Community 1"
+location: "Execution Steps"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Project_Docs_and_Phase_Plan
+  - community/Community_1
 ---
 
 # Private Lab Workflow
 
 ## Connections
-- [[AGENT_CONTEXT]] - `references` [EXTRACTED]
+- [[Phase 2 Execution Plan]] - `references` [EXTRACTED]
 - [[Phase 2 Offline Inference]] - `conceptually_related_to` [EXTRACTED]
-- [[Robust v2 Inference Pipeline]] - `conceptually_related_to` [EXTRACTED]
-- [[gcp_lab]] - `references` [EXTRACTED]
-- [[gen_traffic.py]] - `conceptually_related_to` [INFERRED]
-- [[phase2_plan]] - `references` [EXTRACTED]
+- [[Two-VM Private Lab Topology]] - `conceptually_related_to` [EXTRACTED]
+- [[predict_real_traffic_v2.py]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Project_Docs_and_Phase_Plan
+#graphify/document #graphify/EXTRACTED #community/Community_1

@@ -1,17 +1,19 @@
 ---
-source_file: "docs\README.md"
+source_file: "docs/README.md"
 type: "document"
-community: "Project Docs and Phase Plan"
+community: "Community 6"
+location: "Document Roles"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Project_Docs_and_Phase_Plan
+  - community/Community_6
 ---
 
 # Documentation Map
 
 ## Connections
-- [[README]] - `references` [EXTRACTED]
-- [[README_1]] - `references` [EXTRACTED]
+- [[Artifact-Backed Results Snapshot]] - `references` [EXTRACTED]
+- [[Phase 2 Context and Guardrails]] - `references` [EXTRACTED]
+- [[Project-Wide Technical Source of Truth]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Project_Docs_and_Phase_Plan
+#graphify/document #graphify/EXTRACTED #community/Community_6

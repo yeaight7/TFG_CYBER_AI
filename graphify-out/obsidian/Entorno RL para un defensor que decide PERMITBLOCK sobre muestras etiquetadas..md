@@ -1,12 +1,12 @@
 ---
-source_file: "src\rl_defender_env.py"
+source_file: "src/rl_defender_env.py"
 type: "rationale"
-community: "Environment and Tuning"
+community: "Community 2"
 location: "L7"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Environment_and_Tuning
+  - community/Community_2
 ---
 
 # Entorno RL para un defensor que decide PERMIT/BLOCK sobre muestras etiquetadas.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[RLDatasetDefenderEnv]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Environment_and_Tuning
+#graphify/rationale #graphify/EXTRACTED #community/Community_2

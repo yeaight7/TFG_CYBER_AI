@@ -1,12 +1,12 @@
 ---
-source_file: "scripts\predict_real_traffic_v2.py"
+source_file: "scripts/predict_real_traffic_v2.py"
 type: "rationale"
-community: "Phase 2 Inference Scripts"
+community: "Community 1"
 location: "L165"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Phase_2_Inference_Scripts
+  - community/Community_1
 ---
 
 # Load QRDQN model, falling back to DQN if sb3_contrib is unavailable.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[load_model()_1]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Phase_2_Inference_Scripts
+#graphify/rationale #graphify/EXTRACTED #community/Community_1

@@ -1,21 +1,22 @@
 ---
 source_file: "README.md"
 type: "document"
-community: "Project Docs and Phase Plan"
+community: "Community 4"
+location: "Validation Overview"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Project_Docs_and_Phase_Plan
+  - community/Community_4
 ---
 
 # Validation Suite
 
 ## Connections
+- [[Artifact-Backed Results]] - `conceptually_related_to` [EXTRACTED]
+- [[Check A Direct Evaluation]] - `conceptually_related_to` [EXTRACTED]
+- [[Check B Shuffled-Label Anti-Leakage]] - `conceptually_related_to` [EXTRACTED]
+- [[Check C Hard CSVDay Split]] - `conceptually_related_to` [EXTRACTED]
 - [[Leave-One-Exact-CSV-Out Validation]] - `conceptually_related_to` [EXTRACTED]
-- [[Phase 1 Offline Training]] - `conceptually_related_to` [EXTRACTED]
-- [[README]] - `references` [EXTRACTED]
-- [[RL Cyber Defender Project]] - `conceptually_related_to` [EXTRACTED]
-- [[validate_checks.py]] - `implements` [EXTRACTED]
-- [[validate_leave_one_csv_out.py]] - `references` [EXTRACTED]
+- [[validate_checks.py]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Project_Docs_and_Phase_Plan
+#graphify/document #graphify/EXTRACTED #community/Community_4

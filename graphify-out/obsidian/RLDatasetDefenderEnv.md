@@ -1,12 +1,12 @@
 ---
-source_file: "src\rl_defender_env.py"
+source_file: "src/rl_defender_env.py"
 type: "code"
-community: "Environment and Tuning"
+community: "Community 2"
 location: "L6"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Environment_and_Tuning
+  - community/Community_2
 ---
 
 # RLDatasetDefenderEnv
@@ -31,10 +31,13 @@ tags:
 - [[Evalúa el modelo sobre `X_test` frente a `y_test` en inferencia por lotes.]] - `uses` [INFERRED]
 - [[Optuna objective train QRDQN with suggested hparams, return F1 attack.]] - `uses` [INFERRED]
 - [[ProgressCallback]] - `uses` [INFERRED]
+- [[QRDQN Training Pipeline]] - `references` [EXTRACTED]
+- [[_evaluate_f1()]] - `calls` [INFERRED]
+- [[evaluate_model()]] - `calls` [INFERRED]
 - [[rl_defender_env.py]] - `contains` [EXTRACTED]
 - [[train_rl_defender.py — Entrenamiento de agente defensor RL sobre CICIDS2017.]] - `uses` [INFERRED]
 - [[tune_hparams.py -- Optimizacion de hiperparametros con Optuna para QRDQN sobre C]] - `uses` [INFERRED]
 - [[validate_checks.py — Validación de resultados experimentales del agente RL.  I]] - `uses` [INFERRED]
 - [[validate_leave_one_csv_out.py — Validación leave-one-exact-CSV-out para CICIDS20]] - `uses` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Environment_and_Tuning
+#graphify/code #graphify/INFERRED #community/Community_2
