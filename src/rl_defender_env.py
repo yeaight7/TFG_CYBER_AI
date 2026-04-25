@@ -17,15 +17,13 @@ class RLDatasetDefenderEnv(gym.Env):
 
     reward_config (dict):
         tp: recompensa cuando la etiqueta es ataque y la acción es BLOCK  (true positive)
-        tn: recompensa cuando la etiqueta es normal y la acción es PERMIT (true negative)
         fp: penalización cuando la etiqueta es normal y la acción es BLOCK (false positive)
         fn: penalización cuando la etiqueta es ataque y la acción es PERMIT (false negative)
-        omission: término adicional cuando la acción es PERMIT (coste/bonus por no bloquear)
+        omission: término adicional cuando la acción es PERMIT y la etiqueta es benigna (este sería el reemplazo de true negative, tn)
 
     Ejemplo de reward_config:
         {
             "tp": 1.0,
-            "tn": 0.2,
             "fp": -1.0,
             "fn": -5.0,
             "omission": 0.5,
