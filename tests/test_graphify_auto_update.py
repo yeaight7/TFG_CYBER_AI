@@ -5,8 +5,12 @@ from pathlib import Path
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "graphify_auto_update.py"
 SPEC = importlib.util.spec_from_file_location("graphify_auto_update", MODULE_PATH)
+if SPEC is None:
+    raise ImportError(f"Unable to create import spec for {MODULE_PATH}")
+
 MODULE = importlib.util.module_from_spec(SPEC)
-assert SPEC and SPEC.loader
+if SPEC.loader is None:
+    raise ImportError(f"Unable to load module from {MODULE_PATH}: missing loader")
 SPEC.loader.exec_module(MODULE)
 
 

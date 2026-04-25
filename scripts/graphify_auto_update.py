@@ -78,13 +78,13 @@ def _is_semantic_source(path: str) -> bool:
     norm = _normalize(path)
     if _is_ignored(norm):
         return False
-    # Exclusions intentionally take precedence over broader markdown include prefixes.
-    if any(norm.startswith(prefix) for prefix in EXCLUDED_SEMANTIC_MD_PREFIXES):
-        return False
     if norm in KEY_DOC_PATHS:
         return True
     ext = Path(norm).suffix.lower()
     if ext == ".md":
+        # Exclusions intentionally take precedence over broader markdown include prefixes.
+        if any(norm.startswith(prefix) for prefix in EXCLUDED_SEMANTIC_MD_PREFIXES):
+            return False
         return any(norm.startswith(prefix) for prefix in SEMANTIC_MD_PREFIXES)
     if ext in SEMANTIC_EXTS:
         return norm.startswith(("docs/", "experiments/", "report/", ".github/"))
