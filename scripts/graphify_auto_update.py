@@ -85,7 +85,7 @@ def _is_semantic_source(path: str) -> bool:
         return True
     ext = Path(norm).suffix.lower()
     if ext == ".md":
-        return norm.startswith(SEMANTIC_MD_PREFIXES)
+        return any(norm.startswith(prefix) for prefix in SEMANTIC_MD_PREFIXES)
     if ext in SEMANTIC_EXTS:
         return norm.startswith(("docs/", "experiments/", "report/", ".github/"))
     return False
