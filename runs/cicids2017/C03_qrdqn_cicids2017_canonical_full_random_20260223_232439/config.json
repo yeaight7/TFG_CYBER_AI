@@ -50,6 +50,6 @@
   "batch_size": 2048,
   "gradient_steps": 20,
   "train_freq": 100,
-  "scaler_path": "/home/yeaight/tfg_cyber_ai/runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/scaler.joblib",
-  "percentiles_path": "/home/yeaight/tfg_cyber_ai/runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/train_percentiles.npz"
+  "scaler_path": "runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/scaler.joblib",
+  "percentiles_path": "runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/train_percentiles.npz"
 }
