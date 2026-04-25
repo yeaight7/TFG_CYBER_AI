@@ -36,6 +36,11 @@ KEY_DOC_PATHS = {
     "experiments/nslkdd_experiments.md",
 }
 SEMANTIC_EXTS = {".md", ".pdf", ".png", ".jpg", ".jpeg", ".webp", ".svg"}
+# Prefixes must keep trailing "/" so startswith checks stay path-segment scoped.
+# `.github/` is included for maintained project docs (for example AGENT_CONTEXT),
+# while `.github/skills/` is explicitly excluded as tooling metadata.
+SEMANTIC_MD_PREFIXES = ("docs/", "experiments/", ".github/")
+EXCLUDED_SEMANTIC_MD_PREFIXES = ("docs/Personal Research/", ".github/skills/")
 
 STRUCTURAL_PATTERNS = (
     re.compile(r"^[+-]\s*(async\s+def|def|class)\s+\w+"),
@@ -77,7 +82,10 @@ def _is_semantic_source(path: str) -> bool:
         return True
     ext = Path(norm).suffix.lower()
     if ext == ".md":
-        return False
+        # Exclusions intentionally take precedence over broader markdown include prefixes.
+        if any(norm.startswith(prefix) for prefix in EXCLUDED_SEMANTIC_MD_PREFIXES):
+            return False
+        return any(norm.startswith(prefix) for prefix in SEMANTIC_MD_PREFIXES)
     if ext in SEMANTIC_EXTS:
         return norm.startswith(("docs/", "experiments/", "report/", ".github/"))
     return False
