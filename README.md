@@ -39,17 +39,19 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 
 ```text
 TFG_CYBER_AI/
-├── .github/                 # Agent guidance and project-wide source of truth
-├── datasets/                # Local datasets (also tracked via git lfs)
-├── docs/                    # Documentation, results, Phase 2 guides, defense material
-├── experiments/             # Experiment archive notes: historical and maintained timelines
-├── lab/                     # Lab-related assets
-├── models/                  # Trained model files
-├── pcaps/                   # Extracted flows and captures used for Phase 2 work
-├── report/                  # Thesis report sources
-├── runs/                    # Run artifacts: config.json, metrics.json, validation_results.json, etc.
-├── scripts/                 # Phase 2 and utility scripts
-└── src/                     # Training, validation, adapters, environment, utilities
+├── .codex/                    # hooks.json for triggering knowledge graph updates
+├── .github/                   # Agent guidance and coding/review agent instructions
+├── datasets/                  # Local datasets (also tracked via git lfs)
+├── docs/                      # Documentation, results, Phase 2 guides, defense material
+|   └── Personal Research/     # Personal stuff to guide and track for personal use
+├── experiments/               # Experiment archive notes: historical and maintained timelines
+├── lab/                       # Lab-related assets
+├── models/                    # Trained model files (tracked)
+├── pcaps/                     # Extracted flows and captures used for Phase 2 work (tracked)
+├── report/                    # Thesis report and sources
+├── runs/                      # Run artifacts: config.json, metrics.json, validation_results.json, etc. (tracked)
+├── scripts/                   # Phase 2 and utility scripts
+└── src/                       # Training, validation, adapters, environment, utilities
 ```
 
 ## Core Technical Invariants
