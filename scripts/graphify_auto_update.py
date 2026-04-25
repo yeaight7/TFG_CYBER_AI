@@ -36,6 +36,8 @@ KEY_DOC_PATHS = {
     "experiments/nslkdd_experiments.md",
 }
 SEMANTIC_EXTS = {".md", ".pdf", ".png", ".jpg", ".jpeg", ".webp", ".svg"}
+SEMANTIC_MD_PREFIXES = ("docs/", "experiments/", ".github/")
+EXCLUDED_SEMANTIC_MD_PREFIXES = ("docs/Personal Research/", ".github/skills/")
 
 STRUCTURAL_PATTERNS = (
     re.compile(r"^[+-]\s*(async\s+def|def|class)\s+\w+"),
@@ -73,11 +75,13 @@ def _is_semantic_source(path: str) -> bool:
     norm = _normalize(path)
     if _is_ignored(norm):
         return False
+    if any(norm.startswith(prefix) for prefix in EXCLUDED_SEMANTIC_MD_PREFIXES):
+        return False
     if norm in KEY_DOC_PATHS:
         return True
     ext = Path(norm).suffix.lower()
     if ext == ".md":
-        return False
+        return norm.startswith(SEMANTIC_MD_PREFIXES)
     if ext in SEMANTIC_EXTS:
         return norm.startswith(("docs/", "experiments/", "report/", ".github/"))
     return False
