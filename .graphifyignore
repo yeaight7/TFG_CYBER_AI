@@ -11,7 +11,6 @@ graphify-out/
 datasets/
 runs/
 models/
-experiments/
 pcaps/
 lab/
 
@@ -19,5 +18,4 @@ lab/
 report/
 
 # Personal notes and reusable skill metadata are intentionally outside the corpus
-docs/Personal Research/
 .github/skills/
