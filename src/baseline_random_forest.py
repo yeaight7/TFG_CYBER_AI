@@ -26,13 +26,13 @@ def train_random_forest(
     n_jobs: int = -1,
 ) -> RandomForestClassifier:
     """
-    Entrena un RandomForestClassifier sobre NSL-KDD y devuelve el modelo.
+    Entrena un RandomForestClassifier sobre el dataset y devuelve el modelo.
     """
     rf = RandomForestClassifier(
         n_estimators=n_estimators,
         max_depth=max_depth,
         n_jobs=n_jobs,
-        class_weight=None,  # si quieres, luego probamos 'balanced'
+        class_weight=None,  # note: try 'balanced'
         random_state=42,
     )
     rf.fit(X_train, y_train)
