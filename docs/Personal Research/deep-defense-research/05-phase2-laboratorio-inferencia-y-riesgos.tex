@@ -1,0 +1,90 @@
+\section{05 --- Phase 2: laboratorio, inferencia y riesgos abiertos}
+
+\subsection{1) Qué es exactamente Phase 2 hoy}
+
+Phase~2 es \textbf{inferencia offline} sobre flujos extraídos de tráfico de laboratorio.
+
+Entrada mantenida:
+
+\begin{itemize}
+  \item \verb|scripts/predict_real_traffic_v2.py|
+\end{itemize}
+
+No incluye todavía bloqueo activo inline.
+
+\subsection{2) Flujo operativo resumido}
+
+\begin{enumerate}
+  \item generar/capturar tráfico en lab privado
+  \item extraer flujos
+  \item mapear al esquema canónico
+  \item aplicar pipeline robusto
+  \item predecir PERMIT/BLOCK
+  \item guardar artefactos de run
+\end{enumerate}
+
+\subsection{3) Endurecimiento técnico de la v2}
+
+\subsubsection{Clipping por percentiles (pre-scaling)}
+
+\begin{itemize}
+  \item función: \verb|apply_percentile_clipping| (\verb|src/scaling_utils.py|)
+  \item recorta features crudas a \([p_{\text{low}},\, p_{\text{high}}]\) aprendidos en train
+\end{itemize}
+
+\subsubsection{Clipping por z-score (post-scaling)}
+
+\begin{itemize}
+  \item función: \verb|apply_z_clipping|
+  \item limita valores escalados a \([-\text{max\_z},\, +\text{max\_z}]\)
+\end{itemize}
+
+\subsubsection{Diagnósticos}
+
+\verb|predict_real_traffic_v2.py| calcula y exporta estadísticos de z-score para vigilar domain
+shift.
+
+\subsection{4) Artefactos esperados de cada run Phase 2}
+
+En \verb|runs/phase2/<RUN_ID>/|:
+
+\begin{itemize}
+  \item \texttt{config.json}
+  \item \texttt{metrics.json}
+  \item \texttt{predictions.csv}
+  \item \texttt{diagnostics.json} (si se exporta)
+\end{itemize}
+
+\subsection{5) Hallazgo central de Phase 2 (honesto)}
+
+Hay runs comprometidos con comportamiento muy distinto en benign-only. Esto obliga a evitar
+sobrepromesas y a citar siempre el \texttt{RUN\_ID} al hacer afirmaciones.
+
+Mensaje sólido:
+
+\begin{itemize}
+  \item la pipeline está técnicamente lista
+  \item la robustez en tráfico real sigue siendo el principal problema científico/ingenieril abierto
+\end{itemize}
+
+\subsection{6) Laboratorio privado y seguridad operacional}
+
+Referencias: \verb|docs/gcp_lab.md|, \verb|docs/phase2_plan.md|, \verb|lab/docker/*|
+
+Principios:
+
+\begin{itemize}
+  \item red aislada
+  \item no escaneo fuera de lab
+  \item control estricto de acceso SSH
+  \item no exponer secretos ni datasets sensibles en repo
+\end{itemize}
+
+\subsection{7) Qué faltaría para pasar a bloqueo activo}
+
+\begin{enumerate}
+  \item estabilidad consistente en benign, ataque y mixto
+  \item umbrales operativos de FP/FN aceptables por caso de uso
+  \item procedimiento de rollback y supervisión humana
+  \item pruebas de seguridad operacional antes de automatizar bloqueo
+\end{enumerate}
