@@ -25,3 +25,7 @@ graphify-out/cache
 graphify-out/obsidian/
 graphify-out/obsidian/.obsidian/
 graphify-out/graph.html
+
+# random docs
+docs/Personal Research/*.md
+docs/Personal Research/deep-defense-research/*.md
