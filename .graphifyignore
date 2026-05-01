@@ -19,3 +19,4 @@ report/
 
 # Personal notes and reusable skill metadata are intentionally outside the corpus
 .github/skills/
+.remember/
