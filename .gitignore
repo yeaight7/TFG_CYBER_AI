@@ -13,6 +13,7 @@ __pycache__/
 .vscode/
 
 # PCAPS and big CSV files
+datasets/CICIDS2017/Raw_dataset/
 synthetic*
 runs/phase2/P2v2_pred_20260412_004102/predictions.csv
 runs/phase2/P2v2_pred_20260412_004624/predictions.csv
