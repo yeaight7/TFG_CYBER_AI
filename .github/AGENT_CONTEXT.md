@@ -77,12 +77,21 @@ The following must not be used as model features:
 This is the primary dataset and the basis for the canonical schema.
 
 - flow-based features exported by CICFlowMeter
-- local path: `datasets/CICIDS2017/`
-- repository now recognises the official eight CSV files explicitly
 - current adapter supports:
   - random stratified split
   - CSV/day pattern split
   - exact-file split for leave-one-exact-CSV-out validation
+
+#### Dataset versions
+
+Two versions of the CICIDS2017 data exist locally:
+
+| Version | Path | Tracked in git | Description |
+|---------|------|----------------|-------------|
+| Curated | `datasets/CICIDS2017/*.csv` | Yes | Leakage-prone and redundant columns removed as a pre-ingestion step. This is what the adapter loads. |
+| Raw | `datasets/CICIDS2017/Raw_dataset/` | No (gitignored) | Original, unmodified CICFlowMeter CSV exports. All original columns preserved. Kept locally for reference and reproducibility. |
+
+The adapter in `src/load_cicids2017.py` performs additional cleaning at load time (numeric coercion, inf/NaN handling, canonical mapping). The curated CSVs reduce the ingestion surface, but the code-level anti-leakage policy in the adapter is the authoritative gate. If someone starts from the raw exports, the adapter still works — the anti-leakage drops in code cover what curation already removed.
 
 ### NSL-KDD
 
