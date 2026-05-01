@@ -13,7 +13,6 @@ __pycache__/
 .vscode/
 
 # PCAPS and big CSV files
-flows_simulated_*
 synthetic*
 runs/phase2/P2v2_pred_20260412_004102/predictions.csv
 runs/phase2/P2v2_pred_20260412_004624/predictions.csv
@@ -21,6 +20,6 @@ runs/phase2/P2v2_pred_20260412_004624/predictions.csv
 # Graphify output files
 graphify-out/cache
 .graphify_*.json
+graphify-out/obsidian/
 graphify-out/obsidian/.obsidian/
-graphify-out/obsidian/.obsidian/graph.json
 graphify-out\graph.html
