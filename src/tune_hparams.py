@@ -108,7 +108,7 @@ def objective(
         tau=1.0,
         train_freq=train_freq,
         target_update_interval=max(1_000, timesteps // 50),
-        verbose=0,
+        verbose=1,
         device=device,
     )
 
