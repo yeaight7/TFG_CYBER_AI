@@ -17,7 +17,7 @@ from canonical_schema import (
 )
 
 
-# Ruta por defecto: datasets/CICIDS2017/ relativa a la raíz del repo
+# Ruta por defecto: datasets/CICIDS2017/ relativa a la raíz del proyecto
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_LOCAL_DIR = _REPO_ROOT / "datasets" / "CICIDS2017"
 
@@ -39,8 +39,8 @@ _OFFICIAL_CICIDS2017_CSV_ORDER = {name.lower(): idx for idx, name in enumerate(_
 
 @dataclass(frozen=True)
 class CICIDSLoadConfig:
-    # Directorio local con CSVs de CICIDS2017
-    local_dir: Path = _DEFAULT_LOCAL_DIR
+    # Directorio con CSVs de CICIDS2017
+    local_dir: Path = _DEFAULT_LOCAL_DIR  # busca los CSVs en el directorio de datasets correspondiente
     chunksize: int = 250_000            # para leer CSVs grandes por trozos
     max_rows: Optional[int] = None      # recorta el total cargado (útil para pruebas)
     sample_frac: Optional[float] = None # ej. 0.2 para quedarte con 20% tras cargar
@@ -50,11 +50,11 @@ class CICIDSLoadConfig:
     benign_value: str = "BENIGN"        # CICIDS2017 suele usar "BENIGN"
 
     # Limpieza / features
-    drop_identifier_cols: bool = True   # Destination Port, Flow ID, IPs, Timestamp, etc.
-    scale: bool = True                  # StandardScaler (fit solo en train)
+    drop_identifier_cols: bool = True   # Destination Port, Flow ID, IPs, Timestamps...
+    scale: bool = True                  # StandardScaler (fit only in train)
 
-    # Canonical schema
-    use_canonical: bool = True          # mapear al esquema canónico con missingness mask
+    # Use Canonical schema
+    use_canonical: bool = True          # mapear a esquema canónico con missingness mask
 
     # Split
     test_size: float = 0.2
