@@ -72,6 +72,17 @@ TFG_CYBER_AI/
   - Flow IDs or unique identifiers
   - ports used directly as label proxies
 
+## Dataset Versions (CICIDS2017)
+
+Two versions of the CICIDS2017 data exist locally:
+
+| Version | Path | Tracked | Description |
+|---------|------|---------|-------------|
+| Curated | `datasets/CICIDS2017/*.csv` | Yes | Leakage-prone and redundant columns removed pre-ingestion. What the adapter loads. |
+| Raw | `datasets/CICIDS2017/Raw_dataset/` | No (gitignored) | Original CICFlowMeter CSV exports. All columns preserved. Local reference only. |
+
+The adapter (`src/load_cicids2017.py`) applies further cleaning at load time regardless of which version is used. The anti-leakage policy in code is the authoritative gate.
+
 ## Quickstart
 
 Install dependencies:
