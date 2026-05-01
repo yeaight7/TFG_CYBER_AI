@@ -1,0 +1,500 @@
+% Requires: amsmath, amssymb, listings, booktabs, array (assumed in parent document)
+\section{QRDQN en Stable Baselines3 para el TFG}
+
+\subsection{Resumen ejecutivo}
+
+La implementación de \textbf{QR-DQN} en el ecosistema de Stable Baselines vive en
+\textbf{SB3-Contrib}, no en el núcleo de Stable Baselines3, y convierte a DQN en un método
+\textbf{distribucional}: en vez de aprender un único escalar \(Q(s,a)\), aprende una
+\textbf{distribución aproximada de retornos} por acción usando \(N\) cuantiles. En la práctica de
+SB3, esa distribución se representa como un tensor de forma
+\((\text{batch},\, N,\, |\mathcal{A}|)\), se entrena con \textbf{quantile Huber loss}, y la acción
+codiciosa se elige por la \textbf{media de los cuantiles}, es decir, por el retorno esperado
+implícito en la distribución. Por tanto, QRDQN aprende más información que DQN, pero \textbf{no es
+risk-sensitive por defecto}: sigue actuando según la esperanza matemática salvo que se modifique
+explícitamente el criterio de decisión.
+
+Desde la perspectiva teórica, QR-DQN nace para cerrar la brecha entre la teoría distribucional de
+Marc~G.~Bellemare, Will~Dabney, y Rémi~Munos en C51 y una implementación entrenable por descenso de
+gradiente. C51 fija los soportes \(z_i\) y aprende probabilidades; QR-DQN ``transpone'' esa idea:
+fija probabilidades uniformes y aprende las \textbf{localizaciones} de los cuantiles. Esto evita la
+proyección categórica de C51 y elimina la necesidad de fijar manualmente cotas como \(V_{\min}\) y
+\(V_{\max}\).
+
+En el repositorio \texttt{yeaight7/TFG\_CYBER\_AI}, QRDQN es el algoritmo principal para un
+problema discreto binario de ciberdefensa sobre \textbf{CICIDS2017}, con observaciones de
+\textbf{152 dimensiones} y acciones \textbf{0=PERMIT}, \textbf{1=BLOCK}. La arquitectura elegida es
+\texttt{MlpPolicy} con \texttt{net\_arch=[512, 256]}, \texttt{learning\_rate=1e-4},
+\texttt{gamma=0.99}, \texttt{tau=1.0}, \texttt{train\_freq} de 50 o 100 y
+\texttt{gradient\_steps} de 10 o 20 según preset. El mejor artefacto consolidado del repositorio es
+el run \texttt{C03\_qrdqn\_cicids2017\_canonical\_full\_random\_20260223\_232439}, con accuracy
+\texttt{0.99859} y F1 de ataque \texttt{0.99876} en random split; sin embargo, la validación dura
+por día/CSV cae de forma importante, lo que demuestra que la generalización real es bastante más
+difícil que el escenario aleatorio.
+
+La conclusión práctica para el TFG es clara: QRDQN está bien alineado con el problema porque el
+espacio de acciones es discreto y porque el aprendizaje distribucional puede capturar mejor colas,
+multimodalidad y asimetrías del retorno inducidas por una recompensa con falsos negativos muy
+penalizados. Pero, en SB3, esa ventaja depende mucho de detalles de implementación:
+\textbf{número de cuantiles}, rapidez del decaimiento de \(\varepsilon\), tamaño del batch,
+frecuencia de actualización de la red objetivo y diseño de la recompensa.
+
+\subsection{Supuestos y lagunas del repositorio}
+
+\begin{itemize}
+  \item \textbf{La versión exacta de SB3 y SB3-Contrib no está fijada}, solo un mínimo:
+        \texttt{stable-baselines3>=2.3} y \texttt{sb3-contrib>=2.3}. En SB3-Contrib v2.3.0 cambió
+        el default de \texttt{learning\_starts} de 50\,000 a 100.
+
+  \item \textbf{\texttt{n\_quantiles} no se fija explícitamente} en el script de entrenamiento; se
+        infiere que se usa el default oficial: \textbf{200 cuantiles}.
+
+  \item \textbf{Los parámetros de exploración tampoco se fijan explícitamente}. Se heredan los
+        defaults de QRDQN en SB3-Contrib: \texttt{exploration\_fraction=0.005},
+        \texttt{exploration\_initial\_eps=1.0} y \texttt{exploration\_final\_eps=0.01}. Con
+        100\,000 timesteps, la caída lineal de \(\varepsilon\) termina aproximadamente en los
+        \textbf{primeros 500 pasos}; con 25\,000 timesteps, en los \textbf{primeros 125 pasos}.
+
+  \item \textbf{El script \verb|train_rl_defender.py| contiene una inconsistencia documental
+        interna}: en la ayuda de \texttt{--timesteps} se habla de un default de ``500k full, 5k
+        fast'', pero el código efectivo en \texttt{main()} asigna \texttt{25\_000} para
+        \texttt{fast} y \texttt{100\_000} para \texttt{full}.
+
+  \item \textbf{Los resultados históricos no coinciden necesariamente con los defaults actuales del
+        código}. El reward actual por defecto usa \texttt{fp=-1.5}, mientras que el mejor run
+        histórico consolidado usó \texttt{fp=-2.0}.
+
+  \item \textbf{La validación leave-one-exact-CSV-out está implementada, pero no hay un artefacto
+        agregado comprometido} en \verb|runs/validation/|.
+\end{itemize}
+
+Como hallazgo sintético del repo: el pipeline actual trabaja con CICIDS2017, un esquema canónico de
+\textbf{76 features}, una máscara de missingness de otras \textbf{76}, observación total de
+\textbf{152 dimensiones}, y un entorno Gymnasium con acción discreta binaria.
+
+\subsection{Fundamentos teóricos y matemáticos}
+
+La motivación de \textbf{distributional RL} es que el retorno futuro desde un estado-acción no es
+un número fijo, sino una \textbf{variable aleatoria}. DQN clásico aprende solo su expectativa
+\(Q(s,a)=\mathbb{E}[Z(s,a)]\). El enfoque distribucional intenta aproximar la ley completa de
+\(Z(s,a)\), lo que permite representar colas, multimodalidad y asimetría.
+
+En C51, la distribución se aproxima con una combinación discreta de \textbf{soportes fijos}
+\(z_1,\dots,z_N\) y \textbf{probabilidades aprendidas} \(q_i\). QR-DQN invierte esa
+parametrización: fija probabilidades uniformes \(1/N\) y aprende las \textbf{localizaciones}
+\(\theta_i(s,a)\). Formalmente:
+\[
+  Z_\theta(s,a)=\frac{1}{N}\sum_{i=1}^N \delta_{\theta_i(s,a)},
+\]
+donde cada \(\theta_i\) representa una localización cuantil y \(\delta\) es una masa de Dirac.
+
+La \textbf{pinball loss} para un único cuantil \(\tau\):
+\[
+  \rho_\tau(u)=u\bigl(\tau-\mathbf{1}_{\{u<0\}}\bigr).
+\]
+
+Como la pinball loss no es suave en cero, el paper propone la \textbf{quantile Huber loss}:
+\[
+  L_\kappa(u)=
+  \begin{cases}
+    \tfrac{1}{2}u^2, & |u|\le \kappa \\
+    \kappa\bigl(|u|-\tfrac{1}{2}\kappa\bigr), & |u|>\kappa
+  \end{cases}
+  \qquad
+  \rho^\kappa_\tau(u)=|\tau-\mathbf{1}_{\{u<0\}}|\,L_\kappa(u).
+\]
+
+El \textbf{Bellman update} distribucional en control:
+\[
+  \mathcal{T} Z(s,a)\overset{D}{=} r + \gamma Z(s',a^*),
+  \qquad
+  a^*=\arg\max_{a'}\mathbb{E}[Z(s',a')].
+\]
+
+\begin{table}[htbp]
+\caption{Comparación entre DQN, C51 y QRDQN.}
+\footnotesize
+\begin{tabular}{p{3.5cm}p{3cm}p{3cm}p{4cm}}
+\hline
+\textbf{Atributo} & \textbf{DQN} & \textbf{C51} & \textbf{QRDQN} \\
+\hline
+Qué modela
+  & Esperanza \(Q(s,a)\)
+  & Distribución categórica
+  & Distribución por cuantiles \\
+Representación
+  & 1 escalar por acción
+  & Soportes fijos + probs aprendidas
+  & Probs uniformes + localizaciones aprendidas \\
+Salida por acción
+  & 1 valor
+  & \(N\) probabilidades
+  & \(N\) cuantiles \\
+Necesita \(V_{\min},V_{\max}\)
+  & No & Sí & No \\
+Pérdida
+  & TD/Huber escalar
+  & KL a proyección categórica
+  & Quantile Huber \\
+Política greedy
+  & \(\arg\max Q\)
+  & \(\arg\max \mathbb{E}[Z]\)
+  & \(\arg\max \mathbb{E}[Z]\) \\
+Ventaja principal
+  & Simplicidad
+  & Distribucional con coste moderado
+  & Distribucional más flexible, sin soportes fijos \\
+Inconveniente principal
+  & Pierde información de dispersión
+  & Requiere proyección y cotas
+  & Cabeza de salida más grande y más coste \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Lógica algorítmica e implementación en SB3}
+
+A nivel algorítmico, la lógica de QRDQN en SB3 es la de un \textbf{off-policy method} clásico:
+recolecta transiciones en un replay buffer, espera hasta \texttt{learning\_starts}, entrena cada
+\texttt{train\_freq} pasos durante \texttt{gradient\_steps} iteraciones y actualiza la red objetivo
+cada \texttt{target\_update\_interval}.
+
+% Diagrama original en Mermaid (flowchart TD):
+\begin{verbatim}
+obs_t
+ -> selección de acción
+ -> env.step
+ -> guardar transición en replay buffer
+ -> [num_timesteps > learning_starts?]
+     no  -> obs_t
+     sí  -> [se alcanzó train_freq?]
+             no  -> obs_t
+             sí  -> muestra minibatch
+                    -> Z_next = target_net(next_obs)
+                    -> a* = argmax_a media_tau Z_next
+                    -> Z_target = r + gamma * (1-done) * Z_next[a*]
+                    -> Z_current = online_net(obs, action)
+                    -> quantile_huber_loss
+                    -> Adam / backprop
+                    -> [target_update_interval?]
+                        sí -> polyak_update -> obs_t
+                        no -> obs_t
+\end{verbatim}
+
+El detalle más importante de la implementación oficial es \textbf{cómo se elige la acción
+bootstrap}. SB3 calcula los cuantiles del siguiente estado con la red objetivo, toma la
+\textbf{media} sobre el eje de cuantiles, aplica \texttt{argmax} sobre acciones y luego recoge los
+cuantiles de esa acción ganadora para formar el target.
+
+\begin{lstlisting}[language=Python, caption={Pseudocódigo del entrenamiento QRDQN en SB3-Contrib}]
+# Pseudocodigo fiel al entrenamiento de SB3-Contrib QRDQN
+Z_next = target_net(next_obs)                  # (B, N, A)
+a_star = argmax_a(mean_tau(Z_next))            # accion greedy por esperanza
+Z_boot = select_action_quantiles(Z_next, a_star)  # (B, N)
+Z_target = r + (1 - done) * gamma * Z_boot
+
+Z_current = select_action_quantiles(online_net(obs), action)
+loss = quantile_huber_loss(Z_current, Z_target)
+\end{lstlisting}
+
+En cuanto al \textbf{replay buffer}, QRDQN hereda la lógica genérica de
+\texttt{OffPolicyAlgorithm}: \textbf{1-step targets} y replay uniforme, \textbf{sin prioritized
+replay nativo}.
+
+La \textbf{red objetivo} se actualiza con \texttt{polyak\_update}. Con \texttt{tau=1.0} (valor
+usado en el repo) esto equivale a una \textbf{copia dura} cada
+\texttt{target\_update\_interval}.
+
+La \textbf{exploración} es \(\varepsilon\)-greedy con programación lineal entre
+\texttt{exploration\_initial\_eps} y \texttt{exploration\_final\_eps} a lo largo de
+\texttt{exploration\_fraction}.
+
+El \textbf{optimizador} por defecto es \texttt{Adam}. QRDQN inyecta
+\texttt{optimizer\_kwargs=\{"eps": 0.01 / batch\_size\}}. Con \texttt{batch\_size=2048}, el
+\(\varepsilon\) implícito del Adam es $\approx 4.88\times10^{-6}$; con \texttt{batch\_size=512},
+$\approx 1.95\times10^{-5}$.
+
+\subsection{Arquitectura de red y parámetros de la API}
+
+La política oficial \texttt{QRDQNPolicy} construye dos redes: \texttt{quantile\_net} y
+\texttt{quantile\_net\_target}. Para observaciones vectoriales, el extractor por defecto es
+\texttt{FlattenExtractor} y la arquitectura MLP por defecto es \texttt{[64, 64]}. La capa final
+genera \texttt{action\_dim * n\_quantiles} salidas reordenadas a forma
+\texttt{(-1, n\_quantiles, n\_actions)}.
+
+% Diagrama original en Mermaid (flowchart LR):
+\begin{verbatim}
+Observacion x -> FlattenExtractor -> MLP hidden 1 -> MLP hidden 2
+  -> Linear(A*N) -> reshape(batch, N, A) -> media sobre N -> argmax accion
+\end{verbatim}
+
+En el repo, la arquitectura concreta es \texttt{MlpPolicy} con \texttt{net\_arch=[512, 256]}. Con
+\texttt{n\_quantiles=200} (default), el cabezal de salida tiene \textbf{400 neuronas}
+$(2\,\text{acciones} \times 200\,\text{cuantiles})$. La forma de salida es $(B,\, 200,\, 2)$.
+
+El recuento de parámetros de la red online para una MLP vectorial es:
+\[
+  (d h_1 + h_1) + (h_1 h_2 + h_2) + (h_2 A N + A N),
+\]
+donde \(d\) es la dimensión de observación, \(A\) el número de acciones y \(N\) el número de
+cuantiles. Con \(d=152\), \(A=2\), \(N=200\), \(h_1=512\), \(h_2=256\), el total es
+\textbf{312\,464 parámetros} en la red online.
+
+\subsubsection{Parámetros del constructor \texttt{QRDQN}}
+
+\begin{table}[htbp]
+\caption{Parámetros del constructor \texttt{QRDQN} y su estado en el repositorio.}
+\scriptsize
+\begin{tabular}{p{2.8cm}p{1.8cm}p{3cm}p{3.5cm}p{2.5cm}}
+\hline
+\textbf{Parámetro} & \textbf{Default} & \textbf{Papel} & \textbf{Valores típicos / efecto}
+  & \textbf{En el repo} \\
+\hline
+\texttt{policy}
+  & ---
+  & tipo de política
+  & depende de observación
+  & \textbf{Sí}: \texttt{"MlpPolicy"} \\
+\texttt{env}
+  & ---
+  & entorno Gym/Gymnasium o VecEnv
+  & obligatorio
+  & \textbf{Sí}: \texttt{DummyVecEnv(Monitor(...))} \\
+\texttt{learning\_rate}
+  & \texttt{5e-5}
+  & ritmo de aprendizaje
+  & más alto acelera, pero arriesga inestabilidad
+  & \textbf{Sí}: \texttt{1e-4} \\
+\texttt{buffer\_size}
+  & \texttt{1\_000\_000}
+  & tamaño máximo del replay buffer
+  & buffers grandes estabilizan, consumen RAM
+  & \textbf{Sí}: cap en 200k \\
+\texttt{learning\_starts}
+  & \texttt{100}
+  & warm-up antes de entrenar
+  & demasiado bajo: targets ruidosos
+  & \textbf{Implícito}: default 100 \\
+\texttt{batch\_size}
+  & \texttt{32}
+  & tamaño de minibatch
+  & mayor batch reduce varianza
+  & \textbf{Sí}: \texttt{512} / \texttt{2048} \\
+\texttt{tau}
+  & \texttt{1.0}
+  & soft update de target; \texttt{1.0} = hard copy
+  & \texttt{<1} blando; \texttt{1} duro
+  & \textbf{Sí}: \texttt{1.0} \\
+\texttt{gamma}
+  & \texttt{0.99}
+  & descuento
+  & más alto: horizonte largo
+  & \textbf{Sí}: \texttt{0.99} \\
+\texttt{train\_freq}
+  & \texttt{4}
+  & frecuencia de updates
+  & controla cadencia entre datos y gradientes
+  & \textbf{Sí}: \texttt{50} / \texttt{100} \\
+\texttt{gradient\_steps}
+  & \texttt{1}
+  & nº de pasos de gradiente por ciclo
+  & más alto = más compute
+  & \textbf{Sí}: \texttt{10} / \texttt{20} \\
+\texttt{replay\_buffer\_class}
+  & \texttt{None}
+  & clase de buffer
+  & custom buffer si se quiere extender
+  & \textbf{No} \\
+\texttt{optimize\_memory\_usage}
+  & \texttt{False}
+  & variante memory-efficient
+  & ahorra memoria, añade complejidad
+  & \textbf{No} \\
+\texttt{target\_update\_interval}
+  & \texttt{10000}
+  & cada cuántos pasos se actualiza target
+  & pequeño = más reactivo; grande = más estable
+  & \textbf{Sí}: \texttt{1000} / \texttt{10000} \\
+\texttt{exploration\_fraction}
+  & \texttt{0.005}
+  & fracción donde cae \(\varepsilon\)
+  & más grande = exploración prolongada
+  & \textbf{Implícito} \\
+\texttt{exploration\_initial\_eps}
+  & \texttt{1.0}
+  & \(\varepsilon\) inicial
+  & normalmente alto
+  & \textbf{Implícito} \\
+\texttt{exploration\_final\_eps}
+  & \texttt{0.01}
+  & \(\varepsilon\) final
+  & más alto = más exploración residual
+  & \textbf{Implícito} \\
+\texttt{policy\_kwargs}
+  & \texttt{None}
+  & kwargs internos de la política
+  & donde se pasa \texttt{net\_arch}, \texttt{n\_quantiles}
+  & \textbf{Sí} \\
+\texttt{seed}
+  & \texttt{None}
+  & semilla global
+  & clave para reproducibilidad local
+  & \textbf{Sí}: \texttt{42} por defecto CLI \\
+\texttt{device}
+  & \texttt{"auto"}
+  & CPU / CUDA
+  & afecta velocidad y reproducibilidad
+  & \textbf{Sí}: CPU o CUDA detectado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Parámetros internos de \texttt{QRDQNPolicy}}
+
+\begin{table}[htbp]
+\caption{Parámetros de \texttt{QRDQNPolicy} propagados vía \texttt{policy\_kwargs}.}
+\footnotesize
+\begin{tabular}{p{3.5cm}p{3.5cm}p{3.5cm}p{3cm}}
+\hline
+\textbf{Parámetro} & \textbf{Default oficial} & \textbf{Papel} & \textbf{En el repo} \\
+\hline
+\texttt{n\_quantiles}
+  & \texttt{200}
+  & nº de cuantiles por acción; afecta resolución y coste
+  & \textbf{Implícito} \\
+\texttt{net\_arch}
+  & \texttt{[64,64]} en MLP
+  & profundidad/anchura MLP
+  & \textbf{Sí}: \texttt{[512,256]} \\
+\texttt{activation\_fn}
+  & \texttt{ReLU}
+  & no linealidad
+  & \textbf{Implícito} \\
+\texttt{features\_extractor\_class}
+  & \texttt{FlattenExtractor}
+  & extractor para observación vectorial
+  & \textbf{Implícito} \\
+\texttt{normalize\_images}
+  & \texttt{True}
+  & relevante en observaciones de imagen
+  & \textbf{Implícito}, irrelevante aquí \\
+\texttt{optimizer\_class}
+  & \texttt{Adam}
+  & optimizador
+  & \textbf{Implícito} \\
+\texttt{optimizer\_kwargs}
+  & QRDQN inyecta \texttt{eps=0.01/batch\_size}
+  & detalle fino de estabilidad
+  & \textbf{Implícito} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Fragmento relevante del repositorio}
+
+\begin{lstlisting}[language=Python]
+model = QRDQN(
+    "MlpPolicy",
+    vec_env,
+    seed=seed,
+    policy_kwargs=dict(net_arch=[512, 256]),
+    learning_rate=lr,
+    buffer_size=min(200_000, max(total_timesteps, 10_000)),
+    batch_size=batch_size,
+    gradient_steps=gradient_steps,
+    gamma=0.99,
+    tau=1.0,
+    train_freq=train_freq,
+    target_update_interval=target_update_interval,
+    verbose=1,
+    device=device,
+    tensorboard_log=tb_log_dir,
+)
+\end{lstlisting}
+
+\subsection{Consideraciones prácticas, evaluación y reproducibilidad}
+
+QRDQN suele ser una buena elección frente a DQN cuando el problema tiene \textbf{acciones
+discretas} y se sospecha que el retorno no está bien descrito por una media. Frente a C51, QRDQN
+resulta especialmente cómodo cuando no se quieren elegir manualmente cotas de soporte.
+
+En SB3, sin embargo, esa superioridad no es automática. La guía oficial recomienda hacer tuning
+cuantitativo, evaluar en un entorno separado y validar muy bien terminaciones y wrappers.
+
+El gran resultado positivo del repo es el rendimiento en random split:
+\texttt{C03\_qrdqn\_cicids2017\_canonical\_full\_random\_20260223\_232439} reporta accuracy
+\texttt{0.99859} y F1 de ataque \texttt{0.99876}. El hallazgo científicamente más valioso es
+negativo: en la validación dura por día/CSV (Check~C) la accuracy baja a \texttt{0.84135} y el
+recall de ataque a \texttt{0.52954}. Esto permite defender algo muy sólido: \textbf{el modelo
+aprende muy bien dentro del régimen i.i.d. aproximado del split aleatorio, pero generalizar entre
+días y capturas es mucho más difícil}.
+
+Los \textbf{dos hiperparámetros críticos} a revisar en primer lugar son:
+\begin{itemize}
+  \item \texttt{exploration\_fraction}: al heredarse el default \texttt{0.005} puede que se explore
+        demasiado poco durante casi todo el entrenamiento.
+  \item \texttt{n\_quantiles}: \texttt{200} es un default razonable en Atari pero quizá no sea
+        óptimo para un problema tabular/vectorial con dos acciones.
+\end{itemize}
+
+Para visualizar la salida distribucional en una defensa:
+
+\begin{verbatim}
+Accion PERMIT:
+q05 = -3.2    q50 = 0.1    q95 = 1.7    media ≈ -0.2
+
+Accion BLOCK:
+q05 = -0.9    q50 = 0.8    q95 = 1.1    media ≈  0.7
+
+Decision greedy de SB3: BLOCK
+Interpretacion: BLOCK tiene mejor retorno esperado y menor dispersion.
+\end{verbatim}
+
+Utilidad mínima para extraer curvas de cuantiles programáticamente:
+
+\begin{lstlisting}[language=Python]
+import torch
+import numpy as np
+
+def get_action_quantiles(model, obs_np):
+    obs_t = torch.as_tensor(obs_np[None], device=model.device, dtype=torch.float32)
+    with torch.no_grad():
+        z = model.quantile_net(obs_t)   # (1, N, A)
+    z = z.squeeze(0).cpu().numpy()      # (N, A)
+    q_mean = z.mean(axis=0)             # (A,)
+    return z, q_mean
+\end{lstlisting}
+
+\subsection{Preguntas de tribunal y respuestas breves}
+
+\begin{description}
+  \item[¿Qué aprende QRDQN que DQN no aprende?]
+    DQN aprende solo el retorno esperado por acción. QRDQN aprende una aproximación de la
+    \textbf{distribución completa de retornos} mediante \(N\) cuantiles por acción.
+
+  \item[¿En qué se diferencia QRDQN de C51 en una frase?]
+    C51 fija los soportes y aprende probabilidades; QRDQN fija probabilidades uniformes y aprende
+    las localizaciones de los cuantiles. Por eso QRDQN no necesita \(V_{\min}\) ni \(V_{\max}\).
+
+  \item[Si QRDQN aprende distribución, ¿por qué no es ``risk-sensitive''?]
+    Porque en SB3 la acción se elige con \texttt{argmax} de la \textbf{media} de cuantiles. La
+    distribución se aprende y se puede analizar, pero la política por defecto sigue maximizando
+    esperanza.
+
+  \item[¿Tu implementación usa prioritized replay, Double DQN o dueling?]
+    No de forma nativa. El QRDQN de SB3-Contrib usa \texttt{ReplayBuffer} estándar y muestreo
+    uniforme.
+
+  \item[¿Cuál es el hiperparámetro más ``silencioso'' de tu implementación?]
+    Probablemente \texttt{exploration\_fraction}, porque no se fija en el repo y el default
+    \texttt{0.005} implica que \(\varepsilon\) cae muy deprisa.
+
+  \item[¿Por qué no basta con reportar accuracy de random split?]
+    Porque el propio repositorio muestra que el rendimiento en split aleatorio es casi perfecto,
+    pero cae de forma notable en el split duro por día/CSV. Eso indica que el verdadero reto es la
+    \textbf{generalización fuera de distribución}.
+
+  \item[¿Cuál sería una mejora inmediata para la memoria del TFG?]
+    Fijar en texto y código los parámetros implícitos heredados de SB3-Contrib: versión exacta,
+    \texttt{n\_quantiles}, exploración y \texttt{optimizer\_kwargs}.
+\end{description}
