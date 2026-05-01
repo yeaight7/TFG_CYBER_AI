@@ -1,0 +1,97 @@
+\section{04 --- Validación y lectura correcta de resultados}
+
+\subsection{1) Por qué no basta con una accuracy alta}
+
+Un resultado alto en split aleatorio puede ocultar problemas de generalización. Por eso el proyecto
+incluye varias validaciones con funciones distintas.
+
+\subsection{2) Check A (evaluación directa)}
+
+Archivo: \verb|src/validate_checks.py| $\to$ \verb|check_a_direct_eval|
+
+\begin{itemize}
+  \item compara \verb|model.predict(X_test[i])| con \verb|y_test[i]|
+  \item evita depender de mecánicas internas del entorno para computar métrica
+\end{itemize}
+
+Resultado histórico (artefacto comprometido):
+
+\begin{itemize}
+  \item accuracy $\approx$ \texttt{0.9939}
+\end{itemize}
+
+\subsection{3) Check B (anti-leakage con etiquetas barajadas)}
+
+Archivo: \verb|src/validate_checks.py| $\to$ \verb|check_b_shuffled_labels|
+
+\begin{itemize}
+  \item baraja \texttt{y\_train}
+  \item reentrena brevemente
+  \item espera rendimiento cercano a baseline de clase mayoritaria
+\end{itemize}
+
+Resultado histórico comprometido:
+
+\begin{itemize}
+  \item \texttt{shuffled\_accuracy = 0.4773}
+  \item \texttt{leakage\_detected = false}
+\end{itemize}
+
+\subsection{4) Check C (split duro por CSV/día)}
+
+Archivo: \verb|src/validate_checks.py| $\to$ \verb|check_c_csv_split|
+
+\begin{itemize}
+  \item train en días/patrones distintos de test
+  \item prueba de generalización más realista
+\end{itemize}
+
+Resultado histórico comprometido:
+
+\begin{itemize}
+  \item accuracy $\approx$ \texttt{0.84135}
+  \item recall ataque y F1 bajan de forma notable frente a random split
+\end{itemize}
+
+Lectura correcta: el pipeline funciona muy bien in-distribution, pero la generalización dura es
+sustancialmente más difícil.
+
+\subsection{5) Leave-one-exact-CSV-out}
+
+Archivo: \verb|src/validate_leave_one_csv_out.py|
+
+\begin{itemize}
+  \item holdout de un CSV exacto por fold
+  \item agrega métricas por fold y globales
+  \item incluye métricas operativas (\texttt{balanced\_accuracy}, \texttt{fpr}, \texttt{fnr},
+        \texttt{block\_rate}, \texttt{reward\_per\_sample}, tiempos)
+\end{itemize}
+
+Estado a defender con rigor:
+
+\begin{itemize}
+  \item workflow implementado en código
+  \item sin artefacto agregado completo comprometido aún
+\end{itemize}
+
+\subsection{6) Cómo explicar contradicciones aparentes en métricas}
+
+No hay contradicción entre ``99.8\% en random split'' y ``84\% en split duro''. Son preguntas
+distintas:
+
+\begin{itemize}
+  \item random split: rendimiento en distribución muy parecida
+  \item split duro: robustez a cambios de día/patrón
+\end{itemize}
+
+La defensa sólida es mostrar ambas, no esconder la más dura.
+
+\subsection{7) Regla metodológica para el tribunal}
+
+Siempre separar:
+
+\begin{enumerate}
+  \item defaults actuales del código
+  \item configuración real del run histórico citado
+  \item resultado medido respaldado por artefacto
+\end{enumerate}
