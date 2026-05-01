@@ -21,10 +21,13 @@
   frame=single,
 }
 
-\begin{document}
-\section{06 --- Glosario esencial + preguntas de tribunal}
+\title{Glosario esencial + preguntas de tribunal}
+\date{}
 
-\subsection{1) Glosario mínimo para explicar el proyecto a principiantes}
+\begin{document}
+\maketitle
+
+\section{Glosario mínimo para explicar el proyecto a principiantes}
 
 \begin{description}
   \item[Flujo de red] Resumen estadístico de una comunicación (no payload completo).
@@ -41,42 +44,42 @@
   \item[RUN\_ID] Identificador único de una ejecución reproducible.
 \end{description}
 
-\subsection{2) Preguntas frecuentes del tribunal (con respuesta técnica breve)}
+\section{Preguntas frecuentes del tribunal (con respuesta técnica breve)}
 
-\subsubsection{``¿Por qué RL y no solo clasificación supervisada?''}
+\subsection{``¿Por qué RL y no solo clasificación supervisada?''}
 
 Porque el proyecto necesita optimizar costes asimétricos de seguridad de forma explícita en la
 función de recompensa, no solo exactitud global.
 
-\subsubsection{``¿Qué aporta el esquema canónico?''}
+\subsection{``¿Qué aporta el esquema canónico?''}
 
 Permite un contrato de observación estable entre datasets y Phase~2 real. Sin eso, el agente vería
 vectores incompatibles entre entrenamientos.
 
-\subsubsection{``¿Qué significa realmente 152?''}
+\subsection{``¿Qué significa realmente 152?''}
 
 76 features canónicas + 76 valores de máscara de missingness.
 
-\subsubsection{``¿Cómo evitas leakage?''}
+\subsection{``¿Cómo evitas leakage?''}
 
 Excluyendo IPs, timestamps, Flow IDs y puertos-proxy en el preprocesado; además Check~B comprueba
 que el rendimiento colapsa al barajar etiquetas.
 
-\subsubsection{``¿Tu mejor accuracy implica robustez real?''}
+\subsection{``¿Tu mejor accuracy implica robustez real?''}
 
 No necesariamente. El random split da un techo in-distribution; la validación por día/CSV muestra
 dificultad de generalización más realista.
 
-\subsubsection{``¿Está lista Phase 2 para producción?''}
+\subsection{``¿Está lista Phase 2 para producción?''}
 
 No. Está lista para inferencia offline robusta y diagnóstico; bloqueo activo y robustez operativa
 cerrada aún no.
 
-\subsubsection{``¿Cuál es tu principal limitación actual?''}
+\subsection{``¿Cuál es tu principal limitación actual?''}
 
 La sensibilidad al domain shift en tráfico real.
 
-\subsection{3) Estructura de explicación en 3 minutos (versión corta)}
+\section{Estructura de explicación en 3 minutos (versión corta)}
 
 \begin{enumerate}
   \item problema: decisión PERMIT/BLOCK con costes asimétricos
@@ -85,7 +88,7 @@ La sensibilidad al domain shift en tráfico real.
         Phase~2)
 \end{enumerate}
 
-\subsection{4) Estructura de explicación en 10--12 minutos (versión defensa)}
+\section{Estructura de explicación en 10--12 minutos (versión defensa)}
 
 \begin{enumerate}
   \item motivación y objetivos
