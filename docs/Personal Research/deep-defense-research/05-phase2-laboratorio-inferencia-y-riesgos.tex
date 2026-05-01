@@ -21,10 +21,13 @@
   frame=single,
 }
 
-\begin{document}
-\section{05 --- Phase 2: laboratorio, inferencia y riesgos abiertos}
+\title{Phase 2: laboratorio, inferencia y riesgos abiertos}
+\date{}
 
-\subsection{1) Qué es exactamente Phase 2 hoy}
+\begin{document}
+\maketitle
+
+\section{Qué es exactamente Phase 2 hoy}
 
 Phase~2 es \textbf{inferencia offline} sobre flujos extraídos de tráfico de laboratorio.
 
@@ -36,7 +39,7 @@ Entrada mantenida:
 
 No incluye todavía bloqueo activo inline.
 
-\subsection{2) Flujo operativo resumido}
+\section{Flujo operativo resumido}
 
 \begin{enumerate}
   \item generar/capturar tráfico en lab privado
@@ -47,28 +50,28 @@ No incluye todavía bloqueo activo inline.
   \item guardar artefactos de run
 \end{enumerate}
 
-\subsection{3) Endurecimiento técnico de la v2}
+\section{Endurecimiento técnico de la v2}
 
-\subsubsection{Clipping por percentiles (pre-scaling)}
+\subsection{Clipping por percentiles (pre-scaling)}
 
 \begin{itemize}
   \item función: \verb|apply_percentile_clipping| (\verb|src/scaling_utils.py|)
   \item recorta features crudas a \([p_{\text{low}},\, p_{\text{high}}]\) aprendidos en train
 \end{itemize}
 
-\subsubsection{Clipping por z-score (post-scaling)}
+\subsection{Clipping por z-score (post-scaling)}
 
 \begin{itemize}
   \item función: \verb|apply_z_clipping|
   \item limita valores escalados a \([-\text{max\_z},\, +\text{max\_z}]\)
 \end{itemize}
 
-\subsubsection{Diagnósticos}
+\subsection{Diagnósticos}
 
 \verb|predict_real_traffic_v2.py| calcula y exporta estadísticos de z-score para vigilar domain
 shift.
 
-\subsection{4) Artefactos esperados de cada run Phase 2}
+\section{Artefactos esperados de cada run Phase 2}
 
 En \verb|runs/phase2/<RUN_ID>/|:
 
@@ -79,7 +82,7 @@ En \verb|runs/phase2/<RUN_ID>/|:
   \item \texttt{diagnostics.json} (si se exporta)
 \end{itemize}
 
-\subsection{5) Hallazgo central de Phase 2 (honesto)}
+\section{Hallazgo central de Phase 2 (honesto)}
 
 Hay runs comprometidos con comportamiento muy distinto en benign-only. Esto obliga a evitar
 sobrepromesas y a citar siempre el \texttt{RUN\_ID} al hacer afirmaciones.
@@ -91,7 +94,7 @@ Mensaje sólido:
   \item la robustez en tráfico real sigue siendo el principal problema científico/ingenieril abierto
 \end{itemize}
 
-\subsection{6) Laboratorio privado y seguridad operacional}
+\section{Laboratorio privado y seguridad operacional}
 
 Referencias: \verb|docs/gcp_lab.md|, \verb|docs/phase2_plan.md|, \verb|lab/docker/*|
 
@@ -104,7 +107,7 @@ Principios:
   \item no exponer secretos ni datasets sensibles en repo
 \end{itemize}
 
-\subsection{7) Qué faltaría para pasar a bloqueo activo}
+\section{Qué faltaría para pasar a bloqueo activo}
 
 \begin{enumerate}
   \item estabilidad consistente en benign, ataque y mixto
