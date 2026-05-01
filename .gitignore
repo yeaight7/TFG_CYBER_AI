@@ -8,7 +8,7 @@ __pycache__/
 *.out
 *.toc
 *.gz
-.fdb_latexmk
+*.fdb_latexmk
 *.fls
 .vscode/
 .remember/
