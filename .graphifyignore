@@ -16,6 +16,7 @@ lab/
 
 # Build/report artifacts that are not maintained source context
 report/
+docs/Personal Research/
 
 # Personal notes and reusable skill metadata are intentionally outside the corpus
 .github/skills/
