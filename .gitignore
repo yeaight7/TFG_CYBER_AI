@@ -1,3 +1,4 @@
+# misc
 venv/
 .venv/
 *.pyc
@@ -10,13 +11,16 @@ __pycache__/
 .fdb_latexmk
 *.fls
 .vscode/
+
+# PCAPS and big CSV files
 flows_simulated_*
-untrustworthy*
+synthetic*
+runs/phase2/P2v2_pred_20260412_004102/predictions.csv
+runs/phase2/P2v2_pred_20260412_004624/predictions.csv
+
+# Graphify output files
 graphify-out/cache
 .graphify_*.json
 graphify-out/obsidian/.obsidian/
-
-# big CSV files
-runs/phase2/P2v2_pred_20260412_004102/predictions.csv
-runs/phase2/P2v2_pred_20260412_004624/predictions.csv
 graphify-out/obsidian/.obsidian/graph.json
+graphify-out\graph.html
