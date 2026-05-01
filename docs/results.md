@@ -15,13 +15,11 @@ The **current codebase defaults** for training and validation are:
 ```python
 REWARD_CONFIG = {
     "tp": 1.5,
-    "fp": -1.5,
+    "fp": -2.0,
     "fn": -5.0,
     "omission": 0.0,
 }
 ```
-
-Important: several committed historical runs used different reward values. For example, the best historical CICIDS2017 run below used `fp = -2.0`.
 
 ## CICIDS2017 Training Runs
 
@@ -32,7 +30,7 @@ Important: several committed historical runs used different reward values. For e
 | C01 smoke | 50,000 | 5,000 | random | 0.9697 | 0.9996 | 0.9692 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
 | C01 full | 250,000 | 100,000 | random | 0.9962 | 0.9998 | 0.9963 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
 | C02 fast | 100,000 | 10,000 | random | 0.9766 | 0.9996 | 0.9812 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
-| C03 full | 500,000 | 100,000 | random | **0.99859** | **0.99945** | **0.99876** | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` |
+| **C03 full** | 500,000 | 100,000 | random | **0.99859** | **0.99945** | **0.99876** | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` |
 
 ### Best Committed Historical Run
 
