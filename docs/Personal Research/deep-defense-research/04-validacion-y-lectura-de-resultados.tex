@@ -21,15 +21,18 @@
   frame=single,
 }
 
-\begin{document}
-\section{04 --- Validación y lectura correcta de resultados}
+\title{Validación y lectura correcta de resultados}
+\date{}
 
-\subsection{1) Por qué no basta con una accuracy alta}
+\begin{document}
+\maketitle
+
+\section{Por qué no basta con una accuracy alta}
 
 Un resultado alto en split aleatorio puede ocultar problemas de generalización. Por eso el proyecto
 incluye varias validaciones con funciones distintas.
 
-\subsection{2) Check A (evaluación directa)}
+\section{Check A (evaluación directa)}
 
 Archivo: \verb|src/validate_checks.py| $\to$ \verb|check_a_direct_eval|
 
@@ -44,7 +47,7 @@ Resultado histórico (artefacto comprometido):
   \item accuracy $\approx$ \texttt{0.9939}
 \end{itemize}
 
-\subsection{3) Check B (anti-leakage con etiquetas barajadas)}
+\section{Check B (anti-leakage con etiquetas barajadas)}
 
 Archivo: \verb|src/validate_checks.py| $\to$ \verb|check_b_shuffled_labels|
 
@@ -61,7 +64,7 @@ Resultado histórico comprometido:
   \item \texttt{leakage\_detected = false}
 \end{itemize}
 
-\subsection{4) Check C (split duro por CSV/día)}
+\section{Check C (split duro por CSV/día)}
 
 Archivo: \verb|src/validate_checks.py| $\to$ \verb|check_c_csv_split|
 
@@ -80,7 +83,7 @@ Resultado histórico comprometido:
 Lectura correcta: el pipeline funciona muy bien in-distribution, pero la generalización dura es
 sustancialmente más difícil.
 
-\subsection{5) Leave-one-exact-CSV-out}
+\section{Leave-one-exact-CSV-out}
 
 Archivo: \verb|src/validate_leave_one_csv_out.py|
 
@@ -98,7 +101,7 @@ Estado a defender con rigor:
   \item sin artefacto agregado completo comprometido aún
 \end{itemize}
 
-\subsection{6) Cómo explicar contradicciones aparentes en métricas}
+\section{Cómo explicar contradicciones aparentes en métricas}
 
 No hay contradicción entre ``99.8\% en random split'' y ``84\% en split duro''. Son preguntas
 distintas:
@@ -110,7 +113,7 @@ distintas:
 
 La defensa sólida es mostrar ambas, no esconder la más dura.
 
-\subsection{7) Regla metodológica para el tribunal}
+\section{Regla metodológica para el tribunal}
 
 Siempre separar:
 
