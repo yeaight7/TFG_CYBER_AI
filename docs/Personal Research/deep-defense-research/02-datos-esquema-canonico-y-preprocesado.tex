@@ -21,12 +21,15 @@
   frame=single,
 }
 
+\title{Datos, esquema canónico y preprocesado}
+\date{}
+
 \begin{document}
-\section{02 --- Datos, esquema canónico y preprocesado}
+\maketitle
 
-\subsection{1) Datasets y su papel}
+\section{Datasets y su papel}
 
-\subsubsection{CICIDS2017 (principal)}
+\subsection{CICIDS2017 (principal)}
 
 \begin{itemize}
   \item es la base moderna del proyecto
@@ -63,7 +66,7 @@ independientemente de qué versión se use. La política anti-leakage en código
 autoritativa. La versión curada reduce la superficie de ingesta pero no reemplaza las protecciones
 en código.
 
-\subsubsection{NSL-KDD (histórico)}
+\subsection{NSL-KDD (histórico)}
 
 \begin{itemize}
   \item sirve como benchmark histórico
@@ -71,14 +74,14 @@ en código.
   \item su mapeo al esquema canónico es muy parcial (\texttt{NSL\_KDD\_TO\_CANON})
 \end{itemize}
 
-\subsection{2) Decisión arquitectónica clave: esquema canónico}
+\section{Decisión arquitectónica clave: esquema canónico}
 
 Archivo: \verb|src/canonical_schema.py|
 
 Se define una lista fija \texttt{FEATURES\_CANON} de \textbf{76 features flow-based}. Esto garantiza
 que cada posición del vector tenga siempre el mismo significado.
 
-\subsubsection{Observación final}
+\subsection{Observación final}
 
 \begin{itemize}
   \item 76 valores de features
@@ -86,7 +89,7 @@ que cada posición del vector tenga siempre el mismo significado.
   \item total: \textbf{152 dimensiones}
 \end{itemize}
 
-\subsection{3) Máscara de missingness (semántica)}
+\section{Máscara de missingness (semántica)}
 
 \begin{itemize}
   \item \texttt{1 = presente/válida}
@@ -95,7 +98,7 @@ que cada posición del vector tenga siempre el mismo significado.
 
 Esto ayuda a no confundir ``dato real'' con ``dato rellenado''.
 
-\subsection{4) Política anti-leakage}
+\section{Política anti-leakage}
 
 \verb|load_cicids2017.py| elimina columnas propensas a leakage:
 
@@ -109,7 +112,7 @@ Esto ayuda a no confundir ``dato real'' con ``dato rellenado''.
 Razonamiento: si el modelo aprende atajos espurios, las métricas offline pueden inflarse
 artificialmente y fallar en generalización real.
 
-\subsection{5) Preprocesado en CICIDS2017}
+\section{Preprocesado en CICIDS2017}
 
 Pipeline principal en \verb|load_cicids2017.py|:
 
@@ -123,9 +126,9 @@ Pipeline principal en \verb|load_cicids2017.py|:
   \item \texttt{StandardScaler} (fit en train, transform en test)
 \end{enumerate}
 
-\subsection{6) Modos de split y por qué importan}
+\section{Modos de split y por qué importan}
 
-\subsubsection{\texttt{random}}
+\subsection{\texttt{random}}
 
 \begin{itemize}
   \item estratificado 80/20
@@ -133,21 +136,21 @@ Pipeline principal en \verb|load_cicids2017.py|:
   \item puede sobreestimar generalización
 \end{itemize}
 
-\subsubsection{\texttt{day}}
+\subsection{\texttt{day}}
 
 \begin{itemize}
   \item train y test en grupos de días/CSV distintos
   \item más exigente y más cercano a escenario real
 \end{itemize}
 
-\subsubsection{\texttt{exact CSV}}
+\subsection{\texttt{exact CSV}}
 
 \begin{itemize}
   \item usado en leave-one-exact-CSV-out
   \item deja fuera un CSV real completo por fold
 \end{itemize}
 
-\subsection{7) Puntos finos que conviene dominar}
+\section{Puntos finos que conviene dominar}
 
 \begin{itemize}
   \item En CICIDS2017, los NaN se rellenan antes de mapear; la máscara captura sobre todo
