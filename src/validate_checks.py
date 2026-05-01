@@ -69,7 +69,7 @@ REWARD_CONFIG: Dict[str, float] = {
 
 class ProgressCallback(BaseCallback):
     """Callback para mostrar progreso cada log_freq timesteps."""
-    def __init__(self, log_freq: int = 10_000, verbose: int = 0):
+    def __init__(self, log_freq: int = 10_000, verbose: int = 1):
         super().__init__(verbose)
         self.log_freq = log_freq
         
@@ -202,7 +202,7 @@ def check_b_shuffled_labels(
         tau=1.0,
         train_freq=50,
         target_update_interval=1_000,
-        verbose=0,
+        verbose=1,
         device=device,
     )
 
@@ -337,7 +337,7 @@ def check_c_csv_split(
         tau=1.0,
         train_freq=100,
         target_update_interval=10_000,
-        verbose=0,
+        verbose=1,
         device=device,
     )
 
