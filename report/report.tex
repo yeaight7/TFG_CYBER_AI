@@ -13,7 +13,7 @@
 
 \geometry{margin=2.5cm}
 
-\title{Agente autonomo de ciberseguridad basado en aprendizaje por refuerzo}
+\title{Agente autónomo de ciberseguridad basado en aprendizaje por refuerzo}
 \author{Javier Rivero Iglesias}
 \date{Abril 2026}
 
@@ -22,26 +22,26 @@
 \maketitle
 \tableofcontents
 
-\chapter{Introduccion}
+\chapter{Introducción}
 
-Esta memoria de trabajo resume la evolucion real del repositorio \texttt{TFG\_CYBER\_AI}.
+Esta memoria de trabajo resume la evolución real del repositorio \texttt{TFG\_CYBER\_AI}.
 El objetivo del proyecto es estudiar si un agente de aprendizaje por refuerzo puede
-tomar decisiones binarias sobre trafico de red:
+tomar decisiones binarias sobre tráfico de red:
 
 \begin{itemize}
     \item \texttt{0 = PERMIT}
     \item \texttt{1 = BLOCK}
 \end{itemize}
 
-La historia del TFG tiene dos etapas claras. La primera fue una fase de validacion
-conceptual sobre NSL-KDD, util para comprobar que el problema podia formularse como
-una politica binaria con recompensas sensibles al coste. La segunda, que es la linea
-actualmente mantenida, migro a CICIDS2017, fijo un esquema canonico de 76 variables
+La historia del TFG tiene dos etapas claras. La primera fue una fase de validación
+conceptual sobre NSL-KDD, útil para comprobar que el problema podía formularse como
+una política binaria con recompensas sensibles al coste. La segunda, que es la línea
+actualmente mantenida, migro a CICIDS2017, fijo un esquema canónico de 76 variables
 de flujo y adopto QRDQN como algoritmo principal.
 
 La memoria deja de presentar NSL-KDD como base final del sistema. Desde el punto de
-vista del repositorio, la linea principal es ahora CICIDS2017 + QRDQN + esquema
-canonico, mientras que NSL-KDD queda como antecedente historico.
+vista del repositorio, la línea principal es ahora CICIDS2017 + QRDQN + esquema
+canónico, mientras que NSL-KDD queda como antecedente histórico.
 
 \chapter{Problema y alcance}
 
@@ -52,27 +52,27 @@ El trabajo se divide en dos fases:
     sobre datasets etiquetados y se mide su rendimiento con artefactos reproducibles.
 
     \item \textbf{Fase 2: inferencia offline en laboratorio}. Se aplican el modelo y
-    el preprocesado aprendidos a flujos extraidos en un laboratorio privado para medir
-    el efecto del cambio de distribucion respecto al dataset.
+    el preprocesado aprendidos a flujos extraídos en un laboratorio privado para medir
+    el efecto del cambio de distribución respecto al dataset.
 \end{enumerate}
 
-No forma parte de la linea base actual el bloqueo activo en produccion. La Fase 2
-sigue siendo de inferencia y analisis, no de despliegue defensivo autonomo.
+No forma parte de la línea base actual el bloqueo activo en producción. La Fase 2
+sigue siendo de inferencia y análisis, no de despliegue defensivo autónomo.
 
-\chapter{Evolucion del repositorio}
+\chapter{Evolución del repositorio}
 
-\section{Etapa historica: NSL-KDD + DQN}
+\section{Etapa histórica: NSL-KDD + DQN}
 
 La primera rama importante del proyecto utilizo NSL-KDD y agentes DQN junto a un
-baseline supervisado Random Forest. Su funcion fue:
+baseline supervisado Random Forest. Su función fue:
 
 \begin{itemize}
-    \item validar la formulacion \texttt{PERMIT/BLOCK}
+    \item validar la formulación \texttt{PERMIT/BLOCK}
     \item explorar funciones de recompensa
-    \item comparar RL frente a un baseline clasico
+    \item comparar RL frente a un baseline clásico
 \end{itemize}
 
-Los resultados historicos archivados muestran que Random Forest superaba
+Los resultados históricos archivados muestran que Random Forest superaba
 ligeramente a los primeros DQN:
 
 \begin{center}
@@ -87,27 +87,27 @@ E05 & DQN & 0.7563 & 0.5955 \\
 \end{tabular}
 \end{center}
 
-Esta etapa fue util como prueba de concepto, pero no quedo alineada con la futura
-Fase 2 ni con una representacion moderna de flujos.
+Esta etapa fue útil como prueba de concepto, pero no quedo alineada con la futura
+Fase 2 ni con una representación moderna de flujos.
 
-\section{Migracion a CICIDS2017 + esquema canonico + QRDQN}
+\section{Migración a CICIDS2017 + esquema canónico + QRDQN}
 
-La linea mantenida introdujo tres decisiones estructurales:
+La línea mantenida introdujo tres decisiones estructurales:
 
 \begin{itemize}
     \item usar CICIDS2017 como dataset principal
-    \item congelar un esquema canonico de 76 variables de flujo
-    \item anadir una mascara de ausencia/presencia para construir observaciones de 152 dimensiones
+    \item congelar un esquema canónico de 76 variables de flujo
+    \item añadir una máscara de ausencia/presencia para construir observaciones de 152 dimensiones
 \end{itemize}
 
-La semantica de la mascara quedo fijada como:
+La semántica de la máscara quedó fijada como:
 
 \begin{itemize}
     \item \texttt{1 = present / valid}
     \item \texttt{0 = missing / imputed}
 \end{itemize}
 
-Sobre esa representacion se consolidaron:
+Sobre esa representación se consolidaron:
 
 \begin{itemize}
     \item \texttt{src/canonical\_schema.py}
@@ -118,32 +118,32 @@ Sobre esa representacion se consolidaron:
     \item \texttt{scripts/predict\_real\_traffic\_v2.py}
 \end{itemize}
 
-\chapter{Linea base actual}
+\chapter{Línea base actual}
 
 \section{Invariantes}
 
-La implementacion actual mantiene los siguientes invariantes:
+La implementación actual mantiene los siguientes invariantes:
 
 \begin{itemize}
-    \item \texttt{FEATURES\_CANON} contiene 76 caracteristicas
-    \item la observacion final siempre tiene 152 dimensiones
+    \item \texttt{FEATURES\_CANON} contiene 76 características
+    \item la observación final siempre tiene 152 dimensiones
     \item las etiquetas son \texttt{0 = BENIGN} y \texttt{1 = ATTACK}
     \item no se deben usar IPs, timestamps absolutos, Flow IDs ni proxies directos de puertos
 \end{itemize}
 
 \section{Recompensa}
 
-El codigo actual esta estandarizado en torno a:
+El código actual está estandarizado en torno a:
 
 \[
 \text{reward\_config} =
 \{ \texttt{tp}=1.5,\; \texttt{fp}=-1.5,\; \texttt{fn}=-5.0,\; \texttt{omission}=0.0 \}
 \]
 
-No obstante, varios artefactos historicos comprometidos fueron generados con otros
-valores. El mejor run historico de CICIDS2017, por ejemplo, uso \texttt{fp = -2.0}.
+No obstante, varios artefactos históricos comprometidos fueron generados con otros
+valores. El mejor run histórico de CICIDS2017, por ejemplo, uso \texttt{fp = -2.0}.
 Por eso es necesario distinguir siempre entre \emph{defaults actuales} y
-\emph{configuracion historica del run}.
+\emph{configuración histórica del run}.
 
 \chapter{Resultados reproducibles}
 
@@ -164,20 +164,20 @@ C03 full & 500k & 100k & random & 0.99859 & 0.99945 & 0.99876 & $1.5,-2.0,-5.0,0
 \end{tabular}
 \end{center}
 
-El mejor artefacto historico comprometido es
+El mejor artefacto histórico comprometido es
 \texttt{C03\_qrdqn\_cicids2017\_canonical\_full\_random\_20260223\_232439}, con:
 
 \begin{itemize}
     \item accuracy: 0.99859
-    \item precision ataque: 0.99806
+    \item precisión ataque: 0.99806
     \item recall ataque: 0.99945
     \item F1 ataque: 0.99876
 \end{itemize}
 
-\section{Validacion}
+\section{Validación}
 
-La rama CICIDS2017 gano credibilidad cuando se paso de medir solo \emph{random split}
-a incorporar validaciones mas exigentes:
+La rama CICIDS2017 gano credibilidad cuando se pasó de medir solo \emph{random split}
+a incorporar validaciones más exigentes:
 
 \begin{center}
 \begin{tabular}{llll}
@@ -192,23 +192,23 @@ C & VAL\_checks\_C\_20260213\_004847 & accuracy 0.84135 & generalizacion mas dur
 \end{center}
 
 El Check C es especialmente importante porque entrena en los grupos
-\texttt{Monday}, \texttt{Tuesday} y \texttt{Wednesday}, y evalua sobre
-\texttt{Thursday} y \texttt{Friday}. En ese regimen, el recall de ataque cae
-a 0.52954, lo que deja claro que la generalizacion entre dias sigue siendo
+\texttt{Monday}, \texttt{Tuesday} y \texttt{Wednesday}, y evalúa sobre
+\texttt{Thursday} y \texttt{Friday}. En ese régimen, el recall de ataque cae
+a 0.52954, lo que deja claro que la generalización entre días sigue siendo
 uno de los principales retos del proyecto.
 
-La validacion leave-one-exact-CSV-out ya existe en codigo, pero no tiene todavia
+La validación leave-one-exact-CSV-out ya existe en código, pero no tiene todavía
 un artefacto agregado comprometido bajo \texttt{runs/validation/}. Por tanto,
-su metodologia puede describirse, pero no sus metricas finales.
+su metodología puede describirse, pero no sus métricas finales.
 
-\chapter{Fase 2 y cambio de distribucion}
+\chapter{Fase 2 y cambio de distribución}
 
 La entrada mantenida para Fase 2 es \texttt{scripts/predict\_real\_traffic\_v2.py}.
-Esta tuberia reutiliza el modelo, el escalador y los percentiles del mejor run
+Esta tubería reutiliza el modelo, el escalador y los percentiles del mejor run
 de CICIDS2017 para inferir sobre flujos obtenidos en el laboratorio.
 
 Los artefactos comprometidos muestran dos comportamientos muy distintos sobre
-trafico benigno:
+tráfico benigno:
 
 \begin{center}
 \begin{tabular}{lllll}
@@ -221,31 +221,31 @@ P2v2\_pred\_20260408\_230318 & flows\_benign.csv & 0.0 & 1.0 & 0.68709 \\
 \end{tabular}
 \end{center}
 
-La conclusion operativa es que la Fase 2 sigue siendo sensible al cambio de
-distribucion entre CICIDS2017 y trafico real del laboratorio. Por eso cualquier
-afirmacion sobre comportamiento en Fase 2 debe ir siempre ligada al \texttt{RUN\_ID}
+La conclusión operativa es que la Fase 2 sigue siendo sensible al cambio de
+distribución entre CICIDS2017 y tráfico real del laboratorio. Por eso cualquier
+afirmación sobre comportamiento en Fase 2 debe ir siempre ligada al \texttt{RUN\_ID}
 exacto y no formularse como una propiedad estable del sistema.
 
 \chapter{Conclusiones y siguientes pasos}
 
-El repositorio ya no es solo una coleccion de experimentos iniciales sobre NSL-KDD.
-La linea mantenida basada en CICIDS2017, esquema canonico y QRDQN constituye una
-base mucho mas solida, con artefactos reproducibles y validaciones mejor definidas.
+El repositorio ya no es solo una colección de experimentos iniciales sobre NSL-KDD.
+La línea mantenida basada en CICIDS2017, esquema canónico y QRDQN constituye una
+base mucho mas sólida, con artefactos reproducibles y validaciones mejor definidas.
 
 Sin embargo, permanecen tres riesgos principales:
 
 \begin{itemize}
-    \item la brecha entre \emph{random split} y generalizacion realista entre dias
+    \item la brecha entre \emph{random split} y generalización realista entre días
     \item la ausencia de un artefacto leave-one-exact-CSV-out comprometido
-    \item la sensibilidad de la Fase 2 al cambio de distribucion
+    \item la sensibilidad de la Fase 2 al cambio de distribución
 \end{itemize}
 
 Los siguientes pasos razonables del TFG son:
 
 \begin{itemize}
     \item conservar un run reproducible de leave-one-exact-CSV-out
-    \item repetir inferencia de Fase 2 sobre trafico benigno y mixto con trazabilidad completa
-    \item decidir si hace falta calibracion adicional con datos del laboratorio
+    \item repetir inferencia de Fase 2 sobre tráfico benigno y mixto con trazabilidad completa
+    \item decidir si hace falta calibración adicional con datos del laboratorio
     \item mantener la memoria sincronizada con \texttt{docs/results.md} y los artefactos reales
 \end{itemize}
 
