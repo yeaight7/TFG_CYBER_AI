@@ -79,9 +79,9 @@ frecuencia de actualización de la red objetivo y diseño de la recompensa.
         100\,000 timesteps, la caída lineal de \(\varepsilon\) termina aproximadamente en los
         \textbf{primeros 500 pasos}; con 25\,000 timesteps, en los \textbf{primeros 125 pasos}.
 
-  \item \textbf{El script \verb|train_rl_defender.py| contiene una inconsistencia documental
-        interna}: en la ayuda de \texttt{--timesteps} se habla de un default de ``500k full, 5k
-        fast'', pero el código efectivo en \texttt{main()} asigna \texttt{25\_000} para
+    \item \textbf{El script \texttt{train\_rl\_defender.py} contiene una inconsistencia documental
+      interna}: en la ayuda de \texttt{--timesteps} se habla de un default de ``500k full, 5k
+      fast'', pero el código efectivo en \texttt{main() } asigna \texttt{25\_000} para
         \texttt{fast} y \texttt{100\_000} para \texttt{full}.
 
   \item \textbf{Los resultados históricos no coinciden necesariamente con los defaults actuales del
@@ -463,16 +463,16 @@ Los \textbf{dos hiperparámetros críticos} a revisar en primer lugar son:
 
 Para visualizar la salida distribucional en una defensa:
 
-\begin{verbatim}
-Accion PERMIT:
-q05 = -3.2    q50 = 0.1    q95 = 1.7    media ≈ -0.2
+\begin{quote}\ttfamily
+Accion PERMIT:\\
+q05 = -3.2    q50 = 0.1    q95 = 1.7    media $\approx$ -0.2\\
 
-Accion BLOCK:
-q05 = -0.9    q50 = 0.8    q95 = 1.1    media ≈  0.7
+Accion BLOCK:\\
+q05 = -0.9    q50 = 0.8    q95 = 1.1    media $\approx$  0.7\\
 
-Decision greedy de SB3: BLOCK
-Interpretacion: BLOCK tiene mejor retorno esperado y menor dispersion.
-\end{verbatim}
+Decision greedy de SB3: BLOCK\\
+Interpretacion: BLOCK tiene mejor retorno esperado y menor dispersión.
+\end{quote}
 
 Utilidad mínima para extraer curvas de cuantiles programáticamente:
 
