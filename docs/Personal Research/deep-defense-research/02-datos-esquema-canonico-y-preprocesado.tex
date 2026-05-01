@@ -1,3 +1,27 @@
+﻿\documentclass[12pt,a4paper]{article}
+
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\geometry{margin=2.5cm}
+
+\lstset{
+  basicstyle=\footnotesize\ttfamily,
+  breaklines=true,
+  frame=single,
+}
+
+\begin{document}
 \section{02 --- Datos, esquema canónico y preprocesado}
 
 \subsection{1) Datasets y su papel}
@@ -132,3 +156,5 @@ Pipeline principal en \verb|load_cicids2017.py|:
   \item El \texttt{StandardScaler} se aplica a toda la observación (incluida máscara), así que la
         red recibe máscara escalada, no bits puros 0/1.
 \end{itemize}
+
+\end{document}
