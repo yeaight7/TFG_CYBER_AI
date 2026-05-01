@@ -1,0 +1,134 @@
+\section{02 --- Datos, esquema canónico y preprocesado}
+
+\subsection{1) Datasets y su papel}
+
+\subsubsection{CICIDS2017 (principal)}
+
+\begin{itemize}
+  \item es la base moderna del proyecto
+  \item se usan sus 8 CSV oficiales (\verb|src/load_cicids2017.py|)
+  \item define el espacio de observación actual
+\end{itemize}
+
+\paragraph{Versiones del dataset}
+
+Existen dos versiones locales:
+
+\begin{table}[htbp]
+\footnotesize
+\begin{tabular}{llll}
+\hline
+\textbf{Versión} & \textbf{Ruta} & \textbf{Trackeada en git} & \textbf{Descripción} \\
+\hline
+Curada
+  & \verb|datasets/CICIDS2017/*.csv|
+  & Sí
+  & Columnas con riesgo de leakage o redundantes eliminadas \\
+  & & & antes de la ingesta. Es la que carga el adaptador. \\
+Raw
+  & \verb|datasets/CICIDS2017/Raw_dataset/|
+  & No (en \texttt{.gitignore})
+  & Exports CSV originales de CICFlowMeter. \\
+  & & & Todas las columnas originales preservadas. Referencia local. \\
+\hline
+\end{tabular}
+\end{table}
+
+El adaptador (\verb|src/load_cicids2017.py|) aplica limpieza adicional en tiempo de carga
+independientemente de qué versión se use. La política anti-leakage en código es la fuente de verdad
+autoritativa. La versión curada reduce la superficie de ingesta pero no reemplaza las protecciones
+en código.
+
+\subsubsection{NSL-KDD (histórico)}
+
+\begin{itemize}
+  \item sirve como benchmark histórico
+  \item mantiene valor didáctico para evolución del proyecto
+  \item su mapeo al esquema canónico es muy parcial (\texttt{NSL\_KDD\_TO\_CANON})
+\end{itemize}
+
+\subsection{2) Decisión arquitectónica clave: esquema canónico}
+
+Archivo: \verb|src/canonical_schema.py|
+
+Se define una lista fija \texttt{FEATURES\_CANON} de \textbf{76 features flow-based}. Esto garantiza
+que cada posición del vector tenga siempre el mismo significado.
+
+\subsubsection{Observación final}
+
+\begin{itemize}
+  \item 76 valores de features
+  \item 76 valores de máscara de missingness
+  \item total: \textbf{152 dimensiones}
+\end{itemize}
+
+\subsection{3) Máscara de missingness (semántica)}
+
+\begin{itemize}
+  \item \texttt{1 = presente/válida}
+  \item \texttt{0 = ausente o imputada}
+\end{itemize}
+
+Esto ayuda a no confundir ``dato real'' con ``dato rellenado''.
+
+\subsection{4) Política anti-leakage}
+
+\verb|load_cicids2017.py| elimina columnas propensas a leakage:
+
+\begin{itemize}
+  \item IPs
+  \item timestamps
+  \item Flow ID
+  \item puertos directos como proxy de etiqueta
+\end{itemize}
+
+Razonamiento: si el modelo aprende atajos espurios, las métricas offline pueden inflarse
+artificialmente y fallar en generalización real.
+
+\subsection{5) Preprocesado en CICIDS2017}
+
+Pipeline principal en \verb|load_cicids2017.py|:
+
+\begin{enumerate}
+  \item carga por chunks
+  \item localización robusta de columna de etiqueta
+  \item coerción numérica
+  \item \(\inf \to \text{NaN} \to \texttt{fillna}(0)\) en features
+  \item mapeo a canónico + máscara
+  \item split (\texttt{random} o \texttt{day})
+  \item \texttt{StandardScaler} (fit en train, transform en test)
+\end{enumerate}
+
+\subsection{6) Modos de split y por qué importan}
+
+\subsubsection{\texttt{random}}
+
+\begin{itemize}
+  \item estratificado 80/20
+  \item útil para iterar rápido
+  \item puede sobreestimar generalización
+\end{itemize}
+
+\subsubsection{\texttt{day}}
+
+\begin{itemize}
+  \item train y test en grupos de días/CSV distintos
+  \item más exigente y más cercano a escenario real
+\end{itemize}
+
+\subsubsection{\texttt{exact CSV}}
+
+\begin{itemize}
+  \item usado en leave-one-exact-CSV-out
+  \item deja fuera un CSV real completo por fold
+\end{itemize}
+
+\subsection{7) Puntos finos que conviene dominar}
+
+\begin{itemize}
+  \item En CICIDS2017, los NaN se rellenan antes de mapear; la máscara captura sobre todo
+        disponibilidad/validez tras mapping, no ``histórico crudo'' completo de missingness por
+        celda.
+  \item El \texttt{StandardScaler} se aplica a toda la observación (incluida máscara), así que la
+        red recibe máscara escalada, no bits puros 0/1.
+\end{itemize}
