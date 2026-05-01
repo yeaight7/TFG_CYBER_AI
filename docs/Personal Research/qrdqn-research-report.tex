@@ -1,3 +1,27 @@
+﻿\documentclass[12pt,a4paper]{article}
+
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\geometry{margin=2.5cm}
+
+\lstset{
+  basicstyle=\footnotesize\ttfamily,
+  breaklines=true,
+  frame=single,
+}
+
+\begin{document}
 % Requires: amsmath, amssymb, listings, booktabs, array (assumed in parent document)
 \section{QRDQN en Stable Baselines3 para el TFG}
 
@@ -498,3 +522,5 @@ def get_action_quantiles(model, obs_np):
     Fijar en texto y código los parámetros implícitos heredados de SB3-Contrib: versión exacta,
     \texttt{n\_quantiles}, exploración y \texttt{optimizer\_kwargs}.
 \end{description}
+
+\end{document}
