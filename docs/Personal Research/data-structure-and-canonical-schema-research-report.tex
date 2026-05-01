@@ -1,9 +1,9 @@
 ﻿\documentclass[12pt,a4paper]{article}
 
-\usepackage[spanish,es-nodecimaldot]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
+\usepackage[spanish,es-nodecimaldot]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -190,16 +190,17 @@ El mejor artefacto comprometido del repo es
 indica 500\,000 filas máximas cargadas, \texttt{100\,000} timesteps, \texttt{152} features,
 arquitectura \texttt{[512,~256]}, \texttt{batch\_size~=~2048}, \texttt{gradient\_steps~=~20},
 dispositivo \texttt{cuda} y una \texttt{reward\_config} histórica de \texttt{tp~=~1.5},
-\texttt{fp~=~-2.0}, \texttt{fn~=~-5.0}, \texttt{omission~=~0.0}. Su \texttt{metrics.json} recoge
+\texttt{fp~=~\textminus2.0}, \texttt{fn~=~\textminus5.0}, \texttt{omission~=~0.0}. Su \texttt{metrics.json} recoge
 \texttt{accuracy~=~0.99859}, \texttt{recall\_attack~=~0.99945} y \texttt{f1\_attack~=~0.99876}.
 
 Ese punto enlaza con otra respuesta de defensa imprescindible: \textbf{los defaults actuales del
 código no son idénticos a la configuración del mejor run histórico}. El proyecto documenta hoy
-\texttt{fp~=~-1.5} como normalización vigente, pero el mejor artefacto histórico usó
-\texttt{fp~=~-2.0}. Si el tribunal te pregunta ``¿qué rewards usaba tu mejor modelo?'', no
-contestes con los defaults actuales; contesta con los del artefacto concreto. Y si te preguntan
-``¿qué usa hoy el código?'', entonces sí: \texttt{tp=1.5}, \texttt{fp=-1.5}, \texttt{fn=-5.0},
-\texttt{omission=0.0}. Esa distinción entre \textbf{estado actual del código} y \textbf{estado
+\texttt{fp~=~\textminus1.5} como normalización vigente, pero el mejor artefacto histórico usó
+\texttt{fp~=~\textminus2.0}. Si el tribunal te pregunta sobre los rewards que usaba tu mejor
+modelo, no contestes con los defaults actuales; contesta con los del artefacto concreto. Y si te
+preguntan sobre lo que usa hoy el código, entonces sí: \texttt{tp=1.5}, \texttt{fp=\textminus1.5},
+\texttt{fn=\textminus5.0}, \texttt{omission=0.0}. Esa distinción entre \textbf{estado actual del
+código} y \textbf{estado
 histórico del run} es uno de los mensajes más maduros metodológicamente en tu repo.
 
 \subsection{Validación y lectura correcta de métricas}
@@ -302,8 +303,8 @@ directamente una función de utilidad asimétrica de ciberseguridad y deja el ma
 evolución futura hacia decisiones realmente secuenciales y bloqueo activo.
 
 \textbf{¿Qué optimiza de verdad el sistema de recompensas?}
-Optimiza una asimetría de seguridad: castiga mucho más dejar pasar ataques (\texttt{fn~=~-5.0}) que
-bloquear benignos (\texttt{fp~=~-1.5}), recompensa bloquear ataques (\texttt{tp~=~1.5}) y deja
+Optimiza una asimetría de seguridad: castiga mucho más dejar pasar ataques (\texttt{fn~=~\textminus5.0}) que
+bloquear benignos (\texttt{fp~=~\textminus1.5}), recompensa bloquear ataques (\texttt{tp~=~1.5}) y deja
 neutro permitir benignos (\texttt{omission~=~0.0}).
 
 \textbf{¿Por qué no basta con la accuracy del mejor modelo?}
