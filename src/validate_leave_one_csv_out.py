@@ -374,7 +374,7 @@ def main() -> None:
             tau=1.0,
             train_freq=100,
             target_update_interval=10_000,
-            verbose=0,
+            verbose=1,
             device=device,
         )
 
