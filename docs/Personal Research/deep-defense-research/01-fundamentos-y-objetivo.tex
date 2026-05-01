@@ -1,0 +1,85 @@
+\section{01 --- Fundamentos y objetivo del TFG}
+
+\subsection{1) Qué problema resuelve el proyecto}
+
+El sistema toma decisiones binarias sobre flujos de red:
+
+\begin{itemize}
+  \item \texttt{0 = PERMIT}
+  \item \texttt{1 = BLOCK}
+\end{itemize}
+
+La idea central es que en ciberseguridad los errores no cuestan lo mismo:
+
+\begin{itemize}
+  \item \textbf{Falso negativo (FN)}: dejar pasar un ataque suele ser el error más grave.
+  \item \textbf{Falso positivo (FP)}: bloquear tráfico benigno también duele, pero normalmente menos.
+\end{itemize}
+
+Por eso el proyecto se formula con \textbf{Aprendizaje por Refuerzo (RL)} en lugar de quedarse solo
+en clasificación supervisada clásica.
+
+\subsection{2) Objetivo real del trabajo}
+
+El objetivo no es solo ``sacar accuracy alta'', sino construir un pipeline reproducible de extremo a
+extremo:
+
+\begin{enumerate}
+  \item adaptar datos de red a un contrato común
+  \item entrenar un agente RL sobre ese contrato
+  \item validar con pruebas anti-autoengaño (A/B/C + leave-one-exact-CSV-out)
+  \item llevar el modelo a inferencia offline en tráfico real de laboratorio
+\end{enumerate}
+
+\subsection{3) Estructura por fases}
+
+\subsubsection{Fase 1 (más madura)}
+
+\begin{itemize}
+  \item entrenamiento y validación offline
+  \item dataset principal: CICIDS2017
+  \item baseline histórico: NSL-KDD
+\end{itemize}
+
+\subsubsection{Fase 2 (implementada pero abierta en robustez)}
+
+\begin{itemize}
+  \item inferencia offline sobre flujos extraídos de tráfico de laboratorio
+  \item script mantenido: \verb|scripts/predict_real_traffic_v2.py|
+  \item foco actual: controlar el \textbf{domain shift} entre dataset y tráfico real
+\end{itemize}
+
+\subsection{4) Qué está implementado y qué no}
+
+\subsubsection{Implementado}
+
+\begin{itemize}
+  \item esquema canónico fijo de 76 features
+  \item máscara de missingness (otras 76)
+  \item observación final de 152 dimensiones
+  \item entorno RL custom con Gymnasium
+  \item entrenamiento QRDQN
+  \item validaciones A/B/C
+  \item validación leave-one-exact-CSV-out en código
+  \item inferencia robusta offline en Phase~2
+\end{itemize}
+
+\subsubsection{No implementado todavía}
+
+\begin{itemize}
+  \item bloqueo activo en tiempo real (\verb|iptables|/\verb|nftables|)
+  \item cierre completo de calibración en tráfico benigno real
+  \item despliegue productivo
+  \item línea multiagente/adversarial
+\end{itemize}
+
+\subsection{5) Mensaje fuerte para defensa}
+
+El valor del TFG está en combinar:
+
+\begin{itemize}
+  \item rigor de ingeniería de datos (contrato de observación estable)
+  \item diseño de decisión con costes asimétricos (reward shaping)
+  \item validación que evita sobreinterpretar métricas cómodas
+  \item transición realista hacia tráfico real, con límites reconocidos
+\end{itemize}
