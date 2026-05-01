@@ -21,10 +21,15 @@
   frame=single,
 }
 
-\begin{document}
-\section{01 --- Fundamentos y objetivo del TFG}
 
-\subsection{1) Qué problema resuelve el proyecto}
+\title{Fundamentos y objetivo del TFG}
+\date{}
+
+\begin{document}
+\maketitle
+\section{Fundamentos y objetivo del TFG}
+
+\section{Qué problema resuelve el proyecto}
 
 El sistema toma decisiones binarias sobre flujos de red:
 
@@ -43,7 +48,7 @@ La idea central es que en ciberseguridad los errores no cuestan lo mismo:
 Por eso el proyecto se formula con \textbf{Aprendizaje por Refuerzo (RL)} en lugar de quedarse solo
 en clasificación supervisada clásica.
 
-\subsection{2) Objetivo real del trabajo}
+\section{Objetivo real del trabajo}
 
 El objetivo no es solo ``sacar accuracy alta'', sino construir un pipeline reproducible de extremo a
 extremo:
@@ -55,9 +60,9 @@ extremo:
   \item llevar el modelo a inferencia offline en tráfico real de laboratorio
 \end{enumerate}
 
-\subsection{3) Estructura por fases}
+\section{Estructura por fases}
 
-\subsubsection{Fase 1 (más madura)}
+\subsection{Fase 1 (más madura)}
 
 \begin{itemize}
   \item entrenamiento y validación offline
@@ -65,7 +70,7 @@ extremo:
   \item baseline histórico: NSL-KDD
 \end{itemize}
 
-\subsubsection{Fase 2 (implementada pero abierta en robustez)}
+\subsection{Fase 2 (implementada pero abierta en robustez)}
 
 \begin{itemize}
   \item inferencia offline sobre flujos extraídos de tráfico de laboratorio
@@ -73,9 +78,9 @@ extremo:
   \item foco actual: controlar el \textbf{domain shift} entre dataset y tráfico real
 \end{itemize}
 
-\subsection{4) Qué está implementado y qué no}
+\section{Qué está implementado y qué no}
 
-\subsubsection{Implementado}
+\subsection{Implementado}
 
 \begin{itemize}
   \item esquema canónico fijo de 76 features
@@ -88,7 +93,7 @@ extremo:
   \item inferencia robusta offline en Phase~2
 \end{itemize}
 
-\subsubsection{No implementado todavía}
+\subsection{No implementado todavía}
 
 \begin{itemize}
   \item bloqueo activo en tiempo real (\verb|iptables|/\verb|nftables|)
@@ -97,7 +102,7 @@ extremo:
   \item línea multiagente/adversarial
 \end{itemize}
 
-\subsection{5) Mensaje fuerte para defensa}
+\section{Mensaje fuerte para defensa}
 
 El valor del TFG está en combinar:
 
