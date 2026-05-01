@@ -11,6 +11,7 @@ __pycache__/
 .fdb_latexmk
 *.fls
 .vscode/
+.remember/
 
 # PCAPS and big CSV files
 datasets/CICIDS2017/Raw_dataset/
