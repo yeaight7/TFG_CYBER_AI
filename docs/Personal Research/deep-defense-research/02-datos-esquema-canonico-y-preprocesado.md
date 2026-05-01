@@ -8,6 +8,17 @@
 - se usan sus 8 CSV oficiales (`src/load_cicids2017.py`)
 - define el espacio de observación actual
 
+### Versiones del dataset
+
+Existen dos versiones locales:
+
+| Versión | Ruta | Trackeada en git | Descripción |
+|---------|------|-----------------|-------------|
+| Curada | `datasets/CICIDS2017/*.csv` | Sí | Columnas con riesgo de leakage o redundantes eliminadas antes de la ingesta. Es la que carga el adaptador. |
+| Raw | `datasets/CICIDS2017/Raw_dataset/` | No (en .gitignore) | Exports CSV originales de CICFlowMeter. Todas las columnas originales preservadas. Solo para referencia local. |
+
+El adaptador (`src/load_cicids2017.py`) aplica limpieza adicional en tiempo de carga independientemente de qué versión se use. La política anti-leakage en código es la fuente de verdad autoritativa. La versión curada reduce la superficie de ingesta pero no reemplaza las protecciones en código.
+
 ## NSL-KDD (histórico)
 
 - sirve como benchmark histórico
