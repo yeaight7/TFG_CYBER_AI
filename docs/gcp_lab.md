@@ -10,8 +10,8 @@ Although the examples below use GCP terminology, the topology is provider-agnost
 
 | VM | IP | Role |
 |----|----|------|
-| `attacker` | `10.0.0.10` | Generates benign and malicious traffic |
-| `defender` | `10.0.0.20` | Hosts target services, captures traffic, runs offline inference |
+| `attacker` | `<ATTACKER_PRIVATE_IP>` | Generates benign and malicious traffic |
+| `defender` | `<DEFENDER_PRIVATE_IP>` | Hosts target services, captures traffic, runs offline inference |
 
 ## Safety Requirements
 
@@ -59,7 +59,7 @@ gcloud compute instances create tfg-attacker \
   --machine-type=e2-medium \
   --image-family=kali-rolling \
   --image-project=kali-linux-cloud \
-  --network-interface=subnet=tfg-lab-subnet,private-network-ip=10.0.0.10,no-address \
+  --network-interface=subnet=tfg-lab-subnet,private-network-ip=<ATTACKER_PRIVATE_IP>,no-address \
   --boot-disk-size=30GB
 
 gcloud compute instances create tfg-defender \
@@ -67,7 +67,7 @@ gcloud compute instances create tfg-defender \
   --machine-type=e2-standard-4 \
   --image-family=ubuntu-2204-lts \
   --image-project=ubuntu-os-cloud \
-  --network-interface=subnet=tfg-lab-subnet,private-network-ip=10.0.0.20,no-address \
+  --network-interface=subnet=tfg-lab-subnet,private-network-ip=<DEFENDER_PRIVATE_IP>,no-address \
   --boot-disk-size=50GB
 ```
 
@@ -113,7 +113,7 @@ Typical tools:
 
 ```bash
 for i in $(seq 1 100); do
-  curl -s http://10.0.0.20/ > /dev/null
+  curl -s http://<DEFENDER_PRIVATE_IP>/ > /dev/null
   sleep 0.5
 done
 ```
@@ -121,13 +121,13 @@ done
 ### Scan
 
 ```bash
-nmap -sS -T4 10.0.0.20
+nmap -sS -T4 <DEFENDER_PRIVATE_IP>
 ```
 
 ### Short SYN Flood Burst
 
 ```bash
-sudo hping3 -S --flood -V -p 80 10.0.0.20 &
+sudo hping3 -S --flood -V -p 80 <DEFENDER_PRIVATE_IP> &
 sleep 10
 kill %1
 ```
@@ -183,6 +183,10 @@ gcloud compute networks delete tfg-lab-vpc --quiet
 ## Adapting to Other Providers
 
 | Concern | AWS | Azure | Local virtualisation |
+|---------|-----|-------|----------------------|
+| Private network | VPC + private subnet | VNet + subnet | host-only or isolated bridge |
+| Controlled SSH | SSM or bastion | Bastion | host-only SSH |
+| Teardown | terminate instances | deallocate/delete VMs | destroy or stop VMs |
 |---------|-----|-------|----------------------|
 | Private network | VPC + private subnet | VNet + subnet | host-only or isolated bridge |
 | Controlled SSH | SSM or bastion | Bastion | host-only SSH |
