@@ -30,10 +30,6 @@ from stable_baselines3.common.monitor import Monitor
 
 from rl_defender_env import RLDatasetDefenderEnv
 from load_cicids2017 import (
-    CICIDSLoadConfig,
-    DEFAULT_TRAIN_DAYS,
-    DEFAULT_TEST_DAYS,
-    load_cicids2017_binary,
     load_cicids2017_split,
 )
 
