@@ -1,11 +1,11 @@
-# Graph Report - C:\Users\Rivero\Desktop\TFG_CYBER_AI  (2026-05-01)
+# Graph Report - C:\Users\Rivero\Desktop\TFG_CYBER_AI  (2026-05-03)
 
 ## Corpus Check
-- 14 files · ~33,884 words
+- 19 files · ~21,761 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 187 nodes · 245 edges · 53 communities detected
+- 201 nodes · 252 edges · 59 communities detected
 - Extraction: 87% EXTRACTED · 13% INFERRED · 0% AMBIGUOUS · INFERRED: 32 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
@@ -63,6 +63,12 @@
 - [[_COMMUNITY_Community 50|Community 50]]
 - [[_COMMUNITY_Community 51|Community 51]]
 - [[_COMMUNITY_Community 52|Community 52]]
+- [[_COMMUNITY_Community 53|Community 53]]
+- [[_COMMUNITY_Community 54|Community 54]]
+- [[_COMMUNITY_Community 55|Community 55]]
+- [[_COMMUNITY_Community 56|Community 56]]
+- [[_COMMUNITY_Community 57|Community 57]]
+- [[_COMMUNITY_Community 58|Community 58]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `RLDatasetDefenderEnv` - 24 edges
@@ -141,266 +147,294 @@ Cohesion: 0.7
 Nodes (4): batched_predict(), load_model(), main(), maybe_convert_time_units()
 
 ### Community 11 - "Community 11"
-Cohesion: 0.6
-Nodes (4): _download_nsl_kdd_via_kagglehub(), _ensure_dataset_local_dir(), load_nsl_kdd_binary(), Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:
+Cohesion: 0.67
+Nodes (3): _ensure_dataset_local_dir(), load_nsl_kdd_binary(), Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:
 
 ### Community 12 - "Community 12"
 Cohesion: 0.5
 Nodes (1): GraphifyAutoUpdateSemanticSourceTests
 
 ### Community 13 - "Community 13"
-Cohesion: 1.0
-Nodes (1): AGENTS.md Project Operating Rules
+Cohesion: 0.67
+Nodes (0): 
 
 ### Community 14 - "Community 14"
-Cohesion: 1.0
-Nodes (1): Public README Project Overview
+Cohesion: 0.67
+Nodes (0): 
 
 ### Community 15 - "Community 15"
-Cohesion: 1.0
-Nodes (1): Project-Wide Technical Source of Truth
+Cohesion: 0.67
+Nodes (0): 
 
 ### Community 16 - "Community 16"
-Cohesion: 1.0
-Nodes (1): Documentation Map
+Cohesion: 0.67
+Nodes (0): 
 
 ### Community 17 - "Community 17"
 Cohesion: 1.0
-Nodes (1): Phase 2 Context and Guardrails
+Nodes (0): 
 
 ### Community 18 - "Community 18"
 Cohesion: 1.0
-Nodes (1): Artifact-Backed Results Snapshot
+Nodes (1): Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:
 
 ### Community 19 - "Community 19"
 Cohesion: 1.0
-Nodes (1): Phase 2 Execution Plan
+Nodes (1): AGENTS.md Project Operating Rules
 
 ### Community 20 - "Community 20"
 Cohesion: 1.0
-Nodes (1): Private Lab Setup Guide
+Nodes (1): Public README Project Overview
 
 ### Community 21 - "Community 21"
 Cohesion: 1.0
-Nodes (1): Spanish Defense Progress Notes
+Nodes (1): Project-Wide Technical Source of Truth
 
 ### Community 22 - "Community 22"
 Cohesion: 1.0
-Nodes (1): Spanish Oral Defense Script
+Nodes (1): Documentation Map
 
 ### Community 23 - "Community 23"
 Cohesion: 1.0
-Nodes (1): Python Runtime Dependencies
+Nodes (1): Phase 2 Context and Guardrails
 
 ### Community 24 - "Community 24"
 Cohesion: 1.0
-Nodes (1): RL Cyber Defender Project
+Nodes (1): Artifact-Backed Results Snapshot
 
 ### Community 25 - "Community 25"
 Cohesion: 1.0
-Nodes (1): Phase 1 Offline Training and Validation
+Nodes (1): Phase 2 Execution Plan
 
 ### Community 26 - "Community 26"
 Cohesion: 1.0
-Nodes (1): Phase 2 Offline Inference
+Nodes (1): Private Lab Setup Guide
 
 ### Community 27 - "Community 27"
 Cohesion: 1.0
-Nodes (1): Binary PERMIT/BLOCK Defender Actions
+Nodes (1): Spanish Defense Progress Notes
 
 ### Community 28 - "Community 28"
 Cohesion: 1.0
-Nodes (1): Canonical Flow Schema
+Nodes (1): Spanish Oral Defense Script
 
 ### Community 29 - "Community 29"
 Cohesion: 1.0
-Nodes (1): 76 Canonical Flow Features
+Nodes (1): Python Runtime Dependencies
 
 ### Community 30 - "Community 30"
 Cohesion: 1.0
-Nodes (1): Missingness Mask
+Nodes (1): RL Cyber Defender Project
 
 ### Community 31 - "Community 31"
 Cohesion: 1.0
-Nodes (1): 152-D Observation Vector
+Nodes (1): Phase 1 Offline Training and Validation
 
 ### Community 32 - "Community 32"
 Cohesion: 1.0
-Nodes (1): Dataset Adapter Contract
+Nodes (1): Phase 2 Offline Inference
 
 ### Community 33 - "Community 33"
 Cohesion: 1.0
-Nodes (1): Anti-Leakage Policy
+Nodes (1): Binary PERMIT/BLOCK Defender Actions
 
 ### Community 34 - "Community 34"
 Cohesion: 1.0
-Nodes (1): CICIDS2017 Primary Dataset
+Nodes (1): Canonical Flow Schema
 
 ### Community 35 - "Community 35"
 Cohesion: 1.0
-Nodes (1): NSL-KDD Historical Benchmark
+Nodes (1): 76 Canonical Flow Features
 
 ### Community 36 - "Community 36"
 Cohesion: 1.0
-Nodes (1): QRDQN Training Pipeline
+Nodes (1): Missingness Mask
 
 ### Community 37 - "Community 37"
 Cohesion: 1.0
-Nodes (1): Current Reward Configuration
+Nodes (1): 152-D Observation Vector
 
 ### Community 38 - "Community 38"
 Cohesion: 1.0
-Nodes (1): Validation Suite
+Nodes (1): Dataset Adapter Contract
 
 ### Community 39 - "Community 39"
 Cohesion: 1.0
-Nodes (1): Check A Direct Evaluation
+Nodes (1): Anti-Leakage Policy
 
 ### Community 40 - "Community 40"
 Cohesion: 1.0
-Nodes (1): Check B Shuffled-Label Anti-Leakage
+Nodes (1): CICIDS2017 Primary Dataset
 
 ### Community 41 - "Community 41"
 Cohesion: 1.0
-Nodes (1): Check C Hard CSV/Day Split
+Nodes (1): NSL-KDD Historical Benchmark
 
 ### Community 42 - "Community 42"
 Cohesion: 1.0
-Nodes (1): Leave-One-Exact-CSV-Out Validation
+Nodes (1): QRDQN Training Pipeline
 
 ### Community 43 - "Community 43"
 Cohesion: 1.0
-Nodes (1): Artifact-Backed Results
+Nodes (1): Current Reward Configuration
 
 ### Community 44 - "Community 44"
 Cohesion: 1.0
-Nodes (1): C03 Best Historical CICIDS2017 Run
+Nodes (1): Validation Suite
 
 ### Community 45 - "Community 45"
 Cohesion: 1.0
-Nodes (1): Robust v2 Inference Pipeline
+Nodes (1): Check A Direct Evaluation
 
 ### Community 46 - "Community 46"
 Cohesion: 1.0
-Nodes (1): Domain Shift Risk
+Nodes (1): Check B Shuffled-Label Anti-Leakage
 
 ### Community 47 - "Community 47"
 Cohesion: 1.0
-Nodes (1): Private Lab Workflow
+Nodes (1): Check C Hard CSV/Day Split
 
 ### Community 48 - "Community 48"
 Cohesion: 1.0
-Nodes (1): Two-VM Private Lab Topology
+Nodes (1): Leave-One-Exact-CSV-Out Validation
 
 ### Community 49 - "Community 49"
 Cohesion: 1.0
-Nodes (1): Reproducible Run Artifacts
+Nodes (1): Artifact-Backed Results
 
 ### Community 50 - "Community 50"
 Cohesion: 1.0
-Nodes (1): Active Blocking Future Work
+Nodes (1): C03 Best Historical CICIDS2017 Run
 
 ### Community 51 - "Community 51"
 Cohesion: 1.0
-Nodes (1): Honest Defense Positioning
+Nodes (1): Robust v2 Inference Pipeline
 
 ### Community 52 - "Community 52"
+Cohesion: 1.0
+Nodes (1): Domain Shift Risk
+
+### Community 53 - "Community 53"
+Cohesion: 1.0
+Nodes (1): Private Lab Workflow
+
+### Community 54 - "Community 54"
+Cohesion: 1.0
+Nodes (1): Two-VM Private Lab Topology
+
+### Community 55 - "Community 55"
+Cohesion: 1.0
+Nodes (1): Reproducible Run Artifacts
+
+### Community 56 - "Community 56"
+Cohesion: 1.0
+Nodes (1): Active Blocking Future Work
+
+### Community 57 - "Community 57"
+Cohesion: 1.0
+Nodes (1): Honest Defense Positioning
+
+### Community 58 - "Community 58"
 Cohesion: 1.0
 Nodes (1): Graphify Corpus Policy
 
 ## Knowledge Gaps
-- **66 isolated node(s):** `predict_real_traffic_v2.py — Robust Phase 2 offline inference pipeline.  Loads`, `If time columns look like seconds (median < 1), convert to microseconds.`, `Load QRDQN model, falling back to DQN if sb3_contrib is unavailable.`, `Run model.predict in batches to avoid OOM on large flow CSVs.`, `Compute z-score diagnostics on scaled features (first _N_CANON dims only).` (+61 more)
+- **67 isolated node(s):** `predict_real_traffic_v2.py — Robust Phase 2 offline inference pipeline.  Loads`, `If time columns look like seconds (median < 1), convert to microseconds.`, `Load QRDQN model, falling back to DQN if sb3_contrib is unavailable.`, `Run model.predict in batches to avoid OOM on large flow CSVs.`, `Compute z-score diagnostics on scaled features (first _N_CANON dims only).` (+62 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 13`** (1 nodes): `AGENTS.md Project Operating Rules`
+- **Thin community `Community 17`** (2 nodes): `test_load_cicids2017.py`, `test_prepare_cicids_features_binary_labels()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 14`** (1 nodes): `Public README Project Overview`
+- **Thin community `Community 18`** (1 nodes): `Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 15`** (1 nodes): `Project-Wide Technical Source of Truth`
+- **Thin community `Community 19`** (1 nodes): `AGENTS.md Project Operating Rules`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 16`** (1 nodes): `Documentation Map`
+- **Thin community `Community 20`** (1 nodes): `Public README Project Overview`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 17`** (1 nodes): `Phase 2 Context and Guardrails`
+- **Thin community `Community 21`** (1 nodes): `Project-Wide Technical Source of Truth`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 18`** (1 nodes): `Artifact-Backed Results Snapshot`
+- **Thin community `Community 22`** (1 nodes): `Documentation Map`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 19`** (1 nodes): `Phase 2 Execution Plan`
+- **Thin community `Community 23`** (1 nodes): `Phase 2 Context and Guardrails`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 20`** (1 nodes): `Private Lab Setup Guide`
+- **Thin community `Community 24`** (1 nodes): `Artifact-Backed Results Snapshot`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 21`** (1 nodes): `Spanish Defense Progress Notes`
+- **Thin community `Community 25`** (1 nodes): `Phase 2 Execution Plan`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 22`** (1 nodes): `Spanish Oral Defense Script`
+- **Thin community `Community 26`** (1 nodes): `Private Lab Setup Guide`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 23`** (1 nodes): `Python Runtime Dependencies`
+- **Thin community `Community 27`** (1 nodes): `Spanish Defense Progress Notes`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 24`** (1 nodes): `RL Cyber Defender Project`
+- **Thin community `Community 28`** (1 nodes): `Spanish Oral Defense Script`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 25`** (1 nodes): `Phase 1 Offline Training and Validation`
+- **Thin community `Community 29`** (1 nodes): `Python Runtime Dependencies`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 26`** (1 nodes): `Phase 2 Offline Inference`
+- **Thin community `Community 30`** (1 nodes): `RL Cyber Defender Project`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 27`** (1 nodes): `Binary PERMIT/BLOCK Defender Actions`
+- **Thin community `Community 31`** (1 nodes): `Phase 1 Offline Training and Validation`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 28`** (1 nodes): `Canonical Flow Schema`
+- **Thin community `Community 32`** (1 nodes): `Phase 2 Offline Inference`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 29`** (1 nodes): `76 Canonical Flow Features`
+- **Thin community `Community 33`** (1 nodes): `Binary PERMIT/BLOCK Defender Actions`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 30`** (1 nodes): `Missingness Mask`
+- **Thin community `Community 34`** (1 nodes): `Canonical Flow Schema`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 31`** (1 nodes): `152-D Observation Vector`
+- **Thin community `Community 35`** (1 nodes): `76 Canonical Flow Features`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 32`** (1 nodes): `Dataset Adapter Contract`
+- **Thin community `Community 36`** (1 nodes): `Missingness Mask`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 33`** (1 nodes): `Anti-Leakage Policy`
+- **Thin community `Community 37`** (1 nodes): `152-D Observation Vector`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 34`** (1 nodes): `CICIDS2017 Primary Dataset`
+- **Thin community `Community 38`** (1 nodes): `Dataset Adapter Contract`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 35`** (1 nodes): `NSL-KDD Historical Benchmark`
+- **Thin community `Community 39`** (1 nodes): `Anti-Leakage Policy`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 36`** (1 nodes): `QRDQN Training Pipeline`
+- **Thin community `Community 40`** (1 nodes): `CICIDS2017 Primary Dataset`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 37`** (1 nodes): `Current Reward Configuration`
+- **Thin community `Community 41`** (1 nodes): `NSL-KDD Historical Benchmark`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 38`** (1 nodes): `Validation Suite`
+- **Thin community `Community 42`** (1 nodes): `QRDQN Training Pipeline`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 39`** (1 nodes): `Check A Direct Evaluation`
+- **Thin community `Community 43`** (1 nodes): `Current Reward Configuration`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 40`** (1 nodes): `Check B Shuffled-Label Anti-Leakage`
+- **Thin community `Community 44`** (1 nodes): `Validation Suite`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 41`** (1 nodes): `Check C Hard CSV/Day Split`
+- **Thin community `Community 45`** (1 nodes): `Check A Direct Evaluation`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 42`** (1 nodes): `Leave-One-Exact-CSV-Out Validation`
+- **Thin community `Community 46`** (1 nodes): `Check B Shuffled-Label Anti-Leakage`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 43`** (1 nodes): `Artifact-Backed Results`
+- **Thin community `Community 47`** (1 nodes): `Check C Hard CSV/Day Split`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 44`** (1 nodes): `C03 Best Historical CICIDS2017 Run`
+- **Thin community `Community 48`** (1 nodes): `Leave-One-Exact-CSV-Out Validation`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 45`** (1 nodes): `Robust v2 Inference Pipeline`
+- **Thin community `Community 49`** (1 nodes): `Artifact-Backed Results`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 46`** (1 nodes): `Domain Shift Risk`
+- **Thin community `Community 50`** (1 nodes): `C03 Best Historical CICIDS2017 Run`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 47`** (1 nodes): `Private Lab Workflow`
+- **Thin community `Community 51`** (1 nodes): `Robust v2 Inference Pipeline`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 48`** (1 nodes): `Two-VM Private Lab Topology`
+- **Thin community `Community 52`** (1 nodes): `Domain Shift Risk`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 49`** (1 nodes): `Reproducible Run Artifacts`
+- **Thin community `Community 53`** (1 nodes): `Private Lab Workflow`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 50`** (1 nodes): `Active Blocking Future Work`
+- **Thin community `Community 54`** (1 nodes): `Two-VM Private Lab Topology`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 51`** (1 nodes): `Honest Defense Positioning`
+- **Thin community `Community 55`** (1 nodes): `Reproducible Run Artifacts`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 52`** (1 nodes): `Graphify Corpus Policy`
+- **Thin community `Community 56`** (1 nodes): `Active Blocking Future Work`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 57`** (1 nodes): `Honest Defense Positioning`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 58`** (1 nodes): `Graphify Corpus Policy`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `CICIDSLoadConfig` connect `Community 2` to `Community 0`, `Community 1`, `Community 5`, `Community 7`, `Community 8`?**
-  _High betweenness centrality (0.136) - this node is a cross-community bridge._
+  _High betweenness centrality (0.118) - this node is a cross-community bridge._
 - **Why does `RLDatasetDefenderEnv` connect `Community 1` to `Community 2`, `Community 5`, `Community 7`?**
-  _High betweenness centrality (0.070) - this node is a cross-community bridge._
+  _High betweenness centrality (0.061) - this node is a cross-community bridge._
 - **Why does `validate_leave_one_csv_out.py — Validación leave-one-exact-CSV-out para CICIDS20` connect `Community 5` to `Community 1`, `Community 2`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **Are the 15 inferred relationships involving `RLDatasetDefenderEnv` (e.g. with `train_rl_defender.py — Entrenamiento de agente defensor RL sobre CICIDS2017.` and `Devuelve una función creadora de entornos para DummyVecEnv.`) actually correct?**
   _`RLDatasetDefenderEnv` has 15 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 17 inferred relationships involving `CICIDSLoadConfig` (e.g. with `Entrena un RandomForestClassifier sobre NSL-KDD y devuelve el modelo.` and `Evalúa el Random Forest y muestra matriz de confusión + informe de clasificación`) actually correct?**
@@ -408,4 +442,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 2 inferred relationships involving `ProgressCallback` (e.g. with `RLDatasetDefenderEnv` and `CICIDSLoadConfig`) actually correct?**
   _`ProgressCallback` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `predict_real_traffic_v2.py — Robust Phase 2 offline inference pipeline.  Loads`, `If time columns look like seconds (median < 1), convert to microseconds.`, `Load QRDQN model, falling back to DQN if sb3_contrib is unavailable.` to the rest of the system?**
-  _66 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _67 weakly-connected nodes found - possible documentation gaps or missing edges._
