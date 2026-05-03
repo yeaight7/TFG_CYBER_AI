@@ -223,15 +223,15 @@
     {
       "label": "predict_real_traffic_v2.py",
       "file_type": "code",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L1",
-      "id": "scripts_predict_real_traffic_v2_py",
+      "id": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "community": 4
     },
     {
       "label": "maybe_convert_time_units()",
       "file_type": "code",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L141",
       "id": "predict_real_traffic_v2_maybe_convert_time_units",
       "community": 4
@@ -239,7 +239,7 @@
     {
       "label": "load_model()",
       "file_type": "code",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L164",
       "id": "predict_real_traffic_v2_load_model",
       "community": 4
@@ -247,7 +247,7 @@
     {
       "label": "batched_predict()",
       "file_type": "code",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L178",
       "id": "predict_real_traffic_v2_batched_predict",
       "community": 4
@@ -255,7 +255,7 @@
     {
       "label": "compute_diagnostics()",
       "file_type": "code",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L191",
       "id": "predict_real_traffic_v2_compute_diagnostics",
       "community": 4
@@ -263,7 +263,7 @@
     {
       "label": "compute_truth_metrics()",
       "file_type": "code",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L258",
       "id": "predict_real_traffic_v2_compute_truth_metrics",
       "community": 4
@@ -271,7 +271,7 @@
     {
       "label": "parse_args()",
       "file_type": "code",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L314",
       "id": "predict_real_traffic_v2_parse_args",
       "community": 4
@@ -279,7 +279,7 @@
     {
       "label": "main()",
       "file_type": "code",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L353",
       "id": "predict_real_traffic_v2_main",
       "community": 4
@@ -701,43 +701,34 @@
     {
       "label": "load_nsl_kdd.py",
       "file_type": "code",
-      "source_file": "src\\load_nsl_kdd.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
       "source_location": "L1",
-      "id": "src_load_nsl_kdd_py",
-      "community": 11
-    },
-    {
-      "label": "_download_nsl_kdd_via_kagglehub()",
-      "file_type": "code",
-      "source_file": "src\\load_nsl_kdd.py",
-      "source_location": "L42",
-      "id": "load_nsl_kdd_download_nsl_kdd_via_kagglehub",
+      "id": "c_users_rivero_desktop_tfg_cyber_ai_src_load_nsl_kdd_py",
       "community": 11
     },
     {
       "label": "_ensure_dataset_local_dir()",
       "file_type": "code",
-      "source_file": "src\\load_nsl_kdd.py",
-      "source_location": "L46",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
+      "source_location": "L35",
       "id": "load_nsl_kdd_ensure_dataset_local_dir",
       "community": 11
     },
     {
       "label": "load_nsl_kdd_binary()",
       "file_type": "code",
-      "source_file": "src\\load_nsl_kdd.py",
-      "source_location": "L61",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
+      "source_location": "L50",
       "id": "load_nsl_kdd_load_nsl_kdd_binary",
       "community": 11
     },
     {
       "label": "Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:",
       "file_type": "rationale",
-      "source_file": "src/load_nsl_kdd.py",
-      "source_location": "L67",
-      "community": 11,
-      "norm_label": "carga nsl-kdd desde kaggle (hassan06/nslkdd), lo preprocesa y devuelve:",
-      "id": "load_nsl_kdd_rationale_67"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
+      "source_location": "L56",
+      "id": "load_nsl_kdd_rationale_56",
+      "community": 11
     },
     {
       "label": "rl_defender_env.py",
@@ -1255,6 +1246,30 @@
       "id": "validate_leave_one_csv_out_rationale_156"
     },
     {
+      "label": "test_canonical_schema.py",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_canonical_schema.py",
+      "source_location": "L1",
+      "id": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_canonical_schema_py",
+      "community": 13
+    },
+    {
+      "label": "test_canonical_features_length()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_canonical_schema.py",
+      "source_location": "L12",
+      "id": "test_canonical_schema_test_canonical_features_length",
+      "community": 13
+    },
+    {
+      "label": "test_map_to_canonical_mask_logic()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_canonical_schema.py",
+      "source_location": "L18",
+      "id": "test_canonical_schema_test_map_to_canonical_mask_logic",
+      "community": 13
+    },
+    {
       "label": "test_graphify_auto_update.py",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_graphify_auto_update.py",
@@ -1287,6 +1302,103 @@
       "community": 12
     },
     {
+      "label": "test_load_cicids2017.py",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_load_cicids2017.py",
+      "source_location": "L1",
+      "id": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_load_cicids2017_py",
+      "community": 17
+    },
+    {
+      "label": "test_prepare_cicids_features_binary_labels()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_load_cicids2017.py",
+      "source_location": "L6",
+      "id": "test_load_cicids2017_test_prepare_cicids_features_binary_labels",
+      "community": 17
+    },
+    {
+      "label": "test_predict_real_traffic_v2.py",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py",
+      "source_location": "L1",
+      "id": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_predict_real_traffic_v2_py",
+      "community": 14
+    },
+    {
+      "label": "test_maybe_convert_time_units()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py",
+      "source_location": "L6",
+      "id": "test_predict_real_traffic_v2_test_maybe_convert_time_units",
+      "community": 14
+    },
+    {
+      "label": "test_compute_diagnostics()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py",
+      "source_location": "L16",
+      "id": "test_predict_real_traffic_v2_test_compute_diagnostics",
+      "community": 14
+    },
+    {
+      "label": "test_reward_config.py",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_reward_config.py",
+      "source_location": "L1",
+      "id": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_reward_config_py",
+      "community": 15
+    },
+    {
+      "label": "test_reward_logic_tp_fp_tn_fn()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_reward_config.py",
+      "source_location": "L5",
+      "id": "test_reward_config_test_reward_logic_tp_fp_tn_fn",
+      "community": 15
+    },
+    {
+      "label": "test_unknown_label_reward()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_reward_config.py",
+      "source_location": "L23",
+      "id": "test_reward_config_test_unknown_label_reward",
+      "community": 15
+    },
+    {
+      "label": "test_rl_defender_env.py",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_rl_defender_env.py",
+      "source_location": "L1",
+      "id": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_rl_defender_env_py",
+      "community": 16
+    },
+    {
+      "label": "test_env_initialization()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_rl_defender_env.py",
+      "source_location": "L5",
+      "id": "test_rl_defender_env_test_env_initialization",
+      "community": 16
+    },
+    {
+      "label": "test_env_step_and_reset()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_rl_defender_env.py",
+      "source_location": "L14",
+      "id": "test_rl_defender_env_test_env_step_and_reset",
+      "community": 16
+    },
+    {
+      "label": "Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:",
+      "file_type": "rationale",
+      "source_file": "src/load_nsl_kdd.py",
+      "source_location": "L67",
+      "community": 18,
+      "norm_label": "carga nsl-kdd desde kaggle (hassan06/nslkdd), lo preprocesa y devuelve:",
+      "id": "load_nsl_kdd_rationale_67"
+    },
+    {
       "label": "AGENTS.md Project Operating Rules",
       "file_type": "document",
       "source_file": "AGENTS.md",
@@ -1295,7 +1407,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 19,
       "norm_label": "agents.md project operating rules",
       "id": "doc_agents_md"
     },
@@ -1308,7 +1420,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 20,
       "norm_label": "public readme project overview",
       "id": "doc_readme"
     },
@@ -1321,7 +1433,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 15,
+      "community": 21,
       "norm_label": "project-wide technical source of truth",
       "id": "doc_github_agent_context"
     },
@@ -1334,7 +1446,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 16,
+      "community": 22,
       "norm_label": "documentation map",
       "id": "doc_docs_readme"
     },
@@ -1347,7 +1459,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 17,
+      "community": 23,
       "norm_label": "phase 2 context and guardrails",
       "id": "doc_phase2_context"
     },
@@ -1360,7 +1472,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 18,
+      "community": 24,
       "norm_label": "artifact-backed results snapshot",
       "id": "doc_results"
     },
@@ -1373,7 +1485,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 19,
+      "community": 25,
       "norm_label": "phase 2 execution plan",
       "id": "doc_phase2_plan"
     },
@@ -1386,7 +1498,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 20,
+      "community": 26,
       "norm_label": "private lab setup guide",
       "id": "doc_gcp_lab"
     },
@@ -1399,7 +1511,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 21,
+      "community": 27,
       "norm_label": "spanish defense progress notes",
       "id": "doc_defensa_progreso"
     },
@@ -1412,7 +1524,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 22,
+      "community": 28,
       "norm_label": "spanish oral defense script",
       "id": "doc_defensa_script"
     },
@@ -1425,7 +1537,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 29,
       "norm_label": "python runtime dependencies",
       "id": "doc_requirements"
     },
@@ -1438,7 +1550,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 24,
+      "community": 30,
       "norm_label": "rl cyber defender project",
       "id": "concept_rl_cyber_defender_project"
     },
@@ -1451,7 +1563,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 25,
+      "community": 31,
       "norm_label": "phase 1 offline training and validation",
       "id": "concept_phase1_offline_training"
     },
@@ -1464,7 +1576,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 26,
+      "community": 32,
       "norm_label": "phase 2 offline inference",
       "id": "concept_phase2_offline_inference"
     },
@@ -1477,7 +1589,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 27,
+      "community": 33,
       "norm_label": "binary permit/block defender actions",
       "id": "concept_binary_defender_actions"
     },
@@ -1490,7 +1602,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 28,
+      "community": 34,
       "norm_label": "canonical flow schema",
       "id": "concept_canonical_flow_schema"
     },
@@ -1503,7 +1615,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 29,
+      "community": 35,
       "norm_label": "76 canonical flow features",
       "id": "concept_76_canonical_features"
     },
@@ -1516,7 +1628,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 30,
+      "community": 36,
       "norm_label": "missingness mask",
       "id": "concept_missingness_mask"
     },
@@ -1529,7 +1641,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 31,
+      "community": 37,
       "norm_label": "152-d observation vector",
       "id": "concept_observation_vector_152"
     },
@@ -1542,7 +1654,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 32,
+      "community": 38,
       "norm_label": "dataset adapter contract",
       "id": "concept_adapter_contract"
     },
@@ -1555,7 +1667,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 33,
+      "community": 39,
       "norm_label": "anti-leakage policy",
       "id": "concept_anti_leakage_policy"
     },
@@ -1568,7 +1680,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 34,
+      "community": 40,
       "norm_label": "cicids2017 primary dataset",
       "id": "concept_cicids2017_dataset"
     },
@@ -1581,7 +1693,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 35,
+      "community": 41,
       "norm_label": "nsl-kdd historical benchmark",
       "id": "concept_nsl_kdd_historical"
     },
@@ -1594,7 +1706,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 36,
+      "community": 42,
       "norm_label": "qrdqn training pipeline",
       "id": "concept_qrdqn_training_pipeline"
     },
@@ -1607,7 +1719,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 37,
+      "community": 43,
       "norm_label": "current reward configuration",
       "id": "concept_reward_config_current"
     },
@@ -1620,7 +1732,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 38,
+      "community": 44,
       "norm_label": "validation suite",
       "id": "concept_validation_suite"
     },
@@ -1633,7 +1745,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 39,
+      "community": 45,
       "norm_label": "check a direct evaluation",
       "id": "concept_check_a_direct_eval"
     },
@@ -1646,7 +1758,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 40,
+      "community": 46,
       "norm_label": "check b shuffled-label anti-leakage",
       "id": "concept_check_b_anti_leakage"
     },
@@ -1659,7 +1771,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 41,
+      "community": 47,
       "norm_label": "check c hard csv/day split",
       "id": "concept_check_c_hard_split"
     },
@@ -1672,7 +1784,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 42,
+      "community": 48,
       "norm_label": "leave-one-exact-csv-out validation",
       "id": "concept_leave_one_exact_csv_out"
     },
@@ -1685,7 +1797,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 43,
+      "community": 49,
       "norm_label": "artifact-backed results",
       "id": "concept_artifact_backed_results"
     },
@@ -1698,7 +1810,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 44,
+      "community": 50,
       "norm_label": "c03 best historical cicids2017 run",
       "id": "concept_c03_best_historical_run"
     },
@@ -1711,7 +1823,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 45,
+      "community": 51,
       "norm_label": "robust v2 inference pipeline",
       "id": "concept_robust_v2_inference_pipeline"
     },
@@ -1724,7 +1836,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 46,
+      "community": 52,
       "norm_label": "domain shift risk",
       "id": "concept_domain_shift_risk"
     },
@@ -1737,7 +1849,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 47,
+      "community": 53,
       "norm_label": "private lab workflow",
       "id": "concept_private_lab_workflow"
     },
@@ -1750,7 +1862,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 48,
+      "community": 54,
       "norm_label": "two-vm private lab topology",
       "id": "concept_gcp_two_vm_lab"
     },
@@ -1763,7 +1875,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 49,
+      "community": 55,
       "norm_label": "reproducible run artifacts",
       "id": "concept_reproducible_run_artifacts"
     },
@@ -1776,7 +1888,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 50,
+      "community": 56,
       "norm_label": "active blocking future work",
       "id": "concept_active_blocking_future_work"
     },
@@ -1789,7 +1901,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 51,
+      "community": 57,
       "norm_label": "honest defense positioning",
       "id": "concept_defense_positioning"
     },
@@ -1802,7 +1914,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 52,
+      "community": 58,
       "norm_label": "graphify corpus policy",
       "id": "concept_graphify_corpus_policy"
     }
@@ -2267,103 +2379,103 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L141",
       "weight": 1.0,
-      "_src": "scripts_predict_real_traffic_v2_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "_tgt": "predict_real_traffic_v2_maybe_convert_time_units",
-      "source": "scripts_predict_real_traffic_v2_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "target": "predict_real_traffic_v2_maybe_convert_time_units",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L164",
       "weight": 1.0,
-      "_src": "scripts_predict_real_traffic_v2_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "_tgt": "predict_real_traffic_v2_load_model",
-      "source": "scripts_predict_real_traffic_v2_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "target": "predict_real_traffic_v2_load_model",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L178",
       "weight": 1.0,
-      "_src": "scripts_predict_real_traffic_v2_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "_tgt": "predict_real_traffic_v2_batched_predict",
-      "source": "scripts_predict_real_traffic_v2_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "target": "predict_real_traffic_v2_batched_predict",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L191",
       "weight": 1.0,
-      "_src": "scripts_predict_real_traffic_v2_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "_tgt": "predict_real_traffic_v2_compute_diagnostics",
-      "source": "scripts_predict_real_traffic_v2_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "target": "predict_real_traffic_v2_compute_diagnostics",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L258",
       "weight": 1.0,
-      "_src": "scripts_predict_real_traffic_v2_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "_tgt": "predict_real_traffic_v2_compute_truth_metrics",
-      "source": "scripts_predict_real_traffic_v2_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "target": "predict_real_traffic_v2_compute_truth_metrics",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L314",
       "weight": 1.0,
-      "_src": "scripts_predict_real_traffic_v2_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "_tgt": "predict_real_traffic_v2_parse_args",
-      "source": "scripts_predict_real_traffic_v2_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "target": "predict_real_traffic_v2_parse_args",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L353",
       "weight": 1.0,
-      "_src": "scripts_predict_real_traffic_v2_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "_tgt": "predict_real_traffic_v2_main",
-      "source": "scripts_predict_real_traffic_v2_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "target": "predict_real_traffic_v2_main",
       "confidence_score": 1.0
     },
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L1",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_rationale_1",
-      "_tgt": "scripts_predict_real_traffic_v2_py",
-      "source": "scripts_predict_real_traffic_v2_py",
+      "_tgt": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
       "target": "predict_real_traffic_v2_rationale_1",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L380",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_main",
@@ -2375,7 +2487,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L142",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_rationale_142",
@@ -2387,8 +2499,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
-      "source_location": "L421",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
+      "source_location": "L425",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_main",
       "_tgt": "predict_real_traffic_v2_load_model",
@@ -2399,7 +2511,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L165",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_rationale_165",
@@ -2411,8 +2523,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
-      "source_location": "L422",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
+      "source_location": "L426",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_main",
       "_tgt": "predict_real_traffic_v2_batched_predict",
@@ -2423,7 +2535,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L179",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_rationale_179",
@@ -2435,8 +2547,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
-      "source_location": "L414",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
+      "source_location": "L416",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_main",
       "_tgt": "predict_real_traffic_v2_compute_diagnostics",
@@ -2447,7 +2559,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L196",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_rationale_196",
@@ -2459,8 +2571,8 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
-      "source_location": "L443",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
+      "source_location": "L447",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_main",
       "_tgt": "predict_real_traffic_v2_compute_truth_metrics",
@@ -2471,7 +2583,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L259",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_rationale_259",
@@ -2483,7 +2595,7 @@
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "scripts\\predict_real_traffic_v2.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L354",
       "weight": 1.0,
       "_src": "predict_real_traffic_v2_main",
@@ -2532,7 +2644,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L88",
+      "source_location": "L67",
       "weight": 1.0,
       "_src": "baseline_random_forest_main",
       "_tgt": "baseline_random_forest_train_random_forest",
@@ -2556,7 +2668,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L101",
+      "source_location": "L68",
       "weight": 1.0,
       "_src": "baseline_random_forest_main",
       "_tgt": "baseline_random_forest_evaluate_random_forest",
@@ -3503,56 +3615,32 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\load_nsl_kdd.py",
-      "source_location": "L42",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
+      "source_location": "L35",
       "weight": 1.0,
-      "_src": "src_load_nsl_kdd_py",
-      "_tgt": "load_nsl_kdd_download_nsl_kdd_via_kagglehub",
-      "source": "src_load_nsl_kdd_py",
-      "target": "load_nsl_kdd_download_nsl_kdd_via_kagglehub",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src\\load_nsl_kdd.py",
-      "source_location": "L46",
-      "weight": 1.0,
-      "_src": "src_load_nsl_kdd_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_nsl_kdd_py",
       "_tgt": "load_nsl_kdd_ensure_dataset_local_dir",
-      "source": "src_load_nsl_kdd_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_src_load_nsl_kdd_py",
       "target": "load_nsl_kdd_ensure_dataset_local_dir",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\load_nsl_kdd.py",
-      "source_location": "L61",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
+      "source_location": "L50",
       "weight": 1.0,
-      "_src": "src_load_nsl_kdd_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_nsl_kdd_py",
       "_tgt": "load_nsl_kdd_load_nsl_kdd_binary",
-      "source": "src_load_nsl_kdd_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_src_load_nsl_kdd_py",
       "target": "load_nsl_kdd_load_nsl_kdd_binary",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\load_nsl_kdd.py",
-      "source_location": "L50",
-      "weight": 1.0,
-      "_src": "load_nsl_kdd_ensure_dataset_local_dir",
-      "_tgt": "load_nsl_kdd_download_nsl_kdd_via_kagglehub",
-      "source": "load_nsl_kdd_download_nsl_kdd_via_kagglehub",
-      "target": "load_nsl_kdd_ensure_dataset_local_dir",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "src\\load_nsl_kdd.py",
-      "source_location": "L83",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
+      "source_location": "L72",
       "weight": 1.0,
       "_src": "load_nsl_kdd_load_nsl_kdd_binary",
       "_tgt": "load_nsl_kdd_ensure_dataset_local_dir",
@@ -3563,13 +3651,13 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\load_nsl_kdd.py",
-      "source_location": "L67",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
+      "source_location": "L56",
       "weight": 1.0,
-      "_src": "load_nsl_kdd_rationale_67",
+      "_src": "load_nsl_kdd_rationale_56",
       "_tgt": "load_nsl_kdd_load_nsl_kdd_binary",
       "source": "load_nsl_kdd_load_nsl_kdd_binary",
-      "target": "load_nsl_kdd_rationale_67",
+      "target": "load_nsl_kdd_rationale_56",
       "confidence_score": 1.0
     },
     {
@@ -4715,6 +4803,30 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_canonical_schema.py",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_canonical_schema_py",
+      "_tgt": "test_canonical_schema_test_canonical_features_length",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_canonical_schema_py",
+      "target": "test_canonical_schema_test_canonical_features_length",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_canonical_schema.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_canonical_schema_py",
+      "_tgt": "test_canonical_schema_test_map_to_canonical_mask_logic",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_canonical_schema_py",
+      "target": "test_canonical_schema_test_map_to_canonical_mask_logic",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_graphify_auto_update.py",
       "source_location": "L17",
       "weight": 1.0,
@@ -4746,6 +4858,90 @@
       "_tgt": "test_graphify_auto_update_graphifyautoupdatesemanticsourcetests_test_excludes_personal_research_and_skills_markdown",
       "source": "test_graphify_auto_update_graphifyautoupdatesemanticsourcetests",
       "target": "test_graphify_auto_update_graphifyautoupdatesemanticsourcetests_test_excludes_personal_research_and_skills_markdown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_load_cicids2017.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_load_cicids2017_py",
+      "_tgt": "test_load_cicids2017_test_prepare_cicids_features_binary_labels",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_load_cicids2017_py",
+      "target": "test_load_cicids2017_test_prepare_cicids_features_binary_labels",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_predict_real_traffic_v2_py",
+      "_tgt": "test_predict_real_traffic_v2_test_maybe_convert_time_units",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_predict_real_traffic_v2_py",
+      "target": "test_predict_real_traffic_v2_test_maybe_convert_time_units",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_predict_real_traffic_v2_py",
+      "_tgt": "test_predict_real_traffic_v2_test_compute_diagnostics",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_predict_real_traffic_v2_py",
+      "target": "test_predict_real_traffic_v2_test_compute_diagnostics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_reward_config.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_reward_config_py",
+      "_tgt": "test_reward_config_test_reward_logic_tp_fp_tn_fn",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_reward_config_py",
+      "target": "test_reward_config_test_reward_logic_tp_fp_tn_fn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_reward_config.py",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_reward_config_py",
+      "_tgt": "test_reward_config_test_unknown_label_reward",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_reward_config_py",
+      "target": "test_reward_config_test_unknown_label_reward",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_rl_defender_env.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_rl_defender_env_py",
+      "_tgt": "test_rl_defender_env_test_env_initialization",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_rl_defender_env_py",
+      "target": "test_rl_defender_env_test_env_initialization",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_rl_defender_env.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_rl_defender_env_py",
+      "_tgt": "test_rl_defender_env_test_env_step_and_reset",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_rl_defender_env_py",
+      "target": "test_rl_defender_env_test_env_step_and_reset",
       "confidence_score": 1.0
     }
   ],
