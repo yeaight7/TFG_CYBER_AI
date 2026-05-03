@@ -7,8 +7,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 
-from load_nsl_kdd import load_nsl_kdd_binary
-from load_cicids2017 import load_cicids2017_binary, CICIDSLoadConfig
+from src.load_nsl_kdd import load_nsl_kdd_binary
+from src.load_cicids2017 import load_cicids2017_binary, CICIDSLoadConfig
 
 
 MODELS_DIR = Path("models")
@@ -59,46 +59,52 @@ def evaluate_random_forest(
 def main():
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     RUN_ID = f"rf_{DATASET}_canonical_{timestamp}"
+    
+    # --- Sweep 1: Random Split (full) ---
+    print("\n=== [SWEEP 1] Random Split (full) ===")
+    cfg_random = CICIDSLoadConfig(max_rows=None, use_canonical=True, scale=False)
+    X_train_r, y_train_r, X_test_r, y_test_r, _, feats = load_cicids2017_binary(cfg_random)
+    rf_random = train_random_forest(X_train_r, y_train_r)
+    evaluate_random_forest(rf_random, X_test_r, y_test_r)
+    
+    # --- Sweep 2: Day Split (Check C equivalent) ---
+    print("\n=== [SWEEP 2] Day Split (Check C) ===")
+    from load_cicids2017 import load_cicids2017_csv_split
+    X_train_c, y_train_c, X_test_c, y_test_c, _, _ = load_cicids2017_csv_split(
+        train_csvs=["Monday", "Tuesday", "Wednesday", "Thursday"],
+        test_csvs=["Friday"],
+        cfg=CICIDSLoadConfig(max_rows=None, use_canonical=True, scale=False)
+    )
+    rf_c = train_random_forest(X_train_c, y_train_c)
+    evaluate_random_forest(rf_c, X_test_c, y_test_c)
 
-    # 1) Cargar dataset con esquema canónico
-    if DATASET == "cicids2017":
-        print("Cargando CICIDS2017 con esquema canónico para baseline Random Forest...")
-        cfg = CICIDSLoadConfig(
-            max_rows=500_000,
-            use_canonical=True,
-            scale=False,  # RF no necesita scaling
-        )
-        X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_binary(cfg)
-    elif DATASET == "nslkdd":
-        print("Cargando NSL-KDD con esquema canónico para baseline Random Forest...")
-        X_train, y_train, X_test, y_test, scaler, feature_names = load_nsl_kdd_binary(
-            use_20_percent=False,
-            use_canonical=True,
-            scale=False,
-        )
-    else:
-        raise ValueError(f"Dataset no soportado: {DATASET}. Usa 'nslkdd' o 'cicids2017'.")
+    # --- Sweep 3: Leave-one-out (e.g. Wednesday out) ---
+    print("\n=== [SWEEP 3] Leave-One-Out (Wednesday test) ===")
+    from load_cicids2017 import load_cicids2017_exact_csv_split
+    train_exact = [
+        "Monday-WorkingHours.pcap_ISCX.csv",
+        "Tuesday-WorkingHours.pcap_ISCX.csv",
+        "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+        "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+        "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+        "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+    ]
+    test_exact = ["Wednesday-workingHours.pcap_ISCX.csv"]
+    X_train_l, y_train_l, X_test_l, y_test_l, _, _ = load_cicids2017_exact_csv_split(
+        train_exact, test_exact, cfg=CICIDSLoadConfig(max_rows=None, use_canonical=True, scale=False)
+    )
+    rf_l = train_random_forest(X_train_l, y_train_l)
+    evaluate_random_forest(rf_l, X_test_l, y_test_l)
 
-    print(f"Train shape: X={X_train.shape}, y={y_train.shape}")
-    print(f"Test  shape: X={X_test.shape}, y={y_test.shape}")
-    print(f"Features: {len(feature_names)}")
-
-    # 2) Entrenar Random Forest
-    print("Entrenando Random Forest...")
-    rf = train_random_forest(X_train, y_train)
-
-    # 3) Guardar modelo
+    # 3) Guardar modelo (usamos el random split como el genérico)
     model_path = MODELS_DIR / f"{RUN_ID}.joblib"
     try:
         import joblib
-        joblib.dump(rf, model_path)
-        print(f"Modelo Random Forest guardado en: {model_path}")
+        joblib.dump(rf_random, model_path)
+        print(f"\nModelo Random Forest (Random split) guardado en: {model_path}")
     except ImportError:
         print("joblib no está instalado; omitiendo guardado del modelo.")
-
-    # 4) Evaluación en test
-    print("Evaluando Random Forest en conjunto de test...")
-    evaluate_random_forest(rf, X_test, y_test)
 
 
 if __name__ == "__main__":
