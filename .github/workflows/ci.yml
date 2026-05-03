@@ -23,7 +23,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --all-extras
 
       - name: Check Canonical Schema Dimension
         run: |
