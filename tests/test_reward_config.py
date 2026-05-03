@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 from src.rl_defender_env import RLDatasetDefenderEnv
 
