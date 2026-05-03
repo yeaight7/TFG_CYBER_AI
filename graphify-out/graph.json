@@ -114,7 +114,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L1",
       "id": "c_users_rivero_desktop_tfg_cyber_ai_scripts_graphify_auto_update_py",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_run_git()",
@@ -122,7 +122,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L54",
       "id": "graphify_auto_update_run_git",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_normalize()",
@@ -130,7 +130,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L64",
       "id": "graphify_auto_update_normalize",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_is_ignored()",
@@ -138,7 +138,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L68",
       "id": "graphify_auto_update_is_ignored",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_is_code()",
@@ -146,7 +146,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L73",
       "id": "graphify_auto_update_is_code",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_is_semantic_source()",
@@ -154,7 +154,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L77",
       "id": "graphify_auto_update_is_semantic_source",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_rev_exists()",
@@ -162,7 +162,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L94",
       "id": "graphify_auto_update_rev_exists",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_diff_range()",
@@ -170,7 +170,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L99",
       "id": "graphify_auto_update_diff_range",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_parse_name_status()",
@@ -178,7 +178,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L107",
       "id": "graphify_auto_update_parse_name_status",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_has_structural_patch()",
@@ -186,7 +186,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L124",
       "id": "graphify_auto_update_has_structural_patch",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_write_needs_update()",
@@ -194,7 +194,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L143",
       "id": "graphify_auto_update_write_needs_update",
-      "community": 3
+      "community": 2
     },
     {
       "label": "_rebuild_code_graph()",
@@ -202,7 +202,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L154",
       "id": "graphify_auto_update_rebuild_code_graph",
-      "community": 3
+      "community": 2
     },
     {
       "label": "decide_and_run()",
@@ -210,7 +210,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L165",
       "id": "graphify_auto_update_decide_and_run",
-      "community": 3
+      "community": 2
     },
     {
       "label": "main()",
@@ -218,7 +218,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py",
       "source_location": "L231",
       "id": "graphify_auto_update_main",
-      "community": 3
+      "community": 2
     },
     {
       "label": "predict_real_traffic_v2.py",
@@ -226,7 +226,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L1",
       "id": "c_users_rivero_desktop_tfg_cyber_ai_scripts_predict_real_traffic_v2_py",
-      "community": 4
+      "community": 3
     },
     {
       "label": "maybe_convert_time_units()",
@@ -234,7 +234,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L141",
       "id": "predict_real_traffic_v2_maybe_convert_time_units",
-      "community": 4
+      "community": 3
     },
     {
       "label": "load_model()",
@@ -242,7 +242,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L164",
       "id": "predict_real_traffic_v2_load_model",
-      "community": 4
+      "community": 3
     },
     {
       "label": "batched_predict()",
@@ -250,7 +250,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L178",
       "id": "predict_real_traffic_v2_batched_predict",
-      "community": 4
+      "community": 3
     },
     {
       "label": "compute_diagnostics()",
@@ -258,7 +258,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L191",
       "id": "predict_real_traffic_v2_compute_diagnostics",
-      "community": 4
+      "community": 3
     },
     {
       "label": "compute_truth_metrics()",
@@ -266,7 +266,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L258",
       "id": "predict_real_traffic_v2_compute_truth_metrics",
-      "community": 4
+      "community": 3
     },
     {
       "label": "parse_args()",
@@ -274,7 +274,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L314",
       "id": "predict_real_traffic_v2_parse_args",
-      "community": 4
+      "community": 3
     },
     {
       "label": "main()",
@@ -282,14 +282,14 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py",
       "source_location": "L353",
       "id": "predict_real_traffic_v2_main",
-      "community": 4
+      "community": 3
     },
     {
       "label": "predict_real_traffic_v2.py \u2014 Robust Phase 2 offline inference pipeline.  Loads",
       "file_type": "rationale",
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L1",
-      "community": 4,
+      "community": 3,
       "norm_label": "predict_real_traffic_v2.py \u2014 robust phase 2 offline inference pipeline.  loads",
       "id": "predict_real_traffic_v2_rationale_1"
     },
@@ -298,7 +298,7 @@
       "file_type": "rationale",
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L142",
-      "community": 4,
+      "community": 3,
       "norm_label": "if time columns look like seconds (median < 1), convert to microseconds.",
       "id": "predict_real_traffic_v2_rationale_142"
     },
@@ -307,7 +307,7 @@
       "file_type": "rationale",
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L165",
-      "community": 4,
+      "community": 3,
       "norm_label": "load qrdqn model, falling back to dqn if sb3_contrib is unavailable.",
       "id": "predict_real_traffic_v2_rationale_165"
     },
@@ -316,7 +316,7 @@
       "file_type": "rationale",
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L179",
-      "community": 4,
+      "community": 3,
       "norm_label": "run model.predict in batches to avoid oom on large flow csvs.",
       "id": "predict_real_traffic_v2_rationale_179"
     },
@@ -325,7 +325,7 @@
       "file_type": "rationale",
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L196",
-      "community": 4,
+      "community": 3,
       "norm_label": "compute z-score diagnostics on scaled features (first _n_canon dims only).",
       "id": "predict_real_traffic_v2_rationale_196"
     },
@@ -334,7 +334,7 @@
       "file_type": "rationale",
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L259",
-      "community": 4,
+      "community": 3,
       "norm_label": "compute evaluation metrics when ground-truth columns are present in the flows cs",
       "id": "predict_real_traffic_v2_rationale_259"
     },
@@ -350,7 +350,7 @@
       "label": "train_random_forest()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L21",
+      "source_location": "L18",
       "id": "baseline_random_forest_train_random_forest",
       "community": 8
     },
@@ -358,7 +358,7 @@
       "label": "evaluate_random_forest()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L42",
+      "source_location": "L39",
       "id": "baseline_random_forest_evaluate_random_forest",
       "community": 8
     },
@@ -366,74 +366,72 @@
       "label": "main()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L59",
+      "source_location": "L56",
       "id": "baseline_random_forest_main",
       "community": 8
     },
     {
-      "label": "Entrena un RandomForestClassifier sobre NSL-KDD y devuelve el modelo.",
+      "label": "Entrena un RandomForestClassifier sobre el dataset y devuelve el modelo.",
       "file_type": "rationale",
-      "source_file": "src/baseline_random_forest.py",
-      "source_location": "L28",
-      "community": 8,
-      "norm_label": "entrena un randomforestclassifier sobre nsl-kdd y devuelve el modelo.",
-      "id": "baseline_random_forest_rationale_28"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
+      "source_location": "L25",
+      "id": "baseline_random_forest_rationale_25",
+      "community": 8
     },
     {
       "label": "Eval\u00faa el Random Forest y muestra matriz de confusi\u00f3n + informe de clasificaci\u00f3n",
       "file_type": "rationale",
-      "source_file": "src/baseline_random_forest.py",
-      "source_location": "L47",
-      "community": 8,
-      "norm_label": "evalua el random forest y muestra matriz de confusion + informe de clasificacion",
-      "id": "baseline_random_forest_rationale_47"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
+      "source_location": "L44",
+      "id": "baseline_random_forest_rationale_44",
+      "community": 8
     },
     {
       "label": "canonical_schema.py",
       "file_type": "code",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L1",
-      "id": "src_canonical_schema_py",
-      "community": 6
+      "id": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
+      "community": 5
     },
     {
       "label": "CanonicalResult",
       "file_type": "code",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L267",
       "id": "canonical_schema_canonicalresult",
-      "community": 6
+      "community": 5
     },
     {
       "label": "map_to_canonical()",
       "file_type": "code",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L277",
       "id": "canonical_schema_map_to_canonical",
-      "community": 6
+      "community": 5
     },
     {
       "label": "get_canonical_feature_names()",
       "file_type": "code",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L346",
       "id": "canonical_schema_get_canonical_feature_names",
-      "community": 6
+      "community": 5
     },
     {
       "label": "get_observation_feature_names()",
       "file_type": "code",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L351",
       "id": "canonical_schema_get_observation_feature_names",
-      "community": 6
+      "community": 5
     },
     {
       "label": "canonical_schema.py \u2014 Definici\u00f3n formal del esquema can\u00f3nico de features (FEATUR",
       "file_type": "rationale",
       "source_file": "src/canonical_schema.py",
       "source_location": "L1",
-      "community": 6,
+      "community": 5,
       "norm_label": "canonical_schema.py \u2014 definicion formal del esquema canonico de features (featur",
       "id": "canonical_schema_rationale_1"
     },
@@ -442,7 +440,7 @@
       "file_type": "rationale",
       "source_file": "src/canonical_schema.py",
       "source_location": "L268",
-      "community": 6,
+      "community": 5,
       "norm_label": "resultado de mapear un dataframe al esquema canonico.",
       "id": "canonical_schema_rationale_268"
     },
@@ -451,7 +449,7 @@
       "file_type": "rationale",
       "source_file": "src/canonical_schema.py",
       "source_location": "L282",
-      "community": 6,
+      "community": 5,
       "norm_label": "mapea un dataframe al esquema canonico de features.      parameters     -----",
       "id": "canonical_schema_rationale_282"
     },
@@ -460,7 +458,7 @@
       "file_type": "rationale",
       "source_file": "src/canonical_schema.py",
       "source_location": "L347",
-      "community": 6,
+      "community": 5,
       "norm_label": "devuelve la lista de nombres de features canonicas (sin mascara).",
       "id": "canonical_schema_rationale_347"
     },
@@ -469,7 +467,7 @@
       "file_type": "rationale",
       "source_file": "src/canonical_schema.py",
       "source_location": "L352",
-      "community": 6,
+      "community": 5,
       "norm_label": "devuelve la lista completa de nombres: features + mascara de missingness.",
       "id": "canonical_schema_rationale_352"
     },
@@ -485,15 +483,15 @@
       "label": "CICIDSLoadConfig",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L41",
+      "source_location": "L39",
       "id": "load_cicids2017_cicidsloadconfig",
-      "community": 2
+      "community": 0
     },
     {
       "label": "_list_csv_files()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L64",
+      "source_location": "L62",
       "id": "load_cicids2017_list_csv_files",
       "community": 0
     },
@@ -501,7 +499,7 @@
       "label": "list_cicids2017_csv_files()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L74",
+      "source_location": "L72",
       "id": "load_cicids2017_list_cicids2017_csv_files",
       "community": 0
     },
@@ -509,7 +507,7 @@
       "label": "_normalize_columns()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L98",
+      "source_location": "L96",
       "id": "load_cicids2017_normalize_columns",
       "community": 0
     },
@@ -517,7 +515,7 @@
       "label": "_find_label_column()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L104",
+      "source_location": "L102",
       "id": "load_cicids2017_find_label_column",
       "community": 0
     },
@@ -525,7 +523,7 @@
       "label": "_drop_identifier_like_columns()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L115",
+      "source_location": "L113",
       "id": "load_cicids2017_drop_identifier_like_columns",
       "community": 0
     },
@@ -533,7 +531,7 @@
       "label": "_coerce_numeric_features()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L141",
+      "source_location": "L139",
       "id": "load_cicids2017_coerce_numeric_features",
       "community": 0
     },
@@ -541,7 +539,7 @@
       "label": "_clean_rows()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L150",
+      "source_location": "L148",
       "id": "load_cicids2017_clean_rows",
       "community": 0
     },
@@ -549,7 +547,7 @@
       "label": "_load_all_csvs()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L164",
+      "source_location": "L162",
       "id": "load_cicids2017_load_all_csvs",
       "community": 0
     },
@@ -557,7 +555,7 @@
       "label": "_load_csv_with_row_limit()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L194",
+      "source_location": "L192",
       "id": "load_cicids2017_load_csv_with_row_limit",
       "community": 0
     },
@@ -565,7 +563,7 @@
       "label": "_prepare_cicids_features()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L221",
+      "source_location": "L219",
       "id": "load_cicids2017_prepare_cicids_features",
       "community": 0
     },
@@ -573,7 +571,7 @@
       "label": "_load_and_process_csv_paths()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L275",
+      "source_location": "L273",
       "id": "load_cicids2017_load_and_process_csv_paths",
       "community": 0
     },
@@ -581,7 +579,7 @@
       "label": "_resolve_exact_csv_names()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L299",
+      "source_location": "L297",
       "id": "load_cicids2017_resolve_exact_csv_names",
       "community": 0
     },
@@ -589,7 +587,7 @@
       "label": "load_cicids2017_binary()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L319",
+      "source_location": "L317",
       "id": "load_cicids2017_load_cicids2017_binary",
       "community": 0
     },
@@ -597,7 +595,7 @@
       "label": "load_cicids2017_csv_split()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L366",
+      "source_location": "L364",
       "id": "load_cicids2017_load_cicids2017_csv_split",
       "community": 0
     },
@@ -605,7 +603,7 @@
       "label": "load_cicids2017_exact_csv_split()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L436",
+      "source_location": "L434",
       "id": "load_cicids2017_load_cicids2017_exact_csv_split",
       "community": 0
     },
@@ -613,90 +611,81 @@
       "label": "load_cicids2017_split()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L535",
+      "source_location": "L533",
       "id": "load_cicids2017_load_cicids2017_split",
       "community": 0
     },
     {
       "label": "Lista \u00fanicamente los 8 CSVs oficiales de CICIDS2017 en orden determinista.",
       "file_type": "rationale",
-      "source_file": "src/load_cicids2017.py",
-      "source_location": "L75",
-      "community": 0,
-      "norm_label": "lista unicamente los 8 csvs oficiales de cicids2017 en orden determinista.",
-      "id": "load_cicids2017_rationale_75"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L73",
+      "id": "load_cicids2017_rationale_73",
+      "community": 0
     },
     {
       "label": "Carga un CSV individual con l\u00edmite opcional de filas por archivo.",
       "file_type": "rationale",
-      "source_file": "src/load_cicids2017.py",
-      "source_location": "L195",
-      "community": 0,
-      "norm_label": "carga un csv individual con limite opcional de filas por archivo.",
-      "id": "load_cicids2017_rationale_195"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L193",
+      "id": "load_cicids2017_rationale_193",
+      "community": 0
     },
     {
       "label": "Limpia CICIDS2017 y devuelve X, y y nombres de features.",
       "file_type": "rationale",
-      "source_file": "src/load_cicids2017.py",
-      "source_location": "L225",
-      "community": 0,
-      "norm_label": "limpia cicids2017 y devuelve x, y y nombres de features.",
-      "id": "load_cicids2017_rationale_225"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L223",
+      "id": "load_cicids2017_rationale_223",
+      "community": 0
     },
     {
       "label": "Carga una lista de CSVs, aplica preprocesado y devuelve X, y y features.",
       "file_type": "rationale",
-      "source_file": "src/load_cicids2017.py",
-      "source_location": "L280",
-      "community": 0,
-      "norm_label": "carga una lista de csvs, aplica preprocesado y devuelve x, y y features.",
-      "id": "load_cicids2017_rationale_280"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L278",
+      "id": "load_cicids2017_rationale_278",
+      "community": 0
     },
     {
       "label": "Resuelve nombres exactos de CSV a rutas reales, preservando el orden de entrada.",
       "file_type": "rationale",
-      "source_file": "src/load_cicids2017.py",
-      "source_location": "L300",
-      "community": 0,
-      "norm_label": "resuelve nombres exactos de csv a rutas reales, preservando el orden de entrada.",
-      "id": "load_cicids2017_rationale_300"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L298",
+      "id": "load_cicids2017_rationale_298",
+      "community": 0
     },
     {
       "label": "Carga CICIDS2017 desde directorio local y lo adapta al esquema can\u00f3nico.",
       "file_type": "rationale",
-      "source_file": "src/load_cicids2017.py",
-      "source_location": "L322",
-      "community": 0,
-      "norm_label": "carga cicids2017 desde directorio local y lo adapta al esquema canonico.",
-      "id": "load_cicids2017_rationale_322"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L320",
+      "id": "load_cicids2017_rationale_320",
+      "community": 0
     },
     {
       "label": "Carga CICIDS2017 separando por archivos CSV (train vs test).      En lugar de",
       "file_type": "rationale",
-      "source_file": "src/load_cicids2017.py",
-      "source_location": "L371",
-      "community": 0,
-      "norm_label": "carga cicids2017 separando por archivos csv (train vs test).      en lugar de",
-      "id": "load_cicids2017_rationale_371"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L369",
+      "id": "load_cicids2017_rationale_369",
+      "community": 0
     },
     {
       "label": "Carga CICIDS2017 separando por nombres exactos de archivo CSV.      A diferenc",
       "file_type": "rationale",
-      "source_file": "src/load_cicids2017.py",
-      "source_location": "L442",
-      "community": 0,
-      "norm_label": "carga cicids2017 separando por nombres exactos de archivo csv.      a diferenc",
-      "id": "load_cicids2017_rationale_442"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L440",
+      "id": "load_cicids2017_rationale_440",
+      "community": 0
     },
     {
       "label": "Unified CICIDS2017 loader with split-mode and preset support.      Parameters",
       "file_type": "rationale",
-      "source_file": "src/load_cicids2017.py",
-      "source_location": "L545",
-      "community": 0,
-      "norm_label": "unified cicids2017 loader with split-mode and preset support.      parameters",
-      "id": "load_cicids2017_rationale_545"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L543",
+      "id": "load_cicids2017_rationale_543",
+      "community": 0
     },
     {
       "label": "load_nsl_kdd.py",
@@ -710,7 +699,7 @@
       "label": "_ensure_dataset_local_dir()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
-      "source_location": "L35",
+      "source_location": "L33",
       "id": "load_nsl_kdd_ensure_dataset_local_dir",
       "community": 11
     },
@@ -718,17 +707,17 @@
       "label": "load_nsl_kdd_binary()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
-      "source_location": "L50",
+      "source_location": "L42",
       "id": "load_nsl_kdd_load_nsl_kdd_binary",
       "community": 11
     },
     {
-      "label": "Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:",
+      "label": "Carga NSL-KDD localmente, lo preprocesa y devuelve:          X_train, y_train,",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
-      "source_location": "L56",
-      "community": 11,
-      "id": "load_nsl_kdd_rationale_56"
+      "source_location": "L48",
+      "id": "load_nsl_kdd_rationale_48",
+      "community": 11
     },
     {
       "label": "rl_defender_env.py",
@@ -877,66 +866,64 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
       "source_location": "L1",
       "id": "c_users_rivero_desktop_tfg_cyber_ai_src_train_rl_defender_py",
-      "community": 1
+      "community": 6
     },
     {
       "label": "make_env_fn()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L60",
+      "source_location": "L56",
       "id": "train_rl_defender_make_env_fn",
-      "community": 1
+      "community": 6
     },
     {
       "label": "evaluate_model()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L80",
+      "source_location": "L76",
       "id": "train_rl_defender_evaluate_model",
-      "community": 1
+      "community": 6
     },
     {
       "label": "parse_args()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L136",
+      "source_location": "L132",
       "id": "train_rl_defender_parse_args",
-      "community": 1
+      "community": 6
     },
     {
       "label": "main()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L177",
+      "source_location": "L173",
       "id": "train_rl_defender_main",
-      "community": 1
+      "community": 6
     },
     {
       "label": "train_rl_defender.py \u2014 Entrenamiento de agente defensor RL sobre CICIDS2017.",
       "file_type": "rationale",
       "source_file": "src/train_rl_defender.py",
       "source_location": "L1",
-      "community": 1,
+      "community": 6,
       "norm_label": "train_rl_defender.py \u2014 entrenamiento de agente defensor rl sobre cicids2017.",
       "id": "train_rl_defender_rationale_1"
     },
     {
       "label": "Devuelve una funci\u00f3n creadora de entornos para DummyVecEnv.",
       "file_type": "rationale",
-      "source_file": "src/train_rl_defender.py",
-      "source_location": "L63",
-      "community": 1,
-      "norm_label": "devuelve una funcion creadora de entornos para dummyvecenv.",
-      "id": "train_rl_defender_rationale_63"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
+      "source_location": "L59",
+      "id": "train_rl_defender_rationale_59",
+      "community": 6
     },
     {
       "label": "Eval\u00faa el agente sobre test set.     Devuelve dict con m\u00e9tricas clave.",
       "file_type": "rationale",
-      "source_file": "src/train_rl_defender.py",
-      "source_location": "L83",
-      "community": 1,
-      "norm_label": "evalua el agente sobre test set.     devuelve dict con metricas clave.",
-      "id": "train_rl_defender_rationale_83"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
+      "source_location": "L79",
+      "id": "train_rl_defender_rationale_79",
+      "community": 6
     },
     {
       "label": "tune_hparams.py",
@@ -1011,15 +998,15 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
       "source_location": "L1",
       "id": "c_users_rivero_desktop_tfg_cyber_ai_src_validate_checks_py",
-      "community": 2
+      "community": 1
     },
     {
       "label": "ProgressCallback",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L70",
+      "source_location": "L67",
       "id": "validate_checks_progresscallback",
-      "community": 2
+      "community": 1
     },
     {
       "label": "BaseCallback",
@@ -1027,108 +1014,104 @@
       "source_file": "",
       "source_location": "",
       "id": "basecallback",
-      "community": 2
+      "community": 1
     },
     {
       "label": ".__init__()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L72",
+      "source_location": "L69",
       "id": "validate_checks_progresscallback_init",
-      "community": 2
+      "community": 1
     },
     {
       "label": "._on_step()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L76",
+      "source_location": "L73",
       "id": "validate_checks_progresscallback_on_step",
-      "community": 2
+      "community": 1
     },
     {
       "label": "check_a_direct_eval()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L86",
+      "source_location": "L83",
       "id": "validate_checks_check_a_direct_eval",
-      "community": 2
+      "community": 1
     },
     {
       "label": "check_b_shuffled_labels()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L144",
+      "source_location": "L141",
       "id": "validate_checks_check_b_shuffled_labels",
-      "community": 2
+      "community": 1
     },
     {
       "label": "check_c_csv_split()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L274",
+      "source_location": "L271",
       "id": "validate_checks_check_c_csv_split",
-      "community": 2
+      "community": 1
     },
     {
       "label": "parse_args()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L402",
+      "source_location": "L399",
       "id": "validate_checks_parse_args",
-      "community": 2
+      "community": 1
     },
     {
       "label": "main()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L450",
+      "source_location": "L447",
       "id": "validate_checks_main",
-      "community": 2
+      "community": 1
     },
     {
       "label": "validate_checks.py \u2014 Validaci\u00f3n de resultados experimentales del agente RL.  I",
       "file_type": "rationale",
       "source_file": "src/validate_checks.py",
       "source_location": "L1",
-      "community": 2,
+      "community": 1,
       "norm_label": "validate_checks.py \u2014 validacion de resultados experimentales del agente rl.  i",
       "id": "validate_checks_rationale_1"
     },
     {
       "label": "Callback para mostrar progreso cada log_freq timesteps.",
       "file_type": "rationale",
-      "source_file": "src/validate_checks.py",
-      "source_location": "L71",
-      "community": 2,
-      "norm_label": "callback para mostrar progreso cada log_freq timesteps.",
-      "id": "validate_checks_rationale_71"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
+      "source_location": "L68",
+      "id": "validate_checks_rationale_68",
+      "community": 1
     },
     {
       "label": "Evaluaci\u00f3n directa: model.predict(X_test[i]) vs y_test[i].     No pasa por el e",
       "file_type": "rationale",
-      "source_file": "src/validate_checks.py",
-      "source_location": "L91",
-      "community": 2,
-      "norm_label": "evaluacion directa: model.predict(x_test[i]) vs y_test[i].     no pasa por el e",
-      "id": "validate_checks_rationale_91"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
+      "source_location": "L88",
+      "id": "validate_checks_rationale_88",
+      "community": 1
     },
     {
       "label": "Baraja y_train y entrena brevemente. Si el modelo a\u00fan obtiene accuracy     alta",
       "file_type": "rationale",
-      "source_file": "src/validate_checks.py",
-      "source_location": "L153",
-      "community": 2,
-      "norm_label": "baraja y_train y entrena brevemente. si el modelo aun obtiene accuracy     alta",
-      "id": "validate_checks_rationale_153"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
+      "source_location": "L150",
+      "id": "validate_checks_rationale_150",
+      "community": 1
     },
     {
       "label": "Entrena en unos CSVs de CICIDS2017 y testea en otros.     Es el split m\u00e1s reali",
       "file_type": "rationale",
-      "source_file": "src/validate_checks.py",
-      "source_location": "L283",
-      "community": 2,
-      "norm_label": "entrena en unos csvs de cicids2017 y testea en otros.     es el split mas reali",
-      "id": "validate_checks_rationale_283"
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
+      "source_location": "L280",
+      "id": "validate_checks_rationale_280",
+      "community": 1
     },
     {
       "label": "validate_leave_one_csv_out.py",
@@ -1136,7 +1119,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L1",
       "id": "c_users_rivero_desktop_tfg_cyber_ai_src_validate_leave_one_csv_out_py",
-      "community": 5
+      "community": 4
     },
     {
       "label": "_safe_div()",
@@ -1144,7 +1127,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L70",
       "id": "validate_leave_one_csv_out_safe_div",
-      "community": 5
+      "community": 4
     },
     {
       "label": "make_env_fn()",
@@ -1152,7 +1135,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L74",
       "id": "validate_leave_one_csv_out_make_env_fn",
-      "community": 5
+      "community": 4
     },
     {
       "label": "_compute_reward_total()",
@@ -1160,7 +1143,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L97",
       "id": "validate_leave_one_csv_out_compute_reward_total",
-      "community": 5
+      "community": 4
     },
     {
       "label": "_metrics_from_confusion()",
@@ -1168,7 +1151,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L106",
       "id": "validate_leave_one_csv_out_metrics_from_confusion",
-      "community": 5
+      "community": 4
     },
     {
       "label": "evaluate_model_direct()",
@@ -1176,7 +1159,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L149",
       "id": "validate_leave_one_csv_out_evaluate_model_direct",
-      "community": 5
+      "community": 4
     },
     {
       "label": "_summarize_metric()",
@@ -1184,7 +1167,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L195",
       "id": "validate_leave_one_csv_out_summarize_metric",
-      "community": 5
+      "community": 4
     },
     {
       "label": "_build_aggregate_results()",
@@ -1192,7 +1175,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L205",
       "id": "validate_leave_one_csv_out_build_aggregate_results",
-      "community": 5
+      "community": 4
     },
     {
       "label": "_resolve_holdout_csvs()",
@@ -1200,7 +1183,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L251",
       "id": "validate_leave_one_csv_out_resolve_holdout_csvs",
-      "community": 5
+      "community": 4
     },
     {
       "label": "parse_args()",
@@ -1208,7 +1191,7 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L274",
       "id": "validate_leave_one_csv_out_parse_args",
-      "community": 5
+      "community": 4
     },
     {
       "label": "main()",
@@ -1216,14 +1199,14 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py",
       "source_location": "L311",
       "id": "validate_leave_one_csv_out_main",
-      "community": 5
+      "community": 4
     },
     {
       "label": "validate_leave_one_csv_out.py \u2014 Validaci\u00f3n leave-one-exact-CSV-out para CICIDS20",
       "file_type": "rationale",
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L1",
-      "community": 5,
+      "community": 4,
       "norm_label": "validate_leave_one_csv_out.py \u2014 validacion leave-one-exact-csv-out para cicids20",
       "id": "validate_leave_one_csv_out_rationale_1"
     },
@@ -1232,7 +1215,7 @@
       "file_type": "rationale",
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L80",
-      "community": 5,
+      "community": 4,
       "norm_label": "devuelve una funcion creadora de entornos para dummyvecenv.",
       "id": "validate_leave_one_csv_out_rationale_80"
     },
@@ -1241,7 +1224,7 @@
       "file_type": "rationale",
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L156",
-      "community": 5,
+      "community": 4,
       "norm_label": "evalua el modelo sobre `x_test` frente a `y_test` en inferencia por lotes.",
       "id": "validate_leave_one_csv_out_rationale_156"
     },
@@ -1257,7 +1240,7 @@
       "label": "test_canonical_features_length()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_canonical_schema.py",
-      "source_location": "L12",
+      "source_location": "L11",
       "id": "test_canonical_schema_test_canonical_features_length",
       "community": 13
     },
@@ -1265,7 +1248,7 @@
       "label": "test_map_to_canonical_mask_logic()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_canonical_schema.py",
-      "source_location": "L18",
+      "source_location": "L17",
       "id": "test_canonical_schema_test_map_to_canonical_mask_logic",
       "community": 13
     },
@@ -1313,7 +1296,7 @@
       "label": "test_prepare_cicids_features_binary_labels()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_load_cicids2017.py",
-      "source_location": "L6",
+      "source_location": "L5",
       "id": "test_load_cicids2017_test_prepare_cicids_features_binary_labels",
       "community": 17
     },
@@ -1329,7 +1312,7 @@
       "label": "test_maybe_convert_time_units()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py",
-      "source_location": "L6",
+      "source_location": "L5",
       "id": "test_predict_real_traffic_v2_test_maybe_convert_time_units",
       "community": 14
     },
@@ -1337,7 +1320,7 @@
       "label": "test_compute_diagnostics()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py",
-      "source_location": "L16",
+      "source_location": "L15",
       "id": "test_predict_real_traffic_v2_test_compute_diagnostics",
       "community": 14
     },
@@ -1353,7 +1336,7 @@
       "label": "test_reward_logic_tp_fp_tn_fn()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_reward_config.py",
-      "source_location": "L5",
+      "source_location": "L4",
       "id": "test_reward_config_test_reward_logic_tp_fp_tn_fn",
       "community": 15
     },
@@ -1361,7 +1344,7 @@
       "label": "test_unknown_label_reward()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_reward_config.py",
-      "source_location": "L23",
+      "source_location": "L22",
       "id": "test_reward_config_test_unknown_label_reward",
       "community": 15
     },
@@ -1377,7 +1360,7 @@
       "label": "test_env_initialization()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_rl_defender_env.py",
-      "source_location": "L5",
+      "source_location": "L4",
       "id": "test_rl_defender_env_test_env_initialization",
       "community": 16
     },
@@ -1385,16 +1368,177 @@
       "label": "test_env_step_and_reset()",
       "file_type": "code",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_rl_defender_env.py",
-      "source_location": "L14",
+      "source_location": "L13",
       "id": "test_rl_defender_env_test_env_step_and_reset",
       "community": 16
+    },
+    {
+      "label": "Entrena un RandomForestClassifier sobre NSL-KDD y devuelve el modelo.",
+      "file_type": "rationale",
+      "source_file": "src/baseline_random_forest.py",
+      "source_location": "L28",
+      "community": 18,
+      "norm_label": "entrena un randomforestclassifier sobre nsl-kdd y devuelve el modelo.",
+      "id": "baseline_random_forest_rationale_28"
+    },
+    {
+      "label": "Eval\u00faa el Random Forest y muestra matriz de confusi\u00f3n + informe de clasificaci\u00f3n",
+      "file_type": "rationale",
+      "source_file": "src/baseline_random_forest.py",
+      "source_location": "L47",
+      "community": 19,
+      "norm_label": "evalua el random forest y muestra matriz de confusion + informe de clasificacion",
+      "id": "baseline_random_forest_rationale_47"
+    },
+    {
+      "label": "Lista \u00fanicamente los 8 CSVs oficiales de CICIDS2017 en orden determinista.",
+      "file_type": "rationale",
+      "source_file": "src/load_cicids2017.py",
+      "source_location": "L75",
+      "community": 20,
+      "norm_label": "lista unicamente los 8 csvs oficiales de cicids2017 en orden determinista.",
+      "id": "load_cicids2017_rationale_75"
+    },
+    {
+      "label": "Carga un CSV individual con l\u00edmite opcional de filas por archivo.",
+      "file_type": "rationale",
+      "source_file": "src/load_cicids2017.py",
+      "source_location": "L195",
+      "community": 21,
+      "norm_label": "carga un csv individual con limite opcional de filas por archivo.",
+      "id": "load_cicids2017_rationale_195"
+    },
+    {
+      "label": "Limpia CICIDS2017 y devuelve X, y y nombres de features.",
+      "file_type": "rationale",
+      "source_file": "src/load_cicids2017.py",
+      "source_location": "L225",
+      "community": 22,
+      "norm_label": "limpia cicids2017 y devuelve x, y y nombres de features.",
+      "id": "load_cicids2017_rationale_225"
+    },
+    {
+      "label": "Carga una lista de CSVs, aplica preprocesado y devuelve X, y y features.",
+      "file_type": "rationale",
+      "source_file": "src/load_cicids2017.py",
+      "source_location": "L280",
+      "community": 23,
+      "norm_label": "carga una lista de csvs, aplica preprocesado y devuelve x, y y features.",
+      "id": "load_cicids2017_rationale_280"
+    },
+    {
+      "label": "Resuelve nombres exactos de CSV a rutas reales, preservando el orden de entrada.",
+      "file_type": "rationale",
+      "source_file": "src/load_cicids2017.py",
+      "source_location": "L300",
+      "community": 24,
+      "norm_label": "resuelve nombres exactos de csv a rutas reales, preservando el orden de entrada.",
+      "id": "load_cicids2017_rationale_300"
+    },
+    {
+      "label": "Carga CICIDS2017 desde directorio local y lo adapta al esquema can\u00f3nico.",
+      "file_type": "rationale",
+      "source_file": "src/load_cicids2017.py",
+      "source_location": "L322",
+      "community": 25,
+      "norm_label": "carga cicids2017 desde directorio local y lo adapta al esquema canonico.",
+      "id": "load_cicids2017_rationale_322"
+    },
+    {
+      "label": "Carga CICIDS2017 separando por archivos CSV (train vs test).      En lugar de",
+      "file_type": "rationale",
+      "source_file": "src/load_cicids2017.py",
+      "source_location": "L371",
+      "community": 26,
+      "norm_label": "carga cicids2017 separando por archivos csv (train vs test).      en lugar de",
+      "id": "load_cicids2017_rationale_371"
+    },
+    {
+      "label": "Carga CICIDS2017 separando por nombres exactos de archivo CSV.      A diferenc",
+      "file_type": "rationale",
+      "source_file": "src/load_cicids2017.py",
+      "source_location": "L442",
+      "community": 27,
+      "norm_label": "carga cicids2017 separando por nombres exactos de archivo csv.      a diferenc",
+      "id": "load_cicids2017_rationale_442"
+    },
+    {
+      "label": "Unified CICIDS2017 loader with split-mode and preset support.      Parameters",
+      "file_type": "rationale",
+      "source_file": "src/load_cicids2017.py",
+      "source_location": "L545",
+      "community": 28,
+      "norm_label": "unified cicids2017 loader with split-mode and preset support.      parameters",
+      "id": "load_cicids2017_rationale_545"
+    },
+    {
+      "label": "Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:",
+      "file_type": "rationale",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
+      "source_location": "L56",
+      "community": 29,
+      "id": "load_nsl_kdd_rationale_56"
+    },
+    {
+      "label": "Devuelve una funci\u00f3n creadora de entornos para DummyVecEnv.",
+      "file_type": "rationale",
+      "source_file": "src/train_rl_defender.py",
+      "source_location": "L63",
+      "community": 30,
+      "norm_label": "devuelve una funcion creadora de entornos para dummyvecenv.",
+      "id": "train_rl_defender_rationale_63"
+    },
+    {
+      "label": "Eval\u00faa el agente sobre test set.     Devuelve dict con m\u00e9tricas clave.",
+      "file_type": "rationale",
+      "source_file": "src/train_rl_defender.py",
+      "source_location": "L83",
+      "community": 31,
+      "norm_label": "evalua el agente sobre test set.     devuelve dict con metricas clave.",
+      "id": "train_rl_defender_rationale_83"
+    },
+    {
+      "label": "Callback para mostrar progreso cada log_freq timesteps.",
+      "file_type": "rationale",
+      "source_file": "src/validate_checks.py",
+      "source_location": "L71",
+      "community": 32,
+      "norm_label": "callback para mostrar progreso cada log_freq timesteps.",
+      "id": "validate_checks_rationale_71"
+    },
+    {
+      "label": "Evaluaci\u00f3n directa: model.predict(X_test[i]) vs y_test[i].     No pasa por el e",
+      "file_type": "rationale",
+      "source_file": "src/validate_checks.py",
+      "source_location": "L91",
+      "community": 33,
+      "norm_label": "evaluacion directa: model.predict(x_test[i]) vs y_test[i].     no pasa por el e",
+      "id": "validate_checks_rationale_91"
+    },
+    {
+      "label": "Baraja y_train y entrena brevemente. Si el modelo a\u00fan obtiene accuracy     alta",
+      "file_type": "rationale",
+      "source_file": "src/validate_checks.py",
+      "source_location": "L153",
+      "community": 34,
+      "norm_label": "baraja y_train y entrena brevemente. si el modelo aun obtiene accuracy     alta",
+      "id": "validate_checks_rationale_153"
+    },
+    {
+      "label": "Entrena en unos CSVs de CICIDS2017 y testea en otros.     Es el split m\u00e1s reali",
+      "file_type": "rationale",
+      "source_file": "src/validate_checks.py",
+      "source_location": "L283",
+      "community": 35,
+      "norm_label": "entrena en unos csvs de cicids2017 y testea en otros.     es el split mas reali",
+      "id": "validate_checks_rationale_283"
     },
     {
       "label": "Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:",
       "file_type": "rationale",
       "source_file": "src/load_nsl_kdd.py",
       "source_location": "L67",
-      "community": 18,
+      "community": 36,
       "norm_label": "carga nsl-kdd desde kaggle (hassan06/nslkdd), lo preprocesa y devuelve:",
       "id": "load_nsl_kdd_rationale_67"
     },
@@ -1407,7 +1551,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 19,
+      "community": 37,
       "norm_label": "agents.md project operating rules",
       "id": "doc_agents_md"
     },
@@ -1420,7 +1564,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 20,
+      "community": 38,
       "norm_label": "public readme project overview",
       "id": "doc_readme"
     },
@@ -1433,7 +1577,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 21,
+      "community": 39,
       "norm_label": "project-wide technical source of truth",
       "id": "doc_github_agent_context"
     },
@@ -1446,7 +1590,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 22,
+      "community": 40,
       "norm_label": "documentation map",
       "id": "doc_docs_readme"
     },
@@ -1459,7 +1603,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 23,
+      "community": 41,
       "norm_label": "phase 2 context and guardrails",
       "id": "doc_phase2_context"
     },
@@ -1472,7 +1616,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 24,
+      "community": 42,
       "norm_label": "artifact-backed results snapshot",
       "id": "doc_results"
     },
@@ -1485,7 +1629,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 25,
+      "community": 43,
       "norm_label": "phase 2 execution plan",
       "id": "doc_phase2_plan"
     },
@@ -1498,7 +1642,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 26,
+      "community": 44,
       "norm_label": "private lab setup guide",
       "id": "doc_gcp_lab"
     },
@@ -1511,7 +1655,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 27,
+      "community": 45,
       "norm_label": "spanish defense progress notes",
       "id": "doc_defensa_progreso"
     },
@@ -1524,7 +1668,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 28,
+      "community": 46,
       "norm_label": "spanish oral defense script",
       "id": "doc_defensa_script"
     },
@@ -1537,7 +1681,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 29,
+      "community": 47,
       "norm_label": "python runtime dependencies",
       "id": "doc_requirements"
     },
@@ -1550,7 +1694,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 30,
+      "community": 48,
       "norm_label": "rl cyber defender project",
       "id": "concept_rl_cyber_defender_project"
     },
@@ -1563,7 +1707,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 31,
+      "community": 49,
       "norm_label": "phase 1 offline training and validation",
       "id": "concept_phase1_offline_training"
     },
@@ -1576,7 +1720,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 32,
+      "community": 50,
       "norm_label": "phase 2 offline inference",
       "id": "concept_phase2_offline_inference"
     },
@@ -1589,7 +1733,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 33,
+      "community": 51,
       "norm_label": "binary permit/block defender actions",
       "id": "concept_binary_defender_actions"
     },
@@ -1602,7 +1746,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 34,
+      "community": 52,
       "norm_label": "canonical flow schema",
       "id": "concept_canonical_flow_schema"
     },
@@ -1615,7 +1759,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 35,
+      "community": 53,
       "norm_label": "76 canonical flow features",
       "id": "concept_76_canonical_features"
     },
@@ -1628,7 +1772,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 36,
+      "community": 54,
       "norm_label": "missingness mask",
       "id": "concept_missingness_mask"
     },
@@ -1641,7 +1785,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 37,
+      "community": 55,
       "norm_label": "152-d observation vector",
       "id": "concept_observation_vector_152"
     },
@@ -1654,7 +1798,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 38,
+      "community": 56,
       "norm_label": "dataset adapter contract",
       "id": "concept_adapter_contract"
     },
@@ -1667,7 +1811,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 39,
+      "community": 57,
       "norm_label": "anti-leakage policy",
       "id": "concept_anti_leakage_policy"
     },
@@ -1680,7 +1824,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 40,
+      "community": 58,
       "norm_label": "cicids2017 primary dataset",
       "id": "concept_cicids2017_dataset"
     },
@@ -1693,7 +1837,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 41,
+      "community": 59,
       "norm_label": "nsl-kdd historical benchmark",
       "id": "concept_nsl_kdd_historical"
     },
@@ -1706,7 +1850,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 42,
+      "community": 60,
       "norm_label": "qrdqn training pipeline",
       "id": "concept_qrdqn_training_pipeline"
     },
@@ -1719,7 +1863,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 43,
+      "community": 61,
       "norm_label": "current reward configuration",
       "id": "concept_reward_config_current"
     },
@@ -1732,7 +1876,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 44,
+      "community": 62,
       "norm_label": "validation suite",
       "id": "concept_validation_suite"
     },
@@ -1745,7 +1889,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 45,
+      "community": 63,
       "norm_label": "check a direct evaluation",
       "id": "concept_check_a_direct_eval"
     },
@@ -1758,7 +1902,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 46,
+      "community": 64,
       "norm_label": "check b shuffled-label anti-leakage",
       "id": "concept_check_b_anti_leakage"
     },
@@ -1771,7 +1915,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 47,
+      "community": 65,
       "norm_label": "check c hard csv/day split",
       "id": "concept_check_c_hard_split"
     },
@@ -1784,7 +1928,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 48,
+      "community": 66,
       "norm_label": "leave-one-exact-csv-out validation",
       "id": "concept_leave_one_exact_csv_out"
     },
@@ -1797,7 +1941,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 49,
+      "community": 67,
       "norm_label": "artifact-backed results",
       "id": "concept_artifact_backed_results"
     },
@@ -1810,7 +1954,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 50,
+      "community": 68,
       "norm_label": "c03 best historical cicids2017 run",
       "id": "concept_c03_best_historical_run"
     },
@@ -1823,7 +1967,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 51,
+      "community": 69,
       "norm_label": "robust v2 inference pipeline",
       "id": "concept_robust_v2_inference_pipeline"
     },
@@ -1836,7 +1980,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 52,
+      "community": 70,
       "norm_label": "domain shift risk",
       "id": "concept_domain_shift_risk"
     },
@@ -1849,7 +1993,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 53,
+      "community": 71,
       "norm_label": "private lab workflow",
       "id": "concept_private_lab_workflow"
     },
@@ -1862,7 +2006,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 54,
+      "community": 72,
       "norm_label": "two-vm private lab topology",
       "id": "concept_gcp_two_vm_lab"
     },
@@ -1875,7 +2019,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 55,
+      "community": 73,
       "norm_label": "reproducible run artifacts",
       "id": "concept_reproducible_run_artifacts"
     },
@@ -1888,7 +2032,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 56,
+      "community": 74,
       "norm_label": "active blocking future work",
       "id": "concept_active_blocking_future_work"
     },
@@ -1901,7 +2045,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 57,
+      "community": 75,
       "norm_label": "honest defense positioning",
       "id": "concept_defense_positioning"
     },
@@ -1914,7 +2058,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 58,
+      "community": 76,
       "norm_label": "graphify corpus policy",
       "id": "concept_graphify_corpus_policy"
     }
@@ -2608,7 +2752,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L21",
+      "source_location": "L18",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_baseline_random_forest_py",
       "_tgt": "baseline_random_forest_train_random_forest",
@@ -2620,7 +2764,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L42",
+      "source_location": "L39",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_baseline_random_forest_py",
       "_tgt": "baseline_random_forest_evaluate_random_forest",
@@ -2632,7 +2776,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L59",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_baseline_random_forest_py",
       "_tgt": "baseline_random_forest_main",
@@ -2644,7 +2788,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L67",
+      "source_location": "L64",
       "weight": 1.0,
       "_src": "baseline_random_forest_main",
       "_tgt": "baseline_random_forest_train_random_forest",
@@ -2656,19 +2800,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L28",
+      "source_location": "L25",
       "weight": 1.0,
-      "_src": "baseline_random_forest_rationale_28",
+      "_src": "baseline_random_forest_rationale_25",
       "_tgt": "baseline_random_forest_train_random_forest",
       "source": "baseline_random_forest_train_random_forest",
-      "target": "baseline_random_forest_rationale_28",
+      "target": "baseline_random_forest_rationale_25",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L68",
+      "source_location": "L65",
       "weight": 1.0,
       "_src": "baseline_random_forest_main",
       "_tgt": "baseline_random_forest_evaluate_random_forest",
@@ -2680,23 +2824,23 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L47",
+      "source_location": "L44",
       "weight": 1.0,
-      "_src": "baseline_random_forest_rationale_47",
+      "_src": "baseline_random_forest_rationale_44",
       "_tgt": "baseline_random_forest_evaluate_random_forest",
       "source": "baseline_random_forest_evaluate_random_forest",
-      "target": "baseline_random_forest_rationale_47",
+      "target": "baseline_random_forest_rationale_44",
       "confidence_score": 1.0
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L11",
+      "source_location": "L8",
       "weight": 0.8,
-      "_src": "baseline_random_forest_rationale_28",
+      "_src": "baseline_random_forest_rationale_25",
       "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "baseline_random_forest_rationale_28",
+      "source": "baseline_random_forest_rationale_25",
       "target": "load_cicids2017_cicidsloadconfig",
       "confidence_score": 0.5
     },
@@ -2704,78 +2848,78 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
-      "source_location": "L11",
+      "source_location": "L8",
       "weight": 0.8,
-      "_src": "baseline_random_forest_rationale_47",
+      "_src": "baseline_random_forest_rationale_44",
       "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "baseline_random_forest_rationale_47",
+      "source": "baseline_random_forest_rationale_44",
       "target": "load_cicids2017_cicidsloadconfig",
       "confidence_score": 0.5
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L267",
       "weight": 1.0,
-      "_src": "src_canonical_schema_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
       "_tgt": "canonical_schema_canonicalresult",
-      "source": "src_canonical_schema_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
       "target": "canonical_schema_canonicalresult",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L277",
       "weight": 1.0,
-      "_src": "src_canonical_schema_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
       "_tgt": "canonical_schema_map_to_canonical",
-      "source": "src_canonical_schema_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
       "target": "canonical_schema_map_to_canonical",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L346",
       "weight": 1.0,
-      "_src": "src_canonical_schema_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
       "_tgt": "canonical_schema_get_canonical_feature_names",
-      "source": "src_canonical_schema_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
       "target": "canonical_schema_get_canonical_feature_names",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L351",
       "weight": 1.0,
-      "_src": "src_canonical_schema_py",
+      "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
       "_tgt": "canonical_schema_get_observation_feature_names",
-      "source": "src_canonical_schema_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
       "target": "canonical_schema_get_observation_feature_names",
       "confidence_score": 1.0
     },
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L1",
       "weight": 1.0,
       "_src": "canonical_schema_rationale_1",
-      "_tgt": "src_canonical_schema_py",
-      "source": "src_canonical_schema_py",
+      "_tgt": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
+      "source": "c_users_rivero_desktop_tfg_cyber_ai_src_canonical_schema_py",
       "target": "canonical_schema_rationale_1",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L336",
       "weight": 1.0,
       "_src": "canonical_schema_map_to_canonical",
@@ -2787,7 +2931,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L268",
       "weight": 1.0,
       "_src": "canonical_schema_rationale_268",
@@ -2799,7 +2943,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L282",
       "weight": 1.0,
       "_src": "canonical_schema_rationale_282",
@@ -2811,7 +2955,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L347",
       "weight": 1.0,
       "_src": "canonical_schema_rationale_347",
@@ -2823,7 +2967,7 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "src\\canonical_schema.py",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py",
       "source_location": "L352",
       "weight": 1.0,
       "_src": "canonical_schema_rationale_352",
@@ -2836,7 +2980,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L41",
+      "source_location": "L39",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_cicidsloadconfig",
@@ -2848,7 +2992,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L64",
+      "source_location": "L62",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_list_csv_files",
@@ -2860,7 +3004,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L74",
+      "source_location": "L72",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_list_cicids2017_csv_files",
@@ -2872,7 +3016,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L98",
+      "source_location": "L96",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_normalize_columns",
@@ -2884,7 +3028,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L104",
+      "source_location": "L102",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_find_label_column",
@@ -2896,7 +3040,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L115",
+      "source_location": "L113",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_drop_identifier_like_columns",
@@ -2908,7 +3052,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L141",
+      "source_location": "L139",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_coerce_numeric_features",
@@ -2920,7 +3064,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L150",
+      "source_location": "L148",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_clean_rows",
@@ -2932,7 +3076,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L164",
+      "source_location": "L162",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_load_all_csvs",
@@ -2944,7 +3088,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L194",
+      "source_location": "L192",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_load_csv_with_row_limit",
@@ -2956,7 +3100,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L221",
+      "source_location": "L219",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_prepare_cicids_features",
@@ -2968,7 +3112,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L275",
+      "source_location": "L273",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_load_and_process_csv_paths",
@@ -2980,7 +3124,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L299",
+      "source_location": "L297",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_resolve_exact_csv_names",
@@ -2992,7 +3136,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L319",
+      "source_location": "L317",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_load_cicids2017_binary",
@@ -3004,7 +3148,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L366",
+      "source_location": "L364",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_load_cicids2017_csv_split",
@@ -3016,7 +3160,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L436",
+      "source_location": "L434",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_load_cicids2017_exact_csv_split",
@@ -3028,7 +3172,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L535",
+      "source_location": "L533",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_cicids2017_py",
       "_tgt": "load_cicids2017_load_cicids2017_split",
@@ -3040,7 +3184,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L333",
+      "source_location": "L331",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_binary",
       "_tgt": "load_cicids2017_cicidsloadconfig",
@@ -3052,7 +3196,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L393",
+      "source_location": "L391",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_csv_split",
       "_tgt": "load_cicids2017_cicidsloadconfig",
@@ -3064,7 +3208,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L463",
+      "source_location": "L461",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_exact_csv_split",
       "_tgt": "load_cicids2017_cicidsloadconfig",
@@ -3076,49 +3220,13 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L585",
+      "source_location": "L583",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_split",
       "_tgt": "load_cicids2017_cicidsloadconfig",
       "source": "load_cicids2017_cicidsloadconfig",
       "target": "load_cicids2017_load_cicids2017_split",
       "confidence_score": 1.0
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L32",
-      "weight": 0.8,
-      "_src": "train_rl_defender_rationale_1",
-      "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "load_cicids2017_cicidsloadconfig",
-      "target": "train_rl_defender_rationale_1",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L32",
-      "weight": 0.8,
-      "_src": "train_rl_defender_rationale_63",
-      "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "load_cicids2017_cicidsloadconfig",
-      "target": "train_rl_defender_rationale_63",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L32",
-      "weight": 0.8,
-      "_src": "train_rl_defender_rationale_83",
-      "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "load_cicids2017_cicidsloadconfig",
-      "target": "train_rl_defender_rationale_83",
-      "confidence_score": 0.5
     },
     {
       "relation": "uses",
@@ -3154,78 +3262,6 @@
       "_tgt": "load_cicids2017_cicidsloadconfig",
       "source": "load_cicids2017_cicidsloadconfig",
       "target": "tune_hparams_rationale_69",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L47",
-      "weight": 0.8,
-      "_src": "validate_checks_progresscallback",
-      "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "load_cicids2017_cicidsloadconfig",
-      "target": "validate_checks_progresscallback",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L47",
-      "weight": 0.8,
-      "_src": "validate_checks_rationale_1",
-      "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "load_cicids2017_cicidsloadconfig",
-      "target": "validate_checks_rationale_1",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L47",
-      "weight": 0.8,
-      "_src": "validate_checks_rationale_71",
-      "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "load_cicids2017_cicidsloadconfig",
-      "target": "validate_checks_rationale_71",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L47",
-      "weight": 0.8,
-      "_src": "validate_checks_rationale_91",
-      "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "load_cicids2017_cicidsloadconfig",
-      "target": "validate_checks_rationale_91",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L47",
-      "weight": 0.8,
-      "_src": "validate_checks_rationale_153",
-      "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "load_cicids2017_cicidsloadconfig",
-      "target": "validate_checks_rationale_153",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L47",
-      "weight": 0.8,
-      "_src": "validate_checks_rationale_283",
-      "_tgt": "load_cicids2017_cicidsloadconfig",
-      "source": "load_cicids2017_cicidsloadconfig",
-      "target": "validate_checks_rationale_283",
       "confidence_score": 0.5
     },
     {
@@ -3268,7 +3304,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L84",
+      "source_location": "L82",
       "weight": 1.0,
       "_src": "load_cicids2017_list_cicids2017_csv_files",
       "_tgt": "load_cicids2017_list_csv_files",
@@ -3280,7 +3316,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L342",
+      "source_location": "L340",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_binary",
       "_tgt": "load_cicids2017_list_csv_files",
@@ -3292,7 +3328,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L401",
+      "source_location": "L399",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_csv_split",
       "_tgt": "load_cicids2017_list_csv_files",
@@ -3304,7 +3340,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L471",
+      "source_location": "L469",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_exact_csv_split",
       "_tgt": "load_cicids2017_list_cicids2017_csv_files",
@@ -3316,19 +3352,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L75",
+      "source_location": "L73",
       "weight": 1.0,
-      "_src": "load_cicids2017_rationale_75",
+      "_src": "load_cicids2017_rationale_73",
       "_tgt": "load_cicids2017_list_cicids2017_csv_files",
       "source": "load_cicids2017_list_cicids2017_csv_files",
-      "target": "load_cicids2017_rationale_75",
+      "target": "load_cicids2017_rationale_73",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L171",
+      "source_location": "L169",
       "weight": 1.0,
       "_src": "load_cicids2017_load_all_csvs",
       "_tgt": "load_cicids2017_normalize_columns",
@@ -3340,7 +3376,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L200",
+      "source_location": "L198",
       "weight": 1.0,
       "_src": "load_cicids2017_load_csv_with_row_limit",
       "_tgt": "load_cicids2017_normalize_columns",
@@ -3352,7 +3388,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L226",
+      "source_location": "L224",
       "weight": 1.0,
       "_src": "load_cicids2017_prepare_cicids_features",
       "_tgt": "load_cicids2017_find_label_column",
@@ -3364,7 +3400,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L235",
+      "source_location": "L233",
       "weight": 1.0,
       "_src": "load_cicids2017_prepare_cicids_features",
       "_tgt": "load_cicids2017_drop_identifier_like_columns",
@@ -3376,7 +3412,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L239",
+      "source_location": "L237",
       "weight": 1.0,
       "_src": "load_cicids2017_prepare_cicids_features",
       "_tgt": "load_cicids2017_coerce_numeric_features",
@@ -3388,7 +3424,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L240",
+      "source_location": "L238",
       "weight": 1.0,
       "_src": "load_cicids2017_prepare_cicids_features",
       "_tgt": "load_cicids2017_clean_rows",
@@ -3400,33 +3436,33 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L289",
+      "weight": 1.0,
+      "_src": "load_cicids2017_load_and_process_csv_paths",
+      "_tgt": "load_cicids2017_load_all_csvs",
+      "source": "load_cicids2017_load_all_csvs",
+      "target": "load_cicids2017_load_and_process_csv_paths",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
+      "source_location": "L343",
+      "weight": 1.0,
+      "_src": "load_cicids2017_load_cicids2017_binary",
+      "_tgt": "load_cicids2017_load_all_csvs",
+      "source": "load_cicids2017_load_all_csvs",
+      "target": "load_cicids2017_load_cicids2017_binary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
       "source_location": "L291",
       "weight": 1.0,
       "_src": "load_cicids2017_load_and_process_csv_paths",
-      "_tgt": "load_cicids2017_load_all_csvs",
-      "source": "load_cicids2017_load_all_csvs",
-      "target": "load_cicids2017_load_and_process_csv_paths",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L345",
-      "weight": 1.0,
-      "_src": "load_cicids2017_load_cicids2017_binary",
-      "_tgt": "load_cicids2017_load_all_csvs",
-      "source": "load_cicids2017_load_all_csvs",
-      "target": "load_cicids2017_load_cicids2017_binary",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L293",
-      "weight": 1.0,
-      "_src": "load_cicids2017_load_and_process_csv_paths",
       "_tgt": "load_cicids2017_load_csv_with_row_limit",
       "source": "load_cicids2017_load_csv_with_row_limit",
       "target": "load_cicids2017_load_and_process_csv_paths",
@@ -3436,19 +3472,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L195",
+      "source_location": "L193",
       "weight": 1.0,
-      "_src": "load_cicids2017_rationale_195",
+      "_src": "load_cicids2017_rationale_193",
       "_tgt": "load_cicids2017_load_csv_with_row_limit",
       "source": "load_cicids2017_load_csv_with_row_limit",
-      "target": "load_cicids2017_rationale_195",
+      "target": "load_cicids2017_rationale_193",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L296",
+      "source_location": "L294",
       "weight": 1.0,
       "_src": "load_cicids2017_load_and_process_csv_paths",
       "_tgt": "load_cicids2017_prepare_cicids_features",
@@ -3460,7 +3496,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L346",
+      "source_location": "L344",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_binary",
       "_tgt": "load_cicids2017_prepare_cicids_features",
@@ -3472,19 +3508,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L225",
+      "source_location": "L223",
       "weight": 1.0,
-      "_src": "load_cicids2017_rationale_225",
+      "_src": "load_cicids2017_rationale_223",
       "_tgt": "load_cicids2017_prepare_cicids_features",
       "source": "load_cicids2017_prepare_cicids_features",
-      "target": "load_cicids2017_rationale_225",
+      "target": "load_cicids2017_rationale_223",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L421",
+      "source_location": "L419",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_csv_split",
       "_tgt": "load_cicids2017_load_and_process_csv_paths",
@@ -3496,7 +3532,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L492",
+      "source_location": "L490",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_exact_csv_split",
       "_tgt": "load_cicids2017_load_and_process_csv_paths",
@@ -3508,19 +3544,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L280",
+      "source_location": "L278",
       "weight": 1.0,
-      "_src": "load_cicids2017_rationale_280",
+      "_src": "load_cicids2017_rationale_278",
       "_tgt": "load_cicids2017_load_and_process_csv_paths",
       "source": "load_cicids2017_load_and_process_csv_paths",
-      "target": "load_cicids2017_rationale_280",
+      "target": "load_cicids2017_rationale_278",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L472",
+      "source_location": "L470",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_exact_csv_split",
       "_tgt": "load_cicids2017_resolve_exact_csv_names",
@@ -3532,19 +3568,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L300",
+      "source_location": "L298",
       "weight": 1.0,
-      "_src": "load_cicids2017_rationale_300",
+      "_src": "load_cicids2017_rationale_298",
       "_tgt": "load_cicids2017_resolve_exact_csv_names",
       "source": "load_cicids2017_resolve_exact_csv_names",
-      "target": "load_cicids2017_rationale_300",
+      "target": "load_cicids2017_rationale_298",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L593",
+      "source_location": "L591",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_split",
       "_tgt": "load_cicids2017_load_cicids2017_binary",
@@ -3556,19 +3592,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L322",
+      "source_location": "L320",
       "weight": 1.0,
-      "_src": "load_cicids2017_rationale_322",
+      "_src": "load_cicids2017_rationale_320",
       "_tgt": "load_cicids2017_load_cicids2017_binary",
       "source": "load_cicids2017_load_cicids2017_binary",
-      "target": "load_cicids2017_rationale_322",
+      "target": "load_cicids2017_rationale_320",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L598",
+      "source_location": "L596",
       "weight": 1.0,
       "_src": "load_cicids2017_load_cicids2017_split",
       "_tgt": "load_cicids2017_load_cicids2017_csv_split",
@@ -3580,43 +3616,43 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L371",
+      "source_location": "L369",
       "weight": 1.0,
-      "_src": "load_cicids2017_rationale_371",
+      "_src": "load_cicids2017_rationale_369",
       "_tgt": "load_cicids2017_load_cicids2017_csv_split",
       "source": "load_cicids2017_load_cicids2017_csv_split",
-      "target": "load_cicids2017_rationale_371",
+      "target": "load_cicids2017_rationale_369",
       "confidence_score": 1.0
     },
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L442",
+      "source_location": "L440",
       "weight": 1.0,
-      "_src": "load_cicids2017_rationale_442",
+      "_src": "load_cicids2017_rationale_440",
       "_tgt": "load_cicids2017_load_cicids2017_exact_csv_split",
       "source": "load_cicids2017_load_cicids2017_exact_csv_split",
-      "target": "load_cicids2017_rationale_442",
+      "target": "load_cicids2017_rationale_440",
       "confidence_score": 1.0
     },
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
-      "source_location": "L545",
+      "source_location": "L543",
       "weight": 1.0,
-      "_src": "load_cicids2017_rationale_545",
+      "_src": "load_cicids2017_rationale_543",
       "_tgt": "load_cicids2017_load_cicids2017_split",
       "source": "load_cicids2017_load_cicids2017_split",
-      "target": "load_cicids2017_rationale_545",
+      "target": "load_cicids2017_rationale_543",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
-      "source_location": "L35",
+      "source_location": "L33",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_nsl_kdd_py",
       "_tgt": "load_nsl_kdd_ensure_dataset_local_dir",
@@ -3628,7 +3664,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
-      "source_location": "L50",
+      "source_location": "L42",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_load_nsl_kdd_py",
       "_tgt": "load_nsl_kdd_load_nsl_kdd_binary",
@@ -3640,7 +3676,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
-      "source_location": "L72",
+      "source_location": "L64",
       "weight": 1.0,
       "_src": "load_nsl_kdd_load_nsl_kdd_binary",
       "_tgt": "load_nsl_kdd_ensure_dataset_local_dir",
@@ -3652,12 +3688,12 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
-      "source_location": "L56",
+      "source_location": "L48",
       "weight": 1.0,
-      "_src": "load_nsl_kdd_rationale_56",
+      "_src": "load_nsl_kdd_rationale_48",
       "_tgt": "load_nsl_kdd_load_nsl_kdd_binary",
       "source": "load_nsl_kdd_load_nsl_kdd_binary",
-      "target": "load_nsl_kdd_rationale_56",
+      "target": "load_nsl_kdd_rationale_48",
       "confidence_score": 1.0
     },
     {
@@ -3786,10 +3822,10 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
       "source_location": "L31",
       "weight": 0.8,
-      "_src": "train_rl_defender_rationale_63",
+      "_src": "train_rl_defender_rationale_59",
       "_tgt": "rl_defender_env_rldatasetdefenderenv",
       "source": "rl_defender_env_rldatasetdefenderenv",
-      "target": "train_rl_defender_rationale_63",
+      "target": "train_rl_defender_rationale_59",
       "confidence_score": 0.5
     },
     {
@@ -3798,10 +3834,10 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
       "source_location": "L31",
       "weight": 0.8,
-      "_src": "train_rl_defender_rationale_83",
+      "_src": "train_rl_defender_rationale_79",
       "_tgt": "rl_defender_env_rldatasetdefenderenv",
       "source": "rl_defender_env_rldatasetdefenderenv",
-      "target": "train_rl_defender_rationale_83",
+      "target": "train_rl_defender_rationale_79",
       "confidence_score": 0.5
     },
     {
@@ -3870,10 +3906,10 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
       "source_location": "L46",
       "weight": 0.8,
-      "_src": "validate_checks_rationale_71",
+      "_src": "validate_checks_rationale_68",
       "_tgt": "rl_defender_env_rldatasetdefenderenv",
       "source": "rl_defender_env_rldatasetdefenderenv",
-      "target": "validate_checks_rationale_71",
+      "target": "validate_checks_rationale_68",
       "confidence_score": 0.5
     },
     {
@@ -3882,10 +3918,10 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
       "source_location": "L46",
       "weight": 0.8,
-      "_src": "validate_checks_rationale_91",
+      "_src": "validate_checks_rationale_88",
       "_tgt": "rl_defender_env_rldatasetdefenderenv",
       "source": "rl_defender_env_rldatasetdefenderenv",
-      "target": "validate_checks_rationale_91",
+      "target": "validate_checks_rationale_88",
       "confidence_score": 0.5
     },
     {
@@ -3894,10 +3930,10 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
       "source_location": "L46",
       "weight": 0.8,
-      "_src": "validate_checks_rationale_153",
+      "_src": "validate_checks_rationale_150",
       "_tgt": "rl_defender_env_rldatasetdefenderenv",
       "source": "rl_defender_env_rldatasetdefenderenv",
-      "target": "validate_checks_rationale_153",
+      "target": "validate_checks_rationale_150",
       "confidence_score": 0.5
     },
     {
@@ -3906,10 +3942,10 @@
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
       "source_location": "L46",
       "weight": 0.8,
-      "_src": "validate_checks_rationale_283",
+      "_src": "validate_checks_rationale_280",
       "_tgt": "rl_defender_env_rldatasetdefenderenv",
       "source": "rl_defender_env_rldatasetdefenderenv",
-      "target": "validate_checks_rationale_283",
+      "target": "validate_checks_rationale_280",
       "confidence_score": 0.5
     },
     {
@@ -4060,7 +4096,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L60",
+      "source_location": "L56",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_train_rl_defender_py",
       "_tgt": "train_rl_defender_make_env_fn",
@@ -4072,7 +4108,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L80",
+      "source_location": "L76",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_train_rl_defender_py",
       "_tgt": "train_rl_defender_evaluate_model",
@@ -4084,7 +4120,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L136",
+      "source_location": "L132",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_train_rl_defender_py",
       "_tgt": "train_rl_defender_parse_args",
@@ -4096,7 +4132,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L177",
+      "source_location": "L173",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_train_rl_defender_py",
       "_tgt": "train_rl_defender_main",
@@ -4120,7 +4156,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L253",
+      "source_location": "L249",
       "weight": 1.0,
       "_src": "train_rl_defender_main",
       "_tgt": "train_rl_defender_make_env_fn",
@@ -4132,19 +4168,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L63",
+      "source_location": "L59",
       "weight": 1.0,
-      "_src": "train_rl_defender_rationale_63",
+      "_src": "train_rl_defender_rationale_59",
       "_tgt": "train_rl_defender_make_env_fn",
       "source": "train_rl_defender_make_env_fn",
-      "target": "train_rl_defender_rationale_63",
+      "target": "train_rl_defender_rationale_59",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L305",
+      "source_location": "L301",
       "weight": 1.0,
       "_src": "train_rl_defender_main",
       "_tgt": "train_rl_defender_evaluate_model",
@@ -4156,19 +4192,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L83",
+      "source_location": "L79",
       "weight": 1.0,
-      "_src": "train_rl_defender_rationale_83",
+      "_src": "train_rl_defender_rationale_79",
       "_tgt": "train_rl_defender_evaluate_model",
       "source": "train_rl_defender_evaluate_model",
-      "target": "train_rl_defender_rationale_83",
+      "target": "train_rl_defender_rationale_79",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
-      "source_location": "L178",
+      "source_location": "L174",
       "weight": 1.0,
       "_src": "train_rl_defender_main",
       "_tgt": "train_rl_defender_parse_args",
@@ -4300,7 +4336,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L70",
+      "source_location": "L67",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_validate_checks_py",
       "_tgt": "validate_checks_progresscallback",
@@ -4312,7 +4348,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L86",
+      "source_location": "L83",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_validate_checks_py",
       "_tgt": "validate_checks_check_a_direct_eval",
@@ -4324,7 +4360,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L144",
+      "source_location": "L141",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_validate_checks_py",
       "_tgt": "validate_checks_check_b_shuffled_labels",
@@ -4336,7 +4372,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L274",
+      "source_location": "L271",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_validate_checks_py",
       "_tgt": "validate_checks_check_c_csv_split",
@@ -4348,7 +4384,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L402",
+      "source_location": "L399",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_validate_checks_py",
       "_tgt": "validate_checks_parse_args",
@@ -4360,7 +4396,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L450",
+      "source_location": "L447",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_src_validate_checks_py",
       "_tgt": "validate_checks_main",
@@ -4384,7 +4420,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L70",
+      "source_location": "L67",
       "weight": 1.0,
       "_src": "validate_checks_progresscallback",
       "_tgt": "basecallback",
@@ -4396,7 +4432,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L72",
+      "source_location": "L69",
       "weight": 1.0,
       "_src": "validate_checks_progresscallback",
       "_tgt": "validate_checks_progresscallback_init",
@@ -4408,7 +4444,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L76",
+      "source_location": "L73",
       "weight": 1.0,
       "_src": "validate_checks_progresscallback",
       "_tgt": "validate_checks_progresscallback_on_step",
@@ -4420,7 +4456,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L345",
+      "source_location": "L342",
       "weight": 1.0,
       "_src": "validate_checks_check_c_csv_split",
       "_tgt": "validate_checks_progresscallback",
@@ -4432,19 +4468,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L71",
+      "source_location": "L68",
       "weight": 1.0,
-      "_src": "validate_checks_rationale_71",
+      "_src": "validate_checks_rationale_68",
       "_tgt": "validate_checks_progresscallback",
       "source": "validate_checks_progresscallback",
-      "target": "validate_checks_rationale_71",
+      "target": "validate_checks_rationale_68",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L501",
+      "source_location": "L498",
       "weight": 1.0,
       "_src": "validate_checks_main",
       "_tgt": "validate_checks_check_a_direct_eval",
@@ -4456,19 +4492,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L91",
+      "source_location": "L88",
       "weight": 1.0,
-      "_src": "validate_checks_rationale_91",
+      "_src": "validate_checks_rationale_88",
       "_tgt": "validate_checks_check_a_direct_eval",
       "source": "validate_checks_check_a_direct_eval",
-      "target": "validate_checks_rationale_91",
+      "target": "validate_checks_rationale_88",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L505",
+      "source_location": "L502",
       "weight": 1.0,
       "_src": "validate_checks_main",
       "_tgt": "validate_checks_check_b_shuffled_labels",
@@ -4480,19 +4516,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L153",
+      "source_location": "L150",
       "weight": 1.0,
-      "_src": "validate_checks_rationale_153",
+      "_src": "validate_checks_rationale_150",
       "_tgt": "validate_checks_check_b_shuffled_labels",
       "source": "validate_checks_check_b_shuffled_labels",
-      "target": "validate_checks_rationale_153",
+      "target": "validate_checks_rationale_150",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L514",
+      "source_location": "L511",
       "weight": 1.0,
       "_src": "validate_checks_main",
       "_tgt": "validate_checks_check_c_csv_split",
@@ -4504,19 +4540,19 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L283",
+      "source_location": "L280",
       "weight": 1.0,
-      "_src": "validate_checks_rationale_283",
+      "_src": "validate_checks_rationale_280",
       "_tgt": "validate_checks_check_c_csv_split",
       "source": "validate_checks_check_c_csv_split",
-      "target": "validate_checks_rationale_283",
+      "target": "validate_checks_rationale_280",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
-      "source_location": "L451",
+      "source_location": "L448",
       "weight": 1.0,
       "_src": "validate_checks_main",
       "_tgt": "validate_checks_parse_args",
@@ -4804,7 +4840,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_canonical_schema.py",
-      "source_location": "L12",
+      "source_location": "L11",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_canonical_schema_py",
       "_tgt": "test_canonical_schema_test_canonical_features_length",
@@ -4816,7 +4852,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_canonical_schema.py",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_canonical_schema_py",
       "_tgt": "test_canonical_schema_test_map_to_canonical_mask_logic",
@@ -4864,7 +4900,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_load_cicids2017.py",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_load_cicids2017_py",
       "_tgt": "test_load_cicids2017_test_prepare_cicids_features_binary_labels",
@@ -4876,7 +4912,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_predict_real_traffic_v2_py",
       "_tgt": "test_predict_real_traffic_v2_test_maybe_convert_time_units",
@@ -4888,7 +4924,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_predict_real_traffic_v2_py",
       "_tgt": "test_predict_real_traffic_v2_test_compute_diagnostics",
@@ -4900,7 +4936,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_reward_config.py",
-      "source_location": "L5",
+      "source_location": "L4",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_reward_config_py",
       "_tgt": "test_reward_config_test_reward_logic_tp_fp_tn_fn",
@@ -4912,7 +4948,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_reward_config.py",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_reward_config_py",
       "_tgt": "test_reward_config_test_unknown_label_reward",
@@ -4924,7 +4960,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_rl_defender_env.py",
-      "source_location": "L5",
+      "source_location": "L4",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_rl_defender_env_py",
       "_tgt": "test_rl_defender_env_test_env_initialization",
@@ -4936,7 +4972,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_rl_defender_env.py",
-      "source_location": "L14",
+      "source_location": "L13",
       "weight": 1.0,
       "_src": "c_users_rivero_desktop_tfg_cyber_ai_tests_test_rl_defender_env_py",
       "_tgt": "test_rl_defender_env_test_env_step_and_reset",
