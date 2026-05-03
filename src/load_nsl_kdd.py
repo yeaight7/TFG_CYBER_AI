@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Optional, Tuple, List
-import shutil
 
 import numpy as np
 import pandas as pd
@@ -8,7 +7,6 @@ from sklearn.preprocessing import StandardScaler
 
 from canonical_schema import (
     NSL_KDD_TO_CANON,
-    NUM_OBSERVATION_FEATURES,
     map_to_canonical,
     get_observation_feature_names,
 )
