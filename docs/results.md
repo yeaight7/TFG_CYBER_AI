@@ -193,6 +193,26 @@ NSL-KDD remains historical benchmarking material only.
 
 - `models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip`
 
+## Random Forest Baseline
+
+The supervised Random Forest baseline has been updated to match the QRDQN evaluation splits strictly. 
+
+**Execution Protocol:**
+Run `uv run python src/baseline_random_forest.py` to generate the latest metrics. This will execute three sweeps across the canonical schema:
+1. **Random Split (full)**
+2. **Day Split (Check C)**
+3. **Leave-One-Out (Wednesday test)**
+
+*Metrics to be populated below after the first manual full-sweep execution (requires ~10-15 minutes on full dataset).*
+
+### Baseline Metrics Placeholder
+
+| Split | F1 Attack | Precision | Recall | Notes |
+|-------|-----------|-----------|--------|-------|
+| Random | pending | pending | pending | Compare against QRDQN C03 |
+| Check C | pending | pending | pending | Compare against QRDQN Check C |
+| Leave-One-Out | pending | pending | pending | Evaluate domain shift tolerance |
+
 ## Open Documentation Gap
 
 The repository now includes code for leave-one-exact-CSV-out validation, but the documentation cannot yet report aggregate metrics for it until a full committed run is added under `runs/validation/`.
