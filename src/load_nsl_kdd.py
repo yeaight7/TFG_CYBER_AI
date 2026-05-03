@@ -6,13 +6,6 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
-try:
-    import kagglehub 
-except ImportError as e:
-    raise ImportError(
-        "Instala kagglehub en tu venv: pip install kagglehub"
-    ) from e
-
 from canonical_schema import (
     NSL_KDD_TO_CANON,
     NUM_OBSERVATION_FEATURES,
@@ -38,10 +31,6 @@ NSL_KDD_COLUMNS = [
     "level_or_difficulty",
 ]
 
-
-def _download_nsl_kdd_via_kagglehub() -> Path:
-    path = kagglehub.dataset_download("hassan06/nslkdd")
-    return Path(path)
 
 def _ensure_dataset_local_dir(target_dir: Path) -> Path:
     target_dir = target_dir.resolve()
