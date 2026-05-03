@@ -1,4 +1,3 @@
-import pytest
 import pandas as pd
 import numpy as np
 from src.load_cicids2017 import _prepare_cicids_features, CICIDSLoadConfig
