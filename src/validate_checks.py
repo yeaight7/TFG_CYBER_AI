@@ -45,11 +45,8 @@ from stable_baselines3.common.callbacks import BaseCallback
 
 from rl_defender_env import RLDatasetDefenderEnv
 from load_cicids2017 import (
-    CICIDSLoadConfig,
     DEFAULT_TRAIN_DAYS,
     DEFAULT_TEST_DAYS,
-    load_cicids2017_binary,
-    load_cicids2017_csv_split,
     load_cicids2017_split,
 )
 
@@ -548,7 +545,7 @@ def main() -> None:
 
     # ── Resumen final ──
     print(f"\n{'=' * 60}")
-    print(f"  RESUMEN DE VALIDACIÓN")
+    print("  RESUMEN DE VALIDACIÓN")
     print(f"{'=' * 60}")
 
     for check_id, res in results.items():
