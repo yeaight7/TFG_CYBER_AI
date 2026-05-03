@@ -55,7 +55,7 @@ def main():
     random.shuffle(closed_ports)
 
     # 1) “Scan-like”: many short connects to closed ports (RST-heavy)
-    for i in range(args.n-closed if False else min(args.n_closed, len(closed_ports))):
+    for i in range(args.n_closed if False else min(args.n_closed, len(closed_ports))):
         tcp_connect(args.target, closed_ports[i % len(closed_ports)])
         time.sleep(random.random() * args.jitter_ms / 1000)
 
