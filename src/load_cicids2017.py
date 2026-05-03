@@ -11,9 +11,7 @@ from sklearn.preprocessing import StandardScaler
 
 from src.canonical_schema import (
     CICIDS2017_TO_CANON,
-    NUM_OBSERVATION_FEATURES,
     map_to_canonical,
-    get_observation_feature_names,
 )
 
 
