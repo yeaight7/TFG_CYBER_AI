@@ -375,16 +375,16 @@
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
       "source_location": "L25",
-      "id": "baseline_random_forest_rationale_25",
-      "community": 8
+      "community": 8,
+      "id": "baseline_random_forest_rationale_25"
     },
     {
       "label": "Eval\u00faa el Random Forest y muestra matriz de confusi\u00f3n + informe de clasificaci\u00f3n",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py",
       "source_location": "L44",
-      "id": "baseline_random_forest_rationale_44",
-      "community": 8
+      "community": 8,
+      "id": "baseline_random_forest_rationale_44"
     },
     {
       "label": "canonical_schema.py",
@@ -620,72 +620,72 @@
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
       "source_location": "L73",
-      "id": "load_cicids2017_rationale_73",
-      "community": 0
+      "community": 0,
+      "id": "load_cicids2017_rationale_73"
     },
     {
       "label": "Carga un CSV individual con l\u00edmite opcional de filas por archivo.",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
       "source_location": "L193",
-      "id": "load_cicids2017_rationale_193",
-      "community": 0
+      "community": 0,
+      "id": "load_cicids2017_rationale_193"
     },
     {
       "label": "Limpia CICIDS2017 y devuelve X, y y nombres de features.",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
       "source_location": "L223",
-      "id": "load_cicids2017_rationale_223",
-      "community": 0
+      "community": 0,
+      "id": "load_cicids2017_rationale_223"
     },
     {
       "label": "Carga una lista de CSVs, aplica preprocesado y devuelve X, y y features.",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
       "source_location": "L278",
-      "id": "load_cicids2017_rationale_278",
-      "community": 0
+      "community": 0,
+      "id": "load_cicids2017_rationale_278"
     },
     {
       "label": "Resuelve nombres exactos de CSV a rutas reales, preservando el orden de entrada.",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
       "source_location": "L298",
-      "id": "load_cicids2017_rationale_298",
-      "community": 0
+      "community": 0,
+      "id": "load_cicids2017_rationale_298"
     },
     {
       "label": "Carga CICIDS2017 desde directorio local y lo adapta al esquema can\u00f3nico.",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
       "source_location": "L320",
-      "id": "load_cicids2017_rationale_320",
-      "community": 0
+      "community": 0,
+      "id": "load_cicids2017_rationale_320"
     },
     {
       "label": "Carga CICIDS2017 separando por archivos CSV (train vs test).      En lugar de",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
       "source_location": "L369",
-      "id": "load_cicids2017_rationale_369",
-      "community": 0
+      "community": 0,
+      "id": "load_cicids2017_rationale_369"
     },
     {
       "label": "Carga CICIDS2017 separando por nombres exactos de archivo CSV.      A diferenc",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
       "source_location": "L440",
-      "id": "load_cicids2017_rationale_440",
-      "community": 0
+      "community": 0,
+      "id": "load_cicids2017_rationale_440"
     },
     {
       "label": "Unified CICIDS2017 loader with split-mode and preset support.      Parameters",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py",
       "source_location": "L543",
-      "id": "load_cicids2017_rationale_543",
-      "community": 0
+      "community": 0,
+      "id": "load_cicids2017_rationale_543"
     },
     {
       "label": "load_nsl_kdd.py",
@@ -716,8 +716,8 @@
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
       "source_location": "L48",
-      "id": "load_nsl_kdd_rationale_48",
-      "community": 11
+      "community": 11,
+      "id": "load_nsl_kdd_rationale_48"
     },
     {
       "label": "rl_defender_env.py",
@@ -914,16 +914,16 @@
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
       "source_location": "L59",
-      "id": "train_rl_defender_rationale_59",
-      "community": 6
+      "community": 6,
+      "id": "train_rl_defender_rationale_59"
     },
     {
       "label": "Eval\u00faa el agente sobre test set.     Devuelve dict con m\u00e9tricas clave.",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py",
       "source_location": "L79",
-      "id": "train_rl_defender_rationale_79",
-      "community": 6
+      "community": 6,
+      "id": "train_rl_defender_rationale_79"
     },
     {
       "label": "tune_hparams.py",
@@ -1086,32 +1086,32 @@
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
       "source_location": "L68",
-      "id": "validate_checks_rationale_68",
-      "community": 1
+      "community": 1,
+      "id": "validate_checks_rationale_68"
     },
     {
       "label": "Evaluaci\u00f3n directa: model.predict(X_test[i]) vs y_test[i].     No pasa por el e",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
       "source_location": "L88",
-      "id": "validate_checks_rationale_88",
-      "community": 1
+      "community": 1,
+      "id": "validate_checks_rationale_88"
     },
     {
       "label": "Baraja y_train y entrena brevemente. Si el modelo a\u00fan obtiene accuracy     alta",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
       "source_location": "L150",
-      "id": "validate_checks_rationale_150",
-      "community": 1
+      "community": 1,
+      "id": "validate_checks_rationale_150"
     },
     {
       "label": "Entrena en unos CSVs de CICIDS2017 y testea en otros.     Es el split m\u00e1s reali",
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py",
       "source_location": "L280",
-      "id": "validate_checks_rationale_280",
-      "community": 1
+      "community": 1,
+      "id": "validate_checks_rationale_280"
     },
     {
       "label": "validate_leave_one_csv_out.py",
