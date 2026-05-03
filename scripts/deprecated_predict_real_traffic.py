@@ -9,7 +9,7 @@ import sys
 REPO = Path(__file__).resolve().parents[1]
 sys.path.append(str(REPO / "src"))
 
-from canonical_schema import map_to_canonical
+from canonical_schema import map_to_canonical  # noqa: E402
 
 FLOWMETER_PY_TO_CANON = {
     "flow_duration": "flow_duration",
@@ -114,7 +114,7 @@ META_COLS = ["src_ip", "dst_ip", "src_port", "dst_port", "protocol", "timestamp"
 
 TIME_COLS_HINTS = ("duration", "iat", "active", "idle")
 
-from load_cicids2017 import load_cicids2017_split
+from load_cicids2017 import load_cicids2017_split  # noqa: E402
 
 # pon aquí los valores que usaste para entrenar el modelo C01
 X_train, y_train, X_test, y_test, scaler, feat_names, meta = load_cicids2017_split(
