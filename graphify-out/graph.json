@@ -727,8 +727,8 @@
       "file_type": "rationale",
       "source_file": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py",
       "source_location": "L56",
-      "id": "load_nsl_kdd_rationale_56",
-      "community": 11
+      "community": 11,
+      "id": "load_nsl_kdd_rationale_56"
     },
     {
       "label": "rl_defender_env.py",
