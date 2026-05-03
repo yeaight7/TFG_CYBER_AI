@@ -13,7 +13,6 @@ dependencies = [
     "sb3-contrib>=2.0.0",
     "torch>=2.0.0",
     "joblib>=1.3.0",
-    "kagglehub>=1.0.1",
 ]
 
 [project.optional-dependencies]
