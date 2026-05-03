@@ -1,0 +1,64 @@
+
+=== [SWEEP 1] Random Split (full) ===
+[CICIDS2017] Cargando 8 archivos CSV desde C:\Users\Rivero\Desktop\TFG_CYBER_AI\datasets\CICIDS2017
+[CICIDS2017] Canonical mapping: 76/76 features present
+=== Random Forest – Confusion matrix (clases: 0=normal, 1=ataque) ===
+[[454222    398]
+ [   256 111273]]
+
+=== Random Forest – Classification report ===
+              precision    recall  f1-score   support
+
+           0     0.9994    0.9991    0.9993    454620
+           1     0.9964    0.9977    0.9971    111529
+
+    accuracy                         0.9988    566149
+   macro avg     0.9979    0.9984    0.9982    566149
+weighted avg     0.9988    0.9988    0.9988    566149
+
+
+=== [SWEEP 2] Day Split (Check C) ===
+[CSV-split] Train CSVs (5): ['Monday-WorkingHours.pcap_ISCX.csv', 'Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv', 'Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv', 'Tuesday-WorkingHours.pcap_ISCX.csv', 'Wednesday-workingHours.pcap_ISCX.csv']
+[CSV-split] Test  CSVs (3): ['Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv', 'Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv', 'Friday-WorkingHours-Morning.pcap_ISCX.csv']
+[CICIDS2017] Canonical mapping: 76/76 features present
+[CICIDS2017] Canonical mapping: 76/76 features present
+[CSV-split] Train: (2127498, 152) (benign=1858775, attack=268723)
+[CSV-split] Test:  (703245, 152) (benign=414322, attack=288923)
+=== Random Forest – Confusion matrix (clases: 0=normal, 1=ataque) ===
+[[414174    148]
+ [266387  22536]]
+
+=== Random Forest – Classification report ===
+              precision    recall  f1-score   support
+
+           0     0.6086    0.9996    0.7566    414322
+           1     0.9935    0.0780    0.1446    288923
+
+    accuracy                         0.6210    703245
+   macro avg     0.8010    0.5388    0.4506    703245
+weighted avg     0.7667    0.6210    0.5052    703245
+
+
+=== [SWEEP 3] Leave-One-Out (Wednesday test) ===
+[Exact-CSV-split] Train CSVs (7): ['Monday-WorkingHours.pcap_ISCX.csv', 'Tuesday-WorkingHours.pcap_ISCX.csv', 'Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv', 'Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv', 'Friday-WorkingHours-Morning.pcap_ISCX.csv', 'Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv', 'Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv']
+[Exact-CSV-split] Test  CSVs (1): ['Wednesday-workingHours.pcap_ISCX.csv']
+[CICIDS2017] Canonical mapping: 76/76 features present
+[CICIDS2017] Canonical mapping: 76/76 features present
+[Exact-CSV-split] Train: (2138040, 152) (benign=1833066, attack=304974)
+[Exact-CSV-split] Test:  (692703, 152) (benign=440031, attack=252672)
+=== Random Forest – Confusion matrix (clases: 0=normal, 1=ataque) ===
+[[439989     42]
+ [251257   1415]]
+
+=== Random Forest – Classification report ===
+              precision    recall  f1-score   support
+
+           0     0.6365    0.9999    0.7779    440031
+           1     0.9712    0.0056    0.0111    252672
+
+    accuracy                         0.6372    692703
+   macro avg     0.8038    0.5028    0.3945    692703
+weighted avg     0.7586    0.6372    0.4982    692703
+
+
+Modelo Random Forest (Random split) guardado en: models\rf_cicids2017_canonical_20260504_000432.joblib
