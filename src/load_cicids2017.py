@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-from canonical_schema import (
+from src.canonical_schema import (
     CICIDS2017_TO_CANON,
     NUM_OBSERVATION_FEATURES,
     map_to_canonical,
