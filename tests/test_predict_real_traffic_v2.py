@@ -1,4 +1,3 @@
-import pytest
 import pandas as pd
 import numpy as np
 from scripts.predict_real_traffic_v2 import maybe_convert_time_units, compute_diagnostics
