@@ -34,17 +34,11 @@ NSL_KDD_COLUMNS = [
 
 def _ensure_dataset_local_dir(target_dir: Path) -> Path:
     target_dir = target_dir.resolve()
-    target_dir.mkdir(parents=True, exist_ok=True)
-
-    kaggle_dir = _download_nsl_kdd_via_kagglehub()
-
-    # Copiar todos los .txt (por si el dataset tiene variantes)
-    for src_path in kaggle_dir.glob("*.txt"):
-        if src_path.is_file():
-            dest_path = target_dir / src_path.name
-            if not dest_path.exists():
-                shutil.copy2(src_path, dest_path)
-
+    if not target_dir.exists():
+        raise FileNotFoundError(
+            f"Directorio local de NSL-KDD no encontrado: {target_dir}. "
+            "Asegúrate de que los archivos KDDTrain+.txt y KDDTest+.txt estén presentes."
+        )
     return target_dir
 
 def load_nsl_kdd_binary(
@@ -54,7 +48,7 @@ def load_nsl_kdd_binary(
     scale: bool = False,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
     """
-    Carga NSL-KDD desde Kaggle (hassan06/nslkdd), lo preprocesa y devuelve:
+    Carga NSL-KDD localmente, lo preprocesa y devuelve:
 
         X_train, y_train, X_test, y_test, scaler, feature_names
 
