@@ -399,6 +399,8 @@ def main() -> None:
 
     # ── Step 6: Scaling ─────────────────────────────────────────────────
     if not args.no_scale:
+        # SECURITY WARNING: joblib.load is unsafe for untrusted files. 
+        # Only load scaler artifacts from trusted local paths.
         scaler = joblib.load(args.scaler)
         X = scaler.transform(X).astype(np.float32)
         print("[scale] StandardScaler applied.")
@@ -418,6 +420,8 @@ def main() -> None:
         print(f"[diagnostics] Saved to {diag_path}")
 
     # ── Step 9: Load model + predict ────────────────────────────────────
+    # SECURITY WARNING: QRDQN.load/DQN.load uses pickle under the hood. 
+    # Only load models from trusted local paths to avoid RCE vulnerabilities.
     model = load_model(args.model)
     y_pred = batched_predict(model, X, batch_size=4096)
 
