@@ -1,13 +1,10 @@
 from pathlib import Path
-from typing import List, Optional, Tuple
 from datetime import datetime
 
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.preprocessing import StandardScaler
 
-from src.load_nsl_kdd import load_nsl_kdd_binary
 from src.load_cicids2017 import load_cicids2017_binary, CICIDSLoadConfig
 
 
