@@ -1,18 +1,17 @@
 ---
 source_file: "scripts/graphify_auto_update.py"
 type: "code"
-community: "Community 5"
+community: "Graphify Auto-Update"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_5
+  - community/Graphify_Auto-Update
 ---
 
 # graphify_auto_update.py
 
 ## Connections
-- [[Graphify Corpus Policy]] - `references` [EXTRACTED]
 - [[_diff_range()]] - `contains` [EXTRACTED]
 - [[_has_structural_patch()]] - `contains` [EXTRACTED]
 - [[_is_code()]] - `contains` [EXTRACTED]
@@ -25,6 +24,6 @@ tags:
 - [[_run_git()]] - `contains` [EXTRACTED]
 - [[_write_needs_update()]] - `contains` [EXTRACTED]
 - [[decide_and_run()]] - `contains` [EXTRACTED]
-- [[main()]] - `contains` [EXTRACTED]
+- [[main()_1]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_5
+#graphify/code #graphify/EXTRACTED #community/Graphify_Auto-Update
