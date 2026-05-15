@@ -13,12 +13,24 @@ runs/
 models/
 pcaps/
 lab/
+*.csv
 
 # Build/report artifacts that are not maintained source context
-report/
-docs/Personal Research/
 *.pdf
 
 # Personal notes and reusable skill metadata are intentionally outside the corpus
 .github/skills/
 .remember/
+
+# latex auxiliary files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.toc
+*.gz
