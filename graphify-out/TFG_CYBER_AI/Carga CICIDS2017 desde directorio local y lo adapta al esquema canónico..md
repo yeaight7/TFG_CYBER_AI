@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "Community 0"
-location: "L322"
+community: "RF Baseline Module"
+location: "L320"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Community_0
+  - community/RF_Baseline_Module
 ---
 
 # Carga CICIDS2017 desde directorio local y lo adapta al esquema canónico.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[load_cicids2017_binary()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Community_0
+#graphify/rationale #graphify/EXTRACTED #community/RF_Baseline_Module

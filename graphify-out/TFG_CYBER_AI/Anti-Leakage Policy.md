@@ -1,18 +1,18 @@
 ---
-source_file: ".github/AGENT_CONTEXT.md"
-type: "document"
-community: "Community 0"
-location: "Anti-Leakage Policy"
+source_file: "AGENTS.md"
+type: "rationale"
+community: "CICIDS2017 Research & Experiments"
+location: "AGENTS.md#anti-leakage-rules"
 tags:
-  - graphify/document
+  - graphify/rationale
   - graphify/EXTRACTED
-  - community/Community_0
+  - community/CICIDS2017_Research__Experiments
 ---
 
 # Anti-Leakage Policy
 
 ## Connections
-- [[Canonical Flow Schema]] - `conceptually_related_to` [EXTRACTED]
-- [[_drop_identifier_like_columns()]] - `references` [EXTRACTED]
+- [[Arp2020DosDontsMLSecurity]] - `semantically_similar_to` [INFERRED]
+- [[Canonical Flow Schema (76 Features)]] - `rationale_for` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Community_0
+#graphify/rationale #graphify/EXTRACTED #community/CICIDS2017_Research__Experiments

@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "Community 0"
-location: "L280"
+community: "RF Baseline Module"
+location: "L278"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Community_0
+  - community/RF_Baseline_Module
 ---
 
 # Carga una lista de CSVs, aplica preprocesado y devuelve X, y y features.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[_load_and_process_csv_paths()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Community_0
+#graphify/rationale #graphify/EXTRACTED #community/RF_Baseline_Module
