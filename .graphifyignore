@@ -6,6 +6,7 @@ venv/
 # Generated graph artifacts
 graphify-out/
 .graphify_*.json
+tests/test_graphify_auto_update.py
 
 # Data, captures, model artifacts, and experiment outputs
 datasets/
