@@ -1,18 +1,17 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "code"
-community: "Community 0"
+community: "RF Baseline Module"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_0
+  - community/RF_Baseline_Module
 ---
 
 # load_cicids2017.py
 
 ## Connections
-- [[CICIDS2017 Primary Dataset]] - `references` [EXTRACTED]
 - [[CICIDSLoadConfig]] - `contains` [EXTRACTED]
 - [[_clean_rows()]] - `contains` [EXTRACTED]
 - [[_coerce_numeric_features()]] - `contains` [EXTRACTED]
@@ -31,4 +30,4 @@ tags:
 - [[load_cicids2017_exact_csv_split()]] - `contains` [EXTRACTED]
 - [[load_cicids2017_split()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_0
+#graphify/code #graphify/EXTRACTED #community/RF_Baseline_Module
