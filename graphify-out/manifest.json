@@ -1,26 +1,214 @@
 {
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py": 1777150724.0907238,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic.py": 1775680974.2361226,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py": 1775942764.7088654,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py": 1775680974.2366254,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py": 1775680974.237137,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py": 1775932238.1796138,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py": 1775680974.2376437,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\rl_defender_env.py": 1777148799.0747292,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\scaling_utils.py": 1775680974.2382154,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py": 1777148799.0757291,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\tune_hparams.py": 1777148799.0762348,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py": 1777148799.077241,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py": 1777148799.0782406,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_graphify_auto_update.py": 1777150724.0917246,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\AGENTS.md": 1777150724.084735,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\README.md": 1777148799.0666478,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\requirements.txt": 1777148799.0679698,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\AGENT_CONTEXT.md": 1775934798.6180007,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\DEFENSA_TFG_PROGRESO.md": 1775934798.6180007,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\DEFENSA_TFG_SCRIPT.md": 1776345281.7156126,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\gcp_lab.md": 1775934798.6200085,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\phase2_plan.md": 1775934798.621009,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\README.md": 1776452908.8222313,
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\results.md": 1775934798.621009
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\report.toc": {
+    "mtime": 1778801495.885141,
+    "hash": "ff15ae659a6ec6dd29b8b1da25fcace3"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\deprecated_predict_real_traffic.py": {
+    "mtime": 1777847776.7074897,
+    "hash": "302d499b70f8895942d2ea4a129ccabc"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\graphify_auto_update.py": {
+    "mtime": 1777150724.0907238,
+    "hash": "fea250b4f5d8d254caf779c608e7036b"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\predict_real_traffic_v2.py": {
+    "mtime": 1777844436.3126144,
+    "hash": "625555e0be85c0410d1a06628d656326"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py": {
+    "mtime": 1777847838.564096,
+    "hash": "4bbd59185d1cf3372c06f6b14809405d"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py": {
+    "mtime": 1777847838.6193266,
+    "hash": "5101334e9715ccd8c5a131195d4b8149"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py": {
+    "mtime": 1777847838.6442094,
+    "hash": "c2fb204ae6f7465351ba7c406c8f03b4"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py": {
+    "mtime": 1777847838.6639986,
+    "hash": "531d1e61ca5057f29ede2f161b0a8d6b"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\rl_defender_env.py": {
+    "mtime": 1777148799.0747292,
+    "hash": "33e246cd7b6da8d914877a917358149a"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\scaling_utils.py": {
+    "mtime": 1775680974.2382154,
+    "hash": "4d0e5ec8c35199d42040b3ca1ea1bc05"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py": {
+    "mtime": 1777847838.6958292,
+    "hash": "c0d1d1a90128d70d029bdc4749c8ea44"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\tune_hparams.py": {
+    "mtime": 1777847838.7276843,
+    "hash": "7327ac09689b16986544ed47200b67ab"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_checks.py": {
+    "mtime": 1777847838.7839894,
+    "hash": "ccc0370908c6a8f2cdac7c19551d41e2"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\validate_leave_one_csv_out.py": {
+    "mtime": 1777659380.7946994,
+    "hash": "be075717b561d409c51ddc6ada4e723a"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_canonical_schema.py": {
+    "mtime": 1777847838.7539039,
+    "hash": "e32dafcbc053ee3c5b3fcbe02b48db2f"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_graphify_auto_update.py": {
+    "mtime": 1777150724.0917246,
+    "hash": "451740028b22a6af7fca14379f87ed2c"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_load_cicids2017.py": {
+    "mtime": 1777847838.8099577,
+    "hash": "ab0b875d0c4d359272fbd55be46559f4"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py": {
+    "mtime": 1777847838.838858,
+    "hash": "e999a87b648d6b0772327806b2eddac7"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_reward_config.py": {
+    "mtime": 1777847838.8704786,
+    "hash": "ca2537f8b77143ae8d5622fb419c9085"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_rl_defender_env.py": {
+    "mtime": 1777847838.9003396,
+    "hash": "08bffeb8d2b0ccfec7548e69b3dd59d9"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\AGENTS.md": {
+    "mtime": 1777150724.084735,
+    "hash": "0ba3ce3cddf63603a89cb4f8b4a516f4"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\README.md": {
+    "mtime": 1777668163.9598255,
+    "hash": "cb79a7685221ba5c1307957279db31f1"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\requirements.txt": {
+    "mtime": 1777148799.0679698,
+    "hash": "1244aac8f5b47e8f7296502c678f3f37"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\AGENT_CONTEXT.md": {
+    "mtime": 1775934798.6180007,
+    "hash": "1dc036adc67128e80018532c2326e923"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\DEFENSA_TFG_PROGRESO.md": {
+    "mtime": 1775934798.6180007,
+    "hash": "17effbf3a1650d6179d595c4197defbe"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\DEFENSA_TFG_SCRIPT.md": {
+    "mtime": 1776345281.7156126,
+    "hash": "cbfdf5a1a3fda5e86cd9d3d576ce1c55"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\gcp_lab.md": {
+    "mtime": 1777844537.9454958,
+    "hash": "fa2a3c50719c796949c48579ffcea2c0"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\phase2_plan.md": {
+    "mtime": 1775934798.621009,
+    "hash": "96f5025d3d7aa1a0b33353999fac7f75"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\README.md": {
+    "mtime": 1776452908.8222313,
+    "hash": "612de5c500b12baf54eb4be174c6ae87"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\results.md": {
+    "mtime": 1777844877.268488,
+    "hash": "d83212da188742140a9ddd1971b60eb4"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\experiments\\cicids2017_qrdqn_experiments.md": {
+    "mtime": 1776032277.5072112,
+    "hash": "64fb7479b9d874a384b10ac92fd44f59"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\experiments\\nslkdd_experiments.md": {
+    "mtime": 1775934798.62201,
+    "hash": "010c63ee14076c054e883f418eaa06a1"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\experiments\\README.md": {
+    "mtime": 1776032277.5072112,
+    "hash": "fb84410c6b9dae6214a64d6655cbe80e"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\CITATION_PLAN.md": {
+    "mtime": 1778800763.6750975,
+    "hash": "d01645e63aec49c8c207d140c4309e58"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\CLAIMS_BANK.md": {
+    "mtime": 1778800492.126438,
+    "hash": "740410eef0ce1e22214c83f2644039e9"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\CODEX_HANDOFF.md": {
+    "mtime": 1778800492.133799,
+    "hash": "5f4c014caf2b31e708997dfa574c19e5"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\deep-research-report1.md": {
+    "mtime": 1778794356.3371205,
+    "hash": "076d43a96d7709d95106f995bdae64f3"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\deep-research-report2.md": {
+    "mtime": 1778798858.039905,
+    "hash": "b094ffbed2551a065d79bbff4ec97132"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\METHODOLOGY_HANDOFF.md": {
+    "mtime": 1778800763.6760957,
+    "hash": "d1bf019f635948285bcec52018b450df"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\README.md": {
+    "mtime": 1778800763.6770954,
+    "hash": "07617c1448663a0bcb9aaf947c723cad"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\report-classification-dossier.md": {
+    "mtime": 1778798444.7688227,
+    "hash": "71e1ac67a70f068f11c06a730764233f"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\report-deep-dive.md": {
+    "mtime": 1778795042.2984843,
+    "hash": "4e9e598feb5ae0b844e5e4118919e0aa"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\report-NIDS-datasets.md": {
+    "mtime": 1778795215.9258888,
+    "hash": "17467a7bcdeb15cf6e098f4e2695067c"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\report-qrdqn-deep-distributional-rl.md": {
+    "mtime": 1778798639.2117856,
+    "hash": "b66aa57b270c602f70ed4c6f2a2bf148"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\report-reward-and-cost-sensitive-design-dossier.md": {
+    "mtime": 1778800145.4726543,
+    "hash": "cfe102434a46df59414d17e2a3219d59"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\report-source-map.md": {
+    "mtime": 1778794843.6151419,
+    "hash": "626f86a033574fedde3f2a4807224428"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\Research1.md": {
+    "mtime": 1778794861.5650444,
+    "hash": "971923a50e8fd32391482d6a65f45bab"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\Research2.md": {
+    "mtime": 1778794879.727487,
+    "hash": "acb9f6a25f644da172a72ac857f7edfa"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\Research3.md": {
+    "mtime": 1778794850.9488227,
+    "hash": "03c3c12242359d7453cdb4aa96d4a28a"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\RESEARCH_GAPS_AND_TODOS.md": {
+    "mtime": 1778800763.6760957,
+    "hash": "e1b11005f693f70d8df2d6752b780762"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\RESEARCH_INDEX.md": {
+    "mtime": 1778800492.126438,
+    "hash": "3d01c7c73be12624a031306cc1237425"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\STATE_OF_ART_HANDOFF.md": {
+    "mtime": 1778800763.6750975,
+    "hash": "7229808fb67735b4a32b41c5ddc2e53e"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scratch\\experimental_design_board.html": {
+    "mtime": 1778791770.5080369,
+    "hash": "80bb26fd68cc18bfc5f1ff379b57b931"
+  }
 }
