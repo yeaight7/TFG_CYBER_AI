@@ -1,35 +1,64 @@
 {
-  "corpus_tokens": 25869,
-  "corpus_words": 19402,
-  "nodes": 187,
-  "edges": 339,
-  "avg_query_tokens": 3929,
-  "reduction_ratio": 6.6,
+  "corpus_tokens": 146560,
+  "corpus_words": 109920,
+  "nodes": 413,
+  "edges": 596,
+  "avg_query_tokens": 4254,
+  "reduction_ratio": 34.5,
   "per_question": [
     {
       "question": "how does authentication work",
-      "query_tokens": 1441,
-      "reduction": 18.0
+      "query_tokens": 3488,
+      "reduction": 42.0
     },
     {
       "question": "what is the main entry point",
-      "query_tokens": 4451,
-      "reduction": 5.8
+      "query_tokens": 3379,
+      "reduction": 43.4
     },
     {
       "question": "how are errors handled",
-      "query_tokens": 4024,
-      "reduction": 6.4
+      "query_tokens": 3125,
+      "reduction": 46.9
     },
     {
       "question": "what connects the data layer to the api",
-      "query_tokens": 4904,
-      "reduction": 5.3
+      "query_tokens": 5685,
+      "reduction": 25.8
     },
     {
       "question": "what are the core abstractions",
-      "query_tokens": 4828,
-      "reduction": 5.4
+      "query_tokens": 5597,
+      "reduction": 26.2
     }
-  ]
+  ],
+  "domain_queries": [
+    {
+      "question": "Why do CICIDS2017_TO_CANON and FLOWMETER_PY_TO_CANON exist as two separate feature mappings",
+      "query_tokens": 3906,
+      "reduction": 37.5
+    },
+    {
+      "question": "How does the canonical schema connect to the RL environment and training pipeline",
+      "query_tokens": 8561,
+      "reduction": 17.1
+    },
+    {
+      "question": "What is the multi-stage validation strategy and how do checks A B C and leave-one-out relate",
+      "query_tokens": 7109,
+      "reduction": 20.6
+    },
+    {
+      "question": "How does QRDQN hyperparameter tuning work and what parameters does Optuna optimize",
+      "query_tokens": 3295,
+      "reduction": 44.5
+    },
+    {
+      "question": "What is the Phase 2 real traffic inference pipeline and how does it handle domain shift",
+      "query_tokens": 6079,
+      "reduction": 24.1
+    }
+  ],
+  "domain_avg_query_tokens": 5790,
+  "domain_reduction_ratio": 25.3
 }
