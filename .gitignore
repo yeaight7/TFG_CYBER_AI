@@ -29,6 +29,7 @@ models/rf_cicids2017_canonical_20260504_000432.joblib
 # Graphify output files
 .graphify_python
 graphify-out/cache
+graphify-out/*.py
 .graphify_*.json
 graphify-out/obsidian/
 graphify-out/obsidian/.obsidian/
