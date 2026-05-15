@@ -1,20 +1,18 @@
 ---
 source_file: "src/validate_leave_one_csv_out.py"
 type: "code"
-community: "Community 7"
+community: "Leave-One-Out Validation"
 location: "L311"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_7
+  - community/Leave-One-Out_Validation
 ---
 
 # main()
 
 ## Connections
-- [[.close()]] - `calls` [INFERRED]
 - [[CICIDSLoadConfig]] - `calls` [INFERRED]
-- [[Leave-One-Exact-CSV-Out Validation]] - `references` [EXTRACTED]
 - [[_build_aggregate_results()]] - `calls` [EXTRACTED]
 - [[_resolve_holdout_csvs()]] - `calls` [EXTRACTED]
 - [[evaluate_model_direct()]] - `calls` [EXTRACTED]
@@ -24,4 +22,4 @@ tags:
 - [[parse_args()_4]] - `calls` [EXTRACTED]
 - [[validate_leave_one_csv_out.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_7
+#graphify/code #graphify/EXTRACTED #community/Leave-One-Out_Validation

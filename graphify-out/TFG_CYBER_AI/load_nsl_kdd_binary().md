@@ -1,22 +1,21 @@
 ---
 source_file: "src/load_nsl_kdd.py"
 type: "code"
-community: "Community 6"
-location: "L61"
+community: "Deprecated Inference v1"
+location: "L42"
 tags:
   - graphify/code
-  - graphify/INFERRED
-  - community/Community_6
+  - graphify/EXTRACTED
+  - community/Deprecated_Inference_v1
 ---
 
 # load_nsl_kdd_binary()
 
 ## Connections
-- [[Carga NSL-KDD desde Kaggle (hassan06nslkdd), lo preprocesa y devuelve]] - `rationale_for` [EXTRACTED]
+- [[Carga NSL-KDD localmente, lo preprocesa y devuelve          X_train, y_train,]] - `rationale_for` [EXTRACTED]
 - [[_ensure_dataset_local_dir()]] - `calls` [EXTRACTED]
 - [[get_observation_feature_names()]] - `calls` [INFERRED]
 - [[load_nsl_kdd.py]] - `contains` [EXTRACTED]
-- [[main()_3]] - `calls` [INFERRED]
 - [[map_to_canonical()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Community_6
+#graphify/code #graphify/EXTRACTED #community/Deprecated_Inference_v1

@@ -1,12 +1,12 @@
 ---
 source_file: "src/validate_checks.py"
 type: "code"
-community: "Community 4"
-location: "L402"
+community: "Validation Checks Module"
+location: "L399"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_4
+  - community/Validation_Checks_Module
 ---
 
 # parse_args()
@@ -15,4 +15,4 @@ tags:
 - [[main()_6]] - `calls` [EXTRACTED]
 - [[validate_checks.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_4
+#graphify/code #graphify/EXTRACTED #community/Validation_Checks_Module

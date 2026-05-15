@@ -1,12 +1,12 @@
 ---
 source_file: "src/baseline_random_forest.py"
 type: "code"
-community: "Community 0"
-location: "L59"
+community: "RF Baseline Module"
+location: "L56"
 tags:
   - graphify/code
-  - graphify/EXTRACTED
-  - community/Community_0
+  - graphify/INFERRED
+  - community/RF_Baseline_Module
 ---
 
 # main()
@@ -16,7 +16,8 @@ tags:
 - [[baseline_random_forest.py]] - `contains` [EXTRACTED]
 - [[evaluate_random_forest()]] - `calls` [EXTRACTED]
 - [[load_cicids2017_binary()]] - `calls` [INFERRED]
-- [[load_nsl_kdd_binary()]] - `calls` [INFERRED]
+- [[load_cicids2017_csv_split()]] - `calls` [INFERRED]
+- [[load_cicids2017_exact_csv_split()]] - `calls` [INFERRED]
 - [[train_random_forest()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_0
+#graphify/code #graphify/INFERRED #community/RF_Baseline_Module

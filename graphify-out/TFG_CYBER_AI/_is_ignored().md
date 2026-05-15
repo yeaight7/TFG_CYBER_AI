@@ -1,12 +1,12 @@
 ---
 source_file: "scripts/graphify_auto_update.py"
 type: "code"
-community: "Community 5"
+community: "Graphify Auto-Update"
 location: "L68"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_5
+  - community/Graphify_Auto-Update
 ---
 
 # _is_ignored()
@@ -18,4 +18,4 @@ tags:
 - [[decide_and_run()]] - `calls` [EXTRACTED]
 - [[graphify_auto_update.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_5
+#graphify/code #graphify/EXTRACTED #community/Graphify_Auto-Update

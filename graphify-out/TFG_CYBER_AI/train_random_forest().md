@@ -1,19 +1,19 @@
 ---
 source_file: "src/baseline_random_forest.py"
 type: "code"
-community: "Community 0"
-location: "L21"
+community: "RF Baseline Module"
+location: "L18"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_0
+  - community/RF_Baseline_Module
 ---
 
 # train_random_forest()
 
 ## Connections
-- [[Entrena un RandomForestClassifier sobre NSL-KDD y devuelve el modelo.]] - `rationale_for` [EXTRACTED]
+- [[Entrena un RandomForestClassifier sobre el dataset y devuelve el modelo.]] - `rationale_for` [EXTRACTED]
 - [[baseline_random_forest.py]] - `contains` [EXTRACTED]
 - [[main()_3]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_0
+#graphify/code #graphify/EXTRACTED #community/RF_Baseline_Module

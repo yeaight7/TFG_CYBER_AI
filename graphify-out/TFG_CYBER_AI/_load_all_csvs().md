@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "code"
-community: "Community 0"
-location: "L164"
+community: "RF Baseline Module"
+location: "L162"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_0
+  - community/RF_Baseline_Module
 ---
 
 # _load_all_csvs()
@@ -17,4 +17,4 @@ tags:
 - [[load_cicids2017.py]] - `contains` [EXTRACTED]
 - [[load_cicids2017_binary()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_0
+#graphify/code #graphify/EXTRACTED #community/RF_Baseline_Module

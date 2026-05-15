@@ -1,12 +1,12 @@
 ---
 source_file: "src/canonical_schema.py"
 type: "code"
-community: "Community 3"
+community: "Deprecated Inference v1"
 location: "L346"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_3
+  - community/Deprecated_Inference_v1
 ---
 
 # get_canonical_feature_names()
@@ -15,4 +15,4 @@ tags:
 - [[Devuelve la lista de nombres de features canónicas (sin máscara).]] - `rationale_for` [EXTRACTED]
 - [[canonical_schema.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_3
+#graphify/code #graphify/EXTRACTED #community/Deprecated_Inference_v1

@@ -1,21 +1,18 @@
 ---
-source_file: "scripts/predict_real_traffic.py"
+source_file: "scripts/graphify_auto_update.py"
 type: "code"
-community: "Community 3"
-location: "L158"
+community: "Graphify Auto-Update"
+location: "L231"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_3
+  - community/Graphify_Auto-Update
 ---
 
 # main()
 
 ## Connections
-- [[batched_predict()]] - `calls` [EXTRACTED]
-- [[load_model()]] - `calls` [EXTRACTED]
-- [[map_to_canonical()]] - `calls` [INFERRED]
-- [[maybe_convert_time_units()]] - `calls` [EXTRACTED]
-- [[predict_real_traffic.py]] - `contains` [EXTRACTED]
+- [[decide_and_run()]] - `calls` [EXTRACTED]
+- [[graphify_auto_update.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_3
+#graphify/code #graphify/EXTRACTED #community/Graphify_Auto-Update

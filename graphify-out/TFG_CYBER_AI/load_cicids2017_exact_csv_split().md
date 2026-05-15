@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "code"
-community: "Community 0"
-location: "L436"
+community: "RF Baseline Module"
+location: "L434"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_0
+  - community/RF_Baseline_Module
 ---
 
 # load_cicids2017_exact_csv_split()
@@ -18,6 +18,7 @@ tags:
 - [[_resolve_exact_csv_names()]] - `calls` [EXTRACTED]
 - [[list_cicids2017_csv_files()]] - `calls` [EXTRACTED]
 - [[load_cicids2017.py]] - `contains` [EXTRACTED]
+- [[main()_3]] - `calls` [INFERRED]
 - [[main()_7]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_0
+#graphify/code #graphify/EXTRACTED #community/RF_Baseline_Module

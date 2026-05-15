@@ -1,19 +1,21 @@
 ---
-source_file: "scripts/graphify_auto_update.py"
+source_file: "scripts/deprecated_predict_real_traffic.py"
 type: "code"
-community: "Community 5"
-location: "L231"
+community: "Deprecated Inference v1"
+location: "L158"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_5
+  - community/Deprecated_Inference_v1
 ---
 
 # main()
 
 ## Connections
-- [[decide_and_run()]] - `calls` [EXTRACTED]
-- [[graphify_auto_update.py]] - `contains` [EXTRACTED]
-- [[parse_args()_4]] - `calls` [INFERRED]
+- [[batched_predict()]] - `calls` [EXTRACTED]
+- [[deprecated_predict_real_traffic.py]] - `contains` [EXTRACTED]
+- [[load_model()]] - `calls` [EXTRACTED]
+- [[map_to_canonical()]] - `calls` [INFERRED]
+- [[maybe_convert_time_units()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_5
+#graphify/code #graphify/EXTRACTED #community/Deprecated_Inference_v1

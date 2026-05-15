@@ -1,12 +1,12 @@
 ---
 source_file: "scripts/graphify_auto_update.py"
 type: "code"
-community: "Community 5"
+community: "Graphify Auto-Update"
 location: "L54"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_5
+  - community/Graphify_Auto-Update
 ---
 
 # _run_git()
@@ -17,4 +17,4 @@ tags:
 - [[_rev_exists()]] - `calls` [EXTRACTED]
 - [[graphify_auto_update.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_5
+#graphify/code #graphify/EXTRACTED #community/Graphify_Auto-Update

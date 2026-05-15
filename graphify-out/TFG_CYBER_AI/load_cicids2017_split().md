@@ -1,19 +1,18 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "code"
-community: "Community 0"
-location: "L535"
+community: "RF Baseline Module"
+location: "L533"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Community_0
+  - community/RF_Baseline_Module
 ---
 
 # load_cicids2017_split()
 
 ## Connections
 - [[CICIDSLoadConfig]] - `calls` [EXTRACTED]
-- [[Dataset Adapter Contract]] - `references` [EXTRACTED]
 - [[Unified CICIDS2017 loader with split-mode and preset support.      Parameters]] - `rationale_for` [EXTRACTED]
 - [[check_c_csv_split()]] - `calls` [INFERRED]
 - [[load_cicids2017.py]] - `contains` [EXTRACTED]
@@ -22,4 +21,4 @@ tags:
 - [[main()_4]] - `calls` [INFERRED]
 - [[main()_6]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Community_0
+#graphify/code #graphify/EXTRACTED #community/RF_Baseline_Module
