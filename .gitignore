@@ -4,8 +4,12 @@ venv/
 *.pyc
 __pycache__/
 *.aux
+*.bbl
+*.bcf
+*.blg
 *.log
 *.out
+*.run.xml
 *.toc
 *.gz
 *.fdb_latexmk
@@ -23,6 +27,7 @@ runs/phase2/P2v2_pred_20260412_004624/predictions.csv
 models/rf_cicids2017_canonical_20260504_000432.joblib
 
 # Graphify output files
+.graphify_python
 graphify-out/cache
 .graphify_*.json
 graphify-out/obsidian/
