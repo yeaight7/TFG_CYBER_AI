@@ -1,12 +1,12 @@
 ---
 source_file: "src/canonical_schema.py"
 type: "rationale"
-community: "Community 3"
+community: "Deprecated Inference v1"
 location: "L352"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Community_3
+  - community/Deprecated_Inference_v1
 ---
 
 # Devuelve la lista completa de nombres: features + máscara de missingness.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[get_observation_feature_names()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Community_3
+#graphify/rationale #graphify/EXTRACTED #community/Deprecated_Inference_v1
