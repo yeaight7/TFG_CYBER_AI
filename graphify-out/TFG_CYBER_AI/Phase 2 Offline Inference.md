@@ -1,23 +1,20 @@
 ---
-source_file: "docs/AGENT_CONTEXT.md"
+source_file: "README.md"
 type: "document"
-community: "Community 1"
-location: "Scope"
+community: "CICIDS2017 Research & Experiments"
+location: "README.md#the-project-is-organised-in-two-phases"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Community_1
+  - community/CICIDS2017_Research__Experiments
 ---
 
 # Phase 2 Offline Inference
 
 ## Connections
-- [[Active Blocking Future Work]] - `conceptually_related_to` [EXTRACTED]
-- [[Domain Shift Risk]] - `conceptually_related_to` [EXTRACTED]
-- [[Phase 2 Context and Guardrails]] - `references` [EXTRACTED]
-- [[Private Lab Workflow]] - `conceptually_related_to` [EXTRACTED]
-- [[RL Cyber Defender Project]] - `conceptually_related_to` [EXTRACTED]
-- [[Reproducible Run Artifacts]] - `conceptually_related_to` [EXTRACTED]
-- [[Robust v2 Inference Pipeline]] - `conceptually_related_to` [EXTRACTED]
+- [[CICIDS2017 QRDQN Experiment History]] - `references` [EXTRACTED]
+- [[Phase 2 Scope and Guardrails]] - `conceptually_related_to` [EXTRACTED]
+- [[TFG_CYBER_AI Project]] - `references` [EXTRACTED]
+- [[predict_real_traffic_v2.py_1]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Community_1
+#graphify/document #graphify/EXTRACTED #community/CICIDS2017_Research__Experiments
