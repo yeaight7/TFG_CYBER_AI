@@ -1,19 +1,17 @@
 ---
 source_file: "src/validate_checks.py"
 type: "rationale"
-community: "Community 4"
-location: "L283"
+community: "Validation Checks Module"
+location: "L280"
 tags:
   - graphify/rationale
-  - graphify/INFERRED
-  - community/Community_4
+  - graphify/EXTRACTED
+  - community/Validation_Checks_Module
 ---
 
 # Entrena en unos CSVs de CICIDS2017 y testea en otros.     Es el split más reali
 
 ## Connections
-- [[CICIDSLoadConfig]] - `uses` [INFERRED]
-- [[RLDatasetDefenderEnv]] - `uses` [INFERRED]
 - [[check_c_csv_split()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/INFERRED #community/Community_4
+#graphify/rationale #graphify/EXTRACTED #community/Validation_Checks_Module

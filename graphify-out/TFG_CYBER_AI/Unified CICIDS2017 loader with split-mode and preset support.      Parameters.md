@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "Community 0"
-location: "L545"
+community: "RF Baseline Module"
+location: "L543"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Community_0
+  - community/RF_Baseline_Module
 ---
 
 # Unified CICIDS2017 loader with split-mode and preset support.      Parameters
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[load_cicids2017_split()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Community_0
+#graphify/rationale #graphify/EXTRACTED #community/RF_Baseline_Module

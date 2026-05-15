@@ -1,19 +1,17 @@
 ---
 source_file: "src/tune_hparams.py"
 type: "rationale"
-community: "Community 2"
+community: "Hyperparameter Tuning"
 location: "L69"
 tags:
   - graphify/rationale
-  - graphify/INFERRED
-  - community/Community_2
+  - graphify/EXTRACTED
+  - community/Hyperparameter_Tuning
 ---
 
 # Optuna objective: train QRDQN with suggested hparams, return F1 attack.
 
 ## Connections
-- [[CICIDSLoadConfig]] - `uses` [INFERRED]
-- [[RLDatasetDefenderEnv]] - `uses` [INFERRED]
 - [[objective()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/INFERRED #community/Community_2
+#graphify/rationale #graphify/EXTRACTED #community/Hyperparameter_Tuning
