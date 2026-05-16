@@ -16,6 +16,7 @@ __pycache__/
 *.fls
 .vscode/
 .remember/
+report/tmp
 
 # PCAPS and big CSV files
 datasets/CICIDS2017/Raw_dataset/
