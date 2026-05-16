@@ -9,6 +9,7 @@
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{geometry}
+\usepackage{titlesec}
 \usepackage{csquotes}
 \usepackage[
   backend=biber,
@@ -18,9 +19,13 @@
 ]{biblatex}
 \usepackage{hyperref}
 
-\geometry{margin=2.5cm}
+\geometry{margin=3.5cm}
 \emergencystretch=2em
 \addbibresource{references.bib}
+
+\titlespacing*{\chapter}{0pt}{80pt}{50pt}
+\titlespacing*{\section}{0pt}{36pt}{18pt}
+\titlespacing*{\subsection}{0pt}{24pt}{12pt}
 
 \newcommand{\citationneeded}[1]{\textbf{[Citation needed: #1]}}
 \newcommand{\verifycite}[1]{\textbf{[Verify: #1]}}
@@ -31,8 +36,12 @@
 
 \begin{document}
 
+\pagenumbering{gobble}
 \maketitle
+\newpage
 \tableofcontents
+\newpage
+\pagenumbering{arabic}
 
 \input{chapters/state_of_the_art}
 
