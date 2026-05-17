@@ -1,0 +1,39 @@
+\chapter{Objectives and Scope}
+
+\section{General Objective}
+The general objective of this thesis is to design, implement, and rigorously evaluate an offline, reinforcement learning-based cybersecurity defender that makes cost-sensitive binary decisions (\texttt{PERMIT} or \texttt{BLOCK}) over standardized network flow observations.
+
+\section{Specific Objectives}
+
+\subsection{Flow-Based Traffic Representation}
+To extract and normalize network traffic data into tabular flow records, ensuring that the input format is compatible with both public benchmarks and offline laboratory captures.
+
+\subsection{Canonical Preprocessing and Feature Schema}
+To define and enforce a strict 76-feature canonical schema alongside a 76-value missingness mask, yielding a stable 152-dimensional observation vector that mitigates extraction inconsistencies and exposes absent data explicitly.
+
+\subsection{Reinforcement Learning Environment}
+To construct a Gymnasium-compatible dataset-as-environment interface that presents flow records to the agent and applies a cost-sensitive reward function, penalizing false negatives more heavily than false positives.
+
+\subsection{QRDQN-Based Binary Decision Agent}
+To configure and train a Quantile Regression Deep Q-Network (QRDQN) to navigate the binary \texttt{PERMIT}/\texttt{BLOCK} action space based on the observed canonical features.
+
+\subsection{Supervised Baseline Comparison}
+To implement a robust supervised baseline, primarily utilizing Random Forest, to provide a fair, same-protocol comparative assessment of the QRDQN agent's empirical value.
+
+\subsection{Leakage-Aware Evaluation}
+To design preprocessing pipelines and validation protocols that strictly prevent data leakage by eliminating identifying fields (such as IP addresses and absolute timestamps) and employing train-only scaler fitting.
+
+\subsection{Training-Scale and Data-Efficiency Analysis}
+To evaluate the performance of both the RL agent and the supervised baselines under varying amounts of training data, identifying the data-efficiency characteristics of the proposed formulation.
+
+\subsection{External Validation with Laboratory Traffic}
+To prepare and test the trained models against independently captured traffic from a private laboratory setup, assessing the impact of domain shift beyond the internal CICIDS2017 benchmark.
+
+\section{Scope of the Work}
+The work is bound to the offline evaluation of a tabular machine learning pipeline. It encompasses the ingestion of CSV flow records, the application of standard scaling and percentile clipping, the execution of training loops via Stable Baselines3 (sb3-contrib), and the generation of structured run artifacts (models, metrics, and configuration files). The internal experimentation is conducted entirely on the CICIDS2017 dataset, utilizing explicit train-test splits and a multi-stage validation ladder.
+
+\section{Non-Goals}
+This thesis explicitly excludes the development of inline network monitoring or live packet interception. The system will not integrate with firewalls, Software-Defined Networking (SDN) controllers, or active Intrusion Prevention Systems (IPS). It does not attempt to solve the broader problem of multi-agent adversarial cyber warfare or sequence-dependent attack disruption. Furthermore, the goal is not to prove that QRDQN represents the state-of-the-art for all NIDS tasks, but rather to evaluate its behavior under a highly controlled and reproducible experimental framework.
+
+\section{Expected Outcomes}
+The expected outcome is a fully functional, documented, and reproducible offline inference pipeline accompanied by a detailed empirical analysis. The project will yield persistent artifacts for all training and validation runs, providing clear metrics (including Accuracy, Precision, Recall, F1 score, False Positive Rate, and False Negative Rate) on the relative performance of QRDQN versus the supervised baseline. Ultimately, the results will quantify the generalization limits of benchmark-trained RL models when subjected to strict temporal splits and external laboratory traffic.
