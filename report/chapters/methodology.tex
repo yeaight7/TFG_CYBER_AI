@@ -1,122 +1,220 @@
 \chapter{Methodology}
 
 \section{Methodological Overview}
-This chapter details the methodological design and implementation of the proposed reinforcement learning (RL) based cybersecurity defender. The objective of the methodology is not to build a production-ready Intrusion Prevention System (IPS), but rather to establish a rigorous, offline experimental framework for evaluating RL-based binary security decisions on network flow records. The approach treats a static labeled dataset as the environment in a dataset-as-environment formulation, isolating the learning process from the risks of live network interaction. The methodology encompasses data ingestion and canonicalization, feature scaling and imputation, environment definition, and agent training, culminating in a multi-stage validation ladder.
+This chapter describes the methodological design used to build and evaluate the proposed reinforcement learning (RL) based cybersecurity defender. The objective is not to claim a production-ready Intrusion Prevention System (IPS), but to define a controlled, reproducible, offline experimental framework for binary security decisions over network flow records. Each flow is treated as one decision point: the defender observes a numerical representation of the flow and chooses whether to \texttt{PERMIT} it as benign traffic or \texttt{BLOCK} it as malicious traffic.
+
+The methodology is intentionally conservative. Public intrusion-detection benchmarks can produce inflated results when preprocessing, split construction, leakage controls, and baseline comparisons are weak \parencite{Arp2020DosDontsMLSecurity,Engelen2021CICIDSIssues,Lanvin2023Errors}. Therefore, the pipeline is designed around explicit data contracts, reproducible run artifacts, train-only normalization, and progressively stricter validation. The same canonical representation is used for the CICIDS2017 benchmark and for Phase 2 laboratory-flow inference, so the experimental question is not tied to a single CSV naming convention or a single feature extractor.
+
+At a high level, the methodology contains six linked stages:
+\begin{enumerate}
+    \item ingest flow-level CICIDS2017 CSV data and map labels to a binary defender task;
+    \item remove leakage-prone identifiers and normalize malformed numerical values;
+    \item map extractor-specific columns into a fixed 76-feature canonical schema;
+    \item append a 76-feature missingness mask, producing 152-dimensional observations;
+    \item train and evaluate a Gymnasium-compatible QRDQN defender under controlled split protocols;
+    \item test robustness through validation checks, supervised baselines, and offline Phase 2 inference.
+\end{enumerate}
+
+This design keeps the thesis within an offline experimental boundary. The \texttt{PERMIT} and \texttt{BLOCK} outputs are model predictions over saved flow records. They are not firewall commands and do not modify any live network path.
 
 \section{Experimental Phases}
-The experimental methodology is divided into two primary phases, reflecting a progression from internal benchmark evaluation to testing against domain shift.
+The experimental methodology is divided into two phases. The first phase tests learning and internal generalization on a public benchmark. The second phase tests whether the resulting preprocessing and model pipeline can process independently captured traffic under domain shift.
 
 \subsection{Phase 1: CICIDS2017 Internal Benchmark}
-Phase 1 focuses on offline training and validation using historical data, primarily relying on the CICIDS2017 dataset \parencite{Sharafaldin2018CICIDS2017,CICIDS2017Web}. This phase establishes the baseline learning capability of the RL agent under controlled conditions. The dataset provides a diverse set of labeled benign and attack flows, enabling the agent to learn statistical discrimination. Crucially, this phase incorporates rigorous data cleaning and a multi-stage validation strategy---including random stratified splits, temporal (day-based) splits, and leave-one-exact-CSV-out evaluation---to guard against dataset-specific artifacts and ensure robust generalization \parencite{Engelen2021CICIDSIssues,Lanvin2023Errors}.
+Phase 1 uses CICIDS2017 as the main internal benchmark \parencite{Sharafaldin2018CICIDS2017,CICIDS2017Web}. CICIDS2017 is suitable for this thesis because it provides labeled benign and attack traffic, raw packet captures, and flow CSVs derived from CICFlowMeter-style extraction \parencite{Lashkari2017CICFlowMeter}. It also contains multiple attack scenarios across different capture days, which supports stricter split designs than a single random train-test partition.
+
+The phase is not treated as a clean production proxy. CICIDS2017 has known issues involving duplicated or inconsistent flows, label and extraction errors, and split sensitivity \parencite{Engelen2021CICIDSIssues,Lanvin2023Errors,Liu2022ErrorPrevalenceNIDS}. For that reason, Phase 1 is framed as an internal benchmark with explicit controls. The pipeline removes identifier-like fields, fits normalization only on training data, records run configurations, and evaluates the model using a validation ladder. A high score on the random split is interpreted as evidence that the model can learn the benchmark task; it is not interpreted as deployment readiness.
 
 \subsection{Phase 2: Offline Laboratory-Traffic Inference}
-Phase 2 evaluates the trained model's resilience to domain shift by performing offline inference on flow features extracted from real traffic captured in an independent, private laboratory environment. This phase acts as an external validation tier. It does not involve active real-time blocking or deployment on a live network interface. Instead, PCAP files are processed offline into flow records and fed into the trained model using the same canonical schema as Phase 1. This step is critical for demonstrating that the agent's learned policies transfer beyond the specific extraction peculiarities of the CICIDS2017 environment.
+Phase 2 evaluates transfer beyond the benchmark distribution. Traffic is captured in a private laboratory environment, converted offline into flow CSVs, mapped into the same canonical schema, normalized with persisted training artifacts, and passed through the trained model. This phase is an external-distribution inference test, not a live deployment.
+
+The methodological purpose of Phase 2 is to expose domain shift. Public NIDS studies often report strong within-dataset results that degrade when the model is evaluated on traffic produced by different networks, capture tools, time periods, or feature definitions \parencite{Apruzzese2022CrossEvaluationNIDS,Layeghy2023CrossDomainNIDS}. Phase 2 therefore focuses on reproducible offline inference, diagnostics, and artifact tracking. It does not guarantee stable performance on arbitrary enterprise networks, and it does not implement active real-time blocking.
 
 \section{Data Source and Input Representation}
-The foundation of the methodology relies on the extraction and representation of network traffic as discrete, statistical flow records.
+The thesis uses a flow-level tabular representation. This representation is a deliberate compromise between operational relevance, tractability, and privacy. It captures statistical behavior over packet sequences while avoiding payload inspection.
 
 \subsection{CICIDS2017 Flow CSVs}
-The primary internal benchmark, CICIDS2017, provides traffic data already processed into CSV files via CICFlowMeter. These files contain dozens of statistical features per flow, such as duration, packet counts, byte totals, and inter-arrival times. While widely used, the raw dataset contains extraction errors and data leakage artifacts that require significant preprocessing before use in machine learning pipelines \parencite{Engelen2021CICIDSIssues}.
+The primary data source is the CICIDS2017 flow CSV release. Each CSV row corresponds to a bidirectional network flow summarized by numerical statistics such as duration, packet counts, byte totals, inter-arrival times, packet-length statistics, and TCP flag counts. Flow-based representations are widely used in NIDS research because they compress network behavior into fixed-width numerical rows that can be processed by standard machine-learning methods \parencite{Sperotto2010FlowIDS,Umer2017FlowIDS}.
+
+The local loading pipeline expects the official CICIDS2017 CSV files and supports both full and capped row budgets. Capped budgets allow smoke tests and fast iteration; full budgets support final benchmark runs. The loader reads large CSVs in chunks, standardizes column names by stripping inconsistent whitespace, identifies the label column robustly, and then applies feature cleaning before any split-dependent scaling.
 
 \subsection{Binary Label Mapping}
-The diverse attack categories present in the CICIDS2017 dataset are aggregated into a unified binary classification task. Traffic labeled as normal or benign is mapped to the benign class (\texttt{PERMIT} target), while all variants of malicious traffic (e.g., DoS, PortScan, Web Attacks) are mapped to the attack class (\texttt{BLOCK} target). This binary simplification aligns with the operational decision-making model of a frontline defender filtering traffic.
-
-\subsection{Flow-Level Tabular Representation}
-The learning substrate is a flow-level tabular representation rather than raw packet payloads. This abstraction reduces the dimensionality of the data, making large-scale offline RL tractable, and avoids the complexities of Deep Packet Inspection (DPI), which is hindered by payload encryption \parencite{Sperotto2010FlowIDS,Umer2017FlowIDS}. Each row in the dataset represents a bidirectional flow, summarized by statistical aggregates over its duration.
-
-\section{Data Cleaning and Preprocessing}
-Rigorous preprocessing is essential to ensure the RL agent learns genuine attack behaviors rather than dataset artifacts or extraction anomalies.
-
-\subsection{Column Normalization and Numeric Coercion}
-The raw CSV columns often contain inconsistent naming conventions (e.g., leading/trailing spaces) and data types. The loading pipeline standardizes column names and coerces all feature columns to numeric types (\texttt{float32}). Any rows containing unparseable data after coercion are dropped to maintain the integrity of the observation space.
-
-\subsection{Invalid Values, Missing Values, and Imputation}
-Network flow extraction frequently produces invalid mathematical results, such as infinity or null values, typically arising from division by zero when calculating rates (e.g., bytes per second over a zero-duration flow). These invalid entries are identified and replaced with a default placeholder value (zero). This imputation allows the retention of the flow record while neutralizing the invalid computation.
-
-\subsection{Leakage-Prone Field Exclusion}
-To prevent the model from learning trivial mapping rules based on scenario-specific identifiers, the preprocessing pipeline strictly enforces an anti-leakage policy \parencite{Arp2020DosDontsMLSecurity,Kaufman2011LeakageDataMining}. Fields such as Source and Destination IP addresses, Flow IDs, absolute timestamps, and specific port numbers are explicitly excluded from the model's observation space. If the model were allowed to train on these fields, it would likely memorize the specific IP addresses of the attackers in the CICIDS2017 topology rather than the statistical shape of the attacks.
-
-\section{Canonical Feature Schema}
-To decouple the RL model from the specific column naming conventions of CICFlowMeter or any other extraction tool, the methodology introduces a canonical feature schema.
-
-\subsection{Canonical Flow Features}
-The schema defines a fixed set of 76 numerical flow features. These features capture fundamental flow properties including duration, forward and backward packet counts, length statistics, inter-arrival time (IAT) statistics, and TCP flag distributions. The adapter scripts map the dataset-specific columns to this canonical list. If a new dataset or extraction tool is introduced in Phase 2, its outputs must be mapped to this exact schema, ensuring the model's input space remains invariant.
-
-\subsection{Missingness Mask}
-Because different extraction tools may produce different subsets of features, the pipeline handles missing canonical features via a missingness mask. A 76-dimensional binary mask is appended to the feature vector. For each feature $i$, the mask value $m_i$ is set to 1 if the feature was present and valid in the source data, and 0 if the feature was missing and subsequently imputed with a placeholder.
-
-\subsection{Final Observation Vector}
-The final observation vector presented to the RL agent is a 152-dimensional array: 76 canonical feature values followed by their corresponding 76 missingness-mask values. This concatenated representation ensures that the agent is explicitly aware of which data points are genuine measurements and which are defaults, addressing the silent imputation problem where models unknowingly rely on artificial data.
-
-\section{Train-Test Separation and Scaling}
-Evaluation rigor requires that the training and testing phases remain strictly isolated, preventing data or distributional information from leaking into the training process.
-
-\subsection{Random Stratified Split}
-The most basic validation rung uses a random stratified split across the entire dataset. While useful for verifying that the model can learn at all, this approach is susceptible to adjacent-flow correlation and is considered the weakest form of evaluation \parencite{Lanvin2023Errors}.
-
-\subsection{CSV/Day-Based Split}
-To test temporal generalization, the pipeline supports day-based splits, where the model is trained on flows from certain days and evaluated on flows from different days. This ensures the model is not memorizing the specific background traffic patterns of a single day.
-
-\subsection{Leave-One-Exact-CSV-Out Split}
-The strictest internal validation rung is the leave-one-exact-CSV-out protocol. The model is trained on multiple capture files and evaluated on a single remaining file. This aggressively tests the agent's ability to generalize to unseen attack scenarios and capture contexts that were entirely absent from the training distribution.
-
-\subsection{Train-Fitted Standardization}
-Feature scaling is critical for the stability of neural network training. The methodology employs standard scaling (zero mean, unit variance). Crucially, the scaler is fitted strictly on the training partition. The testing partition is then transformed using these fitted parameters. This prevents test-set distributional information from leaking into the training process. The fitted scaler and any applicable clipping percentiles are persisted as artifacts to ensure consistent normalization during Phase 2 offline inference.
-
-\section{Reinforcement Learning Formulation}
-The intrusion detection problem is formulated as a Markov Decision Process (MDP) over a static dataset, implemented via a Gymnasium-compatible environment \parencite{Farama2023Gymnasium}.
-
-\subsection{Observation Space}
-The environment's observation space is a continuous vector space of dimension 152, representing the scaled canonical features and the missingness mask for a single flow record.
-
-\subsection{Action Space}
-The action space is discrete, corresponding to two binary decisions:
+CICIDS2017 includes several attack labels. The thesis collapses them into a binary defender decision:
 \begin{itemize}
-    \item \texttt{Action 0 (PERMIT)}: Allow the traffic flow.
-    \item \texttt{Action 1 (BLOCK)}: Drop or alert on the traffic flow.
+    \item label \texttt{0}: \texttt{BENIGN}, mapped to the desired action \texttt{PERMIT};
+    \item label \texttt{1}: any attack class, mapped to the desired action \texttt{BLOCK}.
 \end{itemize}
 
+This binary mapping matches the front-line decision model studied here. It also makes the RL action space simple and auditable. The limitation is that attack-family information is not the primary learning target in the current RL path. Any per-family error analysis must therefore be supported by preserved family labels or separate artifacts; it cannot be inferred from the binary labels alone.
+
+\subsection{Flow-Level Tabular Representation}
+The learning substrate is a flow-level table rather than raw packets or payload bytes. This reduces dimensionality and makes large-scale offline training feasible. It also avoids some legal and technical complications of Deep Packet Inspection, especially when payloads are encrypted \parencite{Sperotto2010FlowIDS,Umer2017FlowIDS}. However, flow abstraction loses content, precise packet ordering, and some long-range multi-flow context. The methodology therefore studies a flow-based defender, not a complete network-forensics system.
+
+\section{Data Cleaning and Preprocessing}
+Preprocessing is treated as part of the experimental method, not as an implementation detail. In NIDS benchmarks, small preprocessing decisions can change the meaning of the task by leaking labels, suppressing malformed flows, or making test data influence training.
+
+\subsection{Column Normalization and Numeric Coercion}
+Raw CSV columns can contain leading spaces, inconsistent capitalization, and mixed data types. The loader first normalizes column names and then coerces feature columns to numerical values. The final feature matrix is represented as \texttt{float32}, while labels are represented as \texttt{int64}. This type contract keeps the downstream environment, scaler, and model interface stable.
+
+Rows are not allowed to carry arbitrary strings into the model. Non-numeric feature columns that survive identifier removal are excluded. This prevents accidental introduction of categorical strings whose encoding would be uncontrolled or dataset-specific.
+
+\subsection{Invalid Values, Missing Values, and Imputation}
+Network-flow extraction can produce invalid numerical values. Rate features, for example, may become infinite or undefined when computed over a zero or near-zero duration. The pipeline replaces infinities and missing numerical values with zero before canonical mapping. This choice is pragmatic: many flow counters, rates, and aggregate statistics can safely use zero as a neutral placeholder when paired with an explicit missingness signal.
+
+Zero imputation alone would be unsafe because the model could not distinguish a true measured zero from a synthetic placeholder. The canonical schema therefore pairs imputation with a missingness mask. The mask makes feature availability visible to the model and to later diagnostics.
+
+\subsection{Leakage-Prone Field Exclusion}
+The preprocessing pipeline enforces an anti-leakage policy grounded in known ML-security evaluation risks \parencite{Arp2020DosDontsMLSecurity,Kaufman2011LeakageDataMining}. Source and destination IP addresses, Flow IDs, absolute timestamps, and endpoint identifiers are excluded. Direct port fields are also excluded because they can act as scenario proxies in scripted datasets. For example, an attack day may concentrate malicious traffic on particular services, allowing a model to memorize a capture script rather than learn behavioral flow statistics.
+
+This exclusion is implemented before canonical mapping. The model therefore receives only statistical flow features and corresponding mask values. If new datasets or extractors are introduced later, their adapters must preserve the same policy: no identifiers, no absolute time fields, and no ports used directly as label shortcuts.
+
+\section{Canonical Feature Schema}
+The canonical schema is the central data contract of the thesis. It separates the model interface from the column names, ordering, and feature availability of a particular extractor.
+
+\subsection{Canonical Flow Features}
+The schema defines 76 ordered numerical flow features. They include duration, forward and backward packet counts, byte totals, packet-length statistics, flow and directional inter-arrival-time statistics, packet and byte rates, TCP flag counts, header lengths, window sizes, subflow statistics, and active/idle timing features. These features are chosen because they are flow statistics rather than identifiers, and because they are broadly compatible with CICFlowMeter-style extraction.
+
+For CICIDS2017, an adapter maps original CSV columns into these canonical names. For Phase 2, the robust inference script maps laboratory-flow extractor columns into the same canonical names. The model is therefore trained and evaluated against a fixed feature contract. This design follows the broader methodological motivation of feature standardization in NIDS: cross-domain comparison becomes more auditable when feature definitions are explicit and stable \parencite{Sarhan2021}.
+
+\subsection{Missingness Mask}
+Different extractors may not provide every canonical feature, and even a present source column can contain invalid values. The pipeline therefore produces a 76-dimensional missingness mask. For each canonical feature $x_i$, the corresponding mask value $m_i$ is:
+\begin{itemize}
+    \item $m_i = 1$ when the source feature is present and valid;
+    \item $m_i = 0$ when the feature is absent or had to be imputed.
+\end{itemize}
+
+The mask has two methodological roles. First, it prevents silent imputation: the model can condition its decision on whether a value was observed or filled. Second, it supports Phase 2 diagnostics because a laboratory extractor that lacks many CICIDS2017-style features can be detected through a changed mask pattern rather than hidden inside a dense numerical vector.
+
+\subsection{Final Observation Vector}
+The final observation is:
+\[
+    o = [x_1, x_2, \dots, x_{76}, m_1, m_2, \dots, m_{76}]
+\]
+This produces a 152-dimensional \texttt{float32} vector. The first half contains feature values, and the second half contains the mask. The observation size is therefore invariant across CICIDS2017, validation splits, and Phase 2 inference. This invariance is important because the QRDQN policy network expects a fixed input dimension.
+
+\section{Train-Test Separation and Scaling}
+The methodology separates fitting and evaluation at every preprocessing stage that can learn from data. This is necessary because leakage can occur not only through columns, but also through statistics such as global means, variances, percentiles, and class distributions.
+
+\subsection{Random Stratified Split}
+The random stratified split is the first validation rung. It preserves class proportions across train and test and is useful as a learning-capacity sanity check. If the model cannot learn under this favorable split, later stricter evaluations are unlikely to succeed.
+
+However, random row-wise splitting is the weakest evidence in this project. Flow datasets can contain correlated records, repeated patterns, and capture-context artifacts. Placing adjacent or highly similar flows on both sides of the split can overstate generalization \parencite{Lanvin2023Errors,Arp2020DosDontsMLSecurity}. Random-split results are therefore reported as internal benchmark evidence only.
+
+\subsection{CSV/Day-Based Split}
+The CSV/day split trains on selected CICIDS2017 files and evaluates on different files. This split tests whether the model transfers across capture days and attack contexts. In the maintained implementation, the default day split trains on Monday, Tuesday, and Wednesday patterns and tests on Thursday and Friday patterns. This is a stricter setting than a random split because entire files are withheld from training.
+
+The day split also aligns with known CICIDS2017 structure: different days contain different benign workloads and attack scenarios. It is therefore better suited for revealing whether the model has learned general flow behavior or day-specific artifacts.
+
+\subsection{Leave-One-Exact-CSV-Out Split}
+The strictest internal protocol is leave-one-exact-CSV-out validation. Each fold holds out one official CICIDS2017 CSV as test data and trains on the remaining CSVs. The implemented validation script aggregates per-fold metrics including accuracy, balanced accuracy, attack precision, attack recall, attack F1, benign precision, benign recall, false-positive rate, false-negative rate, block rate, total reward, and time costs.
+
+This protocol is methodologically important because it treats each capture file as a domain-like unit. It is stronger than a substring day split because it uses exact official CSV filenames and avoids accidental overlap. At the time of this chapter, the implementation exists, while final aggregate metrics should only be reported when a committed run artifact is available.
+
+\subsection{Train-Fitted Standardization}
+Neural network training is sensitive to feature scale. The pipeline therefore uses \texttt{StandardScaler} normalization, fitting the scaler on the training partition only and applying the fitted transform to test data. The same principle is used for persisted inference artifacts: the scaler saved during training is reused for Phase 2, rather than recomputed from laboratory flows.
+
+For robust Phase 2 inference, the training pipeline also persists percentile bounds over the raw canonical features. The Phase 2 inference script can apply raw-feature percentile clipping and post-scaling z-score clipping, then export diagnostics. These controls are not presented as a solution to domain shift; they are safeguards that make extreme out-of-distribution values visible and bounded during offline inference.
+
+\section{Reinforcement Learning Formulation}
+The defender is implemented as a Gymnasium-compatible environment \parencite{GymnasiumDocs}. This allows standard value-based RL code to interact with the flow dataset through the familiar \texttt{reset()} and \texttt{step()} interface.
+
+\subsection{Observation Space}
+The observation space is a continuous vector space of dimension 152. Each observation represents one scaled canonical flow vector plus its missingness mask. During training, observations are drawn from the training partition. During deterministic evaluation, the environment iterates through the test partition without shuffling, allowing predictions to be compared directly with the true labels.
+
+\subsection{Action Space}
+The action space is discrete with two actions:
+\begin{itemize}
+    \item \texttt{Action 0 (PERMIT)}: classify the flow as benign and allow it in the experimental decision model;
+    \item \texttt{Action 1 (BLOCK)}: classify the flow as malicious and block or alert on it in the experimental decision model.
+\end{itemize}
+
+The action value is intentionally aligned with the binary label value: benign is \texttt{0}, attack is \texttt{1}. This simplifies direct evaluation because a predicted action can be compared with the target label without an additional decoding layer.
+
 \subsection{Reward Function}
-The reward function encodes the asymmetric operational costs of security decisions \parencite{Lee2002CostSensitiveIDS,Cardenas2006IDSFramework}. Misclassification costs in cybersecurity are highly skewed: a false negative (allowing an attack) is typically far more damaging than a false positive (blocking benign traffic). The environment implements a configurable reward matrix that provides a positive reward for correctly blocking an attack, a moderate penalty for incorrectly blocking benign traffic, a severe penalty for incorrectly permitting an attack, and a neutral or slight reward for correctly permitting benign traffic. This cost-sensitive reward structure guides the RL agent to prioritize attack detection over aggregate accuracy, reflecting realistic defensive priorities.
+The reward function encodes asymmetric security costs \parencite{Lee2002CostSensitiveIDS,Cardenas2006IDSFramework}. A false negative means an attack is permitted. A false positive means benign traffic is blocked. In many defensive settings, missed attacks are more severe than unnecessary blocks, although the exact ratio depends on the operational context.
+
+The current implementation uses the following default reward configuration:
+\[
+\text{TP}=1.5,\quad \text{FP}=-2.0,\quad \text{FN}=-5.0,\quad \text{TN/omission}=0.0.
+\]
+Here, a true positive is an attack correctly blocked, a false positive is benign traffic blocked, a false negative is an attack permitted, and omission is the neutral reward assigned to correctly permitted benign traffic. These values are experimental assumptions, not measured business costs. They are logged with each run so historical runs can be distinguished from current defaults.
 
 \subsection{Episode Structure}
-An episode consists of a sequence of flow evaluations. In the dataset-as-environment model, the environment simply iterates through the shuffled flow records of the training partition. Each step presents a new flow, the agent selects an action, the environment reveals the reward based on the true label, and the process repeats until the maximum number of steps per episode is reached or the dataset is exhausted.
+An episode is a sequence of flow decisions. On reset, the environment initializes an index over the selected partition. When shuffling is enabled, the training order is randomized. At each step, the agent receives one observation, selects \texttt{PERMIT} or \texttt{BLOCK}, receives a reward computed from the true label and the action, and advances to the next flow. An episode terminates when the dataset is exhausted or a configured maximum number of steps is reached.
+
+This design gives standard RL algorithms a transition stream while keeping training offline and safe. No action affects the source dataset, the next flow, or the network environment.
 
 \subsection{Limitations of the Dataset-as-Environment Formulation}
-Because the environment is a static dataset, the agent's actions do not affect the future state of the environment. Unlike a live network where blocking a flow might prevent subsequent attack stages, the dataset environment cannot simulate adversary reaction or state transitions resulting from the defender's choices. Consequently, the RL task degenerates to a form of cost-sensitive contextual bandit problem \parencite{SuttonBarto2018}. However, utilizing RL algorithms in this setting provides a foundation for more complex sequential formulations in future work while remaining safe for offline experimentation.
+Because the environment is a static dataset, the agent's actions do not affect future states. This is not a full autonomous cyber-defense problem in which blocking a flow might change later attacker behavior, host state, routing, or alert context. The formulation is closer to a cost-sensitive contextual decision problem than to a rich Markov Decision Process \parencite{SuttonBarto2018RL,Levine2020OfflineRL}.
+
+This limitation is explicit in the methodology. RL is used here to study value-based cost-sensitive decision learning over flow records and to establish a safe offline pipeline. Claims about multi-step adversary response, online adaptation, or active cyber defense are outside the implemented scope.
 
 \section{QRDQN Agent}
-The primary reinforcement learning algorithm employed is Quantile Regression Deep Q-Network (QRDQN) \parencite{Dabney2018QRDQN}.
+The primary RL algorithm is Quantile Regression Deep Q-Network (QRDQN) \parencite{Dabney2018QRDQN}. QRDQN belongs to the distributional RL family, which models a distribution over returns rather than only an expected return \parencite{Bellemare2017DistributionalRL}.
 
 \subsection{Algorithmic Role}
-QRDQN is a distributional RL algorithm that models the full distribution of expected returns rather than just the expected mean value. By estimating quantiles of the return distribution, QRDQN can learn more robust policies, particularly in environments with highly skewed or asymmetric reward structures, such as the cost-sensitive NIDS environment defined above.
+Standard DQN approximates action values with a neural network and selects actions according to estimated expected return \parencite{Mnih2015DQN}. QRDQN extends this idea by learning quantiles of the return distribution. This is relevant to the thesis because the reward structure is asymmetric: false negatives carry a much larger penalty than correct benign permits carry reward. A distributional view can represent more information about return variability than a single mean estimate.
+
+The methodology does not assume QRDQN is inherently superior to supervised classifiers for tabular flow data. Instead, it evaluates QRDQN as the main RL representative under the same preprocessing, splits, and metrics used by baselines.
 
 \subsection{Training Configuration}
-The agent is implemented using the \texttt{sb3-contrib} library \parencite{SB3Contrib2023QRDQN}, which integrates seamlessly with the Stable Baselines3 ecosystem. Hyperparameter selection (e.g., learning rate, batch size, target network update frequency) is managed via experimental presets and tuning scripts, enabling systematic comparison across different training runs.
+The implementation uses the \texttt{sb3-contrib} QRDQN module \parencite{SB3ContribQRDQNDocs}. The model uses a multilayer perceptron policy over the 152-dimensional observations. Training uses a replay buffer, minibatch updates, a target network, and deterministic prediction during evaluation. The maintained training script supports fast and full presets, random and day split modes, explicit seeds, configurable row caps, and configurable timesteps.
 
-\subsection{Model Persistence}
-Upon completion of training, the final model weights, along with the environment configuration, fitted scaler, and normalization percentiles, are persisted to disk as run artifacts. This ensures strict reproducibility and allows the exact training state to be reloaded for Phase 2 inference.
+The current full-preset defaults use larger batches and more gradient steps than the fast preset. This separation lets the project support quick smoke runs without confusing them with final benchmark runs. Any reported result must include the exact run identifier and configuration.
+
+\subsection{Model and Preprocessing Persistence}
+Training produces a run directory and a model artifact. The run directory stores configuration, metrics, the fitted scaler, and training percentile bounds. Persisting preprocessing artifacts is essential because Phase 2 inference must use the same normalization state as training. Recomputing a scaler on laboratory traffic would leak inference-distribution information into the model interface and would make the run irreproducible.
 
 \section{Supervised Baseline}
-Evaluating the efficacy of the RL approach requires a strong, same-protocol supervised baseline.
+An RL method for flow-level NIDS must be compared against strong supervised baselines. Tabular flow data is a setting where tree-based models, especially Random Forests and gradient-boosted ensembles, are often competitive \parencite{LiuLang2019IDSSurvey,Apruzzese2022CrossEvaluationNIDS}.
 
 \subsection{Random Forest Baseline}
-Random Forest classifiers have consistently demonstrated strong performance on tabular flow data. Consequently, a Random Forest baseline is trained on the exact same canonical features and subjected to the exact same split protocols as the QRDQN agent.
+The primary supervised baseline is a Random Forest classifier. The baseline is methodologically useful because it is strong on tabular data, handles nonlinear feature interactions, and requires less training complexity than deep RL. It also provides a sanity check against over-valuing an RL formulation in a task that may behave like cost-sensitive classification.
 
 \subsection{Same-Protocol Comparison}
-The methodology insists on a strict same-protocol comparison. Both models consume the 152-dimensional canonical schema, utilize the same test partitions, and are evaluated using the same metrics. This approach isolates the algorithmic contribution of the RL formulation, avoiding confounded comparisons where models differ in preprocessing or evaluation rigor.
+The baseline must consume the same canonical observation representation, use the same split protocols, and report the same metrics as QRDQN. This same-protocol rule prevents confounded comparisons. If the baseline uses different preprocessing, different leakage controls, or easier splits, the comparison does not isolate the algorithmic contribution of QRDQN.
+
+The methodology therefore treats baseline comparison as a protocol requirement rather than an optional appendix. It also avoids claiming QRDQN superiority until same-split baseline artifacts exist.
 
 \section{Evaluation Outputs and Reproducibility}
-Transparency and reproducibility are core tenets of the experimental design \parencite{Olszewski2023ReproducibilityMLSecurity}.
+Reproducibility is a core design constraint, especially because ML-security research often suffers from missing code, missing data processing details, and incomplete evaluation records \parencite{Olszewski2023ReproSecurityML}.
 
 \subsection{Metrics}
-Model performance is evaluated using standard binary classification metrics: Accuracy, Precision, Recall (Detection Rate), F1-Score, False Positive Rate (FPR), and False Negative Rate (FNR). The emphasis is placed on Recall and FPR, as these metrics directly reflect the asymmetric costs encoded in the RL reward function.
+The primary binary metrics are accuracy, precision, recall, and F1 for both benign and attack classes. The analysis also tracks confusion-matrix counts: true positives, false positives, false negatives, and true negatives. These counts are required because two models with similar aggregate accuracy can have very different security implications.
+
+False-positive rate and false-negative rate are especially important. The false-positive rate measures the share of benign traffic incorrectly blocked, which relates to availability and analyst workload. The false-negative rate measures the share of attacks incorrectly permitted, which relates directly to missed intrusion risk. Precision-recall analysis is particularly relevant under class imbalance, where accuracy alone can be misleading \parencite{Fawcett2006ROC,Saito2015PRROC}.
+
+\subsection{Validation Ladder}
+The evaluation ladder is ordered from weakest to strongest evidence:
+\begin{enumerate}
+    \item random stratified split, used as a learning-capacity check;
+    \item direct prediction check, which verifies model outputs against test labels without depending on environment metadata;
+    \item shuffled-label check, which helps detect leakage by confirming that performance collapses when training labels are randomized;
+    \item CSV/day split, which withholds entire capture groups;
+    \item leave-one-exact-CSV-out validation, which withholds each official CSV in turn;
+    \item Phase 2 laboratory-flow inference, which tests the trained pipeline on independently captured traffic.
+\end{enumerate}
+
+Each rung targets a different failure mode. The ladder does not make any single result definitive, but it makes the evaluation more informative than a single random train-test score.
 
 \subsection{Run Artifacts}
-Every training and evaluation workflow generates a unique run identifier. All associated artifacts---including the final model file, the fitted scaler, data clipping bounds, configuration dictionaries, and resulting metrics---are persisted in a dedicated run directory.
+Every meaningful training or evaluation run should persist a unique \texttt{RUN\_ID}, a configuration file, metrics, and any preprocessing state needed for exact reuse. Training runs persist model weights and scaler artifacts. Validation runs persist validation results. Phase 2 inference runs persist predictions, metrics, configuration, and optional diagnostics.
 
-\subsection{Configuration Tracking}
-The methodology avoids hardcoded constants in favor of tracked configurations. Parameters such as the reward matrix, learning rates, and split random seeds are logged with each run, ensuring that any reported result can be traced back to its precise experimental setup.
+This artifact discipline prevents ambiguous claims. A result is only treated as measured when it can be tied to a specific run folder and configuration. Historical runs are not silently merged with current defaults; reward values, split logic, preprocessing, row caps, and seeds must be read from the artifact.
+
+\section{Phase 2 Offline Inference Pipeline}
+The maintained Phase 2 entry point is the robust offline inference script. It accepts an extracted flow CSV, a trained model, a persisted scaler, optional percentile bounds, and optional z-score clipping. It then maps input columns to the canonical schema, applies the same feature/mask representation, scales with the saved scaler, computes diagnostics, predicts actions in batches, and writes outputs under a new Phase 2 run directory.
+
+\subsection{Canonical Mapping for Laboratory Flows}
+Laboratory-flow extractors may use different column names from CICIDS2017. The Phase 2 script therefore defines an explicit mapping from extractor names to canonical names. Metadata columns such as source IP, destination IP, ports, protocol, and timestamp may be preserved in output files for inspection, but they are not part of the model feature vector. This keeps interpretability and model input separate.
+
+\subsection{Distribution-Shift Diagnostics}
+Phase 2 inference computes diagnostics over scaled canonical features. Large absolute z-scores indicate that laboratory flow values are far from the CICIDS2017 training distribution. The script can also export the features with the largest deviations. These diagnostics are not labels and do not prove correctness, but they help explain block-rate changes and identify mismatches between benchmark and laboratory traffic.
+
+\subsection{Truth Metrics When Available}
+If a Phase 2 flow CSV includes truth columns such as \texttt{truth\_y} or \texttt{truth\_label}, the script can compute the same binary metrics used in internal evaluation. If ground truth is absent, the script reports prediction statistics such as block rate, allow rate, and z-score diagnostics. This distinction is important: an unlabeled benign-only or mixed-lab run cannot support the same claims as a labeled external validation set.
 
 \section{Methodological Limitations}
-The proposed methodology makes deliberate trade-offs to ensure safety, reproducibility, and analytical clarity. The evaluation is strictly offline; there is no live deployment, inline blocking, or interaction with an active adversary. The \texttt{PERMIT} and \texttt{BLOCK} actions are experimental classifications over static flow records, not executed firewall commands. Furthermore, the dataset-as-environment formulation means the RL agent does not experience true sequential decision-making dynamics, limiting the expression of long-term strategic planning. Finally, while Phase 2 inference on laboratory traffic tests robustness to domain shift, it does not constitute proof of production-readiness for arbitrary enterprise networks.
+The methodology makes deliberate trade-offs. It is safe, reproducible, and auditable, but it is not a full operational cyber-defense system. The RL environment is static, so actions do not alter future traffic. The binary label mapping discards attack-family detail in the main learning path. CICIDS2017 remains a controlled public benchmark with documented issues. Phase 2 laboratory inference tests domain shift but does not prove general production readiness.
+
+These limitations define the interpretation of the thesis. The contribution is an offline, flow-based, cost-sensitive \texttt{PERMIT}/\texttt{BLOCK} defender pipeline with explicit schema control, validation structure, and reproducible artifacts. Stronger future claims would require additional evidence: completed leave-one-exact-CSV-out artifacts, same-protocol supervised baseline metrics, multiple seeds, richer labeled laboratory traffic, and eventually a separate safety analysis for any active deployment.
