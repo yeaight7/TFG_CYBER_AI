@@ -50,14 +50,14 @@ a systematic reconstruction of the dataset and found that a substantial fraction
 traces contained artefacts that reduced their value for intrusion-detection research: flow
 boundaries were sometimes incorrect, certain attack sessions were partially mislabelled, and flow
 records overlapping temporal windows introduced spurious correlation between instances
-\verifycite{Engelen2021CICIDSIssues}. Lanvin et al.\ further argued that the widely circulated
+\parencite{Engelen2021CICIDSIssues}. Lanvin et al.\ further argued that the widely circulated
 summarised version of CICIDS2017 is used in ways that do not reflect the dataset's original
 intent, and that common evaluation practices overstate what it can support
-\verifycite{Lanvin2023CICIDSFaulty}. Neither critique disqualifies CICIDS2017 as a benchmark.
+\parencite{Lanvin2023Errors}. Neither critique disqualifies CICIDS2017 as a benchmark.
 Both require any study using it to document its preprocessing choices, label verification steps,
 and the specific curated version under evaluation.
 
-This thesis addresses these concerns through the adapter in \texttt{src/load\_cicids2017.py},
+This thesis addresses these concerns through the adapter in \texttt{src/load\_cicids.py},
 which applies explicit cleaning and numeric coercion; through an anti-leakage policy that excludes
 identifiers, absolute timestamps, IP addresses, Flow IDs, and port-proxy fields; and through local
 curated CSVs tracked separately from unprocessed exports % \parencite{ProjectAgentContext}.
@@ -76,7 +76,7 @@ across datasets. Different tools, capture environments, and research groups extr
 but non-identical flow statistics, which makes direct comparison across studies difficult.
 Sarhan et al.\ proposed mapping CICFlowMeter-generated features to a standard set aligned with
 a NetFlow schema, with the goal of improving cross-dataset comparability
-\verifycite{Sarhan2022StandardFeatureSet}. This thesis does not adopt that specific standard,
+\parencite{Sarhan2021}. This thesis does not adopt that specific standard,
 but the motivation is the same: a fixed canonical mapping across all data sources---CICIDS2017
 and any external lab-captured traffic---makes the evaluation reproducible, reduces the risk of
 implicit feature-set leakage, and simplifies the detection of missing or anomalous inputs through
@@ -115,42 +115,19 @@ It should not be described as proven superior for NIDS unless same-protocol comp
 
 RL and DRL have already been applied to intrusion detection and cyber defense \parencite{Yang2024DRLNIDSSurvey,Gueriani2024DRLIoTIDSSurvey}. Existing work includes dataset-as-environment formulations, DQN-style classifiers, actor-critic methods, adversarial-environment designs, and broader autonomous-defense settings \parencite{Yang2024DRLNIDSSurvey,Gueriani2024DRLIoTIDSSurvey}. These survey sources are useful for positioning, but they are preprints in the current bibliography; final thesis claims about specific prior systems should audit original papers individually.
 
-Several prior works provide direct precedents for the dataset-as-environment formulation studied
-in this thesis. López-Martín et al.\ explicitly reformulated intrusion detection as a deep RL
-problem by treating labelled dataset records as environment states, class predictions as actions,
-and reward as a function of classification correctness
-\verifycite{LopezMartin2020DRLIDS -- CANDIDATE: Expert Systems with Applications 2020, DOI 10.1016/j.eswa.2019.112963, add to bib after verifying}.
-Their experiments on NSL-KDD and AWID compared DQN, Double DQN, Policy Gradient, and Actor-Critic
-agents against supervised baselines, demonstrating that RL agents can be made competitive with
-supervised classifiers under this formulation. The same group extended this work to a
-dataset-as-environment formulation combining a radial basis function network with RL-style
-training, evaluated across five datasets including CICIDS2017 and UNSW-NB15
-\verifycite{LopezMartin2021RBFOfflineRL -- CANDIDATE: IEEE Access 2021, DOI 10.1109/ACCESS.2021.3127689, add to bib after verifying}.
-Both works evaluate on random train-test splits without temporal or file-based validation, and
-neither reports results on external lab-traffic data. Ren et al.\ applied DRL jointly to feature
-selection and classification on CSE-CIC-IDS2018, arguing that removing approximately 80 per cent
-of redundant features while jointly training a DRL-based classifier maintained detection
-performance
-\verifycite{Ren2022IDRDRL -- CANDIDATE: Scientific Reports 2022, DOI 10.1038/s41598-022-19366-3, add to bib after verifying}.
+Several prior works provide direct precedents for the dataset-as-environment formulation studied in this thesis. López-Martín et al.\ explicitly reformulated intrusion detection as a deep RL problem by treating labelled dataset records as environment states, class predictions as actions, and reward as a function of classification correctness \parencite{LopezMartin2020DRLIDS}.
+Their experiments on NSL-KDD and AWID compared DQN, Double DQN, Policy Gradient, and Actor-Critic agents against supervised baselines, demonstrating that RL agents can be made competitive with supervised classifiers under this formulation. The same group extended this work to a dataset-as-environment formulation combining a radial basis function network with RL-style training, evaluated across five datasets including CICIDS2017 and UNSW-NB15 \parencite{LopezMartin2021RBFOfflineRL}.
+Both works evaluate on random train-test splits without temporal or file-based validation, and neither reports results on external lab-traffic data. Ren et al.\ applied DRL jointly to feature selection and classification on CSE-CIC-IDS2018, arguing that removing approximately 80 per cent of redundant features while jointly training a DRL-based classifier maintained detection performance \parencite{Ren2022IDRDRL}.
 
-A consistent pattern across this literature is that reward design is either unspecified or limited
-to a symmetric correct/incorrect signal, and that the distribution of return values is not
-modelled \parencite{Yang2024DRLNIDSSurvey,Gueriani2024DRLIoTIDSSurvey}. Distributional RL methods
-such as QR-DQN \parencite{Dabney2018QRDQN} and C51 \parencite{Bellemare2017DistributionalRL} do
-not appear in the reviewed RL-IDS literature. This makes QRDQN an exploratory algorithmic choice
-in this context. The thesis does not claim that QRDQN is superior to DQN or to supervised
-alternatives; it evaluates whether a QRDQN formulation can produce competitive results under a
-cost-sensitive reward and a reproducible protocol, which has not been reported in the reviewed
-literature \parencite{Yang2024DRLNIDSSurvey}. % ,ProjectAgentContext
+A consistent pattern across this literature is that reward design is either unspecified or limited to a symmetric correct/incorrect signal, and that the distribution of return values is not modelled \parencite{Yang2024DRLNIDSSurvey,Gueriani2024DRLIoTIDSSurvey}.
+Distributional RL methods such as QR-DQN \parencite{Dabney2018QRDQN} and C51 \parencite{Bellemare2017DistributionalRL} do not appear in the reviewed RL-IDS literature. 
+This makes QRDQN an exploratory algorithmic choice in this context. 
+The thesis does not claim that QRDQN is superior to DQN or to supervised alternatives; it evaluates whether a QRDQN formulation can produce competitive results under a cost-sensitive reward and a reproducible protocol, which has not been reported in the reviewed literature \parencite{Yang2024DRLNIDSSurvey}. % ,ProjectAgentContext
 
-Beyond the dataset-as-environment tradition, a parallel line of work studies autonomous cyber
-defence, in which RL agents learn to select active countermeasures---such as isolating hosts or
-modifying routing rules---in simulated networks or attack graphs
-\citationneeded{audited autonomous cyber-defence survey}. This thesis is not positioned within
-the autonomous cyber-defence literature. The \texttt{PERMIT}/\texttt{BLOCK} decision is an offline
-decision label over extracted flow records, not an active network-control action in the current
-implementation % \parencite{ProjectAgentContext}. The autonomous cyber-defence framing represents
-a natural direction for future extension but is outside the scope of the work as implemented.
+Beyond the dataset-as-environment tradition, a parallel line of work studies autonomous cyber defence, in which RL agents learn to select active countermeasures---such as isolating hosts or modifying routing rules---in simulated networks or attack graphs \parencite{Palmer2023_weak}. 
+This thesis is not positioned within the autonomous cyber-defence literature. 
+The \texttt{PERMIT}/\texttt{BLOCK} decision is an offline decision label over extracted flow records, not an active network-control action in the current implementation % \parencite{ProjectAgentContext}. 
+The autonomous cyber-defence framing represents a natural direction for future extension but is outside the scope of the work as implemented.
 
 \section{Classification-as-RL Formulation}
 
@@ -160,7 +137,7 @@ The dataset-as-environment design used in this thesis follows a pattern identifi
 the RL-IDS literature. López-Martín et al.\ described their approach as a modification of the
 standard deep RL paradigm in which the environment is not a dynamical system but a function that
 samples labelled records and returns reward based on classification accuracy
-\verifycite{LopezMartin2020DRLIDS -- CANDIDATE: DOI 10.1016/j.eswa.2019.112963}. The present
+\parencite{LopezMartin2020DRLIDS}. The present
 design applies the same conceptual model through a Gymnasium-compatible interface
 \parencite{GymnasiumDocs}: each step of \texttt{RLDatasetDefenderEnv} presents one flow
 observation, receives a binary \texttt{PERMIT} or \texttt{BLOCK} action, and returns a reward
@@ -187,7 +164,7 @@ The critical argument is that if each observation is an independent labeled row 
 The structural difficulty of evaluating anomaly-based NIDS under realistic conditions was
 articulated by Sommer and Paxson, who argued that machine learning for network intrusion
 detection is harder to validate in practice than benchmark results suggest
-\verifycite{SommerPaxson2010ClosedWorld, IEEE S\&P 2010, likely DOI 10.1109/SP.2010.25}.
+\parencite{SommerPaxson2010ClosedWorld}.
 Their argument identifies features of the problem that controlled datasets do not reproduce: the
 diversity of benign traffic in production environments, the low base rate of genuine attacks, the
 challenge of obtaining representative labelled training data, and the gap between controlled
@@ -201,7 +178,7 @@ accuracy figure.
 A complementary concern is the base-rate fallacy in intrusion detection: even a classifier with
 a low nominal false-positive rate can produce an operationally unacceptable number of false alarms
 when attacks are rare relative to benign traffic
-\verifycite{Axelsson1999BaseRate, ACM TISSEC vol.\ 3 no.\ 3 2000, likely DOI 10.1145/357802.357804}.
+\parencite{Axelsson1999BaseRate}.
 This follows from a straightforward Bayesian argument and provides independent justification for
 reporting false-positive rate, precision, and recall alongside accuracy, and for the asymmetric
 reward design in which false negatives carry a higher cost than false positives
@@ -248,8 +225,7 @@ compared with a supervised alternative under the same conditions. The RL-IDS lit
 in this thesis typically trains on full public datasets without controlled ablations over data
 volume \parencite{Yang2024DRLNIDSSurvey}. Research into few-shot and class-incremental NIDS has
 addressed data efficiency from the supervised side, studying whether new attack families can be
-recognised with minimal additional examples \verifycite{DiMonda2024FewShotNIDS, approx.\ 2024,
-verify venue and DOI}; however, controlled training-scale experiments---in which only the
+recognised with minimal additional examples \parencite{DiMonda2024FewShotNIDS}; however, controlled training-scale experiments---in which only the
 training-set size changes while all other conditions remain fixed---are uncommon in both
 supervised and RL-IDS contexts.
 
