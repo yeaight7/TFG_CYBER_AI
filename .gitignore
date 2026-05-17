@@ -17,6 +17,7 @@ __pycache__/
 .vscode/
 .remember/
 report/tmp
+.python-version
 
 # PCAPS and big CSV files
 datasets/CICIDS2017/Raw_dataset/
