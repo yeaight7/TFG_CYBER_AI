@@ -76,6 +76,31 @@ The schema defines 76 ordered numerical flow features. They include duration, fo
 
 For CICIDS2017, an adapter maps original CSV columns into these canonical names. For Phase 2, the robust inference script maps laboratory-flow extractor columns into the same canonical names. The model is therefore trained and evaluated against a fixed feature contract. This design follows the broader methodological motivation of feature standardization in NIDS: cross-domain comparison becomes more auditable when feature definitions are explicit and stable \parencite{Sarhan2021}.
 
+Table~\ref{tab:canonical-groups} lists the logical groups within the 76-feature schema and the number of features contributed by each group. The grouping is informational; the model receives all 76 values as a flat vector without structural grouping signals.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcp{7cm}}
+\toprule
+Feature Group & Count & Representative Statistics \\
+\midrule
+Flow duration & 1 & Total duration of the bidirectional flow \\
+Forward packet statistics & 12 & Packet count, total bytes, mean/std/min/max of packet lengths \\
+Backward packet statistics & 12 & Same statistics for the reverse direction \\
+Bidirectional aggregates & 8 & Combined counts, total bytes, bulk-rate averages \\
+Inter-arrival time statistics & 10 & Flow, forward, and backward IAT mean, std, min, max \\
+TCP flag counts & 8 & FIN, SYN, RST, PSH, ACK, URG, CWE, ECE counts \\
+Header length aggregates & 4 & Forward and backward header byte totals \\
+Window size statistics & 3 & Initial and mean window size per direction \\
+Flow rate features & 6 & Bytes/s, packets/s per direction and combined \\
+Subflow statistics & 6 & Subflow packet and byte averages per direction \\
+Active/idle timing & 6 & Mean, std, max of active and idle period durations \\
+\bottomrule
+\end{tabular}
+\caption{Logical grouping of the 76 canonical flow features. All groups are merged into a single flat vector before model input.}
+\label{tab:canonical-groups}
+\end{table}
+
 \subsection{Missingness Mask}
 Different extractors may not provide every canonical feature, and even a present source column can contain invalid values. The pipeline therefore produces a 76-dimensional missingness mask. For each canonical feature $x_i$, the corresponding mask value $m_i$ is:
 \begin{itemize}
@@ -137,12 +162,35 @@ The current implementation uses the following default reward configuration:
 \[
 \text{TP}=1.5,\quad \text{FP}=-2.0,\quad \text{FN}=-5.0,\quad \text{TN/omission}=0.0.
 \]
-Here, a true positive is an attack correctly blocked, a false positive is benign traffic blocked, a false negative is an attack permitted, and omission is the neutral reward assigned to correctly permitted benign traffic. These values are experimental assumptions, not measured business costs. They are logged with each run so historical runs can be distinguished from current defaults.
+Table~\ref{tab:reward-matrix} arranges these values as a decision matrix across the four possible outcomes.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Agent Decision & True Label: Attack & True Label: Benign \\
+\midrule
+\texttt{BLOCK} (Action 1) & $+1.5$ (True Positive) & $-2.0$ (False Positive) \\
+\texttt{PERMIT} (Action 0) & $-5.0$ (False Negative) & $\phantom{-}0.0$ (True Negative) \\
+\bottomrule
+\end{tabular}
+\caption{Default reward matrix for the binary defender environment. Values are experimental assumptions logged with each run.}
+\label{tab:reward-matrix}
+\end{table}
+
+The false-negative penalty dominates the reward signal. An agent that issues \texttt{PERMIT} on every observation accumulates large negative return on attack-heavy traffic, while an agent that issues \texttt{BLOCK} on every observation accumulates false-positive penalties without gaining attack-detection credit. The reward structure is therefore designed to push the agent away from degenerate constant policies and toward discriminative behavior. The true-negative reward of zero is deliberate: explicitly rewarding every correct benign pass would bias the agent toward maximizing pass rate rather than detection quality. These values are experimental assumptions, not measured business costs. They are logged with each run so historical runs can be distinguished from current defaults.
 
 \subsection{Episode Structure}
 An episode is a sequence of flow decisions. On reset, the environment initializes an index over the selected partition. When shuffling is enabled, the training order is randomized. At each step, the agent receives one observation, selects \texttt{PERMIT} or \texttt{BLOCK}, receives a reward computed from the true label and the action, and advances to the next flow. An episode terminates when the dataset is exhausted or a configured maximum number of steps is reached.
 
 This design gives standard RL algorithms a transition stream while keeping training offline and safe. No action affects the source dataset, the next flow, or the network environment.
+
+\subsection{Environment State and Transition Protocol}
+On each \texttt{reset()} call the environment selects the partition assigned to the current mode (training or evaluation), optionally shuffles the index if shuffle mode is active, resets the internal step counter, and returns the first observation together with a metadata dictionary. On each \texttt{step()} call the environment records the agent's action, looks up the ground-truth label for the current flow index, computes the scalar reward from the reward matrix, advances the index, and returns the next observation, the reward, a termination flag, a truncation flag, and the metadata dictionary.
+
+The termination condition is either dataset exhaustion or a configurable maximum step count. In training mode the shuffled order ensures that minibatch transitions sample a broad distribution of flow types during a single episode. In evaluation mode the environment is deterministic: the same partition traversed in the same order produces the same sequence of observations, rewards, and labels. This determinism is essential for reproducible evaluation because it means metric differences between two saved models reflect only model behavior rather than sampling noise in the evaluation loop.
+
+The separation between training and evaluation modes is enforced at the environment level rather than left to the caller. Passing the correct mode flag at construction time sets both the index set and the shuffle behavior, which prevents a common mistake where evaluation accidentally inherits shuffled ordering from a training environment.
 
 \subsection{Limitations of the Dataset-as-Environment Formulation}
 Because the environment is a static dataset, the agent's actions do not affect future states. This is not a full autonomous cyber-defense problem in which blocking a flow might change later attacker behavior, host state, routing, or alert context. The formulation is closer to a cost-sensitive contextual decision problem than to a rich Markov Decision Process \parencite{SuttonBarto2018RL,Levine2020OfflineRL}.
@@ -156,6 +204,27 @@ The primary RL algorithm is Quantile Regression Deep Q-Network (QRDQN) \parencit
 Standard DQN approximates action values with a neural network and selects actions according to estimated expected return \parencite{Mnih2015DQN}. QRDQN extends this idea by learning quantiles of the return distribution. This is relevant to the thesis because the reward structure is asymmetric: false negatives carry a much larger penalty than correct benign permits carry reward. A distributional view can represent more information about return variability than a single mean estimate.
 
 The methodology does not assume QRDQN is inherently superior to supervised classifiers for tabular flow data. Instead, it evaluates QRDQN as the main RL representative under the same preprocessing, splits, and metrics used by baselines.
+
+\subsection{Quantile Regression Loss}
+QRDQN represents the action-return distribution using $N$ learned quantile estimates $\{\theta_i(s, a)\}_{i=1}^{N}$ at fixed quantile midpoints $\hat{\tau}_i = \frac{2i-1}{2N}$ \parencite{Dabney2018QRDQN}. During action selection, these quantiles are averaged to produce an expected-return estimate, recovering the standard DQN greedy rule under expectation.
+
+For a single transition $(s, a, r, s')$, let $a^* = \arg\max_a \sum_j \theta_j^-(s', a)$ denote the greedy action under the target network, and let
+\[
+    \delta_{ij} = r + \gamma\,\theta_j^-(s', a^*) - \theta_i(s, a)
+\]
+denote the temporal-difference error between source quantile $i$ and bootstrapped target quantile $j$. QRDQN minimizes the Huber quantile regression loss summed over all $N^2$ quantile pairs:
+\[
+    \mathcal{L} = \frac{1}{N}\sum_{i=1}^{N}\sum_{j=1}^{N}
+        \bigl|\hat{\tau}_i - \mathbf{1}[\delta_{ij} < 0]\bigr|\cdot L_\kappa(\delta_{ij}),
+\]
+where $L_\kappa$ is the element-wise Huber loss with threshold $\kappa$:
+\[
+    L_\kappa(\delta) = \begin{cases} \tfrac{1}{2}\delta^2 & \text{if } |\delta| \leq \kappa, \\ \kappa\bigl(|\delta| - \tfrac{1}{2}\kappa\bigr) & \text{otherwise.}\end{cases}
+\]
+Unlike C51, which represents returns over a fixed categorical support, QRDQN places no constraint on the support of the return distribution and adapts to the scale of rewards automatically \parencite{Bellemare2017DistributionalRL}. In the asymmetric reward setting of this thesis, the return distribution can develop heavy negative tails when false-negative events are frequent, making a distributional view more informative than a scalar mean estimate for understanding agent behavior near the PERMIT/BLOCK decision boundary.
+
+\subsection{Exploration Strategy}
+During training, the agent uses an $\varepsilon$-greedy policy. With probability $\varepsilon$ it selects a uniformly random action from $\{\texttt{PERMIT}, \texttt{BLOCK}\}$; with probability $1-\varepsilon$ it selects the action whose average quantile estimate is highest \parencite{Mnih2015DQN}. $\varepsilon$ decays linearly from an initial value near one toward a small final value over a fixed fraction of the total training timesteps, then remains constant. In the binary action setting the exploration budget is relatively cheap because only two alternatives exist. The exploration fraction and final $\varepsilon$ value are stored in the run configuration artifact so that runs with different schedules are not silently merged or compared without accounting for their exploration differences.
 
 \subsection{Training Configuration}
 The implementation uses the \texttt{sb3-contrib} QRDQN module \parencite{SB3ContribQRDQNDocs}. The model uses a multilayer perceptron policy over the 152-dimensional observations. Training uses a replay buffer, minibatch updates, a target network, and deterministic prediction during evaluation. The maintained training script supports fast and full presets, random and day split modes, explicit seeds, configurable row caps, and configurable timesteps.
@@ -175,6 +244,24 @@ The primary supervised baseline is a Random Forest classifier. The baseline is m
 The baseline must consume the same canonical observation representation, use the same split protocols, and report the same metrics as QRDQN. This same-protocol rule prevents confounded comparisons. If the baseline uses different preprocessing, different leakage controls, or easier splits, the comparison does not isolate the algorithmic contribution of QRDQN.
 
 The methodology therefore treats baseline comparison as a protocol requirement rather than an optional appendix. It also avoids claiming QRDQN superiority until same-split baseline artifacts exist.
+
+\subsection{Class Imbalance and Cost-Sensitive Weighting}
+CICIDS2017 is class-imbalanced: benign flows typically outnumber attack flows substantially, and within attack flows individual families vary in prevalence. A Random Forest trained with default uniform class weights will therefore tend to bias its predictions toward the majority benign class. To make the comparison meaningful under the asymmetric cost assumptions of the thesis, the Random Forest baseline uses class-balanced weighting, where each class receives a weight inversely proportional to its frequency in the training partition. This ensures that the supervised model is not penalized in the same direction as the RL reward function for different reasons.
+
+The class-weight setting is recorded in the baseline configuration artifact alongside the split mode, feature schema, and evaluation seed, so the weighting assumption is traceable. If the thesis finds that the Random Forest under balanced weighting reaches similar or superior false-negative performance to QRDQN under the asymmetric reward, that comparison is informative precisely because both models have been given access to comparable cost-sensitivity mechanisms. Comparing a cost-adjusted QRDQN against an uncorrected Random Forest would not provide this evidence.
+
+\section{Training-Scale and Data-Efficiency Protocol}
+The methodology includes a training-scale component motivated by a practical question: how much labeled flow data does each approach require before reaching stable performance? This matters because labeled attack traffic is expensive to obtain, benchmark abundance does not reflect deployment availability, and deep RL methods can be substantially more sample-hungry than tree-based supervised learners \parencite{SuttonBarto2018RL,Ring2019DatasetSurvey}.
+
+\subsection{Learning Curve Protocol}
+The learning-curve protocol evaluates both the QRDQN agent and the Random Forest baseline at progressively larger training budgets, all drawn from the same stratified split. The evaluation set is held constant across budgets at the full test partition so that metric changes reflect only training-data size and not evaluation conditions. Metrics are recorded at each budget level using the same evaluation code as the main benchmark runs.
+
+Each budget uses a freshly fitted scaler computed from only the rows included in that training subset. Larger budgets therefore benefit from a more representative normalization without contaminating the fixed test evaluation. This means the preprocessing artifacts produced at each budget level are distinct and independently reproducible.
+
+\subsection{Budget Levels and Comparison}
+Candidate budget levels include 100\,k, 250\,k, 500\,k, 1\,M, and 2\,M flow records. Not every level is achievable under every split mode; when a split does not produce training sets of the target size, the nearest available size is recorded. The final budget is the complete training partition under the selected split.
+
+Comparing QRDQN and Random Forest at each budget level reveals whether the RL formulation has a different sample requirement or convergence trajectory. If the Random Forest reaches a stable performance plateau with substantially fewer rows, this constitutes internal evidence that the benchmark task does not require the additional sample complexity of deep RL on the current feature schema. Conversely, if the cost-sensitive RL behavior improves disproportionately as the budget grows, the training-scale results can identify at what scale the distributional reward structure starts to contribute measurable advantage. All training-scale results are stored under the same run artifact scheme as main experiments, labeled by budget level and seed, so they remain independently recoverable and comparable across future experiments.
 
 \section{Evaluation Outputs and Reproducibility}
 Reproducibility is a core design constraint, especially because ML-security research often suffers from missing code, missing data processing details, and incomplete evaluation records \parencite{Olszewski2023ReproSecurityML}.
@@ -197,6 +284,8 @@ The evaluation ladder is ordered from weakest to strongest evidence:
 
 Each rung targets a different failure mode. The ladder does not make any single result definitive, but it makes the evaluation more informative than a single random train-test score.
 
+The random stratified split tests whether the model and implementation can solve the benchmark at all. A model that fails here has a training or architecture problem, not a generalization problem. The shuffled-label check is a leakage detector: a model that achieves well above majority-class accuracy on a shuffled-label run has learned from label-correlated artifacts in the features rather than from true flow statistics \parencite{Arp2020DosDontsMLSecurity}. The CSV/day split tests temporal and scenario generalization by withholding entire capture groups; performance degradation relative to the random split reveals whether the model depends on day-specific context. The leave-one-exact-CSV-out protocol pushes further: each official CICIDS2017 file is held out in turn, and the aggregate metric distribution shows whether any single file dominates the benchmark or whether performance is stable across capture scenarios. Phase 2 inference is the final and strictest rung, testing whether the entire pipeline can operate on traffic produced outside the benchmark environment.
+
 \subsection{Run Artifacts}
 Every meaningful training or evaluation run should persist a unique \texttt{RUN\_ID}, a configuration file, metrics, and any preprocessing state needed for exact reuse. Training runs persist model weights and scaler artifacts. Validation runs persist validation results. Phase 2 inference runs persist predictions, metrics, configuration, and optional diagnostics.
 
@@ -211,10 +300,34 @@ Laboratory-flow extractors may use different column names from CICIDS2017. The P
 \subsection{Distribution-Shift Diagnostics}
 Phase 2 inference computes diagnostics over scaled canonical features. Large absolute z-scores indicate that laboratory flow values are far from the CICIDS2017 training distribution. The script can also export the features with the largest deviations. These diagnostics are not labels and do not prove correctness, but they help explain block-rate changes and identify mismatches between benchmark and laboratory traffic.
 
+Beyond per-feature z-scores, the diagnostic output records the proportion of canonical features that were imputed from the missingness mask, the mean and variance of scaled feature values relative to training statistics, and any features that consistently fall outside the percentile bounds observed during CICIDS2017 training. Together these indicators provide a structured summary of distributional distance between the laboratory traffic and the benchmark, enabling targeted investigation rather than requiring manual inspection of raw prediction logs.
+
 \subsection{Truth Metrics When Available}
 If a Phase 2 flow CSV includes truth columns such as \texttt{truth\_y} or \texttt{truth\_label}, the script can compute the same binary metrics used in internal evaluation. If ground truth is absent, the script reports prediction statistics such as block rate, allow rate, and z-score diagnostics. This distinction is important: an unlabeled benign-only or mixed-lab run cannot support the same claims as a labeled external validation set.
 
-\section{Methodological Limitations}
-The methodology makes deliberate trade-offs. It is safe, reproducible, and auditable, but it is not a full operational cyber-defense system. The RL environment is static, so actions do not alter future traffic. The binary label mapping discards attack-family detail in the main learning path. CICIDS2017 remains a controlled public benchmark with documented issues. Phase 2 laboratory inference tests domain shift but does not prove general production readiness.
+\section{Implementation Framework}
+The experimental pipeline is implemented in Python and relies on a set of well-established open-source libraries. The core deep RL component uses the \texttt{sb3-contrib} extension of Stable Baselines3, which provides a tested QRDQN implementation with configurable network architecture, replay buffer, exploration schedule, and target-network updates \parencite{SB3ContribQRDQNDocs}. The environment wrapper follows the Gymnasium API \parencite{GymnasiumDocs}, making the flow dataset compatible with any Gymnasium-compliant training loop without changes to the algorithm implementation.
 
-These limitations define the interpretation of the thesis. The contribution is an offline, flow-based, cost-sensitive \texttt{PERMIT}/\texttt{BLOCK} defender pipeline with explicit schema control, validation structure, and reproducible artifacts. Stronger future claims would require additional evidence: completed leave-one-exact-CSV-out artifacts, same-protocol supervised baseline metrics, multiple seeds, richer labeled laboratory traffic, and eventually a separate safety analysis for any active deployment.
+\subsection{Data Processing and Supervised Learning Stack}
+Data loading and preprocessing rely on \texttt{pandas} for CSV ingestion, column standardization, and chunked reading of large files. Feature matrices are converted to \texttt{numpy} arrays and cast to \texttt{float32} before entering the Gymnasium environment or the supervised baseline. Standardization uses \texttt{scikit-learn}'s \texttt{StandardScaler}, chosen for its compatibility with the \texttt{sklearn} serialization protocol, which allows fitted scalers to be persisted and reloaded without reimplementation. The Random Forest baseline also uses \texttt{scikit-learn}, consuming the same input arrays that enter the RL environment. This shared data path ensures that any performance difference between the two models reflects algorithmic behavior rather than a discrepancy in data handling.
+
+\subsection{Artifact Management}
+Each training run produces a unique \texttt{RUN\_ID} composed of a timestamp and a short random suffix. The run directory collects the serialized QRDQN policy, the fitted scaler, percentile bounds, a configuration JSON, and a metrics JSON. Validation and Phase 2 inference runs produce separate subdirectories with their own configuration and metric records. This flat directory scheme avoids database dependencies while making runs independently recoverable and comparable through file-system inspection.
+
+\subsection{Reproducibility Controls}
+Seeds are fixed for the \texttt{numpy}, \texttt{random}, and \texttt{torch} random-number generators at the start of each run. Gymnasium environment resets also receive an explicit seed. Where multiple seeds are used for variance estimation, each seed generates a separate run directory so that per-seed results are preserved individually rather than averaged silently. These controls reduce within-run variance enough to distinguish meaningful performance differences from noise, though they cannot eliminate all nondeterminism arising from GPU kernel ordering.
+
+\section{Methodological Limitations}
+The methodology makes deliberate trade-offs that define the correct interpretation of the thesis results. This section organizes those trade-offs into four categories.
+
+\subsection{Static Environment and Sequential Decision-Making}
+The most fundamental limitation is that the RL environment is a static dataset. The agent's actions do not alter future flow observations, the network topology, the attacker's behavior, or the system state. The formulation is therefore closer to a cost-sensitive contextual decision problem than to a full Markov Decision Process \parencite{SuttonBarto2018RL,Levine2020OfflineRL}. Sequential dependencies, multi-stage attack chains, attacker adaptation, and active defender countermeasures are all outside the implemented scope. Claims about sequential autonomy, adaptive cyber defense, or online reinforcement learning are not supported by the current pipeline.
+
+\subsection{Binary Label Mapping and Attack-Family Detail}
+The binary label mapping collapses all attack types into a single \texttt{BLOCK} class. Attack-family information is discarded in the main RL learning path. This design is justified by the binary decision model studied here, but it means the agent cannot specialize its detection quality for individual attack families. Per-family error analysis requires preserved attack labels and separate evaluation code and cannot be inferred from the binary accuracy metrics reported by the main pipeline.
+
+\subsection{Benchmark Fragility and Generalization}
+CICIDS2017 remains a controlled public benchmark with documented issues: extraction artifacts, label inconsistencies, duplicate flows, and split sensitivity \parencite{Engelen2021CICIDSIssues,Lanvin2023Errors,Liu2022ErrorPrevalenceNIDS}. Even with anti-leakage preprocessing and stricter split protocols, performance on CICIDS2017 is not equivalent to performance on a production network. Phase 2 laboratory inference tests domain shift but is offline inference over a private capture rather than validation on an independently labeled production stream. Stronger generalization evidence would require external labeled datasets, multiple capture environments, and eventually a safety analysis for any active deployment.
+
+\subsection{Single Algorithm and Reproducibility Scope}
+The primary RL algorithm is a single QRDQN configuration. Single-run results cannot quantify run-to-run variance unless multiple seeds are evaluated and their results aggregated \parencite{SuttonBarto2018RL}. The supervised baseline is limited to Random Forest in the core comparison; other tabular learners are discussed in the literature review but are not part of the evaluated protocol. These scope restrictions are practical: completing the core pipeline and validation ladder is more methodologically informative than partially implementing many comparisons. Stronger future claims would require completed leave-one-exact-CSV-out artifacts, same-protocol supervised baseline metrics, multiple seeds, richer labeled laboratory traffic, and eventually a separate safety analysis for any active deployment.
