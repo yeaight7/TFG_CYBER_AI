@@ -1,0 +1,122 @@
+\chapter{Methodology}
+
+\section{Methodological Overview}
+This chapter details the methodological design and implementation of the proposed reinforcement learning (RL) based cybersecurity defender. The objective of the methodology is not to build a production-ready Intrusion Prevention System (IPS), but rather to establish a rigorous, offline experimental framework for evaluating RL-based binary security decisions on network flow records. The approach treats a static labeled dataset as the environment in a dataset-as-environment formulation, isolating the learning process from the risks of live network interaction. The methodology encompasses data ingestion and canonicalization, feature scaling and imputation, environment definition, and agent training, culminating in a multi-stage validation ladder.
+
+\section{Experimental Phases}
+The experimental methodology is divided into two primary phases, reflecting a progression from internal benchmark evaluation to testing against domain shift.
+
+\subsection{Phase 1: CICIDS2017 Internal Benchmark}
+Phase 1 focuses on offline training and validation using historical data, primarily relying on the CICIDS2017 dataset \parencite{Sharafaldin2018CICIDS2017,CICIDS2017Web}. This phase establishes the baseline learning capability of the RL agent under controlled conditions. The dataset provides a diverse set of labeled benign and attack flows, enabling the agent to learn statistical discrimination. Crucially, this phase incorporates rigorous data cleaning and a multi-stage validation strategy---including random stratified splits, temporal (day-based) splits, and leave-one-exact-CSV-out evaluation---to guard against dataset-specific artifacts and ensure robust generalization \parencite{Engelen2021CICIDSIssues,Lanvin2023Errors}.
+
+\subsection{Phase 2: Offline Laboratory-Traffic Inference}
+Phase 2 evaluates the trained model's resilience to domain shift by performing offline inference on flow features extracted from real traffic captured in an independent, private laboratory environment. This phase acts as an external validation tier. It does not involve active real-time blocking or deployment on a live network interface. Instead, PCAP files are processed offline into flow records and fed into the trained model using the same canonical schema as Phase 1. This step is critical for demonstrating that the agent's learned policies transfer beyond the specific extraction peculiarities of the CICIDS2017 environment.
+
+\section{Data Source and Input Representation}
+The foundation of the methodology relies on the extraction and representation of network traffic as discrete, statistical flow records.
+
+\subsection{CICIDS2017 Flow CSVs}
+The primary internal benchmark, CICIDS2017, provides traffic data already processed into CSV files via CICFlowMeter. These files contain dozens of statistical features per flow, such as duration, packet counts, byte totals, and inter-arrival times. While widely used, the raw dataset contains extraction errors and data leakage artifacts that require significant preprocessing before use in machine learning pipelines \parencite{Engelen2021CICIDSIssues}.
+
+\subsection{Binary Label Mapping}
+The diverse attack categories present in the CICIDS2017 dataset are aggregated into a unified binary classification task. Traffic labeled as normal or benign is mapped to the benign class (\texttt{PERMIT} target), while all variants of malicious traffic (e.g., DoS, PortScan, Web Attacks) are mapped to the attack class (\texttt{BLOCK} target). This binary simplification aligns with the operational decision-making model of a frontline defender filtering traffic.
+
+\subsection{Flow-Level Tabular Representation}
+The learning substrate is a flow-level tabular representation rather than raw packet payloads. This abstraction reduces the dimensionality of the data, making large-scale offline RL tractable, and avoids the complexities of Deep Packet Inspection (DPI), which is hindered by payload encryption \parencite{Sperotto2010FlowIDS,Umer2017FlowIDS}. Each row in the dataset represents a bidirectional flow, summarized by statistical aggregates over its duration.
+
+\section{Data Cleaning and Preprocessing}
+Rigorous preprocessing is essential to ensure the RL agent learns genuine attack behaviors rather than dataset artifacts or extraction anomalies.
+
+\subsection{Column Normalization and Numeric Coercion}
+The raw CSV columns often contain inconsistent naming conventions (e.g., leading/trailing spaces) and data types. The loading pipeline standardizes column names and coerces all feature columns to numeric types (\texttt{float32}). Any rows containing unparseable data after coercion are dropped to maintain the integrity of the observation space.
+
+\subsection{Invalid Values, Missing Values, and Imputation}
+Network flow extraction frequently produces invalid mathematical results, such as infinity or null values, typically arising from division by zero when calculating rates (e.g., bytes per second over a zero-duration flow). These invalid entries are identified and replaced with a default placeholder value (zero). This imputation allows the retention of the flow record while neutralizing the invalid computation.
+
+\subsection{Leakage-Prone Field Exclusion}
+To prevent the model from learning trivial mapping rules based on scenario-specific identifiers, the preprocessing pipeline strictly enforces an anti-leakage policy \parencite{Arp2020DosDontsMLSecurity,Kaufman2011LeakageDataMining}. Fields such as Source and Destination IP addresses, Flow IDs, absolute timestamps, and specific port numbers are explicitly excluded from the model's observation space. If the model were allowed to train on these fields, it would likely memorize the specific IP addresses of the attackers in the CICIDS2017 topology rather than the statistical shape of the attacks.
+
+\section{Canonical Feature Schema}
+To decouple the RL model from the specific column naming conventions of CICFlowMeter or any other extraction tool, the methodology introduces a canonical feature schema.
+
+\subsection{Canonical Flow Features}
+The schema defines a fixed set of 76 numerical flow features. These features capture fundamental flow properties including duration, forward and backward packet counts, length statistics, inter-arrival time (IAT) statistics, and TCP flag distributions. The adapter scripts map the dataset-specific columns to this canonical list. If a new dataset or extraction tool is introduced in Phase 2, its outputs must be mapped to this exact schema, ensuring the model's input space remains invariant.
+
+\subsection{Missingness Mask}
+Because different extraction tools may produce different subsets of features, the pipeline handles missing canonical features via a missingness mask. A 76-dimensional binary mask is appended to the feature vector. For each feature $i$, the mask value $m_i$ is set to 1 if the feature was present and valid in the source data, and 0 if the feature was missing and subsequently imputed with a placeholder.
+
+\subsection{Final Observation Vector}
+The final observation vector presented to the RL agent is a 152-dimensional array: 76 canonical feature values followed by their corresponding 76 missingness-mask values. This concatenated representation ensures that the agent is explicitly aware of which data points are genuine measurements and which are defaults, addressing the silent imputation problem where models unknowingly rely on artificial data.
+
+\section{Train-Test Separation and Scaling}
+Evaluation rigor requires that the training and testing phases remain strictly isolated, preventing data or distributional information from leaking into the training process.
+
+\subsection{Random Stratified Split}
+The most basic validation rung uses a random stratified split across the entire dataset. While useful for verifying that the model can learn at all, this approach is susceptible to adjacent-flow correlation and is considered the weakest form of evaluation \parencite{Lanvin2023Errors}.
+
+\subsection{CSV/Day-Based Split}
+To test temporal generalization, the pipeline supports day-based splits, where the model is trained on flows from certain days and evaluated on flows from different days. This ensures the model is not memorizing the specific background traffic patterns of a single day.
+
+\subsection{Leave-One-Exact-CSV-Out Split}
+The strictest internal validation rung is the leave-one-exact-CSV-out protocol. The model is trained on multiple capture files and evaluated on a single remaining file. This aggressively tests the agent's ability to generalize to unseen attack scenarios and capture contexts that were entirely absent from the training distribution.
+
+\subsection{Train-Fitted Standardization}
+Feature scaling is critical for the stability of neural network training. The methodology employs standard scaling (zero mean, unit variance). Crucially, the scaler is fitted strictly on the training partition. The testing partition is then transformed using these fitted parameters. This prevents test-set distributional information from leaking into the training process. The fitted scaler and any applicable clipping percentiles are persisted as artifacts to ensure consistent normalization during Phase 2 offline inference.
+
+\section{Reinforcement Learning Formulation}
+The intrusion detection problem is formulated as a Markov Decision Process (MDP) over a static dataset, implemented via a Gymnasium-compatible environment \parencite{Farama2023Gymnasium}.
+
+\subsection{Observation Space}
+The environment's observation space is a continuous vector space of dimension 152, representing the scaled canonical features and the missingness mask for a single flow record.
+
+\subsection{Action Space}
+The action space is discrete, corresponding to two binary decisions:
+\begin{itemize}
+    \item \texttt{Action 0 (PERMIT)}: Allow the traffic flow.
+    \item \texttt{Action 1 (BLOCK)}: Drop or alert on the traffic flow.
+\end{itemize}
+
+\subsection{Reward Function}
+The reward function encodes the asymmetric operational costs of security decisions \parencite{Lee2002CostSensitiveIDS,Cardenas2006IDSFramework}. Misclassification costs in cybersecurity are highly skewed: a false negative (allowing an attack) is typically far more damaging than a false positive (blocking benign traffic). The environment implements a configurable reward matrix that provides a positive reward for correctly blocking an attack, a moderate penalty for incorrectly blocking benign traffic, a severe penalty for incorrectly permitting an attack, and a neutral or slight reward for correctly permitting benign traffic. This cost-sensitive reward structure guides the RL agent to prioritize attack detection over aggregate accuracy, reflecting realistic defensive priorities.
+
+\subsection{Episode Structure}
+An episode consists of a sequence of flow evaluations. In the dataset-as-environment model, the environment simply iterates through the shuffled flow records of the training partition. Each step presents a new flow, the agent selects an action, the environment reveals the reward based on the true label, and the process repeats until the maximum number of steps per episode is reached or the dataset is exhausted.
+
+\subsection{Limitations of the Dataset-as-Environment Formulation}
+Because the environment is a static dataset, the agent's actions do not affect the future state of the environment. Unlike a live network where blocking a flow might prevent subsequent attack stages, the dataset environment cannot simulate adversary reaction or state transitions resulting from the defender's choices. Consequently, the RL task degenerates to a form of cost-sensitive contextual bandit problem \parencite{SuttonBarto2018}. However, utilizing RL algorithms in this setting provides a foundation for more complex sequential formulations in future work while remaining safe for offline experimentation.
+
+\section{QRDQN Agent}
+The primary reinforcement learning algorithm employed is Quantile Regression Deep Q-Network (QRDQN) \parencite{Dabney2018QRDQN}.
+
+\subsection{Algorithmic Role}
+QRDQN is a distributional RL algorithm that models the full distribution of expected returns rather than just the expected mean value. By estimating quantiles of the return distribution, QRDQN can learn more robust policies, particularly in environments with highly skewed or asymmetric reward structures, such as the cost-sensitive NIDS environment defined above.
+
+\subsection{Training Configuration}
+The agent is implemented using the \texttt{sb3-contrib} library \parencite{SB3Contrib2023QRDQN}, which integrates seamlessly with the Stable Baselines3 ecosystem. Hyperparameter selection (e.g., learning rate, batch size, target network update frequency) is managed via experimental presets and tuning scripts, enabling systematic comparison across different training runs.
+
+\subsection{Model Persistence}
+Upon completion of training, the final model weights, along with the environment configuration, fitted scaler, and normalization percentiles, are persisted to disk as run artifacts. This ensures strict reproducibility and allows the exact training state to be reloaded for Phase 2 inference.
+
+\section{Supervised Baseline}
+Evaluating the efficacy of the RL approach requires a strong, same-protocol supervised baseline.
+
+\subsection{Random Forest Baseline}
+Random Forest classifiers have consistently demonstrated strong performance on tabular flow data. Consequently, a Random Forest baseline is trained on the exact same canonical features and subjected to the exact same split protocols as the QRDQN agent.
+
+\subsection{Same-Protocol Comparison}
+The methodology insists on a strict same-protocol comparison. Both models consume the 152-dimensional canonical schema, utilize the same test partitions, and are evaluated using the same metrics. This approach isolates the algorithmic contribution of the RL formulation, avoiding confounded comparisons where models differ in preprocessing or evaluation rigor.
+
+\section{Evaluation Outputs and Reproducibility}
+Transparency and reproducibility are core tenets of the experimental design \parencite{Olszewski2023ReproducibilityMLSecurity}.
+
+\subsection{Metrics}
+Model performance is evaluated using standard binary classification metrics: Accuracy, Precision, Recall (Detection Rate), F1-Score, False Positive Rate (FPR), and False Negative Rate (FNR). The emphasis is placed on Recall and FPR, as these metrics directly reflect the asymmetric costs encoded in the RL reward function.
+
+\subsection{Run Artifacts}
+Every training and evaluation workflow generates a unique run identifier. All associated artifacts---including the final model file, the fitted scaler, data clipping bounds, configuration dictionaries, and resulting metrics---are persisted in a dedicated run directory.
+
+\subsection{Configuration Tracking}
+The methodology avoids hardcoded constants in favor of tracked configurations. Parameters such as the reward matrix, learning rates, and split random seeds are logged with each run, ensuring that any reported result can be traced back to its precise experimental setup.
+
+\section{Methodological Limitations}
+The proposed methodology makes deliberate trade-offs to ensure safety, reproducibility, and analytical clarity. The evaluation is strictly offline; there is no live deployment, inline blocking, or interaction with an active adversary. The \texttt{PERMIT} and \texttt{BLOCK} actions are experimental classifications over static flow records, not executed firewall commands. Furthermore, the dataset-as-environment formulation means the RL agent does not experience true sequential decision-making dynamics, limiting the expression of long-term strategic planning. Finally, while Phase 2 inference on laboratory traffic tests robustness to domain shift, it does not constitute proof of production-readiness for arbitrary enterprise networks.
