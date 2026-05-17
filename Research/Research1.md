@@ -441,8 +441,9 @@ Below are example BibTeX entries for key sources (adapt as needed for your style
   url       = {https://arxiv.org/abs/2306.04920}
 }
 
+% adapt authors appropriately for final reference
 @article{Umer2022RLRLIDS,
-  author    = {Ying Zhao and others}, % adapt authors appropriately for final reference
+  author    = {Ying Zhao and others}, 
   title     = {Packet-Level and Flow-Level Network Intrusion Detection Based on Reinforcement Learning and Adversarial Training},
   journal   = {Algorithms},
   volume    = {15},
@@ -452,8 +453,9 @@ Below are example BibTeX entries for key sources (adapt as needed for your style
   doi       = {10.3390/a15120453}
 }
 
+% complete from final paper
 @article{AESAC2023RLIDS,
-  author    = {First Author and Others}, % complete from final paper
+  author    = {First Author and Others},
   title     = {A Soft Actor-Critic Reinforcement Learning Algorithm for Network Intrusion Detection},
   journal   = {Computers \& Security},
   year      = {2023}
@@ -499,8 +501,9 @@ Below are example BibTeX entries for key sources (adapt as needed for your style
   howpublished = {\url{https://cset.georgetown.edu/publication/autonomous-cyber-defense/}}
 }
 
+% fill exact authors
 @article{TrainingData2025Generalizability,
-  author    = {First Author and Others}, % fill exact authors
+  author    = {First Author and Others},
   title     = {The Choice of Training Data and the Generalizability of Machine Learning Models for Network Intrusion Detection Systems},
   journal   = {Applied Sciences},
   year      = {2025},

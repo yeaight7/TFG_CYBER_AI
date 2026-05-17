@@ -1,6 +1,6 @@
 \chapter{State of the Art}
 
-This chapter reviews the research background for a reinforcement-learning-based defender that makes binary \texttt{PERMIT}/\texttt{BLOCK} decisions over network-flow observations. The objective is not to claim that reinforcement learning is new in intrusion detection. RL and DRL have already been studied for IDS and cyber-defense tasks, including DQN-style methods and broader autonomous-defense settings \parencite{Yang2024DRLNIDSSurvey,Gueriani2024DRLIoTIDSSurvey}. The contribution of this thesis is instead scoped as a reproducible experimental prototype: a QRDQN-based flow-level defender with internal CICIDS2017 benchmarking, supervised baseline comparison, data-efficiency analysis, leakage-aware validation, and planned or preferred external validation using lab-captured traffic % \parencite{ProjectAgentContext,ProjectResultsSnapshot}.
+This chapter reviews the research background for a reinforcement-learning-based defender that makes binary \texttt{PERMIT}/\texttt{BLOCK} decisions over network-flow observations. The objective is not to claim that reinforcement learning is new in intrusion detection. RL and DRL have already been studied for IDS and cyber-defense tasks, including DQN-style methods and broader autonomous-defense settings \Parencite{Yang2024DRLNIDSSurvey,Gueriani2024DRLIoTIDSSurvey}. The contribution of this thesis is instead scoped as a reproducible experimental prototype: a QRDQN-based flow-level defender with internal CICIDS2017 benchmarking, supervised baseline comparison, data-efficiency analysis, leakage-aware validation, and planned or preferred external validation using lab-captured traffic % \parencite{ProjectAgentContext,ProjectResultsSnapshot}.
 
 \section{Network Intrusion Detection Systems}
 
@@ -45,11 +45,50 @@ The dataset should therefore be presented as an internal benchmark and validatio
 
 The limitations of CICIDS2017 are central to the thesis argument. It is lab-generated and class-imbalanced, and performance can be inflated by favorable random splits, duplicated or near-duplicated flows, leakage-prone fields, or preprocessing choices \parencite{Ring2019DatasetSurvey,Arp2020DosDontsMLSecurity,Layeghy2023CrossDomainNIDS}. A model that scores highly on a random CICIDS2017 split has not demonstrated production robustness. This thesis should separate internal benchmark evidence from stricter split validation and external lab-traffic evaluation \parencite{Apruzzese2022CrossEvaluationNIDS}. % ProjectResultsSnapshot,
 
+The limitations of CICIDS2017 extend beyond its controlled lab origin. Engelen et al.\ conducted
+a systematic reconstruction of the dataset and found that a substantial fraction of the original
+traces contained artefacts that reduced their value for intrusion-detection research: flow
+boundaries were sometimes incorrect, certain attack sessions were partially mislabelled, and flow
+records overlapping temporal windows introduced spurious correlation between instances
+\parencite{Engelen2021CICIDSIssues}. Lanvin et al.\ further argued that the widely circulated
+summarised version of CICIDS2017 is used in ways that do not reflect the dataset's original
+intent, and that common evaluation practices overstate what it can support
+\parencite{Lanvin2023Errors}. Neither critique disqualifies CICIDS2017 as a benchmark.
+Both require any study using it to document its preprocessing choices, label verification steps,
+and the specific curated version under evaluation.
+
+This thesis addresses these concerns through the adapter in \texttt{src/load\_cicids.py},
+which applies explicit cleaning and numeric coercion; through an anti-leakage policy that excludes
+identifiers, absolute timestamps, IP addresses, Flow IDs, and port-proxy fields; and through local
+curated CSVs tracked separately from unprocessed exports % \parencite{ProjectAgentContext}.
+These steps reduce the risk of the most commonly documented failure modes and make the preprocessing
+choices auditable, but they do not guarantee that all benchmark artefacts are eliminated
+\parencite{Arp2020DosDontsMLSecurity}. % ProjectResultsSnapshot
+
 \section{Supervised Machine Learning and Deep Learning for NIDS}
 
 Most NIDS work is naturally framed as supervised learning: a labeled traffic record is mapped to benign, attack, or a specific attack family \parencite{LiuLang2019IDSSurvey,Ring2019DatasetSurvey}. Classical supervised methods such as Random Forest, decision trees, SVMs, and boosted trees remain important for tabular flow features, while deep-learning studies explore MLPs, CNNs, RNN/LSTM models, autoencoders, attention-based models, and hybrids \parencite{LiuLang2019IDSSurvey}. These models are not merely historical baselines. On structured flow features, simpler supervised methods can be strong and sometimes difficult for more complex models to beat under fair splits \parencite{LiuLang2019IDSSurvey,Apruzzese2022CrossEvaluationNIDS}.
 
 Random Forest is especially important here because it is a strong and natural baseline for tabular flow data. If an RL formulation is evaluated without strong supervised baselines, it becomes difficult to separate the value of the modeling framework from the value of the features and split protocol. The repository already includes a Random Forest baseline protocol aligned with the QRDQN evaluation splits, but metrics are still marked as pending % \parencite{ProjectResultsSnapshot}.
+
+A recognised difficulty in the NIDS research community is the lack of a standard feature set
+across datasets. Different tools, capture environments, and research groups extract overlapping
+but non-identical flow statistics, which makes direct comparison across studies difficult.
+Sarhan et al.\ proposed mapping CICFlowMeter-generated features to a standard set aligned with
+a NetFlow schema, with the goal of improving cross-dataset comparability
+\parencite{Sarhan2021}. This thesis does not adopt that specific standard,
+but the motivation is the same: a fixed canonical mapping across all data sources---CICIDS2017
+and any external lab-captured traffic---makes the evaluation reproducible, reduces the risk of
+implicit feature-set leakage, and simplifies the detection of missing or anomalous inputs through
+a dedicated missingness indicator % \parencite{ProjectAgentContext}.
+
+The canonical schema maps to 76 flow features from the CICIDS2017 CICFlowMeter pipeline. Each
+observation is extended by a 76-value binary missingness mask, where a value of 1 indicates a
+present and valid feature and 0 indicates a missing or imputed value, producing a 152-dimensional
+input vector % \parencite{ProjectAgentContext}. This schema is an implementation choice rather
+than a universality claim. Its primary function is reproducibility: the same pipeline processes
+both the internal CICIDS2017 benchmark and any external flow source, enabling consistent
+comparison across both data origins % \parencite{ProjectAgentContext}.
 
 Deep learning NIDS studies broaden the design space, but they also illustrate common evaluation risks. Surveys report strong results across public datasets, yet many works depend on unclear splits, limited preprocessing detail, imbalanced labels, or no external validation \parencite{LiuLang2019IDSSurvey,Ring2019DatasetSurvey,Arp2020DosDontsMLSecurity}. This does not mean supervised ML/DL work should be dismissed. It means the comparison must be methodological rather than rhetorical: QRDQN should be evaluated under the same data, feature mapping, split, and metrics as supervised baselines before making any algorithmic claim % \parencite{ProjectResultsSnapshot}.
 
@@ -76,13 +115,44 @@ It should not be described as proven superior for NIDS unless same-protocol comp
 
 RL and DRL have already been applied to intrusion detection and cyber defense \parencite{Yang2024DRLNIDSSurvey,Gueriani2024DRLIoTIDSSurvey}. Existing work includes dataset-as-environment formulations, DQN-style classifiers, actor-critic methods, adversarial-environment designs, and broader autonomous-defense settings \parencite{Yang2024DRLNIDSSurvey,Gueriani2024DRLIoTIDSSurvey}. These survey sources are useful for positioning, but they are preprints in the current bibliography; final thesis claims about specific prior systems should audit original papers individually.
 
-The processed research base suggests that many RL-for-IDS works remain heterogeneous in dataset choice, split protocol, baseline comparison, and external validation. This claim should be treated as a literature-synthesis claim, not as a numerical result, until paper-level audit is completed \verifycite{original RL-IDS papers and protocols}. The thesis should therefore avoid novelty overclaims. The relevant claim is not that RL for IDS is absent, but that this project studies a specific flow-level binary \texttt{PERMIT}/\texttt{BLOCK} formulation with QRDQN under a reproducible evaluation protocol % \parencite{ProjectAgentContext,ProjectResultsSnapshot}.
+Several prior works provide direct precedents for the dataset-as-environment formulation studied in this thesis. López-Martín et al.\ explicitly reformulated intrusion detection as a deep RL problem by treating labelled dataset records as environment states, class predictions as actions, and reward as a function of classification correctness \parencite{LopezMartin2020DRLIDS}.
+Their experiments on NSL-KDD and AWID compared DQN, Double DQN, Policy Gradient, and Actor-Critic agents against supervised baselines, demonstrating that RL agents can be made competitive with supervised classifiers under this formulation. The same group extended this work to a dataset-as-environment formulation combining a radial basis function network with RL-style training, evaluated across five datasets including CICIDS2017 and UNSW-NB15 \parencite{LopezMartin2021RBFOfflineRL}.
+Both works evaluate on random train-test splits without temporal or file-based validation, and neither reports results on external lab-traffic data. Ren et al.\ applied DRL jointly to feature selection and classification on CSE-CIC-IDS2018, arguing that removing approximately 80 per cent of redundant features while jointly training a DRL-based classifier maintained detection performance \parencite{Ren2022IDRDRL}.
 
-Autonomous cyber-defense work is related but distinct. Many autonomous-defense studies model defenders that select response strategies in simulated networks or attack graphs \citationneeded{audited autonomous cyber-defense survey}. The present thesis is closer to an IDS decision problem exposed through a Gymnasium-compatible environment. It can be framed as a building block for future defense automation, not as a complete autonomous defense system \parencite{GymnasiumDocs} % ,ProjectAgentContext}.
+A consistent pattern across this literature is that reward design is either unspecified or limited to a symmetric correct/incorrect signal, and that the distribution of return values is not modelled \parencite{Yang2024DRLNIDSSurvey,Gueriani2024DRLIoTIDSSurvey}.
+Distributional RL methods such as QR-DQN \parencite{Dabney2018QRDQN} and C51 \parencite{Bellemare2017DistributionalRL} do not appear in the reviewed RL-IDS literature. 
+This makes QRDQN an exploratory algorithmic choice in this context. 
+The thesis does not claim that QRDQN is superior to DQN or to supervised alternatives; it evaluates whether a QRDQN formulation can produce competitive results under a cost-sensitive reward and a reproducible protocol, which has not been reported in the reviewed literature \parencite{Yang2024DRLNIDSSurvey}. % ,ProjectAgentContext
+
+Beyond the dataset-as-environment tradition, a parallel line of work studies autonomous cyber defence, in which RL agents learn to select active countermeasures---such as isolating hosts or modifying routing rules---in simulated networks or attack graphs \parencite{Palmer2023_weak}. 
+This thesis is not positioned within the autonomous cyber-defence literature. 
+The \texttt{PERMIT}/\texttt{BLOCK} decision is an offline decision label over extracted flow records, not an active network-control action in the current implementation % \parencite{ProjectAgentContext}. 
+The autonomous cyber-defence framing represents a natural direction for future extension but is outside the scope of the work as implemented.
 
 \section{Classification-as-RL Formulation}
 
 The main methodological tension is that labeled flow detection is naturally a supervised classification problem, while this project formulates it as an RL environment. The favorable argument is that binary security decisions have asymmetric costs: false negatives permit attacks, while false positives block benign traffic. RL rewards can encode these costs directly \parencite{Lee2002CostSensitiveIDS} % ,ProjectAgentContext}.
+
+The dataset-as-environment design used in this thesis follows a pattern identified explicitly in
+the RL-IDS literature. López-Martín et al.\ described their approach as a modification of the
+standard deep RL paradigm in which the environment is not a dynamical system but a function that
+samples labelled records and returns reward based on classification accuracy
+\parencite{LopezMartin2020DRLIDS}. The present
+design applies the same conceptual model through a Gymnasium-compatible interface
+\parencite{GymnasiumDocs}: each step of \texttt{RLDatasetDefenderEnv} presents one flow
+observation, receives a binary \texttt{PERMIT} or \texttt{BLOCK} action, and returns a reward
+computed from the ground-truth label and the asymmetric cost preference
+\parencite{Lee2002CostSensitiveIDS}. % ,ProjectAgentContext
+
+The principal justification for this framing is not that it is the only way to apply RL to
+intrusion detection. It is that the binary security decision has asymmetric consequences---a false
+negative permits an attack flow, while a false positive blocks benign traffic---and that a reward
+function can encode this asymmetry directly rather than requiring post-hoc calibration of a
+symmetric loss \parencite{Lee2002CostSensitiveIDS}. The limitation is equally clear: without
+temporal dynamics, adversarial interaction, or sequential state evolution, the RL problem
+resembles reward-engineered classification. This is precisely why the supervised baseline
+comparison is a required element of the evaluation protocol, not an optional one.
+% \parencite{ProjectResultsSnapshot}
 
 A second favorable argument is continuity with future sequential defense. A \texttt{PERMIT}/\texttt{BLOCK} interface resembles a decision that an eventual defender might make, even though the current implementation is offline % \parencite{ProjectAgentContext}. 
 A Gymnasium-compatible environment also provides a structured interface that could later be extended with temporal context, online feedback, richer actions, or simulated adversarial behavior \parencite{GymnasiumDocs}.
@@ -90,6 +160,30 @@ A Gymnasium-compatible environment also provides a structured interface that cou
 The critical argument is that if each observation is an independent labeled row and reward mirrors the label, RL may add complexity without clear modeling benefit over supervised learning \parencite{SuttonBarto2018RL,LiuLang2019IDSSurvey}. In that case, supervised baselines are mandatory. The correct framing is balanced: the thesis studies classification-as-RL because it makes costs and the \texttt{PERMIT}/\texttt{BLOCK} interface explicit, but the experiments must show how this formulation compares with supervised baselines % \parencite{ProjectResultsSnapshot}.
 
 \section{Methodological Pitfalls in ML-Based NIDS}
+
+The structural difficulty of evaluating anomaly-based NIDS under realistic conditions was
+articulated by Sommer and Paxson, who argued that machine learning for network intrusion
+detection is harder to validate in practice than benchmark results suggest
+\parencite{SommerPaxson2010ClosedWorld}.
+Their argument identifies features of the problem that controlled datasets do not reproduce: the
+diversity of benign traffic in production environments, the low base rate of genuine attacks, the
+challenge of obtaining representative labelled training data, and the gap between controlled
+evaluation conditions and operational deployment. The implication is that high accuracy on a
+public benchmark is not a reliable indicator of operational performance
+\parencite{Arp2020DosDontsMLSecurity,Apruzzese2022CrossEvaluationNIDS}. This observation
+motivates the evaluation design in this thesis, which separates internal benchmark performance
+from external lab-traffic inference and applies staged evaluation rather than relying on a single
+accuracy figure.
+
+A complementary concern is the base-rate fallacy in intrusion detection: even a classifier with
+a low nominal false-positive rate can produce an operationally unacceptable number of false alarms
+when attacks are rare relative to benign traffic
+\parencite{Axelsson1999BaseRate}.
+This follows from a straightforward Bayesian argument and provides independent justification for
+reporting false-positive rate, precision, and recall alongside accuracy, and for the asymmetric
+reward design in which false negatives carry a higher cost than false positives
+\parencite{Lee2002CostSensitiveIDS}. The specific reward ratio is a scenario assumption and
+should be described as such in the methodology chapter, not as a measured operational cost.
 
 NIDS evaluation is vulnerable to inflated metrics. Random row-wise splits can place related flows, repeated patterns, or scenario-specific artifacts in both training and test data, making the test set less independent than it appears \parencite{Arp2020DosDontsMLSecurity,Apruzzese2022CrossEvaluationNIDS,Layeghy2023CrossDomainNIDS}. Very high accuracy is therefore not sufficient evidence unless the split, preprocessing, class distribution, and leakage controls are clear \parencite{Arp2020DosDontsMLSecurity,Ring2019DatasetSurvey}.
 
@@ -122,3 +216,23 @@ The design makes false-positive and false-negative consequences explicit through
 
 The evaluation posture should be skeptical by design. Random-split performance is useful but not sufficient; strict splits, shuffled-label validation, leave-one-exact-CSV-out evaluation, and external lab-flow inference each test different failure modes \parencite{Apruzzese2022CrossEvaluationNIDS,Layeghy2023CrossDomainNIDS}. % ProjectResultsSnapshot,
 In the current repository, Random Forest metrics and the full leave-one-exact-CSV-out artifact remain gaps, Phase 2 behavior must be tied to exact run artifacts, and external validation should be described as planned or preferred unless a current artifact supports a stronger claim % \parencite{ProjectResultsSnapshot}.
+
+\section{Data Efficiency and Training-Scale Evaluation}
+
+An underexplored dimension of RL-based NIDS evaluation is training-data efficiency: how
+performance scales with training-set size, and how much labelled data the RL formulation requires
+compared with a supervised alternative under the same conditions. The RL-IDS literature reviewed
+in this thesis typically trains on full public datasets without controlled ablations over data
+volume \parencite{Yang2024DRLNIDSSurvey}. Research into few-shot and class-incremental NIDS has
+addressed data efficiency from the supervised side, studying whether new attack families can be
+recognised with minimal additional examples \parencite{DiMonda2024FewShotNIDS}; however, controlled training-scale experiments---in which only the
+training-set size changes while all other conditions remain fixed---are uncommon in both
+supervised and RL-IDS contexts.
+
+This thesis evaluates five training budgets: 100k, 250k, 500k, 1M, and 2M samples, each using
+the same internal test set and the same canonical feature schema % \parencite{ProjectAgentContext}.
+The goal is to characterise whether the RL agent requires substantially more data than a
+supervised baseline to reach comparable performance, and to identify any regions of the learning
+curve where the two approaches diverge meaningfully. These experiments are positioned as
+methodological evidence for understanding the data requirements of the RL formulation, not as a
+benchmark against specialised few-shot or continual-learning methods % \parencite{ProjectAgentContext}.

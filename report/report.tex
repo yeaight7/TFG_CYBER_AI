@@ -9,33 +9,52 @@
 \usepackage{booktabs}
 \usepackage{enumitem}
 \usepackage{geometry}
+\usepackage{titlesec}
 \usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{setspace}
 \usepackage[
   backend=biber,
   style=authoryear,
-  maxcitenames=2,
-  maxbibnames=99
+  bibstyle=numeric,
+  backref=true,
+  maxcitenames=1,
+  maxbibnames=99,
+  hyperref=true
 ]{biblatex}
-\usepackage{hyperref}
+% \usepackage{biblatex}
 
-\geometry{margin=2.5cm}
+\geometry{margin=3.5cm}
 \emergencystretch=2em
 \addbibresource{references.bib}
+\setstretch{1.5}
+
+\titlespacing*{\chapter}{0pt}{80pt}{50pt}
+\titlespacing*{\section}{0pt}{36pt}{18pt}
+\titlespacing*{\subsection}{0pt}{24pt}{12pt}
 
 \newcommand{\citationneeded}[1]{\textbf{[Citation needed: #1]}}
 \newcommand{\verifycite}[1]{\textbf{[Verify: #1]}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \title{Reinforcement Learning for Cybersecurity: A Flow-Based Defender for Binary Permit/Block Decisions}
 \author{Javier Rivero Iglesias}
 \date{May 2026}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{document}
 
+\pagenumbering{gobble}
 \maketitle
+\newpage
 \tableofcontents
+\newpage
+\pagenumbering{arabic}
 
 \input{chapters/state_of_the_art}
 
-\printbibliography
-
+\chapter{Bibliography}
+\printbibliography[heading=none]
 \end{document}

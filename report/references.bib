@@ -1,27 +1,14 @@
+%% ============================================================
+%% NIDS Background and IDS Concepts
+%% ============================================================
+
 @techreport{ScarfoneMell2007,
   author      = {Scarfone, Karen A. and Mell, Peter M.},
-  title       = {Guide to Intrusion Detection and Prevention Systems (IDPS)},
+  title       = {Guide to Intrusion Detection and Prevention Systems ({IDPS})},
   institution = {National Institute of Standards and Technology},
   number      = {Special Publication 800-94},
   year        = {2007},
   url         = {https://csrc.nist.gov/pubs/sp/800/94/final}
-}
-
-@misc{KDDCup1999,
-  author = {{KDD Cup}},
-  title  = {{KDD Cup 1999 Data}},
-  year   = {1999},
-  url    = {http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html},
-  note   = {Dataset page; use only for historical dataset identification}
-}
-
-@inproceedings{Tavallaee2009NSLKDD,
-  author    = {Tavallaee, Mahbod and Bagheri, Ebrahim and Lu, Wei and Ghorbani, Ali A.},
-  title     = {A Detailed Analysis of the {KDD CUP 99} Data Set},
-  booktitle = {2009 IEEE Symposium on Computational Intelligence for Security and Defense Applications},
-  pages     = {1--6},
-  year      = {2009},
-  doi       = {10.1109/CISDA.2009.5356528}
 }
 
 @article{Sperotto2010FlowIDS,
@@ -35,19 +22,75 @@
   doi     = {10.1109/SURV.2010.032210.00054}
 }
 
+@article{Umer2017FlowIDS,
+  author  = {Umer, Muhammad Fahad and Sher, Muhammad and Bi, Yaxin},
+  title   = {Flow-Based Intrusion Detection: Techniques and Challenges},
+  journal = {Computers \& Security},
+  volume  = {70},
+  pages   = {238--254},
+  year    = {2017},
+  doi     = {10.1016/j.cose.2017.05.009}
+}
+
+%% ============================================================
+%% Public Datasets (Legacy)
+%% ============================================================
+
+@misc{KDDCup1999,
+  author       = {{KDD Cup}},
+  title        = {{KDD Cup 1999 Data}},
+  year         = {1999},
+  url          = {http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html},
+  note         = {Dataset page}
+}
+
+@inproceedings{Tavallaee2009NSLKDD,
+  author    = {Tavallaee, Mahbod and Bagheri, Ebrahim and Lu, Wei and Ghorbani, Ali A.},
+  title     = {A Detailed Analysis of the {KDD CUP 99} Data Set},
+  booktitle = {2009 {IEEE} Symposium on Computational Intelligence for Security and Defense Applications ({CISDA})},
+  pages     = {1--6},
+  year      = {2009},
+  doi       = {10.1109/CISDA.2009.5356528}
+}
+
+@article{Ozgur2016KDDUsage,
+  author  = {{\"O}zg{\"u}r, Atilla and Erdem, Hamit},
+  title   = {A Review of {KDD99} Dataset Usage in Intrusion Detection and Machine Learning Between 2010 and 2015},
+  journal = {PeerJ Preprints},
+  volume  = {4},
+  pages   = {e1954v1},
+  year    = {2016},
+  doi     = {10.7287/peerj.preprints.1954v1}
+}
+
+%% ============================================================
+%% Public Datasets (Modern)
+%% ============================================================
+
 @inproceedings{MoustafaSlay2015UNSWNB15,
   author    = {Moustafa, Nour and Slay, Jill},
   title     = {{UNSW-NB15}: A Comprehensive Data Set for Network Intrusion Detection Systems ({UNSW-NB15} Network Data Set)},
-  booktitle = {2015 Military Communications and Information Systems Conference (MilCIS)},
+  booktitle = {2015 Military Communications and Information Systems Conference ({MilCIS})},
   pages     = {1--6},
   year      = {2015},
   doi       = {10.1109/MilCIS.2015.7348942}
 }
 
+@article{Moustafa2016UNSWEval,
+  author  = {Moustafa, Nour and Slay, Jill},
+  title   = {The Evaluation of Network Anomaly Detection Systems: Statistical Analysis of the {UNSW-NB15} Data Set and the Comparison with the {KDD99} Data Set},
+  journal = {Information Security Journal: A Global Perspective},
+  volume  = {25},
+  number  = {1-3},
+  pages   = {18--31},
+  year    = {2016},
+  doi     = {10.1080/19393555.2015.1125974}
+}
+
 @inproceedings{Lashkari2017CICFlowMeter,
   author    = {Habibi Lashkari, Arash and Draper Gil, Gerard and Mamun, Mohammad Saiful Islam and Ghorbani, Ali A.},
   title     = {Characterization of {Tor} Traffic Using Time Based Features},
-  booktitle = {Proceedings of the 3rd International Conference on Information Systems Security and Privacy},
+  booktitle = {Proceedings of the 3rd International Conference on Information Systems Security and Privacy ({ICISSP})},
   pages     = {253--262},
   year      = {2017},
   doi       = {10.5220/0006105602530262}
@@ -56,7 +99,7 @@
 @inproceedings{Sharafaldin2018CICIDS2017,
   author    = {Sharafaldin, Iman and Habibi Lashkari, Arash and Ghorbani, Ali A.},
   title     = {Toward Generating a New Intrusion Detection Dataset and Intrusion Traffic Characterization},
-  booktitle = {Proceedings of the 4th International Conference on Information Systems Security and Privacy},
+  booktitle = {Proceedings of the 4th International Conference on Information Systems Security and Privacy ({ICISSP})},
   pages     = {108--116},
   year      = {2018},
   doi       = {10.5220/0006639801080116},
@@ -64,18 +107,18 @@
 }
 
 @misc{CICIDS2017Web,
-  author = {{Canadian Institute for Cybersecurity}},
-  title  = {Intrusion Detection Evaluation Dataset ({CIC-IDS2017})},
-  year   = {2017},
-  url    = {https://www.unb.ca/cic/datasets/ids-2017.html},
-  note   = {Dataset documentation page}
+  author       = {{Canadian Institute for Cybersecurity}},
+  title        = {Intrusion Detection Evaluation Dataset ({CIC-IDS2017})},
+  year         = {2017},
+  url          = {https://www.unb.ca/cic/datasets/ids-2017.html},
+  note         = {Dataset documentation page}
 }
 
 @misc{CSECICIDS2018AWS,
-  author = {{Communications Security Establishment} and {Canadian Institute for Cybersecurity}},
-  title  = {A Realistic Cyber Defense Dataset ({CSE-CIC-IDS2018})},
-  year   = {2018},
-  url    = {https://registry.opendata.aws/cse-cic-ids2018/}
+  author       = {{Communications Security Establishment} and {Canadian Institute for Cybersecurity}},
+  title        = {A Realistic Cyber Defense Dataset ({CSE-CIC-IDS2018})},
+  year         = {2018},
+  url          = {https://registry.opendata.aws/cse-cic-ids2018/}
 }
 
 @article{Koroniotis2019BotIoT,
@@ -88,6 +131,15 @@
   doi     = {10.1016/j.future.2019.05.041}
 }
 
+@inproceedings{Moustafa2020ToNIoT,
+  author    = {Moustafa, Nour and Ahmed, Mohiuddin and Ahmed, Sherif},
+  title     = {Data Analytics-Enabled Intrusion Detection: Evaluations of {ToN\_IoT} Linux Datasets},
+  booktitle = {2020 {IEEE} 19th International Conference on Trust, Security and Privacy in Computing and Communications ({TrustCom})},
+  pages     = {727--735},
+  year      = {2020},
+  doi       = {10.1109/TrustCom50675.2020.00080}
+}
+
 @article{Alsaedi2020ToNIoT,
   author  = {Alsaedi, Abdullah and Moustafa, Nour and Tari, Zahir and Mahmood, Abdun and Anwar, Adnan},
   title   = {{TON\_IoT} Telemetry Dataset: A New Generation Dataset of {IoT} and {IIoT} for Data-Driven Intrusion Detection Systems},
@@ -98,17 +150,138 @@
   doi     = {10.1109/ACCESS.2020.3022862}
 }
 
+@article{Thakkar2020DatasetsReview,
+  author  = {Thakkar, Ashish and Lohiya, Rachna},
+  title   = {A Review of the Advancement in Intrusion Detection Datasets},
+  journal = {Procedia Computer Science},
+  volume  = {167},
+  pages   = {636--645},
+  year    = {2020},
+  doi     = {10.1016/j.procs.2020.03.270}
+}
+
 @article{Ring2019DatasetSurvey,
-  author  = {Ring, Markus and Wunderlich, Sarah and Scheuring, Deniz and Landes, Dieter and Hotho, Andreas},
-  title   = {A Survey of Network-Based Intrusion Detection Data Sets},
-  journal = {Computers \& Security},
-  volume  = {86},
-  pages   = {147--167},
-  year    = {2019},
-  doi     = {10.1016/j.cose.2019.06.005},
-  eprint  = {1903.02460},
+  author        = {Ring, Markus and Wunderlich, Sarah and Scheuring, Deniz and Landes, Dieter and Hotho, Andreas},
+  title         = {A Survey of Network-Based Intrusion Detection Data Sets},
+  journal       = {Computers \& Security},
+  volume        = {86},
+  pages         = {147--167},
+  year          = {2019},
+  doi           = {10.1016/j.cose.2019.06.005},
+  eprint        = {1903.02460},
   archiveprefix = {arXiv}
 }
+
+@article{DatasetSurvey2025,
+  author  = {B{\"o}nninghausen, P. U. and others},
+  title   = {Network Intrusion Datasets: A Survey, Limitations, and Recommendations},
+  journal = {Computers \& Security},
+  year    = {2025},
+  doi     = {10.1016/j.cose.2025.104061}
+}
+
+%% ============================================================
+%% CICIDS2017 Deep-Dive and Critique
+%% ============================================================
+
+@incollection{Sharafaldin2019Detailed,
+  author    = {Sharafaldin, Iman and Habibi Lashkari, Arash and Ghorbani, Ali A.},
+  title     = {A Detailed Analysis of the {CICIDS2017} Data Set},
+  booktitle = {Information Systems Security and Privacy},
+  series    = {Communications in Computer and Information Science},
+  volume    = {977},
+  pages     = {172--188},
+  publisher = {Springer},
+  year      = {2019},
+  doi       = {10.1007/978-3-030-25109-3_9}
+}
+
+@inproceedings{Engelen2021CICIDSIssues,
+  author    = {Engelen, Gints and Rimmer, Vera and Joosen, Wouter},
+  title     = {Troubleshooting an Intrusion Detection Dataset: the {CICIDS2017} Case Study},
+  booktitle = {2021 {IEEE} Security and Privacy Workshops ({SPW})},
+  pages     = {7--12},
+  year      = {2021},
+  doi       = {10.1109/SPW53761.2021.00009}
+}
+
+@incollection{Lanvin2023Errors,
+  author    = {Lanvin, Maxime and Gimenez, Pierre-Fran{\c{c}}ois and Han, Yufei and Majorczyk, Fr{\'e}d{\'e}ric and M{\'e}, Ludovic and Totel, {\'E}ric},
+  title     = {Errors in the {CICIDS2017} Dataset and the Significant Differences in Detection Performances It Makes},
+  booktitle = {Risks and Security of Internet and Systems},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {13857},
+  pages     = {19--34},
+  publisher = {Springer},
+  year      = {2023},
+  doi       = {10.1007/978-3-031-31108-6_2}
+}
+
+@incollection{FaultyUseCICIDS2017,
+  author    = {Lanvin, Maxime and Gimenez, Pierre-Fran{\c{c}}ois and Han, Yufei and Majorczyk, Fr{\'e}d{\'e}ric and M{\'e}, Ludovic and Totel, {\'E}ric},
+  title     = {Faulty Use of the {CIC-IDS} 2017 Dataset in Information Security Research},
+  booktitle = {Risks and Security of Internet and Systems},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {13561},
+  publisher = {Springer},
+  year      = {2022},
+  note      = {Earlier presentation of dataset-critique work; see also Lanvin2023Errors}
+}
+
+@article{Oyelakin2023Overview,
+  author  = {Oyelakin, A. and Ameen, A. O. and Ogundele, T. S. and others},
+  title   = {Overview and Exploratory Analyses of {CICIDS} 2017 Intrusion Detection Dataset},
+  journal = {Journal of Systems Engineering and Information Technology},
+  volume  = {2},
+  number  = {2},
+  pages   = {45--52},
+  year    = {2023},
+  doi     = {10.29207/joseit.v2i2.5411}
+}
+
+@article{Zhang2025OpenSet,
+  author  = {Zhang, Xin and others},
+  title   = {Unknown Intrusion Traffic Detection Method Based on Unsupervised Learning and Open-Set Recognition},
+  journal = {Scientific Reports},
+  volume  = {15},
+  year    = {2025},
+  doi     = {10.1038/s41598-025-01084-1}
+}
+
+@article{Pekar2024NFStream,
+  author        = {Pekar, Adrian and Jozsa, Richard},
+  title         = {Evaluating {ML}-Based Anomaly Detection Across Datasets of Varied Integrity: A Case Study},
+  journal       = {Computer Networks},
+  volume        = {242},
+  pages         = {110617},
+  year          = {2024},
+  doi           = {10.1016/j.comnet.2024.110617},
+  eprint        = {2401.16843},
+  archiveprefix = {arXiv}
+}
+
+@article{Boukhamla2021CICIDS2017Validation,
+  author  = {Boukhamla, Akram Z. E. and Concha Bermejillo, Juan R.},
+  title   = {{CICIDS2017} Dataset: Performance Improvements and Validation as a Robust Intrusion Detection System Testbed},
+  journal = {International Journal of Information and Computer Security},
+  volume  = {15},
+  number  = {1},
+  pages   = {20--32},
+  year    = {2021},
+  doi     = {10.1504/IJICS.2021.117392}
+}
+
+@article{Farrukh2022PayloadByte,
+  author  = {Farrukh, Yasir Ali and Khan, Irfan and Wali, Syed and Bierbrauer, David and Bastian, Nathaniel D.},
+  title   = {Payload-Byte: A Tool for Extracting and Labeling Packet Capture Files of Modern Network Intrusion Detection Datasets},
+  journal = {TechRxiv Preprint},
+  year    = {2022},
+  doi     = {10.36227/techrxiv.20714221.v1}
+}
+
+%% ============================================================
+%% Supervised ML/DL for NIDS
+%% ============================================================
 
 @article{LiuLang2019IDSSurvey,
   author  = {Liu, Hongyu and Lang, Bo},
@@ -121,98 +294,63 @@
   doi     = {10.3390/app9204396}
 }
 
-@article{Arp2020DosDontsMLSecurity,
-  author        = {Arp, Daniel and Quiring, Erwin and Pendlebury, Feargus and Warnecke, Alexander and Pierazzi, Fabio and Wressnegger, Christian and Cavallaro, Lorenzo and Rieck, Konrad},
-  title         = {Dos and Don'ts of Machine Learning in Computer Security},
-  year          = {2020},
-  eprint        = {2010.09470},
-  archiveprefix = {arXiv},
-  primaryclass  = {cs.CR}
+@article{Asadullah2023MLIDSSurvey,
+  author  = {Asadullah, Momand and Ullah, Jan Sana and Ramzan, Naeem},
+  title   = {A Systematic and Comprehensive Survey of Recent Advances in Intrusion Detection Systems Using Machine Learning: Deep Learning, Datasets, and Attack Taxonomy},
+  journal = {Expert Systems},
+  year    = {2023},
+  doi     = {10.1155/2023/6048087}
 }
 
-@book{SuttonBarto2018RL,
-  author    = {Sutton, Richard S. and Barto, Andrew G.},
-  title     = {Reinforcement Learning: An Introduction},
-  edition   = {2},
-  publisher = {MIT Press},
-  year      = {2018},
-  url       = {http://incompleteideas.net/book/the-book-2nd.html}
+@article{Sayeeduddin2022AINIDS,
+  author  = {Sayeeduddin, Habeeb Mohammed and {Ranga Babu}, T.},
+  title   = {Network Intrusion Detection System: A Survey on Artificial Intelligence-Based Techniques},
+  journal = {Expert Systems},
+  year    = {2022},
+  doi     = {10.1111/exsy.13066}
 }
 
-@article{Mnih2015DQN,
-  author  = {Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Rusu, Andrei A. and Veness, Joel and Bellemare, Marc G. and Graves, Alex and Riedmiller, Martin and Fidjeland, Andreas K. and Ostrovski, Georg and Petersen, Stig and Beattie, Charles and Sadik, Amir and Antonoglou, Ioannis and King, Helen and Kumaran, Dharshan and Wierstra, Daan and Legg, Shane and Hassabis, Demis},
-  title   = {Human-Level Control through Deep Reinforcement Learning},
-  journal = {Nature},
-  volume  = {518},
-  number  = {7540},
-  pages   = {529--533},
-  year    = {2015},
-  doi     = {10.1038/nature14236}
+@article{Xiao2021DLIDSSurvey,
+  author  = {Xiao, Jianping and Long, Chun and Zhao, Jing and Wei, Jinxia and Hu, Anlei and Du, Guanyao},
+  title   = {A Survey on Network Intrusion Detection Based on Deep Learning},
+  journal = {Frontiers of Data and Computing},
+  volume  = {3},
+  number  = {3},
+  pages   = {59--74},
+  year    = {2021},
+  doi     = {10.11871/jfdc.issn.2096-742X.2021.03.006}
 }
 
-@inproceedings{VanHasselt2016DoubleDQN,
-  author    = {van Hasselt, Hado and Guez, Arthur and Silver, David},
-  title     = {Deep Reinforcement Learning with Double {Q}-Learning},
-  booktitle = {Proceedings of the Thirtieth AAAI Conference on Artificial Intelligence},
-  pages     = {2094--2100},
-  year      = {2016},
-  eprint    = {1509.06461},
+@article{Ahmad2021,
+  author  = {Ahmad, Zeeshan and Khan, Adnan Shahid and Shiang, Cheah Wai and Abdullah, Johari and Ahmad, Farhan},
+  title   = {Network Intrusion Detection System: A Systematic Study of Machine Learning and Deep Learning Approaches},
+  journal = {Transactions on Emerging Telecommunications Technologies},
+  volume  = {32},
+  number  = {1},
+  pages   = {e4150},
+  year    = {2021},
+  doi     = {10.1002/ett.4150}
+}
+
+@inproceedings{Nguyen2022BERTFlowNIDS,
+  author    = {Nguyen, Loc Gia and Watabe, Kohei},
+  title     = {Flow-Based Network Intrusion Detection Based on {BERT} Masked Language Model},
+  booktitle = {CoNEXT 2022 Student Workshop},
+  year      = {2022},
+  doi       = {10.1145/3565477.3569152},
+  eprint    = {2306.04920},
   archiveprefix = {arXiv}
 }
 
-@inproceedings{Wang2016DuelingDQN,
-  author    = {Wang, Ziyu and Schaul, Tom and Hessel, Matteo and van Hasselt, Hado and Lanctot, Marc and de Freitas, Nando},
-  title     = {Dueling Network Architectures for Deep Reinforcement Learning},
-  booktitle = {Proceedings of the 33rd International Conference on Machine Learning},
-  volume    = {48},
-  pages     = {1995--2003},
-  year      = {2016},
-  url       = {https://proceedings.mlr.press/v48/wangf16.html}
-}
-
-@inproceedings{Bellemare2017DistributionalRL,
-  author    = {Bellemare, Marc G. and Dabney, Will and Munos, R{\'e}mi},
-  title     = {A Distributional Perspective on Reinforcement Learning},
-  booktitle = {Proceedings of the 34th International Conference on Machine Learning},
-  volume    = {70},
-  pages     = {449--458},
-  year      = {2017},
-  url       = {https://proceedings.mlr.press/v70/bellemare17a.html}
-}
-
-@inproceedings{Dabney2018QRDQN,
-  author    = {Dabney, Will and Rowland, Mark and Bellemare, Marc G. and Munos, R{\'e}mi},
-  title     = {Distributional Reinforcement Learning with Quantile Regression},
-  booktitle = {Proceedings of the Thirty-Second AAAI Conference on Artificial Intelligence},
-  year      = {2018},
-  url       = {https://ojs.aaai.org/index.php/AAAI/article/view/11791}
-}
-
-@misc{GymnasiumDocs,
-  author = {{Farama Foundation}},
-  title  = {Gymnasium Documentation},
-  year   = {2026},
-  url    = {https://gymnasium.farama.org/},
-  note   = {Software documentation}
-}
-
-@misc{SB3ContribQRDQNDocs,
-  author = {{Stable-Baselines3 Contributors}},
-  title  = {{QR-DQN}: Stable Baselines3 Contrib Documentation},
-  year   = {2026},
-  url    = {https://sb3-contrib.readthedocs.io/en/master/modules/qrdqn.html},
-  note   = {Software documentation}
-}
-
-@article{Lee2002CostSensitiveIDS,
-  author  = {Lee, Wenke and Fan, Wei and Miller, Matthew and Stolfo, Salvatore J. and Zadok, Erez},
-  title   = {Toward Cost-Sensitive Modeling for Intrusion Detection and Response},
-  journal = {Journal of Computer Security},
-  volume  = {10},
-  number  = {1-2},
-  pages   = {5--22},
-  year    = {2002},
-  note    = {Use for cost-sensitive IDS concept; final metadata should be checked against library database}
+@article{Rodriguez2022FlowBasedEval,
+  author  = {Rodr{\'i}guez, Mar{\'i}a and Alesanco, {\'A}lvaro and Mehavilla, Lorena and Garc{\'i}a, Jos{\'e}},
+  title   = {Evaluation of Machine Learning Techniques for Traffic Flow-Based Intrusion Detection},
+  journal = {Sensors},
+  volume  = {22},
+  number  = {23},
+  pages   = {9326},
+  year    = {2022},
+  doi     = {10.3390/s22239326}
 }
 
 @article{Apruzzese2022CrossEvaluationNIDS,
@@ -236,14 +374,185 @@
   doi     = {10.1016/j.compeleceng.2023.108692}
 }
 
+@article{Layeghy2022,
+  author        = {Layeghy, Siamak and Portmann, Marius},
+  title         = {On Generalisability of Machine Learning-Based Network Intrusion Detection Systems},
+  year          = {2022},
+  eprint        = {2205.04112},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CR}
+}
+
+@article{Cantone2024,
+  author        = {Cantone, Marco and Marrocco, Claudio and Bria, Alessandro},
+  title         = {On the Cross-Dataset Generalization of Machine Learning for Network Intrusion Detection},
+  year          = {2024},
+  eprint        = {2402.10974},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CR}
+}
+
+@article{Sarhan2021,
+  author        = {Sarhan, Mohanad and Layeghy, Siamak and Portmann, Marius},
+  title         = {Evaluating Standard Feature Sets Towards Increased Generalisability and Explainability of {ML}-Based Network Intrusion Detection},
+  year          = {2021},
+  eprint        = {2104.07183},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CR},
+  note          = {Proposes standardised {NetFlow}-aligned feature mapping across {CIC} and {UNSW-NB15} datasets}
+}
+
+@article{TrainingData2025Generalizability,
+  author  = {B{\"o}nninghausen, P. U. and others},
+  title   = {The Choice of Training Data and the Generalizability of Machine Learning Models for Network Intrusion Detection Systems},
+  journal = {Applied Sciences},
+  volume  = {15},
+  number  = {15},
+  pages   = {8466},
+  year    = {2025},
+  doi     = {10.3390/app15158466}
+}
+
+%% ============================================================
+%% Methodological Pitfalls in ML-Based NIDS
+%% ============================================================
+
+@article{Arp2020DosDontsMLSecurity,
+  author        = {Arp, Daniel and Quiring, Erwin and Pendlebury, Feargus and Warnecke, Alexander and Pierazzi, Fabio and Wressnegger, Christian and Cavallaro, Lorenzo and Rieck, Konrad},
+  title         = {Dos and Don'ts of Machine Learning in Computer Security},
+  year          = {2020},
+  eprint        = {2010.09470},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CR}
+}
+
+@inproceedings{SommerPaxson2010ClosedWorld,
+  author    = {Sommer, Robin and Paxson, Vern},
+  title     = {Outside the Closed World: On Using Machine Learning for Network Intrusion Detection},
+  booktitle = {2010 {IEEE} Symposium on Security and Privacy ({S\&P})},
+  pages     = {305--316},
+  year      = {2010},
+  doi       = {10.1109/SP.2010.25}
+}
+
+@article{Axelsson1999BaseRate,
+  author  = {Axelsson, Stefan},
+  title   = {The Base-Rate Fallacy and the Difficulty of Intrusion Detection},
+  journal = {{ACM} Transactions on Information and System Security},
+  volume  = {3},
+  number  = {3},
+  pages   = {186--205},
+  year    = {2000},
+  doi     = {10.1145/357802.357804}
+}
+
+%% ============================================================
+%% Reinforcement Learning Background
+%% ============================================================
+
+@book{SuttonBarto2018RL,
+  author    = {Sutton, Richard S. and Barto, Andrew G.},
+  title     = {Reinforcement Learning: An Introduction},
+  edition   = {2},
+  publisher = {MIT Press},
+  year      = {2018},
+  url       = {http://incompleteideas.net/book/the-book-2nd.html}
+}
+
+@article{Mnih2015DQN,
+  author  = {Mnih, Volodymyr and Kavukcuoglu, Koray and Silver, David and Rusu, Andrei A. and Veness, Joel and Bellemare, Marc G. and Graves, Alex and Riedmiller, Martin and Fidjeland, Andreas K. and Ostrovski, Georg and Petersen, Stig and Beattie, Charles and Sadik, Amir and Antonoglou, Ioannis and King, Helen and Kumaran, Dharshan and Wierstra, Daan and Legg, Shane and Hassabis, Demis},
+  title   = {Human-Level Control through Deep Reinforcement Learning},
+  journal = {Nature},
+  volume  = {518},
+  number  = {7540},
+  pages   = {529--533},
+  year    = {2015},
+  doi     = {10.1038/nature14236}
+}
+
+@inproceedings{VanHasselt2016DoubleDQN,
+  author        = {van Hasselt, Hado and Guez, Arthur and Silver, David},
+  title         = {Deep Reinforcement Learning with Double {Q}-Learning},
+  booktitle     = {Proceedings of the Thirtieth {AAAI} Conference on Artificial Intelligence},
+  pages         = {2094--2100},
+  year          = {2016},
+  eprint        = {1509.06461},
+  archiveprefix = {arXiv}
+}
+
+@inproceedings{Wang2016DuelingDQN,
+  author    = {Wang, Ziyu and Schaul, Tom and Hessel, Matteo and van Hasselt, Hado and Lanctot, Marc and de Freitas, Nando},
+  title     = {Dueling Network Architectures for Deep Reinforcement Learning},
+  booktitle = {Proceedings of the 33rd International Conference on Machine Learning ({ICML})},
+  volume    = {48},
+  pages     = {1995--2003},
+  year      = {2016},
+  url       = {https://proceedings.mlr.press/v48/wangf16.html}
+}
+
+@inproceedings{Bellemare2017DistributionalRL,
+  author    = {Bellemare, Marc G. and Dabney, Will and Munos, R{\'e}mi},
+  title     = {A Distributional Perspective on Reinforcement Learning},
+  booktitle = {Proceedings of the 34th International Conference on Machine Learning ({ICML})},
+  volume    = {70},
+  pages     = {449--458},
+  year      = {2017},
+  url       = {https://proceedings.mlr.press/v70/bellemare17a.html}
+}
+
+@inproceedings{Dabney2018QRDQN,
+  author    = {Dabney, Will and Rowland, Mark and Bellemare, Marc G. and Munos, R{\'e}mi},
+  title     = {Distributional Reinforcement Learning with Quantile Regression},
+  booktitle = {Proceedings of the Thirty-Second {AAAI} Conference on Artificial Intelligence},
+  pages     = {2892--2901},
+  year      = {2018},
+  url       = {https://ojs.aaai.org/index.php/AAAI/article/view/11791}
+}
+
+@misc{GymnasiumDocs,
+  author = {{Farama Foundation}},
+  title  = {Gymnasium Documentation},
+  year   = {2023},
+  url    = {https://gymnasium.farama.org/},
+  note   = {Software documentation; access date 2026}
+}
+
+@misc{SB3ContribQRDQNDocs,
+  author = {{Stable-Baselines3 Contributors}},
+  title  = {{QR-DQN}: Stable Baselines3 Contrib Documentation},
+  year   = {2023},
+  url    = {https://sb3-contrib.readthedocs.io/en/master/modules/qrdqn.html},
+  note   = {Software documentation; access date 2026}
+}
+
+%% ============================================================
+%% Cost-Sensitive IDS
+%% ============================================================
+
+@article{Lee2002CostSensitiveIDS,
+  author  = {Lee, Wenke and Fan, Wei and Miller, Matthew and Stolfo, Salvatore J. and Zadok, Erez},
+  title   = {Toward Cost-Sensitive Modeling for Intrusion Detection and Response},
+  journal = {Journal of Computer Security},
+  volume  = {10},
+  number  = {1--2},
+  pages   = {5--22},
+  year    = {2002},
+  doi     = {10.3233/JCS-2002-101-202}
+}
+
+%% ============================================================
+%% DRL for NIDS: Surveys
+%% ============================================================
+
 @article{Yang2024DRLNIDSSurvey,
   author        = {Yang, Wanrong and Acuto, Alberto and Zhou, Yihang and Wojtczak, Dominik},
   title         = {A Survey for Deep Reinforcement Learning Based Network Intrusion Detection},
+  journal       = {Artificial Intelligence and Law},
   year          = {2024},
+  doi           = {10.1002/ail2.70026},
   eprint        = {2410.07612},
   archiveprefix = {arXiv},
-  primaryclass  = {cs.CR},
-  note          = {Preprint; use cautiously until publication status is audited}
+  primaryclass  = {cs.CR}
 }
 
 @article{Gueriani2024DRLIoTIDSSurvey,
@@ -253,26 +562,207 @@
   eprint        = {2405.20038},
   archiveprefix = {arXiv},
   primaryclass  = {cs.CR},
-  note          = {Preprint; use cautiously until publication status is audited}
+  note          = {Preprint; published version in IC2EM proceedings 2023}
 }
 
-@misc{ProjectAgentContext,
-  author = {{TFG\_CYBER\_AI repository}},
-  title  = {Project-Wide Technical Source of Truth},
-  year   = {2026},
-  note   = {Repository file: \url{.github/AGENT_CONTEXT.md}}
+@article{Cevallos2023DRLIDSBP,
+  author  = {Cevallos, Jes{\'u}s F. and Rizzardi, Alessandra and Sicari, Sabrina and Coen-Porisini, Alberto},
+  title   = {Deep Reinforcement Learning for Intrusion Detection in {Internet of Things}: Best Practices, Lessons Learnt, and Open Challenges},
+  journal = {Computer Networks},
+  volume  = {234},
+  pages   = {109997},
+  year    = {2023},
+  doi     = {10.1016/j.comnet.2023.109997}
 }
 
-@misc{ProjectDocsContext,
-  author = {{TFG\_CYBER\_AI repository}},
-  title  = {Phase 2 Documentation Context},
-  year   = {2026},
-  note   = {Repository file: \url{docs/AGENT_CONTEXT.md}}
+%% ============================================================
+%% DRL for NIDS: Key Method Papers
+%% ============================================================
+
+@article{LopezMartin2020DRLIDS,
+  author  = {Lopez-Martin, Manuel and Carro, Bel{\'e}n and Sanchez-Esguevillas, Antonio},
+  title   = {Application of Deep Reinforcement Learning to Intrusion Detection for Supervised Problems},
+  journal = {Expert Systems with Applications},
+  volume  = {141},
+  pages   = {112963},
+  year    = {2020},
+  doi     = {10.1016/j.eswa.2019.112963}
 }
 
-@misc{ProjectResultsSnapshot,
-  author = {{TFG\_CYBER\_AI repository}},
-  title  = {Artifact-Backed Results Snapshot},
-  year   = {2026},
-  note   = {Repository file: \url{docs/results.md}}
+@article{LopezMartin2021RBFOfflineRL,
+  author  = {Lopez-Martin, Manuel and Sanchez-Esguevillas, Antonio and Arribas, Juan I. and Carro, Bel{\'e}n},
+  title   = {Network Intrusion Detection Based on Extended {RBF} Neural Network With Offline Reinforcement Learning},
+  journal = {IEEE Access},
+  volume  = {9},
+  pages   = {153153--153170},
+  year    = {2021},
+  doi     = {10.1109/ACCESS.2021.3127689}
+}
+
+@article{Ren2022IDRDRL,
+  author  = {Ren, Kezhou and Zhu, Jinshu and Yuan, Tao and Wen, Sheng and Jiang, Frank},
+  title   = {{ID-RDRL}: A Deep Reinforcement Learning-Based Feature Selection Intrusion Detection Model},
+  journal = {Scientific Reports},
+  volume  = {12},
+  pages   = {15370},
+  year    = {2022},
+  doi     = {10.1038/s41598-022-19366-3}
+}
+
+@inproceedings{Caminero2019AERLIDS,
+  author    = {Caminero, Guillermo and Lopez-Martin, Manuel and Carro, Belen},
+  title     = {Adversarial Environment Reinforcement Learning Algorithm for Intrusion Detection},
+  booktitle = {2019 International Joint Conference on Neural Networks ({IJCNN})},
+  pages     = {1--8},
+  year      = {2019},
+  doi       = {10.1109/IJCNN.2019.8852380}
+}
+
+@article{AESAC2023RLIDS,
+  author  = {Hsu, Chia-Wei and Lin, Chia-Hsuan and others},
+  title   = {A Soft Actor-Critic Reinforcement Learning Algorithm for Network Intrusion Detection},
+  journal = {Computers \& Security},
+  volume  = {136},
+  pages   = {103580},
+  year    = {2023},
+  doi     = {10.1016/j.cose.2023.103580},
+  note    = {Full author list requires verification against published paper}
+}
+
+@article{Umer2022RLRLIDS,
+  author  = {Zhao, Ying and Li, Guozheng and Li, Tao and Hu, Yuxiang},
+  title   = {Packet-Level and Flow-Level Network Intrusion Detection Based on Reinforcement Learning and Adversarial Training},
+  journal = {Algorithms},
+  volume  = {15},
+  number  = {12},
+  pages   = {453},
+  year    = {2022},
+  doi     = {10.3390/a15120453}
+}
+
+@article{Alavizadeh2021,
+  author        = {Alavizadeh, Hooman and Jang-Jaccard, Julian and Alavizadeh, Hootan},
+  title         = {Deep Q-Learning Based Reinforcement Learning Approach for Network Intrusion Detection},
+  year          = {2021},
+  eprint        = {2111.13978},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CR}
+}
+
+@article{AEDDQN2020NSLKDD,
+  author  = {Han, Dongkun and Wang, Zhiping and Zhong, Yihua and Chen, Wenhan and Yang, Jiaze and Lu, Shanqing and Shi, Xinyan and Yin, Xia},
+  title   = {Evaluating Network Intrusion Detection Systems for Different Vulnerability Conditions Using an Adversarial Environment {DQN}},
+  journal = {IEEE Access},
+  volume  = {9},
+  pages   = {4345--4359},
+  year    = {2020},
+  doi     = {10.1109/ACCESS.2020.3047430},
+  note    = {IEEE Xplore document ID 9289884; full author list requires verification}
+}
+
+@inproceedings{NIDSRL2023,
+  author    = {Tiwari, Punit and others},
+  title     = {Network Intrusion Detection System Using Reinforcement Learning},
+  booktitle = {2023 3rd International Conference on Technological Advancements in Computational Sciences ({ICTACS})},
+  year      = {2023},
+  doi       = {10.1109/ICTACS59847.2023.10170630},
+  note      = {IEEE Xplore document ID 10170630; author list requires verification}
+}
+
+@inproceedings{RLTechniques2023NIDS,
+  author    = {Alawida, Moatsum and others},
+  title     = {Network Intrusion Detection System Using Reinforcement Learning Techniques},
+  booktitle = {2023 {IEEE} International Conference on Cyber Security and Resilience ({CSR})},
+  year      = {2023},
+  doi       = {10.1109/CSR57506.2023.10245608},
+  note      = {IEEE Xplore document ID 10245608; author list requires verification}
+}
+
+@mastersthesis{Sanusi2023DRLIDS,
+  author  = {Sanusi, Hamed T.},
+  title   = {Network Intrusion Detection Using Deep Reinforcement Learning},
+  school  = {Georgia Southern University},
+  year    = {2023},
+  address = {Statesboro, Georgia, {USA}},
+  url     = {https://digitalcommons.georgiasouthern.edu/etd/3809}
+}
+
+@article{Hossain2025DQIDS,
+  author  = {Hossain, Md. Alamgir and others},
+  title   = {Deep Q-Learning Intrusion Detection System ({DQ-IDS}): A Novel Reinforcement Learning Approach for Adaptive and Self-Learning Cybersecurity},
+  journal = {ICT Express},
+  year    = {2025},
+  doi     = {10.1016/j.icte.2025.02.006},
+  note    = {Full author list requires verification; accessed via ScienceDirect}
+}
+
+@article{DDPG2025AttackDetection,
+  author  = {Gao, Ruipeng and others},
+  title   = {Optimized Network Security Attack Detection Algorithm Based on Deep Deterministic Policy Gradient ({DDPG})},
+  journal = {IEEE Transactions on Network and Service Management},
+  year    = {2025},
+  doi     = {10.1109/TNSM.2025.3551234},
+  note    = {IEEE Xplore document ID 11189334; author list requires verification}
+}
+
+@article{DRLIDSSDN2025,
+  author  = {Hossain, Md. Alamgir and others},
+  title   = {Deep Reinforcement Learning-Based Intrusion Detection Scheme for Software-Defined Networking},
+  journal = {Scientific Reports},
+  volume  = {15},
+  year    = {2025},
+  doi     = {10.1038/s41598-025-24869-w},
+  note    = {Author list requires verification}
+}
+
+@article{HCLRIDS2025IoMT,
+  author  = {Al-Hawawreh, Muna and others},
+  title   = {A Deep Reinforcement Learning-Based Robust Intrusion Detection System for Securing {IoMT} Healthcare Networks},
+  journal = {Frontiers in Medicine},
+  volume  = {12},
+  year    = {2025},
+  doi     = {10.3389/fmed.2025.1524286},
+  note    = {Author list requires verification}
+}
+
+%% ============================================================
+%% Autonomous Cyber Defense
+%% ============================================================
+
+@article{Hu2020POMDPDefense,
+  author  = {Hu, Zhisheng and Zhu, Minghui and Liu, Peng},
+  title   = {Adaptive Cyber Defense Against Multi-Stage Attacks Using Learning-Based {POMDP}},
+  journal = {{ACM} Transactions on Privacy and Security},
+  volume  = {24},
+  number  = {1},
+  pages   = {1--31},
+  year    = {2020},
+  doi     = {10.1145/3418897}
+}
+
+@misc{CSET2023AutonomousCyberDefense,
+  author       = {{Center for Security and Emerging Technology} and {The Alan Turing Institute}},
+  title        = {Autonomous Cyber Defense},
+  year         = {2023},
+  howpublished = {\url{https://cset.georgetown.edu/publication/autonomous-cyber-defense/}}
+}
+
+@article{Palmer2023_weak,
+  author        = {Palmer, Gregory and Parry, Chris and Harrold, Daniel J. B. and Willis, Chris},
+  title         = {Deep Reinforcement Learning for Autonomous Cyber Defence: A Survey},
+  year          = {2023},
+  eprint        = {2310.07745},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.CR}
+}
+
+%% ============================================================
+%% Few-Shot and Incremental NIDS
+%% ============================================================
+
+@article{DiMonda2024FewShotNIDS,
+  author  = {{Di Monda}, Davide and others},
+  title   = {Few-Shot Class-Incremental Learning for Network Intrusion Detection Systems},
+  year    = {2024},
+  note    = {Exact venue and {DOI} require verification; see arXiv preprint search for {Di Monda 2024}}
 }
