@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c9a1d051`
+- Built from commit: `c5066143`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -129,8 +129,6 @@
 10. `Data Structure and Canonical Schema Research Report` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Deep Defense: Phase 2 - Laboratorio, Inferencia y Riesgos` --references--> `Lab Docker Traffic Generator`  [EXTRACTED]
-  docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md → lab/docker/generator/gen_traffic.py
 - `RF Random Split Result (accuracy=0.9988)` --semantically_similar_to--> `Best Run C03 (accuracy=0.99859, random split)`  [INFERRED] [semantically similar]
   runs/cicids2017/baseline_random_forest_comparison/results_rf.txt → docs/Personal Research/data-structure-and-canonical-schema-research-report.md
 - `Anti-Leakage Policy` --semantically_similar_to--> `Arp2020DosDontsMLSecurity`  [INFERRED] [semantically similar]
@@ -139,6 +137,8 @@
   Research/CLAIMS_BANK.md → docs/AGENT_CONTEXT.md
 - `CICIDS2017_TO_CANON mapping dict` --semantically_similar_to--> `FLOWMETER_PY_TO_CANON mapping in v2`  [INFERRED] [semantically similar]
   src/canonical_schema.py → scripts/predict_real_traffic_v2.py
+- `Data Structure and Canonical Schema Research Report` --references--> `RLDatasetDefenderEnv gymnasium environment`  [EXTRACTED]
+  docs/Personal Research/data-structure-and-canonical-schema-research-report.md → src/rl_defender_env.py
 
 ## Hyperedges (group relationships)
 - **Canonical Observation Pipeline (schema + mask + 152-dim vector)** — readme_canonical_schema, readme_missingness_mask, readme_observation_vector_152 [EXTRACTED 1.00]
@@ -241,44 +241,44 @@ Cohesion: 0.12
 Nodes (17): batched_predict(), load_model(), main(), maybe_convert_time_units(), CanonicalResult, get_canonical_feature_names(), get_observation_feature_names(), map_to_canonical() (+9 more)
 
 ### Community 21 - "Community 21"
-Cohesion: 0.12
-Nodes (22): DummyVecEnv + Monitor Wrappers, Episode Mechanics: train shuffle / test deterministic, load_cicids2017_binary function, load_cicids2017_csv_split function, load_cicids2017_split unified loader, RLDatasetDefenderEnv gymnasium environment, _compute_reward, Reward Config (tp/fp/fn/omission) (+14 more)
-
-### Community 22 - "Community 22"
 Cohesion: 0.1
 Nodes (20): 10) Conclusión de esta investigación complementaria, 1) Mapa de “qué es cada cosa” (resto del proyecto), 2.1 Random Forest baseline, 2.2 Optuna (no es modelo, es algoritmo de búsqueda), 2) Algoritmos adicionales (aparte de QRDQN), 3.1 Validación leave-one-exact-CSV-out, 3.2 Check B y Check C (detalles prácticos no obvios), 3.3 Pipeline robusto de inferencia: utilidades de clipping (+12 more)
 
-### Community 23 - "Community 23"
+### Community 22 - "Community 22"
 Cohesion: 0.1
 Nodes (20): Afirmaciones a evitar, Afirmaciones seguras, Afirmaciones seguras, afirmaciones a evitar y glosario, Base de fuentes, Bloque BibTeX esencial, Brecha que tu TFG puede reclamar sin exagerar, Cómo puede responder tu diseño experimental, code:bibtex (@techreport{ScarfoneMell2007,) (+12 more)
 
-### Community 24 - "Community 24"
+### Community 23 - "Community 23"
 Cohesion: 0.1
 Nodes (20): Claims to Avoid, code:bibtex (@techreport{ScarfoneMell2007,), Essential BibTeX Block, Essential Selection, Glossary of Terms, How your experimental design can answer, Methodological Critique of the Area, Narrative Synthesis (+12 more)
 
-### Community 25 - "Community 25"
+### Community 24 - "Community 24"
 Cohesion: 0.1
 Nodes (20): 1. Core Thesis Research Areas, 2. Source Clusters, 3. Must-Cite Sources, 4. Useful but Secondary Sources, 5. Weak / Risky / Suspicious Sources, 6. Missing Research Areas, 7. Recommended Next Research Prompts, Autonomous Cyber Defense (+12 more)
 
-### Community 26 - "Community 26"
+### Community 25 - "Community 25"
 Cohesion: 0.11
 Nodes (17): code:text (TFG_CYBER_AI/), code:bash (pip install -r requirements.txt), code:bash (python src/train_rl_defender.py --smoke), code:bash (python src/validate_checks.py --model models/<MODEL>.zip --c), code:bash (python src/validate_leave_one_csv_out.py --timesteps 30000), code:bash (python scripts/predict_real_traffic_v2.py \), Core Technical Invariants, Current Status (+9 more)
 
-### Community 27 - "Community 27"
+### Community 26 - "Community 26"
 Cohesion: 0.11
 Nodes (17): Artifacts, code:bash (git clone https://github.com/yeaight7/TFG_CYBER_AI.git), code:text (datasets/CICIDS2017/*.csv), code:bash (python src/train_rl_defender.py \), code:bash (python src/train_rl_defender.py \), code:bash (python src/train_rl_defender.py \), code:bash (tensorboard --logdir runs/cicids2017), code:text (models/<RUN_ID>.zip) (+9 more)
 
-### Community 28 - "Community 28"
+### Community 27 - "Community 27"
 Cohesion: 0.11
 Nodes (17): 1) Alcance, 2.1 Baseline clásico: Random Forest, 2.2 DQN como fallback operativo, 2.3 Búsqueda de hiperparámetros con Optuna, 2) Modelos y algoritmos presentes además del núcleo QRDQN, 3) Arquitecturas de red usadas en el proyecto (sin entrar en detalle de QRDQN), 4.1 Entrenamiento principal (`src/train_rl_defender.py`), 4.2 Leave-one-exact-CSV-out (`src/validate_leave_one_csv_out.py`) (+9 more)
 
-### Community 29 - "Community 29"
+### Community 28 - "Community 28"
 Cohesion: 0.11
 Nodes (16): Arquitectura de red y parámetros de la API, code:block1 (flowchart TD), code:python (# Pseudocódigo fiel al entrenamiento de SB3-Contrib QRDQN), code:block3 (flowchart LR), code:text (Acción PERMIT:), code:python (import torch), Consideraciones prácticas, evaluación y reproducibilidad, Fragmento relevante de tu repositorio (+8 more)
 
-### Community 30 - "Community 30"
+### Community 29 - "Community 29"
 Cohesion: 0.11
 Nodes (17): 1. Files Modified in This Session, 2. Best Material Produced, 3. Material That Still Needs Human Review, 4. Missing Citations and Verification Points, 5. Suggested Next Prompt — Codex / Claude: Integrate SoA into Draft, 6. Suggested Next Prompt — Perplexity / Deep Research: Verify Citations, 7. Git Commands to Inspect Changes, 8. State of All Nightly Files (+9 more)
+
+### Community 30 - "Community 30"
+Cohesion: 0.14
+Nodes (18): DummyVecEnv + Monitor Wrappers, Episode Mechanics: train shuffle / test deterministic, RLDatasetDefenderEnv gymnasium environment, _compute_reward, Reward Config (tp/fp/fn/omission), test_reward_logic_tp_fp_tn_fn, test_unknown_label_reward, test_env_initialization (+10 more)
 
 ### Community 31 - "Community 31"
 Cohesion: 0.12
@@ -321,52 +321,52 @@ Cohesion: 0.14
 Nodes (13): Attack-Family Error Analysis, Data-Efficiency Curve, External Lab Validation, False Positive / False Negative Analysis, Internal Benchmark Design, Leakage Controls, Methodology Handoff, Methodology Writing Checklist (+5 more)
 
 ### Community 41 - "Community 41"
-Cohesion: 0.15
-Nodes (12): 06 — Glosario esencial + preguntas de tribunal, 1) Glosario mínimo para explicar el proyecto a principiantes, 2) Preguntas frecuentes del tribunal (con respuesta técnica breve), 3) Estructura de explicación en 3 minutos (versión corta), 4) Estructura de explicación en 10–12 minutos (versión defensa), “¿Cómo evitas leakage?”, “¿Cuál es tu principal limitación actual?”, “¿Está lista Phase 2 para producción?” (+4 more)
+Cohesion: 0.22
+Nodes (14): Deep Defense: Entorno RL, Algoritmo y Entrenamiento, Deep Defense: Phase 2 - Laboratorio, Inferencia y Riesgos, Domain Shift Problem (Train vs Real Traffic), Lab Docker Traffic Generator, NSL-KDD Dataset (historical benchmark), Optuna Hyperparameter Search, Percentile Clipping (p0.5/p99.5 pre-scaling), Project Components Defense Research Report (+6 more)
 
 ### Community 42 - "Community 42"
 Cohesion: 0.15
-Nodes (12): Claims Requiring Verification, code:txt (Audit the citation keys in report/drafts/state_of_the_art.md), code:txt (Build the experimental design chapter from Research/METHODOL), Deeper Mathematical Explanation to Add Later, Missing Citations, Overclaim Checks for Next Pass, Places Where the Draft May Be Too Generic, Repository Facts to Cross-Check Later (+4 more)
+Nodes (12): 06 — Glosario esencial + preguntas de tribunal, 1) Glosario mínimo para explicar el proyecto a principiantes, 2) Preguntas frecuentes del tribunal (con respuesta técnica breve), 3) Estructura de explicación en 3 minutos (versión corta), 4) Estructura de explicación en 10–12 minutos (versión defensa), “¿Cómo evitas leakage?”, “¿Cuál es tu principal limitación actual?”, “¿Está lista Phase 2 para producción?” (+4 more)
 
 ### Community 43 - "Community 43"
 Cohesion: 0.15
-Nodes (12): 10. Codex handoff, 1. What CICIDS2017 is, 2. Official facts, 3. Attack categories and labels, 4. Feature extraction and flow representation, 5. Known limitations, 6. Preprocessing checklist for my thesis, 7. Evaluation protocol recommendation (+4 more)
+Nodes (12): Claims Requiring Verification, code:txt (Audit the citation keys in report/drafts/state_of_the_art.md), code:txt (Build the experimental design chapter from Research/METHODOL), Deeper Mathematical Explanation to Add Later, Missing Citations, Overclaim Checks for Next Pass, Places Where the Draft May Be Too Generic, Repository Facts to Cross-Check Later (+4 more)
 
 ### Community 44 - "Community 44"
 Cohesion: 0.15
-Nodes (12): 1. Dataset comparison table, 2. Historical evolution, 3.1 Advantages, 3.2 Comparison vs. NSL-KDD and UNSW-NB15, 3.3 Why suitable for flow-level binary PERMIT/BLOCK, 3.4 Why not enough for real-world claims, 3. Why CICIDS2017 is a reasonable main dataset, 4. Dataset choice decision matrix (+4 more)
+Nodes (12): 10. Codex handoff, 1. What CICIDS2017 is, 2. Official facts, 3. Attack categories and labels, 4. Feature extraction and flow representation, 5. Known limitations, 6. Preprocessing checklist for my thesis, 7. Evaluation protocol recommendation (+4 more)
 
 ### Community 45 - "Community 45"
 Cohesion: 0.15
-Nodes (12): 1. The Literature Landscape, 2. What Is Partially Covered and Leaves Room for Contribution, 3. What Is Weakly Validated in the Literature, 4. Defensible Research Gap, 5. Claims That Must Not Appear in the Thesis, 6. Evidence Mapping, 7. Thesis-Ready Sentences, Research Gap and Thesis Positioning (+4 more)
+Nodes (12): 1. Dataset comparison table, 2. Historical evolution, 3.1 Advantages, 3.2 Comparison vs. NSL-KDD and UNSW-NB15, 3.3 Why suitable for flow-level binary PERMIT/BLOCK, 3.4 Why not enough for real-world claims, 3. Why CICIDS2017 is a reasonable main dataset, 4. Dataset choice decision matrix (+4 more)
 
 ### Community 46 - "Community 46"
 Cohesion: 0.15
-Nodes (13): code:bibtex (@article{MaliciousBehavior2021,), code:bibtex (@misc{Stamus2024IDSTypes,), code:bibtex (@article{ContextNetFlow2026,), code:bibtex (@article{FlowTutorial2025,), code:bibtex (@article{TemporalNetFlow2025,), code:bibtex (@article{DeploymentFramework2026,), code:bibtex (@article{TONIoTLeakage2026,), Deployment-oriented and transfer-aware evaluation (+5 more)
+Nodes (12): 1. The Literature Landscape, 2. What Is Partially Covered and Leaves Room for Contribution, 3. What Is Weakly Validated in the Literature, 4. Defensible Research Gap, 5. Claims That Must Not Appear in the Thesis, 6. Evidence Mapping, 7. Thesis-Ready Sentences, Research Gap and Thesis Positioning (+4 more)
 
 ### Community 47 - "Community 47"
-Cohesion: 0.21
-Nodes (13): Deep Defense: Entorno RL, Algoritmo y Entrenamiento, DQN (Deep Q-Network), Flow-Based Traffic Representation (CICFlowMeter), Lab Docker Traffic Generator, NSL-KDD Dataset (historical benchmark), Optuna Hyperparameter Search, Project Components Defense Research Report, QRDQN: Distributional RL via Quantile Regression (+5 more)
-
-### Community 48 - "Community 48"
-Cohesion: 0.22
-Nodes (13): Anti-Leakage Policy (drop IPs, timestamps, Flow IDs, ports), 152-Dimensional Observation Vector, Canonical Schema (76 Flow Features), CICIDS2017 Dataset (8 CSVs, 5-day capture), Classification-as-RL / Contextual Bandit Equivalence, Data Structure and Canonical Schema Research Report, Deep Defense: Datos, Esquema Canonico y Preprocesado, Missingness Mask (76 binary indicators) (+5 more)
-
-### Community 49 - "Community 49"
 Cohesion: 0.17
 Nodes (11): 03 — Entorno RL, algoritmo y entrenamiento, 1) Entorno RL: qué modela exactamente, 2) Recompensa actual por defecto, 3) Sobre el algoritmo principal, 4) Hiperparámetros relevantes en entrenamiento principal, 5) Presets y timesteps, 6) Artefactos que deja cada entrenamiento, 7) Baseline y tuning (complemento) (+3 more)
 
-### Community 50 - "Community 50"
+### Community 48 - "Community 48"
 Cohesion: 0.17
 Nodes (11): 05 — Phase 2: laboratorio, inferencia y riesgos abiertos, 1) Qué es exactamente Phase 2 hoy, 2) Flujo operativo resumido, 3) Endurecimiento técnico de la v2, 4) Artefactos esperados de cada run Phase 2, 5) Hallazgo central de Phase 2 (honesto), 6) Laboratorio privado y seguridad operacional, 7) Qué faltaría para pasar a bloqueo activo (+3 more)
 
-### Community 51 - "Community 51"
+### Community 49 - "Community 49"
 Cohesion: 0.17
 Nodes (11): Archived Follow-Up Ideas, DQN vs Random Forest, Historical Interpretation, Historical Summary Table, Legacy Architecture Notes, Main Takeaways, NSL-KDD Historical Experiments, Reward-System Sensitivity (+3 more)
 
-### Community 52 - "Community 52"
+### Community 50 - "Community 50"
 Cohesion: 0.17
 Nodes (11): Administrative: Citation Key Mismatches in Existing Draft, Citation Notes, Cumulative Citation Status, Second revised pass — 2026-05-16, Section A — CICIDS2017 Quality Concerns, Section B — Canonical Feature Schema and the Case for a Fixed Representation, Section C — Reinforcement Learning for Intrusion Detection: Named Prior Works, Section D — The Dataset-as-Environment Design: Named Precedent (+3 more)
+
+### Community 51 - "Community 51"
+Cohesion: 0.17
+Nodes (12): code:bibtex (@article{MaliciousBehavior2021,), code:bibtex (@misc{Stamus2024IDSTypes,), code:bibtex (@misc{Varonis2023FlowMonitoring,), code:bibtex (@misc{Faddom2023NetFlowIPFIX,), code:bibtex (@article{DeploymentFramework2026,), code:bibtex (@article{TONIoTLeakage2026,), Deployment-oriented and transfer-aware evaluation, Entries to adjust or verify (+4 more)
+
+### Community 52 - "Community 52"
+Cohesion: 0.2
+Nodes (12): evaluate_random_forest function, baseline_random_forest main (3-sweep eval), train_random_forest function, list_cicids2017_csv_files function, load_cicids2017_binary function, load_cicids2017_csv_split function, load_cicids2017_exact_csv_split function, load_cicids2017_split unified loader (+4 more)
 
 ### Community 53 - "Community 53"
 Cohesion: 0.18
@@ -414,39 +414,39 @@ Nodes (10): Check A: Direct Evaluation (anti-env-dependency), Check C: Hard CSV/
 
 ### Community 64 - "Community 64"
 Cohesion: 0.22
-Nodes (8): AGENTS.md — TFG_CYBER_AI instructions for Codex, Anti-Leakage Rules, Documentation Rules, graphify, Project Invariants, Read This Before Making Changes, Reproducibility Expectations, Training and Validation Rules
+Nodes (10): Classification-as-RL / Contextual Bandit Equivalence, DQN (Deep Q-Network), Flow-Based Traffic Representation (CICFlowMeter), QRDQN: Distributional RL via Quantile Regression, Reward Config: Historical (fp=-2.0) vs Current (fp=-1.5) Discrepancy, Classification-as-RL Formulation (SOTA discussion), Distributional RL / QRDQN Justification for NIDS, Methodological Pitfalls in ML-Based NIDS (+2 more)
 
 ### Community 65 - "Community 65"
 Cohesion: 0.22
-Nodes (8): 04 — Validación y lectura correcta de resultados, 1) Por qué no basta con una accuracy alta, 2) Check A (evaluación directa), 3) Check B (anti-leakage con etiquetas barajadas), 4) Check C (split duro por CSV/día), 5) Leave-one-exact-CSV-out, 6) Cómo explicar contradicciones aparentes en métricas, 7) Regla metodológica para el tribunal
+Nodes (8): AGENTS.md — TFG_CYBER_AI instructions for Codex, Anti-Leakage Rules, Documentation Rules, graphify, Project Invariants, Read This Before Making Changes, Reproducibility Expectations, Training and Validation Rules
 
 ### Community 66 - "Community 66"
 Cohesion: 0.22
-Nodes (8): Advisor / Tutor Questions, Claims Needing Verification, Experiments Needed, Explicit TODO List, Missing Sources, Research Gaps and TODOs, Uncertain Citations, Writing Decisions Needed
+Nodes (8): 04 — Validación y lectura correcta de resultados, 1) Por qué no basta con una accuracy alta, 2) Check A (evaluación directa), 3) Check B (anti-leakage con etiquetas barajadas), 4) Check C (split duro por CSV/día), 5) Leave-one-exact-CSV-out, 6) Cómo explicar contradicciones aparentes en métricas, 7) Regla metodológica para el tribunal
 
 ### Community 67 - "Community 67"
-Cohesion: 0.25
-Nodes (9): Asymmetric Cost Reward Design (FN >> FP penalty), Check B: Shuffled Labels Anti-Leakage Test, Deep Defense: Fundamentos y Objetivo, Deep Defense: Glosario y Preguntas de Tribunal, Deep Defense Research README, Binary Action Space: PERMIT(0) / BLOCK(1), Phase 2: Offline Inference on Lab Traffic, Reward Config Schema (tp/fp/fn/omission) (+1 more)
+Cohesion: 0.22
+Nodes (8): Advisor / Tutor Questions, Claims Needing Verification, Experiments Needed, Explicit TODO List, Missing Sources, Research Gaps and TODOs, Uncertain Citations, Writing Decisions Needed
 
 ### Community 68 - "Community 68"
 Cohesion: 0.25
-Nodes (9): Best Run C03 (accuracy=0.99859, random split), C51 (Categorical DQN, distributional RL predecessor), MlpPolicy net_arch=[512,256] (main training), Adam epsilon coupled to batch_size (eps=0.01/batch_size), QRDQN exploration_fraction=0.005 (fast epsilon decay), Hard Target Update (tau=1.0, periodic copy), QRDQN n_quantiles=200 (implicit default), Quantile Huber Loss (+1 more)
+Nodes (9): Asymmetric Cost Reward Design (FN >> FP penalty), Check B: Shuffled Labels Anti-Leakage Test, Deep Defense: Fundamentos y Objetivo, Deep Defense: Glosario y Preguntas de Tribunal, Deep Defense Research README, Binary Action Space: PERMIT(0) / BLOCK(1), Phase 2: Offline Inference on Lab Traffic, Reward Config Schema (tp/fp/fn/omission) (+1 more)
 
 ### Community 69 - "Community 69"
+Cohesion: 0.36
+Nodes (9): Anti-Leakage Policy (drop IPs, timestamps, Flow IDs, ports), 152-Dimensional Observation Vector, Canonical Schema (76 Flow Features), CICIDS2017 Dataset (8 CSVs, 5-day capture), Data Structure and Canonical Schema Research Report, Deep Defense: Datos, Esquema Canonico y Preprocesado, Missingness Mask (76 binary indicators), StandardScaler fitted on train only (anti-leakage) (+1 more)
+
+### Community 70 - "Community 70"
+Cohesion: 0.25
+Nodes (9): Best Run C03 (accuracy=0.99859, random split), C51 (Categorical DQN, distributional RL predecessor), MlpPolicy net_arch=[512,256] (main training), Adam epsilon coupled to batch_size (eps=0.01/batch_size), QRDQN exploration_fraction=0.005 (fast epsilon decay), Hard Target Update (tau=1.0, periodic copy), QRDQN n_quantiles=200 (implicit default), Quantile Huber Loss (+1 more)
+
+### Community 71 - "Community 71"
 Cohesion: 0.25
 Nodes (8): Bot-IoT, CICIDS2017 and CSE-CIC-IDS2018, Comparison of key NIDS datasets, Legacy datasets: KDDCup99 and NSL-KDD, Newer datasets and surveys, Public NIDS Datasets, ToN_IoT, UNSW-NB15
 
-### Community 70 - "Community 70"
-Cohesion: 0.29
-Nodes (8): evaluate_random_forest function, baseline_random_forest main (3-sweep eval), train_random_forest function, list_cicids2017_csv_files function, load_cicids2017_exact_csv_split function, _build_aggregate_results fold aggregation, evaluate_model_direct (batched leave-one-out eval), validate_leave_one_csv_out main pipeline
-
-### Community 71 - "Community 71"
+### Community 72 - "Community 72"
 Cohesion: 0.29
 Nodes (7): CICIDS2017: Purpose, Structure, and Critiques, Common misuse patterns, Corrected or reconstructed versions, Known problems and critiques, Original purpose and structure, PCAPs vs generated CSVs and the CICFlowMeter pipeline, Responsible use as an internal benchmark
-
-### Community 72 - "Community 72"
-Cohesion: 0.48
-Nodes (7): Deep Defense: Phase 2 - Laboratorio, Inferencia y Riesgos, Domain Shift Problem (Train vs Real Traffic), Percentile Clipping (p0.5/p99.5 pre-scaling), Scaling Utilities (apply_percentile_clipping, apply_z_clipping), System Components Thesis Defense Research Report, train_percentiles.npz artifact, Z-Score Clipping (post-scaling)
 
 ### Community 73 - "Community 73"
 Cohesion: 0.33
@@ -466,15 +466,15 @@ Nodes (5): Drafting Guardrails, Recommended Chapter Structure, Safe Thesis Posit
 
 ### Community 77 - "Community 77"
 Cohesion: 0.33
-Nodes (6): CICFlowMeter vs NetFlow-like schemas, Diversity of feature sets, Feature Engineering and Feature Standardisation in NIDS, Feature leakage risks and identifiers, Feature selection in NIDS, Missing, infinite, and categorical values
+Nodes (6): CICIDS2017-specific discussion, Feature engineering and standardisation, IDS/NIDS fundamentals, Network traffic representation, Public NIDS datasets, What to Add to the Current State of the Art
 
 ### Community 78 - "Community 78"
 Cohesion: 0.33
-Nodes (6): Alerting vs active response, Anomaly-based detection, IDS and NIDS Fundamentals, IDS vs IPS and deployment modes, Signature-based detection, Specification-based and hybrid detection
+Nodes (6): CICFlowMeter vs NetFlow-like schemas, Diversity of feature sets, Feature Engineering and Feature Standardisation in NIDS, Feature leakage risks and identifiers, Feature selection in NIDS, Missing, infinite, and categorical values
 
 ### Community 79 - "Community 79"
 Cohesion: 0.33
-Nodes (6): CICIDS2017-specific discussion, Feature engineering and standardisation, IDS/NIDS fundamentals, Network traffic representation, Public NIDS datasets, What to Add to the Current State of the Art
+Nodes (6): Alerting vs active response, Anomaly-based detection, IDS and NIDS Fundamentals, IDS vs IPS and deployment modes, Signature-based detection, Specification-based and hybrid detection
 
 ### Community 80 - "Community 80"
 Cohesion: 0.4
@@ -485,8 +485,8 @@ Cohesion: 0.5
 Nodes (3): Overview, References, State of the Art on NIDS and Network-Flow Representations for a Flow-Level RL Defender
 
 ### Community 82 - "Community 82"
-Cohesion: 0.67
-Nodes (3): code:bibtex (@misc{Varonis2023FlowMonitoring,), code:bibtex (@misc{Faddom2023NetFlowIPFIX,), Traffic representation and NetFlow/IPFIX
+Cohesion: 0.5
+Nodes (4): code:bibtex (@article{ContextNetFlow2026,), code:bibtex (@article{FlowTutorial2025,), code:bibtex (@article{TemporalNetFlow2025,), Flow-based NIDS and feature engineering
 
 ## Knowledge Gaps
 - **903 isolated node(s):** `predict_real_traffic_v2.py — Robust Phase 2 offline inference pipeline.  Loads`, `If time columns look like seconds (median < 1), convert to microseconds.`, `Load QRDQN model, falling back to DQN if sb3_contrib is unavailable.`, `Run model.predict in batches to avoid OOM on large flow CSVs.`, `Compute z-score diagnostics on scaled features (first _N_CANON dims only).` (+898 more)
