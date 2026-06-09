@@ -13,9 +13,14 @@ Uso:
 from __future__ import annotations
 
 import argparse
+import copy
 import json
+import platform
+import shutil
+import sys
+from importlib import metadata
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List
 from datetime import datetime
 
 import joblib
@@ -25,6 +30,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 
 from sb3_contrib import QRDQN
+from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.monitor import Monitor
 
@@ -51,6 +57,113 @@ REWARD_CONFIG: Dict[str, float] = {
     "fn": -5.0,
     "omission": 0.0,
 }
+
+
+def resolve_total_timesteps(args: argparse.Namespace, is_fast: bool) -> int:
+    if args.timesteps is not None:
+        return args.timesteps
+    if args.training_profile == "main-experiment":
+        return 2_500_000
+    return 25_000 if is_fast else 100_000
+
+
+def resolve_training_hyperparams(
+    training_profile: str,
+    is_fast: bool,
+    total_timesteps: int,
+) -> Dict[str, Any]:
+    if training_profile == "main-experiment":
+        policy_kwargs = {
+            "net_arch": [512, 512, 256],
+            "n_quantiles": 200,
+        }
+        return {
+            "policy": "MlpPolicy",
+            "policy_kwargs": policy_kwargs,
+            "learning_rate": 5e-5,
+            "buffer_size": 1_000_000,
+            "learning_starts": 50_000,
+            "batch_size": 2048,
+            "gamma": 0.0,
+            "tau": 1.0,
+            "train_freq": 100,
+            "gradient_steps": 20,
+            "target_update_interval": 10_000,
+            "exploration_initial_eps": 1.0,
+            "exploration_final_eps": 0.02,
+            "exploration_fraction": 0.10,
+            "max_grad_norm": 10.0,
+        }
+
+    policy_kwargs = {
+        "net_arch": [512, 256],
+        "n_quantiles": 200,
+    }
+    return {
+        "policy": "MlpPolicy",
+        "policy_kwargs": policy_kwargs,
+        "learning_rate": 1e-4,
+        "buffer_size": min(200_000, max(total_timesteps, 10_000)),
+        "learning_starts": 100,
+        "batch_size": 512 if is_fast else 2048,
+        "gamma": 0.0,
+        "tau": 1.0,
+        "train_freq": 50 if is_fast else 100,
+        "gradient_steps": 10 if is_fast else 20,
+        "target_update_interval": 1_000 if is_fast else 10_000,
+        "exploration_initial_eps": 1.0,
+        "exploration_final_eps": 0.01,
+        "exploration_fraction": 0.005,
+        "max_grad_norm": None,
+    }
+
+
+def resolve_checkpoint_freq(
+    training_profile: str,
+    checkpoint_freq: int | None,
+) -> int:
+    if checkpoint_freq is not None:
+        if checkpoint_freq < 0:
+            raise ValueError("--checkpoint-freq must be >= 0")
+        return checkpoint_freq
+    if training_profile == "main-experiment":
+        return 250_000
+    return 0
+
+
+def _package_version(package_name: str) -> str | None:
+    try:
+        return metadata.version(package_name)
+    except metadata.PackageNotFoundError:
+        return None
+
+
+def collect_environment_metadata(device: str) -> Dict[str, Any]:
+    cuda_device_name = None
+    if torch.cuda.is_available():
+        cuda_device_name = torch.cuda.get_device_name(0)
+
+    return {
+        "python_version": sys.version,
+        "platform": platform.platform(),
+        "device": device,
+        "torch_version": torch.__version__,
+        "torch_cuda_available": torch.cuda.is_available(),
+        "torch_cuda_version": torch.version.cuda,
+        "torch_cudnn_version": torch.backends.cudnn.version(),
+        "cuda_device_name": cuda_device_name,
+        "numpy_version": _package_version("numpy"),
+        "pandas_version": _package_version("pandas"),
+        "scikit_learn_version": _package_version("scikit-learn"),
+        "gymnasium_version": _package_version("gymnasium"),
+        "stable_baselines3_version": _package_version("stable-baselines3"),
+        "sb3_contrib_version": _package_version("sb3-contrib"),
+        "joblib_version": _package_version("joblib"),
+    }
+
+
+def write_json(path: Path, payload: Any) -> None:
+    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
 def make_env_fn(
@@ -153,7 +266,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--timesteps", type=int, default=None,
-        help="Total timesteps for training (default: 500k full, 5k fast)",
+        help=(
+            "Total timesteps for training "
+            "(default: 25k fast, 100k full, 2.5M main-experiment)"
+        ),
     )
     parser.add_argument(
         "--max-rows", type=int, default=None,
@@ -167,6 +283,25 @@ def parse_args() -> argparse.Namespace:
         "--seed", type=int, default=42,
         help="Random seed for reproducibility (default: 42)",
     )
+    parser.add_argument(
+        "--training-profile",
+        type=str,
+        default="default",
+        choices=["default", "main-experiment"],
+        help=(
+            "Training hyperparameter profile. 'default' preserves current "
+            "behavior; 'main-experiment' uses the fixed RunPod main run config."
+        ),
+    )
+    parser.add_argument(
+        "--checkpoint-freq",
+        type=int,
+        default=None,
+        help=(
+            "Save model checkpoints every N timesteps. 0 disables. "
+            "Default: disabled for default profile, 250k for main-experiment."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -176,41 +311,73 @@ def main() -> None:
     # ── Resolve preset (--smoke is an alias for --preset fast) ──
     preset = "fast" if args.smoke else args.preset
     is_fast = preset == "fast"
+    training_profile = args.training_profile
 
     # ── Smoke / fast vs full defaults ──
-    total_timesteps = args.timesteps or (25_000 if is_fast else 100_000)
+    total_timesteps = resolve_total_timesteps(args, is_fast)
 
     use_canonical = not args.no_canonical
     seed = args.seed
     split_mode = args.split_mode
+    hyperparams = resolve_training_hyperparams(
+        training_profile=training_profile,
+        is_fast=is_fast,
+        total_timesteps=total_timesteps,
+    )
+    checkpoint_freq = resolve_checkpoint_freq(
+        training_profile=training_profile,
+        checkpoint_freq=args.checkpoint_freq,
+    )
 
     # ── RUN_ID único ──
+    run_started_at = datetime.now().isoformat(timespec="seconds")
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     algo_tag = "qrdqn"
     canon_tag = "canonical" if use_canonical else "raw"
     exp_tag = f"{preset}_{split_mode}"
-    RUN_ID = f"C03_{algo_tag}_cicids2017_{canon_tag}_{exp_tag}_{timestamp}"
+    run_prefix = "MAIN" if training_profile == "main-experiment" else "C03"
+    RUN_ID = f"{run_prefix}_{algo_tag}_cicids2017_{canon_tag}_{exp_tag}_{timestamp}"
 
     # ── Directorios de salida ──
     run_dir = RUNS_DIR / "cicids2017" / RUN_ID
+    checkpoints_dir = run_dir / "checkpoints"
+    tb_log_dir = str(RUNS_DIR / "cicids2017")
+    model_path = MODELS_DIR / RUN_ID
+    model_zip_path = model_path.with_suffix(".zip")
+    run_model_path = run_dir / "model.zip"
+    scaler_path = run_dir / "scaler.joblib"
+    percentiles_path = run_dir / "train_percentiles.npz"
+    feature_names_path = run_dir / "feature_names.json"
+    environment_path = run_dir / "environment.json"
+    config_path = run_dir / "config.json"
+    metrics_path = run_dir / "metrics.json"
+    manifest_path = run_dir / "artifact_manifest.json"
     run_dir.mkdir(parents=True, exist_ok=True)
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
     print(f"{'='*60}")
     print(f"  Experimento: {RUN_ID}")
     print(f"  Preset: {preset.upper()}")
+    print(f"  Training profile: {training_profile}")
     print(f"  Split mode: {split_mode}")
     print(f"  Max rows: {args.max_rows or '(preset default)'}")
     print(f"  Timesteps: {total_timesteps}")
     print(f"  Canonical: {use_canonical}")
     print(f"  Output: {run_dir}")
+    if checkpoint_freq > 0:
+        print(f"  Checkpoints: every {checkpoint_freq} steps -> {checkpoints_dir}")
+    else:
+        print("  Checkpoints: disabled")
     print(f"{'='*60}")
+    print("\nResolved QRDQN hyperparameters:")
+    print(json.dumps(hyperparams, indent=2))
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     if torch.cuda.is_available():
         print(f"GPU detectada: {torch.cuda.get_device_name(0)}")
     else:
         print("GPU NO detectada. Se usara CPU.")
+    environment_metadata = collect_environment_metadata(device)
 
     # ------------------------------------------------------------------
     # 1) Cargar dataset CICIDS2017 (sin escalar, para poder persistir scaler)
@@ -242,81 +409,26 @@ def main() -> None:
           f"(benign={int((y_test==0).sum())}, attack={int((y_test==1).sum())})")
     print(f"Features: {len(feature_names)}")
 
-    # ------------------------------------------------------------------
-    # 2) Crear entorno vectorizado
-    # ------------------------------------------------------------------
-    max_steps_ep = min(10_000, len(X_train))
-    vec_env = DummyVecEnv([make_env_fn(X_train, y_train, REWARD_CONFIG, max_steps_ep)])
-
-    # ------------------------------------------------------------------
-    # 3) Definir modelo QRDQN
-    # ------------------------------------------------------------------
-    vec_env.seed(seed)
-    policy_kwargs = dict(net_arch=[512, 256])
-    tb_log_dir = str(RUNS_DIR / "cicids2017")
-
-    # Hyperparámetros adaptados al modo (fast vs full)
-    batch_size = 512 if is_fast else 2048
-    gradient_steps = 10 if is_fast else 20
-    train_freq = 50 if is_fast else 100
-    target_update_interval = 1_000 if is_fast else 10_000
-    lr = 1e-4
-
-    model = QRDQN(
-        "MlpPolicy",
-        vec_env,
-        seed=seed,
-        policy_kwargs=policy_kwargs,
-        learning_rate=lr,
-        buffer_size=min(200_000, max(total_timesteps, 10_000)),
-        batch_size=batch_size,
-        gradient_steps=gradient_steps,
-        gamma=0.99,
-        tau=1.0,
-        train_freq=train_freq,
-        target_update_interval=target_update_interval,
-        verbose=1,
-        device=device,
-        tensorboard_log=tb_log_dir,
-    )
-
-    print(f"\nEntrenando QRDQN durante {total_timesteps} timesteps...")
-    model.learn(
-        total_timesteps=total_timesteps,
-        tb_log_name=RUN_ID,
-        reset_num_timesteps=False,
-    )
-
-    # ------------------------------------------------------------------
-    # 4) Guardar modelo
-    # ------------------------------------------------------------------
-    model_path = MODELS_DIR / RUN_ID
-    print(f"\nGuardando modelo en: {model_path}")
-    model.save(str(model_path))
-
-    # ------------------------------------------------------------------
-    # 5) Evaluación en test
-    # ------------------------------------------------------------------
-    print("\nEvaluando en conjunto de test...")
-    metrics = evaluate_model(model, X_test, y_test, REWARD_CONFIG)
-
-    # ------------------------------------------------------------------
-    # 5b) Persistir artefactos de preprocesamiento
-    # ------------------------------------------------------------------
-    scaler_path = run_dir / "scaler.joblib"
     joblib.dump(scaler, scaler_path)
     print(f"\nScaler guardado en: {scaler_path}")
 
-    percentiles_path = run_dir / "train_percentiles.npz"
     np.savez(percentiles_path, p_low=p_low, p_high=p_high)
     print(f"Percentiles guardados en: {percentiles_path}")
 
-    # ------------------------------------------------------------------
-    # 6) Guardar config + métricas
-    # ------------------------------------------------------------------
+    write_json(feature_names_path, feature_names)
+    print(f"Feature names guardados en: {feature_names_path}")
+
+    write_json(environment_path, environment_metadata)
+    print(f"Environment metadata guardado en: {environment_path}")
+
     config = {
         "run_id": RUN_ID,
+        "status": "started",
+        "started_at": run_started_at,
+        "completed_at": None,
         "algorithm": "QRDQN",
+        "policy": hyperparams["policy"],
+        "training_profile": training_profile,
         "dataset": "CICIDS2017",
         "split_mode": split_mode,
         "preset": preset,
@@ -329,27 +441,151 @@ def main() -> None:
         "test_shape": list(X_test.shape),
         "n_features": len(feature_names),
         "device": device,
+        "script": "src/train_rl_defender.py",
+        "argv": sys.argv,
         "split_metadata": split_meta,
-        "policy_kwargs": {"net_arch": [512, 256]},
-        "learning_rate": lr,
-        "batch_size": batch_size,
-        "gradient_steps": gradient_steps,
-        "train_freq": train_freq,
+        "training_hyperparams": hyperparams,
+        "policy_kwargs": hyperparams["policy_kwargs"],
+        "learning_rate": hyperparams["learning_rate"],
+        "buffer_size": hyperparams["buffer_size"],
+        "learning_starts": hyperparams["learning_starts"],
+        "batch_size": hyperparams["batch_size"],
+        "gamma": hyperparams["gamma"],
+        "tau": hyperparams["tau"],
+        "train_freq": hyperparams["train_freq"],
+        "gradient_steps": hyperparams["gradient_steps"],
+        "target_update_interval": hyperparams["target_update_interval"],
+        "exploration_initial_eps": hyperparams["exploration_initial_eps"],
+        "exploration_final_eps": hyperparams["exploration_final_eps"],
+        "exploration_fraction": hyperparams["exploration_fraction"],
+        "max_grad_norm": hyperparams["max_grad_norm"],
+        "checkpoint_freq": checkpoint_freq,
+        "checkpoints_dir": str(checkpoints_dir) if checkpoint_freq > 0 else None,
+        "save_replay_buffer_checkpoints": False,
+        "tensorboard_log_dir": tb_log_dir,
+        "model_path": str(model_zip_path),
+        "run_model_path": str(run_model_path),
+        "config_path": str(config_path),
+        "metrics_path": str(metrics_path),
         "scaler_path": str(scaler_path),
         "percentiles_path": str(percentiles_path),
+        "feature_names_path": str(feature_names_path),
+        "environment_path": str(environment_path),
+        "artifact_manifest_path": str(manifest_path),
     }
+    write_json(config_path, config)
+    print(f"Config inicial guardada en: {config_path}")
 
-    config_path = run_dir / "config.json"
-    with open(config_path, "w") as f:
-        json.dump(config, f, indent=2)
+    artifact_manifest = {
+        "run_id": RUN_ID,
+        "status": "started",
+        "download_all": [
+            str(run_dir),
+            str(model_zip_path),
+        ],
+        "artifacts": {
+            "model": {
+                "global_path": str(model_zip_path),
+                "run_copy_path": str(run_model_path),
+            },
+            "config": str(config_path),
+            "metrics": str(metrics_path),
+            "scaler": str(scaler_path),
+            "train_percentiles": str(percentiles_path),
+            "feature_names": str(feature_names_path),
+            "environment": str(environment_path),
+            "tensorboard_dir": tb_log_dir,
+            "checkpoints_dir": str(checkpoints_dir) if checkpoint_freq > 0 else None,
+        },
+    }
+    write_json(manifest_path, artifact_manifest)
+    print(f"Manifest inicial guardado en: {manifest_path}")
 
-    metrics_path = run_dir / "metrics.json"
-    with open(metrics_path, "w") as f:
-        json.dump(metrics, f, indent=2)
+    # ------------------------------------------------------------------
+    # 2) Crear entorno vectorizado
+    # ------------------------------------------------------------------
+    max_steps_ep = min(10_000, len(X_train))
+    vec_env = DummyVecEnv([make_env_fn(X_train, y_train, REWARD_CONFIG, max_steps_ep)])
+
+    # ------------------------------------------------------------------
+    # 3) Definir modelo QRDQN
+    # ------------------------------------------------------------------
+    vec_env.seed(seed)
+    model_policy_kwargs = copy.deepcopy(hyperparams["policy_kwargs"])
+
+    model = QRDQN(
+        hyperparams["policy"],
+        vec_env,
+        seed=seed,
+        policy_kwargs=model_policy_kwargs,
+        learning_rate=hyperparams["learning_rate"],
+        buffer_size=hyperparams["buffer_size"],
+        learning_starts=hyperparams["learning_starts"],
+        batch_size=hyperparams["batch_size"],
+        gamma=hyperparams["gamma"],
+        tau=hyperparams["tau"],
+        train_freq=hyperparams["train_freq"],
+        gradient_steps=hyperparams["gradient_steps"],
+        target_update_interval=hyperparams["target_update_interval"],
+        exploration_initial_eps=hyperparams["exploration_initial_eps"],
+        exploration_final_eps=hyperparams["exploration_final_eps"],
+        exploration_fraction=hyperparams["exploration_fraction"],
+        max_grad_norm=hyperparams["max_grad_norm"],
+        verbose=1,
+        device=device,
+        tensorboard_log=tb_log_dir,
+    )
+
+    checkpoint_callback = None
+    if checkpoint_freq > 0:
+        checkpoints_dir.mkdir(parents=True, exist_ok=True)
+        print(f"\nCheckpoints will be saved in: {checkpoints_dir}")
+        checkpoint_callback = CheckpointCallback(
+            save_freq=checkpoint_freq,
+            save_path=str(checkpoints_dir),
+            name_prefix=RUN_ID,
+            save_replay_buffer=False,
+            save_vecnormalize=False,
+            verbose=1,
+        )
+
+    print(f"\nEntrenando QRDQN durante {total_timesteps} timesteps...")
+    model.learn(
+        total_timesteps=total_timesteps,
+        callback=checkpoint_callback,
+        tb_log_name=RUN_ID,
+        reset_num_timesteps=False,
+    )
+
+    # ------------------------------------------------------------------
+    # 4) Guardar modelo
+    # ------------------------------------------------------------------
+    print(f"\nGuardando modelo en: {model_path}")
+    model.save(str(model_path))
+    shutil.copy2(model_zip_path, run_model_path)
+    print(f"Copia del modelo guardada en: {run_model_path}")
+
+    # ------------------------------------------------------------------
+    # 5) Evaluación en test
+    # ------------------------------------------------------------------
+    print("\nEvaluando en conjunto de test...")
+    metrics = evaluate_model(model, X_test, y_test, REWARD_CONFIG)
+
+    # ------------------------------------------------------------------
+    # 6) Guardar config + métricas
+    # ------------------------------------------------------------------
+    write_json(metrics_path, metrics)
+    config["status"] = "completed"
+    config["completed_at"] = datetime.now().isoformat(timespec="seconds")
+    write_json(config_path, config)
+    artifact_manifest["status"] = "completed"
+    write_json(manifest_path, artifact_manifest)
 
     print(f"\nConfig guardada en: {config_path}")
     print(f"Metricas guardadas en: {metrics_path}")
+    print(f"Manifest guardado en: {manifest_path}")
     print(f"Modelo guardado en: {model_path}.zip")
+    print(f"Copia del modelo guardada en: {run_model_path}")
     print(f"TensorBoard: tensorboard --logdir {tb_log_dir}")
     print(f"\n{'='*60}")
     print(f"  Experimento completado: {RUN_ID}")
