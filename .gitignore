@@ -3,6 +3,8 @@ venv/
 .venv/
 *.pyc
 __pycache__/
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
 *.aux
 *.bbl
 *.bcf

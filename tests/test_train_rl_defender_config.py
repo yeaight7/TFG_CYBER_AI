@@ -74,11 +74,11 @@ def test_main_experiment_profile_resolves_fixed_config():
         total_timesteps=total_timesteps,
     )
 
-    assert total_timesteps == 2_500_000
+    assert total_timesteps == 3_000_000
     assert hyperparams == {
         "policy": "MlpPolicy",
         "policy_kwargs": {
-            "net_arch": [512, 512, 256],
+            "net_arch": [1024, 1024, 512],
             "n_quantiles": 200,
         },
         "learning_rate": 5e-5,

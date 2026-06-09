@@ -56,13 +56,29 @@ python src/train_rl_defender.py \
   --training-profile main-experiment
 ```
 
+Smoke runs below `learning_starts=50_000` only validate the pipeline and
+artifact saving. They do not validate learning quality.
+
+To validate actual learning before the main run, use at least:
+
+```bash
+python src/train_rl_defender.py \
+  --preset fast \
+  --split-mode random \
+  --max-rows 250000 \
+  --timesteps 150000 \
+  --seed 42 \
+  --training-profile main-experiment \
+  --checkpoint-freq 0
+```
+
 ## Main Command
 
 ```bash
 python src/train_rl_defender.py \
   --preset full \
   --split-mode random \
-  --timesteps 2500000 \
+  --timesteps 3000000 \
   --seed 42 \
   --training-profile main-experiment
 ```

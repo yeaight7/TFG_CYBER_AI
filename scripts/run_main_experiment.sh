@@ -24,6 +24,6 @@ fi
 python src/train_rl_defender.py \
   --preset full \
   --split-mode random \
-  --timesteps 2500000 \
+  --timesteps 3000000 \
   --seed 42 \
   --training-profile main-experiment

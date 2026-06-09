@@ -63,7 +63,7 @@ def resolve_total_timesteps(args: argparse.Namespace, is_fast: bool) -> int:
     if args.timesteps is not None:
         return args.timesteps
     if args.training_profile == "main-experiment":
-        return 2_500_000
+        return 3_000_000
     return 25_000 if is_fast else 100_000
 
 
@@ -74,7 +74,7 @@ def resolve_training_hyperparams(
 ) -> Dict[str, Any]:
     if training_profile == "main-experiment":
         policy_kwargs = {
-            "net_arch": [512, 512, 256],
+            "net_arch": [1024, 1024, 512],
             "n_quantiles": 200,
         }
         return {
@@ -268,7 +268,7 @@ def parse_args() -> argparse.Namespace:
         "--timesteps", type=int, default=None,
         help=(
             "Total timesteps for training "
-            "(default: 25k fast, 100k full, 2.5M main-experiment)"
+            "(default: 25k fast, 100k full, 3M main-experiment)"
         ),
     )
     parser.add_argument(
