@@ -76,6 +76,27 @@ split, QRDQN, and the fixed main-experiment hyperparameter profile.
 tensorboard --logdir runs/cicids2017
 ```
 
+The training script writes TensorBoard events while the run is active. This is
+the safest way to capture learning curves without adding work inside the
+training loop.
+
+After the run, export thesis-ready CSV and PNG curves:
+
+```bash
+python scripts/export_tensorboard_scalars.py --run-id <RUN_ID>
+```
+
+This reads TensorBoard event files such as `runs/cicids2017/<RUN_ID>_0/` and
+writes:
+
+```text
+runs/cicids2017/<RUN_ID>/plots/tensorboard_scalars/
+```
+
+The exporter also updates `artifact_manifest.json` with the plot directory and
+its own export manifest. It can be run while training is still active, but the
+final export should be run after training completes.
+
 ## Artifacts
 
 The final model is written to:
@@ -105,11 +126,21 @@ Download these after training:
 - `runs/cicids2017/<RUN_ID>/metrics.json`
 - `runs/cicids2017/<RUN_ID>/scaler.joblib`
 - `runs/cicids2017/<RUN_ID>/train_percentiles.npz`
-- TensorBoard event files under `runs/cicids2017/<RUN_ID>/`
+- TensorBoard event files under `runs/cicids2017/<RUN_ID>_0/`
+- `runs/cicids2017/<RUN_ID>/plots/tensorboard_scalars/` after running the exporter
 - `runs/cicids2017/<RUN_ID>/checkpoints/` only if a checkpoint is needed
 
 Do not commit raw datasets, huge checkpoints, or unnecessary generated binary
 artifacts unless intentionally tracked.
+
+Recommended download bundle:
+
+```bash
+tar -czf "<RUN_ID>_bundle.tar.gz" \
+  "runs/cicids2017/<RUN_ID>" \
+  "runs/cicids2017/<RUN_ID>_0" \
+  "models/<RUN_ID>.zip"
+```
 
 ## Post-Training Validation
 
