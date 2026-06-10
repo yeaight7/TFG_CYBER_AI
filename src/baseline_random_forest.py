@@ -5,7 +5,20 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 
-from src.load_cicids2017 import load_cicids2017_binary, CICIDSLoadConfig
+try:
+    from src.load_cicids2017 import (
+        CICIDSLoadConfig,
+        load_cicids2017_binary,
+        load_cicids2017_csv_split,
+        load_cicids2017_exact_csv_split,
+    )
+except ModuleNotFoundError:
+    from load_cicids2017 import (
+        CICIDSLoadConfig,
+        load_cicids2017_binary,
+        load_cicids2017_csv_split,
+        load_cicids2017_exact_csv_split,
+    )
 
 
 MODELS_DIR = Path("models")
@@ -66,7 +79,6 @@ def main():
     
     # --- Sweep 2: Day Split (Check C equivalent) ---
     print("\n=== [SWEEP 2] Day Split (Check C) ===")
-    from load_cicids2017 import load_cicids2017_csv_split
     X_train_c, y_train_c, X_test_c, y_test_c, _, _ = load_cicids2017_csv_split(
         train_csvs=["Monday", "Tuesday", "Wednesday", "Thursday"],
         test_csvs=["Friday"],
@@ -77,7 +89,6 @@ def main():
 
     # --- Sweep 3: Leave-one-out (e.g. Wednesday out) ---
     print("\n=== [SWEEP 3] Leave-One-Out (Wednesday test) ===")
-    from load_cicids2017 import load_cicids2017_exact_csv_split
     train_exact = [
         "Monday-WorkingHours.pcap_ISCX.csv",
         "Tuesday-WorkingHours.pcap_ISCX.csv",
