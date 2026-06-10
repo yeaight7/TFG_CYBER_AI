@@ -10,7 +10,7 @@ __pycache__/
 *.bcf
 *.blg
 report/*.log
-relay.log
+*.log
 *.out
 *.run.xml
 *.toc
