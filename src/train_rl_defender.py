@@ -162,6 +162,32 @@ def collect_environment_metadata(device: str) -> Dict[str, Any]:
     }
 
 
+def configure_torch_runtime(
+    torch_threads: int | None,
+    torch_inter_op_threads: int | None,
+) -> Dict[str, int | None]:
+    """Apply optional PyTorch CPU thread limits and report effective values."""
+    if torch_threads is not None:
+        if torch_threads <= 0:
+            raise ValueError("--torch-threads must be > 0")
+        torch.set_num_threads(torch_threads)
+
+    if torch_inter_op_threads is not None:
+        if torch_inter_op_threads <= 0:
+            raise ValueError("--torch-inter-op-threads must be > 0")
+        try:
+            torch.set_num_interop_threads(torch_inter_op_threads)
+        except RuntimeError as exc:
+            print(f"WARNING: could not set torch inter-op threads: {exc}")
+
+    return {
+        "torch_num_threads": int(torch.get_num_threads()),
+        "torch_num_interop_threads": int(torch.get_num_interop_threads()),
+        "requested_torch_threads": torch_threads,
+        "requested_torch_inter_op_threads": torch_inter_op_threads,
+    }
+
+
 def write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
@@ -187,34 +213,26 @@ def make_env_fn(
 
 
 def evaluate_model(
-    model, X_test: np.ndarray, y_test: np.ndarray, reward_config: Dict[str, float],
+    model,
+    X_test: np.ndarray,
+    y_test: np.ndarray,
+    reward_config: Dict[str, float],
+    batch_size: int = 8192,
 ) -> Dict[str, float]:
     """
     Evalúa el agente sobre test set.
     Devuelve dict con métricas clave.
     """
-    env_test = RLDatasetDefenderEnv(
-        X=X_test,
-        y=y_test,
-        benign_label=0,
-        attack_label=1,
-        reward_config=reward_config,
-        max_steps_per_episode=len(X_test),
-        shuffle=False,
-    )
+    if batch_size <= 0:
+        raise ValueError("--eval-batch-size must be > 0")
 
-    obs, info = env_test.reset()
-    done = False
-
-    y_true: List[int] = []
-    y_pred: List[int] = []
-
-    while not done:
-        action, _ = model.predict(obs, deterministic=True)
-        obs, reward, terminated, truncated, info = env_test.step(int(action))
-        done = terminated or truncated
-        y_true.append(int(info["true_label"]))
-        y_pred.append(int(action))
+    y_true = y_test.astype(np.int64)
+    pred_chunks: List[np.ndarray] = []
+    for start_idx in range(0, len(X_test), batch_size):
+        end_idx = min(start_idx + batch_size, len(X_test))
+        actions, _ = model.predict(X_test[start_idx:end_idx], deterministic=True)
+        pred_chunks.append(np.asarray(actions, dtype=np.int64).reshape(-1))
+    y_pred = np.concatenate(pred_chunks)
 
     cm = confusion_matrix(y_true, y_pred)
     report = classification_report(y_true, y_pred, digits=4, output_dict=True)
@@ -302,6 +320,30 @@ def parse_args() -> argparse.Namespace:
             "Default: disabled for default profile, 250k for main-experiment."
         ),
     )
+    parser.add_argument(
+        "--torch-threads",
+        type=int,
+        default=None,
+        help=(
+            "Set torch.set_num_threads(N) for CPU-side PyTorch work. "
+            "Default leaves PyTorch runtime default unchanged."
+        ),
+    )
+    parser.add_argument(
+        "--torch-inter-op-threads",
+        type=int,
+        default=None,
+        help=(
+            "Set torch.set_num_interop_threads(N) when possible. "
+            "Default leaves PyTorch runtime default unchanged."
+        ),
+    )
+    parser.add_argument(
+        "--eval-batch-size",
+        type=int,
+        default=8192,
+        help="Batch size for deterministic test-set evaluation. Default: 8192",
+    )
     return parser.parse_args()
 
 
@@ -327,6 +369,10 @@ def main() -> None:
     checkpoint_freq = resolve_checkpoint_freq(
         training_profile=training_profile,
         checkpoint_freq=args.checkpoint_freq,
+    )
+    torch_runtime = configure_torch_runtime(
+        torch_threads=args.torch_threads,
+        torch_inter_op_threads=args.torch_inter_op_threads,
     )
 
     # ── RUN_ID único ──
@@ -363,6 +409,7 @@ def main() -> None:
     print(f"  Max rows: {args.max_rows or '(preset default)'}")
     print(f"  Timesteps: {total_timesteps}")
     print(f"  Canonical: {use_canonical}")
+    print(f"  Eval batch size: {args.eval_batch_size}")
     print(f"  Output: {run_dir}")
     if checkpoint_freq > 0:
         print(f"  Checkpoints: every {checkpoint_freq} steps -> {checkpoints_dir}")
@@ -371,6 +418,8 @@ def main() -> None:
     print(f"{'='*60}")
     print("\nResolved QRDQN hyperparameters:")
     print(json.dumps(hyperparams, indent=2))
+    print("\nPyTorch runtime:")
+    print(json.dumps(torch_runtime, indent=2))
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     if torch.cuda.is_available():
@@ -460,6 +509,8 @@ def main() -> None:
         "exploration_fraction": hyperparams["exploration_fraction"],
         "max_grad_norm": hyperparams["max_grad_norm"],
         "checkpoint_freq": checkpoint_freq,
+        "eval_batch_size": args.eval_batch_size,
+        "torch_runtime": torch_runtime,
         "checkpoints_dir": str(checkpoints_dir) if checkpoint_freq > 0 else None,
         "save_replay_buffer_checkpoints": False,
         "tensorboard_log_dir": tb_log_dir,
@@ -569,7 +620,13 @@ def main() -> None:
     # 5) Evaluación en test
     # ------------------------------------------------------------------
     print("\nEvaluando en conjunto de test...")
-    metrics = evaluate_model(model, X_test, y_test, REWARD_CONFIG)
+    metrics = evaluate_model(
+        model,
+        X_test,
+        y_test,
+        REWARD_CONFIG,
+        batch_size=args.eval_batch_size,
+    )
 
     # ------------------------------------------------------------------
     # 6) Guardar config + métricas
