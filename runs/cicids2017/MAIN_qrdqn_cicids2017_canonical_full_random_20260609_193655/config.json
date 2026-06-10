@@ -1,0 +1,120 @@
+{
+  "run_id": "MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+  "status": "completed",
+  "started_at": "2026-06-09T19:36:55",
+  "completed_at": "2026-06-10T00:51:39",
+  "algorithm": "QRDQN",
+  "policy": "MlpPolicy",
+  "training_profile": "main-experiment",
+  "dataset": "CICIDS2017",
+  "split_mode": "random",
+  "preset": "full",
+  "use_canonical": true,
+  "max_rows": null,
+  "total_timesteps": 3000000,
+  "seed": 42,
+  "reward_config": {
+    "tp": 1.5,
+    "fp": -2.0,
+    "fn": -5.0,
+    "omission": 0.0
+  },
+  "train_shape": [
+    2264594,
+    152
+  ],
+  "test_shape": [
+    566149,
+    152
+  ],
+  "n_features": 152,
+  "device": "cuda",
+  "script": "src/train_rl_defender.py",
+  "argv": [
+    "src/train_rl_defender.py",
+    "--preset",
+    "full",
+    "--split-mode",
+    "random",
+    "--timesteps",
+    "3000000",
+    "--seed",
+    "42",
+    "--training-profile",
+    "main-experiment"
+  ],
+  "split_metadata": {
+    "split_mode": "random",
+    "preset": "full",
+    "seed": 42,
+    "max_rows": null,
+    "n_train": 2264594,
+    "n_test": 566149,
+    "train_benign": 1818477,
+    "train_attack": 446117,
+    "test_benign": 454620,
+    "test_attack": 111529,
+    "train_benign_rate": 0.8030035405904988,
+    "train_attack_rate": 0.19699645940950122,
+    "test_benign_rate": 0.8030041561497062,
+    "test_attack_rate": 0.19699584385029384
+  },
+  "training_hyperparams": {
+    "policy": "MlpPolicy",
+    "policy_kwargs": {
+      "net_arch": [
+        1024,
+        1024,
+        512
+      ],
+      "n_quantiles": 200
+    },
+    "learning_rate": 5e-05,
+    "buffer_size": 1000000,
+    "learning_starts": 50000,
+    "batch_size": 2048,
+    "gamma": 0.0,
+    "tau": 1.0,
+    "train_freq": 100,
+    "gradient_steps": 20,
+    "target_update_interval": 10000,
+    "exploration_initial_eps": 1.0,
+    "exploration_final_eps": 0.02,
+    "exploration_fraction": 0.1,
+    "max_grad_norm": 10.0
+  },
+  "policy_kwargs": {
+    "net_arch": [
+      1024,
+      1024,
+      512
+    ],
+    "n_quantiles": 200
+  },
+  "learning_rate": 5e-05,
+  "buffer_size": 1000000,
+  "learning_starts": 50000,
+  "batch_size": 2048,
+  "gamma": 0.0,
+  "tau": 1.0,
+  "train_freq": 100,
+  "gradient_steps": 20,
+  "target_update_interval": 10000,
+  "exploration_initial_eps": 1.0,
+  "exploration_final_eps": 0.02,
+  "exploration_fraction": 0.1,
+  "max_grad_norm": 10.0,
+  "checkpoint_freq": 250000,
+  "checkpoints_dir": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/checkpoints",
+  "save_replay_buffer_checkpoints": false,
+  "tensorboard_log_dir": "/workspace/TFG_CYBER_AI/runs/cicids2017",
+  "model_path": "/workspace/TFG_CYBER_AI/models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip",
+  "run_model_path": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/model.zip",
+  "config_path": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json",
+  "metrics_path": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json",
+  "scaler_path": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib",
+  "percentiles_path": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz",
+  "feature_names_path": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/feature_names.json",
+  "environment_path": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json",
+  "artifact_manifest_path": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/artifact_manifest.json"
+}

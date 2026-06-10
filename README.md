@@ -29,6 +29,7 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 - [docs/AGENT_CONTEXT.md](docs/AGENT_CONTEXT.md): Phase 2 scope and guardrails
 - [docs/phase2_plan.md](docs/phase2_plan.md): execution plan for the lab workflow
 - [docs/gcp_lab.md](docs/gcp_lab.md): private lab deployment guide
+- [docs/runpod_main_experiment.md](docs/runpod_main_experiment.md): single main RunPod training run guide
 - [experiments/README.md](experiments/README.md): experiment archive index
 - [experiments/cicids2017_qrdqn_experiments.md](experiments/cicids2017_qrdqn_experiments.md): maintained CICIDS2017 + QRDQN run history
 - [docs/DEFENSA_TFG_PROGRESO.md](docs/DEFENSA_TFG_PROGRESO.md): Spanish defense notes

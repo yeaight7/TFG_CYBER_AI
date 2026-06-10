@@ -1,0 +1,22 @@
+{
+  "run_id": "MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+  "status": "completed",
+  "download_all": [
+    "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+    "/workspace/TFG_CYBER_AI/models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip"
+  ],
+  "artifacts": {
+    "model": {
+      "global_path": "/workspace/TFG_CYBER_AI/models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip",
+      "run_copy_path": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/model.zip"
+    },
+    "config": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json",
+    "metrics": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json",
+    "scaler": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib",
+    "train_percentiles": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz",
+    "feature_names": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/feature_names.json",
+    "environment": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json",
+    "tensorboard_dir": "/workspace/TFG_CYBER_AI/runs/cicids2017",
+    "checkpoints_dir": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/checkpoints"
+  }
+}

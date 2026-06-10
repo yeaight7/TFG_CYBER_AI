@@ -370,7 +370,7 @@ def main() -> None:
             buffer_size=min(200_000, max(args.timesteps, 10_000)),
             batch_size=512,
             gradient_steps=20,
-            gamma=0.99,
+            gamma=0.0,
             tau=1.0,
             train_freq=100,
             target_update_interval=10_000,

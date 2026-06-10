@@ -123,7 +123,7 @@ The current codebase is standardised around:
 ```python
 REWARD_CONFIG = {
     "tp": 1.5,
-    "fp": -1.5,
+    "fp": -2.0,
     "fn": -5.0,
     "omission": 0.0,
 }
@@ -138,11 +138,11 @@ This matches:
 
 ### Important Historical Note
 
-Some committed historical run artifacts were produced with different reward settings. Example:
+Some older committed historical run artifacts were produced with different reward settings. Example:
 
-- `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` used:
+- early C01 artifacts used:
   - `tp = 1.5`
-  - `fp = -2.0`
+  - `fp = -1.0`
   - `fn = -5.0`
   - `omission = 0.0`
 
