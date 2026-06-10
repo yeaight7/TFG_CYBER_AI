@@ -9,7 +9,8 @@ __pycache__/
 *.bbl
 *.bcf
 *.blg
-*.log
+report/*.log
+relay.log
 *.out
 *.run.xml
 *.toc
