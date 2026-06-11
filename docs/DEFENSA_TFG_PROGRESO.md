@@ -139,7 +139,7 @@ Hoy, el repositorio está normalizado en:
 ```python
 REWARD_CONFIG = {
     "tp": 1.5,
-    "fp": -1.5,
+    "fp": -2.0,
     "fn": -5.0,
     "omission": 0.0,
 }
