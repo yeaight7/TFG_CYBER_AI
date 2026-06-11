@@ -51,13 +51,15 @@ runs/phase2/<RUN_ID>/
 └── diagnostics.json   # optional, when exported
 ```
 
+When `predictions.csv` is too large to commit directly, it may be committed compressed as `predictions.csv.gz` together with a `predictions_head_10000.csv` sample (e.g. `runs/phase2/P2v2_pred_20260610_161231/`). The script itself always writes `predictions.csv` at run time.
+
 ## Maintained Entry Point
 
 Use:
 
 - `scripts/predict_real_traffic_v2.py`
 
-and do not document `predict_real_traffic.py` as the recommended path except when discussing legacy behaviour.
+and do not document `scripts/deprecated_predict_real_traffic.py` (the legacy script, formerly `predict_real_traffic.py`) as the recommended path except when discussing legacy behaviour.
 
 ## Current Open Risk
 
