@@ -294,6 +294,14 @@ def parse_args() -> argparse.Namespace:
         help="Max rows to load from dataset (overrides preset default)",
     )
     parser.add_argument(
+        "--train-max-rows", type=int, default=None,
+        help=(
+            "Benchmark: subsample only the TRAIN partition after the split; "
+            "the test partition stays identical to the full run. "
+            "Requires --preset full (no --max-rows)."
+        ),
+    )
+    parser.add_argument(
         "--no-canonical", action="store_true",
         help="Disable canonical schema + missingness mask (use raw features)",
     )
@@ -381,6 +389,8 @@ def main() -> None:
     algo_tag = "qrdqn"
     canon_tag = "canonical" if use_canonical else "raw"
     exp_tag = f"{preset}_{split_mode}"
+    if args.train_max_rows is not None:
+        exp_tag = f"{exp_tag}_t{args.train_max_rows}"
     run_prefix = "MAIN" if training_profile == "main-experiment" else "C03"
     RUN_ID = f"{run_prefix}_{algo_tag}_cicids2017_{canon_tag}_{exp_tag}_{timestamp}"
 
@@ -407,6 +417,7 @@ def main() -> None:
     print(f"  Training profile: {training_profile}")
     print(f"  Split mode: {split_mode}")
     print(f"  Max rows: {args.max_rows or '(preset default)'}")
+    print(f"  Train max rows: {args.train_max_rows or '(full train partition)'}")
     print(f"  Timesteps: {total_timesteps}")
     print(f"  Canonical: {use_canonical}")
     print(f"  Eval batch size: {args.eval_batch_size}")
@@ -437,6 +448,7 @@ def main() -> None:
         preset=preset,
         seed=seed,
         max_rows=args.max_rows,
+        train_max_rows=args.train_max_rows,
         train_days=args.train_days,
         test_days=args.test_days,
         scale=False,
@@ -483,6 +495,7 @@ def main() -> None:
         "preset": preset,
         "use_canonical": use_canonical,
         "max_rows": split_meta["max_rows"],
+        "train_max_rows": args.train_max_rows,
         "total_timesteps": total_timesteps,
         "seed": seed,
         "reward_config": REWARD_CONFIG,
