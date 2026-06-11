@@ -89,8 +89,8 @@ This is the primary dataset and the basis for the canonical schema.
 
 - requires the effective `max_rows` to be `None` (`preset="full"`, no explicit `--max-rows`); otherwise the loader raises
 - subsampling is deterministic, stratified, and **nested** (`stratified_nested_prefix_v1`: 500k ⊂ 1M ⊂ full for the same seed)
-- every load records `test_set_sha256`, `y_test_sha256`, `train_set_sha256`, `y_train_sha256`, `n_train_full`, and `subsample_method` in `split_metadata`
-- the fixed test-partition reference manifest lives at `runs/cicids2017/test_partition_reference_seed42.json` (minted by `scripts/verify_fixed_test_split.py`)
+- every load records `test_set_sha256`, `y_test_sha256`, `train_set_sha256`, `y_train_sha256`, `n_train_full`, `subsample_method`, and `scale` in `split_metadata`
+- the fixed test-partition reference manifest will live at `runs/cicids2017/test_partition_reference_seed42.json` once minted on RunPod by `scripts/verify_fixed_test_split.py` (pending)
 - this is an **internal benchmark** mechanism only; do not mix its claims with Phase 2 / offline-inference results
 
 Impact of this change: current defaults unchanged (`train_max_rows=None` reproduces prior behavior exactly), historical comparisons unaffected, prior run artifacts remain reproducible, and the new `split_metadata` keys are additive.
@@ -126,6 +126,7 @@ This dataset is kept for historical Phase 1 benchmarking.
 | Validation checks A/B/C | `src/validate_checks.py` |
 | Leave-one-exact-CSV-out | `src/validate_leave_one_csv_out.py` |
 | Phase 2 robust inference | `scripts/predict_real_traffic_v2.py` |
+| Random Forest baseline | `src/baseline_random_forest.py` |
 
 ## Training and Validation
 
@@ -202,10 +203,16 @@ Key features:
 Artifact-backed highlights currently available in the repository:
 
 - Best committed CICIDS2017 training run:
-  - `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439`
+  - `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` (max_rows=500,000; 100,000-row test set — not the fixed benchmark partition)
   - accuracy `0.99859`
   - attack recall `0.99945`
   - attack F1 `0.99876`
+- Main experiment (completed, fixed test partition):
+  - `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`
+  - training_profile: `main-experiment`, preset: `full`, timesteps: 3,000,000
+  - train shape: [2,264,594 × 152], test shape: [566,149 × 152]
+  - accuracy `0.9938055`, attack recall `0.9953555`, attack F1 `0.9844499`
+  - **Not directly comparable with C03**: C03 used `max_rows=500,000` (distorted 100,000-row test set); MAIN uses the fixed 566,149-row test partition
 - Historical Check C artifact:
   - accuracy `0.84135`
 - Phase 2:
