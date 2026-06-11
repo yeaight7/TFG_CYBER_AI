@@ -104,15 +104,19 @@ Expected observation shape:
 
 Example:
 
+El modelo de referencia actual es el run MAIN (entrenado con el conjunto completo de 2 264 594 filas, 3 000 000 pasos, completado el 2026-06-10):
+
 ```bash
 python scripts/predict_real_traffic_v2.py \
-  --flows pcaps/flows.csv \
-  --model models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip \
-  --scaler runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/scaler.joblib \
-  --percentiles runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/train_percentiles.npz \
+  --flows pcaps/synthetic_real_traffic.csv \
+  --model models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip \
+  --scaler runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib \
+  --percentiles runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz \
   --clip-z 10.0 \
   --export-diagnostics
 ```
+
+(El run `P2v2_pred_20260610_161231` ya utilizó este modelo.)
 
 ### 7. Store Run Artifacts
 
@@ -122,9 +126,12 @@ Every Phase 2 run should write to:
 runs/phase2/<RUN_ID>/
 ├── config.json
 ├── metrics.json
-├── predictions.csv
-└── diagnostics.json   # optional
+├── predictions.csv.gz          # comprimido; head en predictions_head_10000.csv
+├── predictions_head_10000.csv  # primeras 10 000 filas sin comprimir
+└── diagnostics.json   # opcional
 ```
+
+Nota: runs anteriores a P2v2_pred_20260610_161231 contienen `predictions.csv` sin comprimir.
 
 ### 8. Review the Results
 
