@@ -187,7 +187,3 @@ gcloud compute networks delete tfg-lab-vpc --quiet
 | Private network | VPC + private subnet | VNet + subnet | host-only or isolated bridge |
 | Controlled SSH | SSM or bastion | Bastion | host-only SSH |
 | Teardown | terminate instances | deallocate/delete VMs | destroy or stop VMs |
-|---------|-----|-------|----------------------|
-| Private network | VPC + private subnet | VNet + subnet | host-only or isolated bridge |
-| Controlled SSH | SSM or bastion | Bastion | host-only SSH |
-| Teardown | terminate instances | deallocate/delete VMs | destroy or stop VMs |
