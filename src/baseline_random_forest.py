@@ -59,10 +59,10 @@ def evaluate_random_forest(
     """
     y_pred = model.predict(X_test)
 
-    print("=== Random Forest – Confusion matrix (clases: 0=normal, 1=ataque) ===")
+    print("=== Random Forest - Confusion matrix (clases: 0=normal, 1=ataque) ===")
     print(confusion_matrix(y_test, y_pred))
     print()
-    print("=== Random Forest – Classification report ===")
+    print("=== Random Forest - Classification report ===")
     print(classification_report(y_test, y_pred, digits=4))
 
 
