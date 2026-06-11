@@ -59,6 +59,18 @@ Metrics from `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_2026022
 | Recall benign | `0.99746` |
 | F1 benign | `0.99837` |
 
+### Training-Size Benchmark (Fixed Test Partition)
+
+Internal benchmark to justify the full-data main experiment. Smaller runs use `--train-max-rows` (train-only subsampling AFTER the split): the test partition is byte-identical to the main run's 566,149-row test set (seed 42; benign 454,620 / attack 111,529), verified per run via `split_metadata.test_set_sha256` against `runs/cicids2017/test_partition_reference_seed42.json`. Timesteps scale proportionally with train size. Protocol details: [../experiments/cicids2017_qrdqn_experiments.md](../experiments/cicids2017_qrdqn_experiments.md).
+
+These results are an **internal CICIDS2017 benchmark only** — random stratified split with a fixed held-out test partition. They are not comparable to, and must not be mixed with, the Phase 2 offline-inference results, which measure distribution shift on real lab traffic.
+
+No benchmark training artifacts are committed yet; the table below will be filled only from committed `runs/cicids2017/` artifacts.
+
+| Run | Train rows | Timesteps | test_set_sha256 match | Accuracy | Recall attack | F1 attack |
+|-----|------------|-----------|----------------------|----------|---------------|-----------|
+| _(pending)_ | | | | | | |
+
 ## Validation Artifacts
 
 ### Check A — Direct Evaluation
