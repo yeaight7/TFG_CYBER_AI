@@ -18,6 +18,7 @@ This directory contains the maintained project documentation used for developmen
 | [../experiments/README.md](../experiments/README.md) | Author, reviewers | Historical experiment archive index | Maintained |
 | [DEFENSA_TFG_PROGRESO.md](DEFENSA_TFG_PROGRESO.md) | Author | Spanish defense preparation notes | Maintained, Spanish by design |
 | [DEFENSA_TFG_SCRIPT.md](DEFENSA_TFG_SCRIPT.md) | Author | Spanish defense script | Maintained, Spanish by design |
+| [informe.tex](informe.tex) / [informe.pdf](informe.pdf) | Author, evaluators | LaTeX source and compiled thesis submission report | Maintained |
 
 ## Reading Order
 
