@@ -30,6 +30,7 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 - [docs/phase2_plan.md](docs/phase2_plan.md): execution plan for the lab workflow
 - [docs/gcp_lab.md](docs/gcp_lab.md): private lab deployment guide
 - [docs/runpod_main_experiment.md](docs/runpod_main_experiment.md): single main RunPod training run guide
+- [docs/reproducibility.md](docs/reproducibility.md): recorded environment for the main QRDQN run and dependency-file strategy
 - [experiments/README.md](experiments/README.md): experiment archive index
 - [experiments/cicids2017_qrdqn_experiments.md](experiments/cicids2017_qrdqn_experiments.md): maintained CICIDS2017 + QRDQN run history
 - [docs/DEFENSA_TFG_PROGRESO.md](docs/DEFENSA_TFG_PROGRESO.md): Spanish defense notes
@@ -40,7 +41,7 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 
 ```text
 TFG_CYBER_AI/
-├── .codex/                    # hooks.json for triggering knowledge graph updates
+├── .codex/                    # (empty — reserved for knowledge graph hooks; hooks.json not yet populated)
 ├── .github/                   # Agent guidance and coding/review agent instructions
 ├── datasets/                  # Local datasets (also tracked via git lfs)
 ├── docs/                      # Documentation, results, Phase 2 guides, defense material
@@ -125,7 +126,7 @@ Run robust Phase 2 offline inference:
 
 ```bash
 python scripts/predict_real_traffic_v2.py \
-  --flows pcaps/flows.csv \
+  --flows pcaps/synthetic_real_traffic.csv \
   --model models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip \
   --scaler runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/scaler.joblib \
   --percentiles runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/train_percentiles.npz \
@@ -155,6 +156,13 @@ Artifact-backed historical results are summarised in [docs/results.md](docs/resu
   - accuracy `0.99859`
   - attack recall `0.99945`
   - attack F1 `0.99876`
+- Main experiment run (full dataset, fixed test partition — not directly comparable to C03's 100k-row subset):
+  - `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`
+  - train_shape [2264594, 152], test_shape [566149, 152]
+  - accuracy `0.9938055`
+  - attack recall `0.9953555`
+  - attack F1 `0.9844499`
+  - Artifact: `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json`
 - Validation Check C historical artifact:
   - accuracy `0.84135`
   - train on Monday–Wednesday patterns
