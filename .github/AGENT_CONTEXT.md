@@ -81,6 +81,19 @@ This is the primary dataset and the basis for the canonical schema.
   - random stratified split
   - CSV/day pattern split
   - exact-file split for leave-one-exact-CSV-out validation
+  - train-only subsampling for the internal training-size benchmark (`train_max_rows`)
+
+#### Train-only subsampling (`train_max_rows`)
+
+`load_cicids2017_split(..., train_max_rows=N)` subsamples only the **train** partition AFTER the split; the test partition stays byte-identical to the `train_max_rows=None` run for the same seed/preset (verified via the `test_set_sha256` content hash in `split_metadata`). This exists because `max_rows` caps rows at CSV-read time, *before* the split, which shrinks the test set and distorts its class mix (sequential read starts with all-benign Monday) — unusable for comparing training-set sizes.
+
+- requires the effective `max_rows` to be `None` (`preset="full"`, no explicit `--max-rows`); otherwise the loader raises
+- subsampling is deterministic, stratified, and **nested** (`stratified_nested_prefix_v1`: 500k ⊂ 1M ⊂ full for the same seed)
+- every load records `test_set_sha256`, `y_test_sha256`, `train_set_sha256`, `y_train_sha256`, `n_train_full`, and `subsample_method` in `split_metadata`
+- the fixed test-partition reference manifest lives at `runs/cicids2017/test_partition_reference_seed42.json` (minted by `scripts/verify_fixed_test_split.py`)
+- this is an **internal benchmark** mechanism only; do not mix its claims with Phase 2 / offline-inference results
+
+Impact of this change: current defaults unchanged (`train_max_rows=None` reproduces prior behavior exactly), historical comparisons unaffected, prior run artifacts remain reproducible, and the new `split_metadata` keys are additive.
 
 #### Dataset versions
 
