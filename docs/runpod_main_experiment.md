@@ -3,6 +3,18 @@
 This guide prepares one main cloud training run for the thesis model. It is not
 a hyperparameter search.
 
+## Status
+
+The main run described by this guide has completed.
+
+- RUN_ID: `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`
+- Started 2026-06-09T19:36:55, completed 2026-06-10T00:51:39 (RunPod, `device=cuda`, 3,000,000 timesteps, seed 42).
+- Artifacts: `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/` and `models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip`.
+- Test-set metrics (566,149 rows): accuracy 0.9938, attack recall 0.9954, attack F1 0.9844 (from the run's `metrics.json`).
+- Environment record: `docs/reproducibility.md`.
+
+The instructions below are kept as the reproduction procedure for this run.
+
 ## Machine
 
 - Preferred: RTX 3090. It has 24 GB VRAM and commonly enough system RAM for the
