@@ -17,7 +17,8 @@ Treat the current project baseline as:
 Treat NSL-KDD as historical benchmark material unless the pull request explicitly works on historical experiments.
 
 Flag any change that breaks or risks these invariants:
-- dataset adapters must return `(X_train, y_train, X_test, y_test, scaler, feature_names)`
+- low-level dataset adapters (`load_cicids2017_binary`, `load_cicids2017_csv_split`, `load_nsl_kdd`) must return `(X_train, y_train, X_test, y_test, scaler, feature_names)`
+- `load_cicids2017_split` (the training-level wrapper) returns a 7-tuple `(X_train, y_train, X_test, y_test, scaler, feature_names, metadata)` — the extra `metadata` dict carries split info and SHA-256 partition hashes and must not be dropped
 - `X` should remain `float32`
 - `y` should remain `int64`
 - labels remain `0 = BENIGN`, `1 = ATTACK`
