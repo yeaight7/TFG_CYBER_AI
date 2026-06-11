@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, List
@@ -535,12 +536,63 @@ _PRESET_MAX_ROWS: Dict[str, Dict[str, Optional[int]]] = {
     "full": {"random": None, "day": None},
 }
 
+# Versioned identifier for the train-only subsampling strategy used by
+# ``train_max_rows`` (recorded in split metadata for auditability).
+SUBSAMPLE_METHOD_STRATIFIED_NESTED_PREFIX = "stratified_nested_prefix_v1"
+
+
+def _sha256_of_array(arr: np.ndarray) -> str:
+    """
+    SHA-256 content hash of an ndarray, prefixed with dtype and shape so that
+    arrays with identical bytes but different layout do not collide.
+    """
+    h = hashlib.sha256()
+    h.update(f"{arr.dtype}|{arr.shape}|".encode())
+    h.update(np.ascontiguousarray(arr))
+    return h.hexdigest()
+
+
+def _stratified_nested_prefix_indices(y_train: np.ndarray, n: int, seed: int) -> np.ndarray:
+    """
+    Deterministic, stratified, *nested* train subsample indices.
+
+    Per-class seeded permutations are drawn in a fixed order (benign first,
+    then attack) so the RNG stream consumed does not depend on ``n``: any two
+    sizes share the same permutations, and prefixes nest (500k ⊂ 1M ⊂ full).
+    Class allocation ``round(n * attack_ratio)`` is monotone in ``n``, so
+    nesting holds as set inclusion. Returned indices are sorted ascending to
+    preserve the original row order of the train partition.
+    """
+    n_total = int(len(y_train))
+    if n <= 0 or n >= n_total:
+        raise ValueError(
+            f"train_max_rows must be in (0, n_train={n_total}); got {n}. "
+            "Use train_max_rows=None for the full run."
+        )
+
+    benign_idx = np.flatnonzero(y_train == 0)
+    attack_idx = np.flatnonzero(y_train == 1)
+
+    attack_ratio = len(attack_idx) / n_total
+    n_attack = int(round(n * attack_ratio))
+    # Defensive clamp (unreachable with real CICIDS2017 proportions).
+    n_attack = min(max(n_attack, n - len(benign_idx)), len(attack_idx), n)
+    n_benign = n - n_attack
+
+    rng = np.random.default_rng(seed)
+    benign_perm = rng.permutation(benign_idx)
+    attack_perm = rng.permutation(attack_idx)
+
+    selected = np.concatenate([benign_perm[:n_benign], attack_perm[:n_attack]])
+    return np.sort(selected)
+
 
 def load_cicids2017_split(
     split_mode: str = "random",
     preset: str = "fast",
     seed: int = 42,
     max_rows: Optional[int] = None,
+    train_max_rows: Optional[int] = None,
     train_days: Optional[List[str]] = None,
     test_days: Optional[List[str]] = None,
     scale: bool = True,
@@ -561,6 +613,13 @@ def load_cicids2017_split(
         Random seed for reproducibility.
     max_rows : int or None
         Explicit cap on rows loaded.  When *None*, the preset default is used.
+    train_max_rows : int or None
+        Benchmark mode: subsample only the *train* partition AFTER the split,
+        using a deterministic stratified nested prefix (500k ⊂ 1M ⊂ full).
+        The test partition stays byte-identical to the ``train_max_rows=None``
+        run for the same seed/preset.  Requires the effective ``max_rows`` to
+        be *None* (i.e. ``preset="full"`` without an explicit ``max_rows``),
+        because a capped row load would change the test partition.
     train_days : list[str] or None
         Day patterns for training (only used when *split_mode="day"*).
         Defaults to ``["Monday", "Tuesday", "Wednesday"]``.
@@ -586,10 +645,18 @@ def load_cicids2017_split(
     # Resolve effective max_rows
     effective_max_rows = max_rows if max_rows is not None else _PRESET_MAX_ROWS[preset][split_mode]
 
+    if train_max_rows is not None and effective_max_rows is not None:
+        raise ValueError(
+            "train_max_rows requires the full dataset: use preset='full' (or "
+            "max_rows=None); a capped max_rows would change the test partition."
+        )
+
     cfg = CICIDSLoadConfig(
         max_rows=effective_max_rows,
         use_canonical=use_canonical,
-        scale=scale,
+        # Scaling is deferred when subsampling: the scaler must be fit on the
+        # subsampled train partition, not on the full one.
+        scale=(scale and train_max_rows is None),
         random_state=seed,
     )
 
@@ -609,12 +676,33 @@ def load_cicids2017_split(
             "test_days": effective_test_days,
         }
 
+    # Train-only subsample (benchmark mode): test partition untouched.
+    n_train_full = int(len(y_train))
+    subsample_method: Optional[str] = None
+    if train_max_rows is not None:
+        sel = _stratified_nested_prefix_indices(y_train, train_max_rows, seed)
+        X_train = X_train[sel]
+        y_train = y_train[sel]
+        subsample_method = SUBSAMPLE_METHOD_STRATIFIED_NESTED_PREFIX
+        if scale:
+            scaler = StandardScaler()
+            X_train = scaler.fit_transform(X_train).astype(np.float32)
+            X_test = scaler.transform(X_test).astype(np.float32)
+
     # Build metadata dict (JSON-safe)
     metadata: Dict[str, Any] = {
         "split_mode": split_mode,
         "preset": preset,
         "seed": seed,
         "max_rows": effective_max_rows,
+        "train_max_rows": train_max_rows,
+        "n_train_full": n_train_full,
+        "subsample_method": subsample_method,
+        "scale": bool(scale),
+        "test_set_sha256": _sha256_of_array(X_test),
+        "y_test_sha256": _sha256_of_array(y_test),
+        "train_set_sha256": _sha256_of_array(X_train),
+        "y_train_sha256": _sha256_of_array(y_train),
         "n_train": int(len(y_train)),
         "n_test": int(len(y_test)),
         "train_benign": int((y_train == 0).sum()),
