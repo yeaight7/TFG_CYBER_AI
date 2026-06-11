@@ -34,8 +34,7 @@ If `graphify-out/GRAPH_REPORT.md` exists and the task is architectural, cross-fi
 ## Data and Modeling Guardrails
 
 - Never introduce IP addresses, absolute timestamps, Flow IDs, unique identifiers, or direct port proxies as model features.
-- Dataset adapters should preserve the shared return contract:
-  `(X_train, y_train, X_test, y_test, scaler, feature_names)`.
+- Dataset adapters should preserve the shared return contract: `(X_train, y_train, X_test, y_test, scaler, feature_names)`. The higher-level `load_cicids2017_split` wrapper extends this to `(X_train, y_train, X_test, y_test, scaler, feature_names, metadata)` where `metadata` is a JSON-serialisable dict containing split info and SHA-256 hashes of the partitions.
 - Preserve `X` as `float32`, `y` as `int64`, and labels as `0 = BENIGN`, `1 = ATTACK`.
 - New datasets require an adapter that maps into the shared canonical schema.
 
