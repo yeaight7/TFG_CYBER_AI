@@ -32,7 +32,7 @@ This file tracks citation, verification, and writing risks for `state_of_the_art
 - Exact local CICIDS2017 row counts, class counts, and attack-family distribution.
 - Exact local feature list after curation, loader cleaning, and canonical mapping.
 - Exact mapping from CICFlowMeter feature names to the 76 canonical features.
-- Current reward defaults: `.github/AGENT_CONTEXT.md` and `docs/results.md` disagree on `fp` default (`-1.5` vs `-2.0`). Verify code before final writing.
+- Current reward defaults: both `.github/AGENT_CONTEXT.md` and `docs/results.md` agree on `fp=-2.0` (tp=1.5, fn=-5.0, omission=0.0); this matches `src/train_rl_defender.py` and `src/rl_defender_env.py`. No disagreement exists. Historical runs C01/C02 used `fp=-1.0`; that is historical record, not the current default.
 - Whether the final thesis will include Random Forest baseline artifacts.
 - Whether the final thesis will include a committed full leave-one-exact-CSV-out validation artifact.
 - Whether final Phase 2 lab traffic includes attack labels, benign-only traffic, or unlabeled traffic.
@@ -100,11 +100,11 @@ Keep those details for algorithm/design chapters unless the final State of the A
 Next task:
 
 ```txt
-Audit the citation keys in report/drafts/state_of_the_art.md against Research/CITATION_PLAN.md and verified source metadata, then replace [CITATION NEEDED] / [VERIFY: ...] markers with stable keys or explicit TODOs.
+Audit the citation keys in report/drafts/state_of_the_art.md against Research/Initial Research for Report - Chapter State Of The Art/nightly/CITATION_PLAN.md and verified source metadata, then replace [CITATION NEEDED] / [VERIFY: ...] markers with stable keys or explicit TODOs.
 ```
 
 After that:
 
 ```txt
-Build the experimental design chapter from Research/METHODOLOGY_HANDOFF.md
+Build the experimental design chapter from Research/Initial Research for Report - Chapter State Of The Art/nightly/METHODOLOGY_HANDOFF.md
 ```
