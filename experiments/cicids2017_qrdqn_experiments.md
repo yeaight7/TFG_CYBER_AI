@@ -19,13 +19,13 @@ This document archives the committed CICIDS2017 training, validation, and Phase 
 ```python
 REWARD_CONFIG = {
     "tp": 1.5,
-    "fp": -1.5,
+    "fp": -2.0,
     "fn": -5.0,
     "omission": 0.0,
 }
 ```
 
-- Some of the strongest historical runs used different reward values, especially `fp = -2.0`.
+- The earliest historical runs (C01, C02) used a softer false-positive penalty, `fp = -1.0`, which differs from the current default `fp = -2.0`.
 
 ## Why This Branch Matters
 
@@ -45,8 +45,11 @@ The CICIDS2017 + QRDQN branch is the maintained Phase 1 baseline because it intr
 | C01 full | `C01_qrdqn_cicids2017_canonical_full_20260212_200218` | 250,000 | 100,000 | random | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` | `0.99618` | `0.99980` | `0.99628` | First larger random-split run showing the approach scaled cleanly. |
 | C02 fast | `C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122` | 100,000 | 10,000 | random | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` | `0.9766` | `0.99959` | `0.98123` | Faster preset retained strong attack recall while trading off some benign recall. |
 | C03 full | `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` | 500,000 | 100,000 | random | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` | `0.99859` | `0.99945` | `0.99876` | Best committed historical CICIDS2017 result in the repository. |
+| MAIN full | `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` | 2,830,743 | 3,000,000 | random | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` | `0.99381` | `0.99536` | `0.98445` | Completed full-data canonical main experiment (max_rows=null, seed 42, RunPod RTX 3090). Its 566,149-row test set is the reference benchmark; not comparable to the smaller capped C01-C03 test sets. |
 
-## Best Committed Historical Run
+## Best Committed Capped-Test Run (C03)
+
+C03 remains the strongest of the early capped-data runs, but its accuracy was measured on a 100,000-row test set with a distorted class mix (test_benign_rate 0.434), so it is **not** comparable to the completed full-data main run (`MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`), whose 566,149-row test set (test_benign_rate 0.803) yields accuracy 0.99381. See the Training-Size Benchmark section.
 
 The strongest committed CICIDS2017 artifact is:
 
@@ -129,18 +132,18 @@ The historical `--max-rows` knob caps rows at CSV-read time, *before* the strati
 
 - `--train-max-rows N` subsamples **only the train partition after the split**; the test partition is byte-identical to the full run (566,149 rows; benign 454,620 / attack 111,529; seed 42), verified by `split_metadata.test_set_sha256`.
 - Subsampling: `stratified_nested_prefix_v1` — deterministic, stratified to the full-train class ratio (±1 row), and nested (500k ⊂ 1M ⊂ full for the same seed).
-- Timestep budget **scales proportionally with train size**: `timesteps = round(3,000,000 × N / 2,264,594)` (1M → ≈1,324,736; 500k → ≈662,368). The benchmark therefore measures proportional data+compute, not data size alone.
-- Reference manifest: `runs/cicids2017/test_partition_reference_seed42.json` (minted by `scripts/verify_fixed_test_split.py` in the same environment as the main run). Every benchmark run's `split_metadata.test_set_sha256` must match it.
+- Timestep budget **scales proportionally with train size**: `timesteps = round(3,000,000 × N / 2,264,594)` (1M → ≈1,324,741; 500k → ≈662,370). The benchmark therefore measures proportional data+compute, not data size alone.
+- Reference manifest: will live at `runs/cicids2017/test_partition_reference_seed42.json` once minted by `scripts/verify_fixed_test_split.py` in the same environment as the main run (pending). Once minted, every benchmark run's `split_metadata.test_set_sha256` must match it.
 - Cross-environment proof: a local run of the verification script (scikit-learn 1.8.0) reproduced the exact split of the RunPod main run (scikit-learn 1.9.0) — `StandardScaler` `mean_`/`scale_` fit on the reproduced full train partition match the committed `scaler.joblib` of `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`.
 
 ### Commands
 
 ```bash
 # 1M train rows (same fixed test partition as the main run):
-python src/train_rl_defender.py --preset full --split-mode random --train-max-rows 1000000 --timesteps 1324736 --seed 42 --training-profile main-experiment
+python src/train_rl_defender.py --preset full --split-mode random --train-max-rows 1000000 --timesteps 1324741 --seed 42 --training-profile main-experiment
 
 # 500k train rows:
-python src/train_rl_defender.py --preset full --split-mode random --train-max-rows 500000 --timesteps 662368 --seed 42 --training-profile main-experiment
+python src/train_rl_defender.py --preset full --split-mode random --train-max-rows 500000 --timesteps 662370 --seed 42 --training-profile main-experiment
 
 # Verification (load-only, no training):
 python scripts/verify_fixed_test_split.py --sizes 500000 1000000 --seed 42 \
@@ -151,11 +154,13 @@ No benchmark training runs are committed yet; results will be reported here and 
 
 ## Link To Phase 2
 
-The CICIDS2017 QRDQN branch is also the foundation for the maintained Phase 2 offline inference path:
+The CICIDS2017 QRDQN branch is also the foundation for the maintained Phase 2 offline inference path.
 
-- model: `models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip`
-- scaler: `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/scaler.joblib`
-- percentiles: `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/train_percentiles.npz`
+The Phase 2 entry point `scripts/predict_real_traffic_v2.py` takes the model/scaler/percentiles as required arguments (no hardcoded default). The earliest committed Phase 2 v2 runs used the C03 assets, but the newest committed run (`P2v2_pred_20260610_161231`, 2026-06-10) used the full-data main model:
+
+- model: `models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip`
+- scaler: `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib`
+- percentiles: `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz`
 
 Two committed Phase 2 v2 artifacts show why run-level traceability matters:
 
