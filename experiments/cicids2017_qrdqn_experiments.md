@@ -117,6 +117,38 @@ The repository now includes the implementation:
 
 but no committed full aggregate artifact exists yet under `runs/validation/`. That means the workflow is implemented, documented, and ready to run, but it is not yet reportable here as a measured result.
 
+## Training-Size Benchmark (Fixed Test Partition)
+
+Internal benchmark protocol used to justify the full-data main experiment. **Not** part of the Phase 2 / offline-inference comparison.
+
+### Motivation
+
+The historical `--max-rows` knob caps rows at CSV-read time, *before* the stratified split, so it changes both the test-set size and its class mix. Evidence: the committed C03 artifact (`max_rows=500000`) has a test set of only 100,000 rows with `test_benign_rate ≈ 0.434`, versus 566,149 rows with `test_benign_rate ≈ 0.803` in the full main run — the sequential read starts with the all-benign Monday CSV. Results across `max_rows` values are therefore not comparable.
+
+### Method
+
+- `--train-max-rows N` subsamples **only the train partition after the split**; the test partition is byte-identical to the full run (566,149 rows; benign 454,620 / attack 111,529; seed 42), verified by `split_metadata.test_set_sha256`.
+- Subsampling: `stratified_nested_prefix_v1` — deterministic, stratified to the full-train class ratio (±1 row), and nested (500k ⊂ 1M ⊂ full for the same seed).
+- Timestep budget **scales proportionally with train size**: `timesteps = round(3,000,000 × N / 2,264,594)` (1M → ≈1,324,736; 500k → ≈662,368). The benchmark therefore measures proportional data+compute, not data size alone.
+- Reference manifest: `runs/cicids2017/test_partition_reference_seed42.json` (minted by `scripts/verify_fixed_test_split.py` in the same environment as the main run). Every benchmark run's `split_metadata.test_set_sha256` must match it.
+- Cross-environment proof: a local run of the verification script (scikit-learn 1.8.0) reproduced the exact split of the RunPod main run (scikit-learn 1.9.0) — `StandardScaler` `mean_`/`scale_` fit on the reproduced full train partition match the committed `scaler.joblib` of `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`.
+
+### Commands
+
+```bash
+# 1M train rows (same fixed test partition as the main run):
+python src/train_rl_defender.py --preset full --split-mode random --train-max-rows 1000000 --timesteps 1324736 --seed 42 --training-profile main-experiment
+
+# 500k train rows:
+python src/train_rl_defender.py --preset full --split-mode random --train-max-rows 500000 --timesteps 662368 --seed 42 --training-profile main-experiment
+
+# Verification (load-only, no training):
+python scripts/verify_fixed_test_split.py --sizes 500000 1000000 --seed 42 \
+    --check-scaler runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib
+```
+
+No benchmark training runs are committed yet; results will be reported here and in `docs/results.md` once their artifacts exist under `runs/cicids2017/`.
+
 ## Link To Phase 2
 
 The CICIDS2017 QRDQN branch is also the foundation for the maintained Phase 2 offline inference path:
