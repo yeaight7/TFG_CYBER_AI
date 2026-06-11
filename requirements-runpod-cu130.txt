@@ -1,12 +1,12 @@
+--extra-index-url https://download.pytorch.org/whl/cu130
+
 numpy==2.4.6
 pandas==3.0.3
 scikit-learn==1.9.0
 gymnasium==1.2.3
-torch==2.12.0
+torch==2.12.0+cu130
 stable-baselines3==2.8.0
 sb3-contrib==2.8.0
 joblib==1.5.3
 tensorboard==2.20.0
 matplotlib==3.10.9
-optuna==4.9.0
-graphifyy==0.7.0

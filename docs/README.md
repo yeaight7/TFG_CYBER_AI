@@ -13,6 +13,7 @@ This directory contains the maintained project documentation used for developmen
 | [phase2_plan.md](phase2_plan.md) | Author, contributors | Execution plan for the Phase 2 workflow | Maintained |
 | [gcp_lab.md](gcp_lab.md) | Author, contributors | Private lab setup guide | Maintained |
 | [runpod_main_experiment.md](runpod_main_experiment.md) | Author, contributors | Single main RunPod training run guide | Maintained |
+| [reproducibility.md](reproducibility.md) | Author, contributors | Dependency and environment reproduction notes | Maintained |
 | [Personal Research/deep-defense-research/README.md](Personal%20Research/deep-defense-research/README.md) | Author | Deep multi-file defense research pack (Spanish) | Maintained |
 | [../experiments/README.md](../experiments/README.md) | Author, reviewers | Historical experiment archive index | Maintained |
 | [DEFENSA_TFG_PROGRESO.md](DEFENSA_TFG_PROGRESO.md) | Author | Spanish defense preparation notes | Maintained, Spanish by design |
@@ -27,6 +28,7 @@ If you are new to the repository, read in this order:
 3. [results.md](results.md)
 4. [AGENT_CONTEXT.md](AGENT_CONTEXT.md)
 5. [phase2_plan.md](phase2_plan.md)
+6. [reproducibility.md](reproducibility.md)
 
 ## Language Policy
 

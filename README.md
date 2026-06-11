@@ -92,6 +92,14 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
+For the pinned RunPod CUDA 13.0 environment used by the main QRDQN run, use:
+
+```bash
+pip install -r requirements-runpod-cu130.txt
+```
+
+See [docs/reproducibility.md](docs/reproducibility.md) for the exact recorded environment.
+
 Train the RL model on CICIDS2017:
 
 ```bash

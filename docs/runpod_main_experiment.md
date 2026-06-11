@@ -21,8 +21,20 @@ cd TFG_CYBER_AI
 python -m venv venv
 source venv/bin/activate
 pip install -U pip
-pip install -r requirements.txt
+pip install -r requirements-runpod-cu130.txt
+python - <<'PY'
+import torch
+import stable_baselines3
+import sb3_contrib
+print("torch", torch.__version__, "cuda", torch.version.cuda, "available", torch.cuda.is_available())
+print("sb3", stable_baselines3.__version__, "sb3-contrib", sb3_contrib.__version__)
+PY
 ```
+
+`requirements-runpod-cu130.txt` is the pinned direct dependency set for
+reproducing the main QRDQN RunPod stack. It installs `torch==2.12.0+cu130` from
+the PyTorch CUDA 13.0 wheel index. For local CPU/dev installs, use
+`requirements.txt` or `uv sync`.
 
 Place the CICIDS2017 CSVs here:
 
