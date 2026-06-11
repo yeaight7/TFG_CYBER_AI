@@ -2,11 +2,11 @@
 === [SWEEP 1] Random Split (full) ===
 [CICIDS2017] Cargando 8 archivos CSV desde C:\Users\Rivero\Desktop\TFG_CYBER_AI\datasets\CICIDS2017
 [CICIDS2017] Canonical mapping: 76/76 features present
-=== Random Forest – Confusion matrix (clases: 0=normal, 1=ataque) ===
+=== Random Forest - Confusion matrix (clases: 0=normal, 1=ataque) ===
 [[454222    398]
  [   256 111273]]
 
-=== Random Forest – Classification report ===
+=== Random Forest - Classification report ===
               precision    recall  f1-score   support
 
            0     0.9994    0.9991    0.9993    454620
@@ -24,11 +24,11 @@ weighted avg     0.9988    0.9988    0.9988    566149
 [CICIDS2017] Canonical mapping: 76/76 features present
 [CSV-split] Train: (2127498, 152) (benign=1858775, attack=268723)
 [CSV-split] Test:  (703245, 152) (benign=414322, attack=288923)
-=== Random Forest – Confusion matrix (clases: 0=normal, 1=ataque) ===
+=== Random Forest - Confusion matrix (clases: 0=normal, 1=ataque) ===
 [[414174    148]
  [266387  22536]]
 
-=== Random Forest – Classification report ===
+=== Random Forest - Classification report ===
               precision    recall  f1-score   support
 
            0     0.6086    0.9996    0.7566    414322
@@ -46,11 +46,11 @@ weighted avg     0.7667    0.6210    0.5052    703245
 [CICIDS2017] Canonical mapping: 76/76 features present
 [Exact-CSV-split] Train: (2138040, 152) (benign=1833066, attack=304974)
 [Exact-CSV-split] Test:  (692703, 152) (benign=440031, attack=252672)
-=== Random Forest – Confusion matrix (clases: 0=normal, 1=ataque) ===
+=== Random Forest - Confusion matrix (clases: 0=normal, 1=ataque) ===
 [[439989     42]
  [251257   1415]]
 
-=== Random Forest – Classification report ===
+=== Random Forest - Classification report ===
               precision    recall  f1-score   support
 
            0     0.6365    0.9999    0.7779    440031
