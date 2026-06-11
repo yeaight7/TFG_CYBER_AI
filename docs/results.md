@@ -31,8 +31,38 @@ REWARD_CONFIG = {
 | C01 full | 250,000 | 100,000 | random | 0.9962 | 0.9998 | 0.9963 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
 | C02 fast | 100,000 | 10,000 | random | 0.9766 | 0.9996 | 0.9812 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
 | **C03 full** | 500,000 | 100,000 | random | **0.99859** | **0.99945** | **0.99876** | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` |
+| **MAIN full** | 2,830,743 | 3,000,000 | random | **0.99381** | **0.99536** | **0.98445** | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` |
 
-### Best Committed Historical Run
+The `Rows` column lists total rows loaded before the split (the historical `max_rows` semantics); the MAIN run's train/test partition is detailed below.
+
+### Main Committed Run (full data)
+
+| Field | Value |
+|-------|-------|
+| RUN_ID | `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` |
+| Algorithm | QRDQN |
+| Dataset | CICIDS2017 |
+| Observation size | 152 |
+| Train / test | 2,264,594 / 566,149 |
+| Device | `cuda` |
+| Total timesteps | `3,000,000` |
+| Reward config | `tp=1.5, fp=-2.0, fn=-5.0, omission=0.0` |
+
+Metrics from `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json`:
+
+| Metric | Value |
+|--------|-------|
+| Accuracy | `0.99381` |
+| Precision attack | `0.97378` |
+| Recall attack | `0.99536` |
+| F1 attack | `0.98445` |
+| Precision benign | `0.99885` |
+| Recall benign | `0.99343` |
+| F1 benign | `0.99613` |
+
+### Historical Run C03
+
+C03 used `max_rows=500000`; its 100,000-row test set has a distorted class mix (benign rate ≈0.434) and is NOT comparable with the main run's 566,149-row test set (benign rate ≈0.803).
 
 | Field | Value |
 |-------|-------|
@@ -61,7 +91,7 @@ Metrics from `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_2026022
 
 ### Training-Size Benchmark (Fixed Test Partition)
 
-Internal benchmark to justify the full-data main experiment. Smaller runs use `--train-max-rows` (train-only subsampling AFTER the split): the test partition is byte-identical to the main run's 566,149-row test set (seed 42; benign 454,620 / attack 111,529), verified per run via `split_metadata.test_set_sha256` against `runs/cicids2017/test_partition_reference_seed42.json`. Timesteps scale proportionally with train size. Protocol details: [../experiments/cicids2017_qrdqn_experiments.md](../experiments/cicids2017_qrdqn_experiments.md).
+Internal benchmark to justify the full-data main experiment. Smaller runs use `--train-max-rows` (train-only subsampling AFTER the split): the test partition is byte-identical to the main run's 566,149-row test set (seed 42; benign 454,620 / attack 111,529), verified per run via `split_metadata.test_set_sha256` against the reference manifest `runs/cicids2017/test_partition_reference_seed42.json` (pending mint on RunPod). Timesteps scale proportionally with train size. Protocol details: [../experiments/cicids2017_qrdqn_experiments.md](../experiments/cicids2017_qrdqn_experiments.md).
 
 These results are an **internal CICIDS2017 benchmark only** — random stratified split with a fixed held-out test partition. They are not comparable to, and must not be mixed with, the Phase 2 offline-inference results, which measure distribution shift on real lab traffic.
 
@@ -167,6 +197,24 @@ Artifact:
 
 This later artifact shows that Phase 2 behaviour is sensitive to configuration and run conditions, which is exactly why documentation must cite the specific run artifact.
 
+### Labeled Synthetic-Traffic Artifact (main model)
+
+Artifact:
+
+- `runs/phase2/P2v2_pred_20260610_161231/`
+
+| Field | Value |
+|-------|-------|
+| Flows CSV | `pcaps/synthetic_real_traffic.csv` |
+| Model | `models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip` |
+| Block rate | `0.252364` |
+| Accuracy | `0.991862` |
+| Precision attack | `0.97919` |
+| Recall attack | `0.988452` |
+| F1 attack | `0.983801` |
+
+This Phase 2 metric is a synthetic-traffic benchmark and must not be mixed with the internal CICIDS2017 test results.
+
 ## NSL-KDD Historical Benchmark
 
 The maintained historical summary lives in [../experiments/nslkdd_experiments.md](../experiments/nslkdd_experiments.md).
@@ -200,10 +248,12 @@ NSL-KDD remains historical benchmarking material only.
 
 - `runs/phase2/P2v2_pred_20260224_004121/`
 - `runs/phase2/P2v2_pred_20260408_230318/`
+- `runs/phase2/P2v2_pred_20260610_161231/`
 
 ### Models
 
 - `models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip`
+- `models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip`
 
 ## Random Forest Baseline
 
@@ -215,15 +265,15 @@ Run `uv run python src/baseline_random_forest.py` to generate the latest metrics
 2. **Day Split (Check C)**
 3. **Leave-One-Out (Wednesday test)**
 
-*Metrics to be populated below after the first manual full-sweep execution (requires ~10-15 minutes on full dataset).*
+Sweep results committed to `runs/cicids2017/baseline_random_forest_comparison/results_rf.txt`.
 
-### Baseline Metrics Placeholder
+### Baseline Metrics
 
 | Split | F1 Attack | Precision | Recall | Notes |
 |-------|-----------|-----------|--------|-------|
-| Random | pending | pending | pending | Compare against QRDQN C03 |
-| Check C | pending | pending | pending | Compare against QRDQN Check C |
-| Leave-One-Out | pending | pending | pending | Evaluate domain shift tolerance |
+| Random | 0.9971 | 0.9964 | 0.9977 | Compare against QRDQN main run / C03 |
+| Check C | 0.1446 | 0.9935 | 0.0780 | Compare against QRDQN Check C (RL f1 0.6258) |
+| Leave-One-Out | 0.0111 | 0.9712 | 0.0056 | Wednesday-test domain shift |
 
 ## Open Documentation Gap
 
