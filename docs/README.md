@@ -14,7 +14,7 @@ This directory contains the maintained project documentation used for developmen
 | [gcp_lab.md](gcp_lab.md) | Author, contributors | Private lab setup guide | Maintained |
 | [runpod_main_experiment.md](runpod_main_experiment.md) | Author, contributors | Single main RunPod training run guide | Maintained |
 | [reproducibility.md](reproducibility.md) | Author, contributors | Dependency and environment reproduction notes | Maintained |
-| [Personal Research/deep-defense-research/README.md](Personal%20Research/deep-defense-research/README.md) | Author | Deep multi-file defense research pack (Spanish) | Maintained |
+| [Personal Research/deep-defense-research/README.md](Personal%20Research/deep-defense-research/README.md) | Author | Deep multi-file thesis/defense research pack (Spanish) | Maintained |
 | [../experiments/README.md](../experiments/README.md) | Author, reviewers | Historical experiment archive index | Maintained |
 | [DEFENSA_TFG_PROGRESO.md](DEFENSA_TFG_PROGRESO.md) | Author | Spanish defense preparation notes | Maintained, Spanish by design |
 | [DEFENSA_TFG_SCRIPT.md](DEFENSA_TFG_SCRIPT.md) | Author | Spanish defense script | Maintained, Spanish by design |
@@ -33,10 +33,12 @@ If you are new to the repository, read in this order:
 
 ## Language Policy
 
-- English is the default documentation language.
-- Spanish is intentionally preserved only for:
+- English is the default language for technical repository documentation such as `README.md`, implementation notes, contributor guidance, and reproducibility guides.
+- Spanish is the default language for thesis, memoria, and defense-facing material.
+- Spanish is intentionally preserved and maintained for:
   - [DEFENSA_TFG_PROGRESO.md](DEFENSA_TFG_PROGRESO.md)
   - [DEFENSA_TFG_SCRIPT.md](DEFENSA_TFG_SCRIPT.md)
+  - [Personal Research/deep-defense-research/](Personal%20Research/deep-defense-research/)
 
 ## Notes
 
