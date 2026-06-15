@@ -1,23 +1,26 @@
 ---
-source_file: "src/baseline_random_forest.py"
+source_file: "scripts/predict_real_traffic_v2.py"
 type: "code"
-community: "RF Baseline Module"
-location: "L56"
+community: "Inference Diagnostics"
+location: "L353"
 tags:
   - graphify/code
-  - graphify/INFERRED
-  - community/RF_Baseline_Module
+  - graphify/EXTRACTED
+  - community/Inference_Diagnostics
 ---
 
 # main()
 
 ## Connections
-- [[CICIDSLoadConfig]] - `calls` [INFERRED]
-- [[baseline_random_forest.py]] - `contains` [EXTRACTED]
-- [[evaluate_random_forest()]] - `calls` [EXTRACTED]
-- [[load_cicids2017_binary()]] - `calls` [INFERRED]
-- [[load_cicids2017_csv_split()]] - `calls` [INFERRED]
-- [[load_cicids2017_exact_csv_split()]] - `calls` [INFERRED]
-- [[train_random_forest()]] - `calls` [EXTRACTED]
+- [[apply_percentile_clipping()]] - `calls` [INFERRED]
+- [[apply_z_clipping()]] - `calls` [INFERRED]
+- [[batched_predict()_1]] - `calls` [EXTRACTED]
+- [[compute_diagnostics()]] - `calls` [EXTRACTED]
+- [[compute_truth_metrics()]] - `calls` [EXTRACTED]
+- [[load_model()_1]] - `calls` [EXTRACTED]
+- [[map_to_canonical()]] - `calls` [INFERRED]
+- [[maybe_convert_time_units()_1]] - `calls` [EXTRACTED]
+- [[parse_args()_1]] - `calls` [EXTRACTED]
+- [[predict_real_traffic_v2.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/RF_Baseline_Module
+#graphify/code #graphify/EXTRACTED #community/Inference_Diagnostics

@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "RF Baseline Module"
-location: "L73"
+community: "CICIDS2017 Preprocessing"
+location: "L80"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/RF_Baseline_Module
+  - community/CICIDS2017_Preprocessing
 ---
 
 # Lista únicamente los 8 CSVs oficiales de CICIDS2017 en orden determinista.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[list_cicids2017_csv_files()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/RF_Baseline_Module
+#graphify/rationale #graphify/EXTRACTED #community/CICIDS2017_Preprocessing

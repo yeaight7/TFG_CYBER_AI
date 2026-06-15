@@ -1,12 +1,12 @@
 ---
 source_file: "src/validate_leave_one_csv_out.py"
 type: "code"
-community: "Leave-One-Out Validation"
+community: "Leave One CSV Out"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Leave-One-Out_Validation
+  - community/Leave_One_CSV_Out
 ---
 
 # validate_leave_one_csv_out.py
@@ -19,9 +19,10 @@ tags:
 - [[_safe_div()]] - `contains` [EXTRACTED]
 - [[_summarize_metric()]] - `contains` [EXTRACTED]
 - [[evaluate_model_direct()]] - `contains` [EXTRACTED]
-- [[main()_7]] - `contains` [EXTRACTED]
+- [[load_cicids2017.py_1]] - `imports_from` [EXTRACTED]
+- [[main()_9]] - `contains` [EXTRACTED]
 - [[make_env_fn()_1]] - `contains` [EXTRACTED]
-- [[parse_args()_4]] - `contains` [EXTRACTED]
+- [[parse_args()_6]] - `contains` [EXTRACTED]
 - [[validate_leave_one_csv_out.py — Validación leave-one-exact-CSV-out para CICIDS20]] - `rationale_for` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Leave-One-Out_Validation
+#graphify/code #graphify/EXTRACTED #community/Leave_One_CSV_Out

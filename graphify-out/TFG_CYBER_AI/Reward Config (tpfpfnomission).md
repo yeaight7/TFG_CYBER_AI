@@ -1,12 +1,12 @@
 ---
 source_file: "src/rl_defender_env.py"
 type: "rationale"
-community: "RL Training & Validation Patterns"
+community: "Hyperparams & Rewards"
 location: "line 18"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/RL_Training__Validation_Patterns
+  - community/Hyperparams__Rewards
 ---
 
 # Reward Config (tp/fp/fn/omission)
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[RLDatasetDefenderEnv gymnasium environment]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/RL_Training__Validation_Patterns
+#graphify/rationale #graphify/EXTRACTED #community/Hyperparams__Rewards

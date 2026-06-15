@@ -1,21 +1,23 @@
 ---
-source_file: "src/tune_hparams.py"
+source_file: "src/baseline_random_forest.py"
 type: "code"
-community: "Hyperparameter Tuning"
-location: "L132"
+community: "CICIDS2017 Preprocessing"
+location: "L69"
 tags:
   - graphify/code
-  - graphify/EXTRACTED
-  - community/Hyperparameter_Tuning
+  - graphify/INFERRED
+  - community/CICIDS2017_Preprocessing
 ---
 
 # main()
 
 ## Connections
 - [[CICIDSLoadConfig]] - `calls` [INFERRED]
+- [[baseline_random_forest.py]] - `contains` [EXTRACTED]
+- [[evaluate_random_forest()]] - `calls` [EXTRACTED]
 - [[load_cicids2017_binary()]] - `calls` [INFERRED]
-- [[objective()]] - `calls` [EXTRACTED]
-- [[parse_args()_2]] - `calls` [EXTRACTED]
-- [[tune_hparams.py]] - `contains` [EXTRACTED]
+- [[load_cicids2017_csv_split()]] - `calls` [INFERRED]
+- [[load_cicids2017_exact_csv_split()]] - `calls` [INFERRED]
+- [[train_random_forest()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Hyperparameter_Tuning
+#graphify/code #graphify/INFERRED #community/CICIDS2017_Preprocessing

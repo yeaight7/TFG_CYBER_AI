@@ -1,12 +1,12 @@
 ---
 source_file: "src/train_rl_defender.py"
 type: "rationale"
-community: "RL Environment (Code)"
-location: "L79"
+community: "RL Defender Training"
+location: "L222"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/RL_Environment_Code
+  - community/RL_Defender_Training
 ---
 
 # Evalúa el agente sobre test set.     Devuelve dict con métricas clave.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[evaluate_model()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/RL_Environment_Code
+#graphify/rationale #graphify/EXTRACTED #community/RL_Defender_Training

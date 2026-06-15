@@ -1,11 +1,11 @@
 ---
 source_file: ""
 type: "code"
-community: "Validation Checks Module"
+community: "Test Split Validation"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Validation_Checks_Module
+  - community/Test_Split_Validation
 ---
 
 # BaseCallback
@@ -13,4 +13,4 @@ tags:
 ## Connections
 - [[ProgressCallback]] - `inherits` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Validation_Checks_Module
+#graphify/code #graphify/EXTRACTED #community/Test_Split_Validation

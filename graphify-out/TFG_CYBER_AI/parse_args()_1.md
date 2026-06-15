@@ -1,18 +1,18 @@
 ---
-source_file: "src/train_rl_defender.py"
+source_file: "scripts/predict_real_traffic_v2.py"
 type: "code"
-community: "RL Environment (Code)"
-location: "L132"
+community: "Inference Diagnostics"
+location: "L314"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/RL_Environment_Code
+  - community/Inference_Diagnostics
 ---
 
 # parse_args()
 
 ## Connections
-- [[main()_4]] - `calls` [EXTRACTED]
-- [[train_rl_defender.py]] - `contains` [EXTRACTED]
+- [[main()_3]] - `calls` [EXTRACTED]
+- [[predict_real_traffic_v2.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/RL_Environment_Code
+#graphify/code #graphify/EXTRACTED #community/Inference_Diagnostics

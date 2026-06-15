@@ -1,18 +1,16 @@
 ---
-source_file: ".github/AGENT_CONTEXT.md"
-type: "document"
-community: "Community 3"
-location: "Canonical Observation Space"
+source_file: "AGENTS.md"
+type: "paper"
+community: "Project Overview"
 tags:
-  - graphify/document
+  - graphify/paper
   - graphify/EXTRACTED
-  - community/Community_3
+  - community/Project_Overview
 ---
 
 # Missingness Mask
 
 ## Connections
-- [[152-D Observation Vector]] - `conceptually_related_to` [EXTRACTED]
-- [[Canonical Flow Schema]] - `conceptually_related_to` [EXTRACTED]
+- [[Deep Defense Datos, Esquema Canonico y Preprocesado]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Community_3
+#graphify/paper #graphify/EXTRACTED #community/Project_Overview

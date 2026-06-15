@@ -3,26 +3,26 @@
     {
       "id": "g0",
       "type": "group",
-      "label": "RL Defender Core Design",
+      "label": "Project Overview",
       "x": 0,
       "y": 0,
-      "width": 1760,
-      "height": 2120,
+      "width": 1540,
+      "height": 1420,
       "color": "1"
     },
     {
-      "id": "n_canonical_schema_152dim_observation",
+      "id": "n_agents_md",
       "type": "file",
-      "file": "152-Dimensional Observation Vector_1.md",
+      "file": "AGENTS.md",
       "x": 20,
       "y": 80,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_qrdqn_adam_eps_batch_coupling",
+      "id": "n_agent_context_md",
       "type": "file",
-      "file": "Adam epsilon coupled to batch_size (eps=0.01batch_size).md",
+      "file": "AGENT_CONTEXT.md",
       "x": 220,
       "y": 80,
       "width": 180,
@@ -38,38 +38,20 @@
       "height": 60
     },
     {
-      "id": "n_asymmetric_cost_reward_design",
-      "type": "file",
-      "file": "Asymmetric Cost Reward Design (FN  FP penalty).md",
-      "x": 20,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_best_run_C03",
-      "type": "file",
-      "file": "Best Run C03 (accuracy=0.99859, random split).md",
-      "x": 220,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
       "id": "n_permit_block_action_space",
       "type": "file",
       "file": "Binary Action Space PERMIT(0)  BLOCK(1).md",
-      "x": 420,
+      "x": 20,
       "y": 160,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_c51_algorithm",
+      "id": "n_cicids2017",
       "type": "file",
-      "file": "C51 (Categorical DQN, distributional RL predecessor).md",
-      "x": 20,
-      "y": 240,
+      "file": "CICIDS2017 Dataset.md",
+      "x": 220,
+      "y": 160,
       "width": 180,
       "height": 60
     },
@@ -77,89 +59,26 @@
       "id": "n_cicids2017_dataset",
       "type": "file",
       "file": "CICIDS2017 Dataset (8 CSVs, 5-day capture).md",
-      "x": 220,
+      "x": 420,
+      "y": 160,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_defensa_tfg_progreso_md",
+      "type": "file",
+      "file": "DEFENSA_TFG_PROGRESO.md",
+      "x": 20,
       "y": 240,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_canonical_schema_76features",
+      "id": "n_defensa_tfg_script_md",
       "type": "file",
-      "file": "Canonical Schema (76 Flow Features).md",
-      "x": 420,
+      "file": "DEFENSA_TFG_SCRIPT.md",
+      "x": 220,
       "y": 240,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_check_a_direct_eval",
-      "type": "file",
-      "file": "Check A Direct Evaluation (anti-env-dependency).md",
-      "x": 20,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_check_b_shuffled_labels",
-      "type": "file",
-      "file": "Check B Shuffled Labels Anti-Leakage Test.md",
-      "x": 220,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_check_c_csv_split",
-      "type": "file",
-      "file": "Check C Hard CSVDay Split Generalization Test.md",
-      "x": 420,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_sota_classification_as_rl",
-      "type": "file",
-      "file": "Classification-as-RL Formulation (SOTA discussion).md",
-      "x": 20,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_dqn_algorithm",
-      "type": "file",
-      "file": "DQN (Deep Q-Network).md",
-      "x": 220,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_dqn_fallback",
-      "type": "file",
-      "file": "DQN Fallback (when QRDQN load fails).md",
-      "x": 420,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_data_canonical_schema_research",
-      "type": "file",
-      "file": "Data Structure and Canonical Schema Research Report.md",
-      "x": 20,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_defense_readme",
-      "type": "file",
-      "file": "Deep Defense Research README.md",
-      "x": 220,
-      "y": 480,
       "width": 180,
       "height": 60
     },
@@ -168,16 +87,7 @@
       "type": "file",
       "file": "Deep Defense Datos, Esquema Canonico y Preprocesado.md",
       "x": 420,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_defense_03",
-      "type": "file",
-      "file": "Deep Defense Entorno RL, Algoritmo y Entrenamiento.md",
-      "x": 20,
-      "y": 560,
+      "y": 240,
       "width": 180,
       "height": 60
     },
@@ -185,8 +95,8 @@
       "id": "n_deep_defense_01",
       "type": "file",
       "file": "Deep Defense Fundamentos y Objetivo.md",
-      "x": 220,
-      "y": 560,
+      "x": 20,
+      "y": 320,
       "width": 180,
       "height": 60
     },
@@ -194,8 +104,8 @@
       "id": "n_deep_defense_06",
       "type": "file",
       "file": "Deep Defense Glosario y Preguntas de Tribunal.md",
-      "x": 420,
-      "y": 560,
+      "x": 220,
+      "y": 320,
       "width": 180,
       "height": 60
     },
@@ -203,143 +113,62 @@
       "id": "n_deep_defense_05",
       "type": "file",
       "file": "Deep Defense Phase 2 - Laboratorio, Inferencia y Riesgos.md",
-      "x": 20,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_defense_04",
-      "type": "file",
-      "file": "Deep Defense Validacion y Lectura de Resultados.md",
-      "x": 220,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_sota_distributional_rl_justification",
-      "type": "file",
-      "file": "Distributional RL  QRDQN Justification for NIDS.md",
       "x": 420,
-      "y": 640,
+      "y": 320,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_domain_shift_problem",
+      "id": "n_domain_shift",
       "type": "file",
-      "file": "Domain Shift Problem (Train vs Real Traffic).md",
+      "file": "Domain Shift.md",
       "x": 20,
-      "y": 720,
+      "y": 400,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_sota_external_validation",
+      "id": "n_features_canon",
       "type": "file",
-      "file": "External Validation via Lab-Captured Traffic.md",
+      "file": "FEATURES_CANON (Canonical Schema).md",
       "x": 220,
-      "y": 720,
+      "y": 400,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_flow_based_representation",
+      "id": "n_gemini_md",
       "type": "file",
-      "file": "Flow-Based Traffic Representation (CICFlowMeter).md",
+      "file": "GEMINI.md",
       "x": 420,
-      "y": 720,
+      "y": 400,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_qrdqn_hard_target_update",
+      "id": "n_leave_one_exact_csv_out",
       "type": "file",
-      "file": "Hard Target Update (tau=1.0, periodic copy).md",
+      "file": "Leave-one-exact-CSV-out Validation.md",
       "x": 20,
-      "y": 800,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_lab_docker_generator",
-      "type": "file",
-      "file": "Lab Docker Traffic Generator.md",
-      "x": 220,
-      "y": 800,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_leave_one_csv_out_validation",
-      "type": "file",
-      "file": "Leave-One-Exact-CSV-Out Validation_1.md",
-      "x": 420,
-      "y": 800,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_sota_pitfalls_nids_evaluation",
-      "type": "file",
-      "file": "Methodological Pitfalls in ML-Based NIDS.md",
-      "x": 20,
-      "y": 880,
+      "y": 480,
       "width": 180,
       "height": 60
     },
     {
       "id": "n_missingness_mask",
       "type": "file",
-      "file": "Missingness Mask (76 binary indicators).md",
+      "file": "Missingness Mask.md",
       "x": 220,
-      "y": 880,
+      "y": 480,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_mlp_policy_512_256",
+      "id": "n_nsl_kdd",
       "type": "file",
-      "file": "MlpPolicy net_arch=512,256 (main training).md",
+      "file": "NSL-KDD Dataset.md",
       "x": 420,
-      "y": 880,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_models_params_validation_research",
-      "type": "file",
-      "file": "Models, Parameters and Validation Thesis Defense Report.md",
-      "x": 20,
-      "y": 960,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_nslkdd_dataset",
-      "type": "file",
-      "file": "NSL-KDD Dataset (historical benchmark).md",
-      "x": 220,
-      "y": 960,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_optuna_hyperparameter_search",
-      "type": "file",
-      "file": "Optuna Hyperparameter Search.md",
-      "x": 420,
-      "y": 960,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_percentile_clipping",
-      "type": "file",
-      "file": "Percentile Clipping (p0.5p99.5 pre-scaling).md",
-      "x": 20,
-      "y": 1040,
+      "y": 480,
       "width": 180,
       "height": 60
     },
@@ -347,864 +176,630 @@
       "id": "n_phase2_offline_inference",
       "type": "file",
       "file": "Phase 2 Offline Inference on Lab Traffic.md",
+      "x": 20,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_private_lab",
+      "type": "file",
+      "file": "Private Lab.md",
       "x": 220,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_qrdqn",
+      "type": "file",
+      "file": "QRDQN RL Algorithm.md",
+      "x": 420,
+      "y": 560,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_readme_md",
+      "type": "file",
+      "file": "README.md",
+      "x": 20,
+      "y": 640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_reward_config",
+      "type": "file",
+      "file": "REWARD_CONFIG.md",
+      "x": 220,
+      "y": 640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_dataset_defender_env",
+      "type": "file",
+      "file": "RLDatasetDefenderEnv_1.md",
+      "x": 420,
+      "y": 640,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_validation_check_a",
+      "type": "file",
+      "file": "Validation Check A (Direct Eval).md",
+      "x": 20,
+      "y": 720,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_validation_check_b",
+      "type": "file",
+      "file": "Validation Check B (Shuffled Labels).md",
+      "x": 220,
+      "y": 720,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_validation_check_c",
+      "type": "file",
+      "file": "Validation Check C (CSV Split).md",
+      "x": 420,
+      "y": 720,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_baseline_random_forest",
+      "type": "file",
+      "file": "baseline_random_forest.py_1.md",
+      "x": 20,
+      "y": 800,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_gcp_lab_md",
+      "type": "file",
+      "file": "gcp_lab.md",
+      "x": 220,
+      "y": 800,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_load_cicids2017",
+      "type": "file",
+      "file": "load_cicids2017.py_1.md",
+      "x": 420,
+      "y": 800,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_phase2_plan_md",
+      "type": "file",
+      "file": "phase2_plan.md",
+      "x": 20,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_predict_real_traffic_v2",
+      "type": "file",
+      "file": "predict_real_traffic_v2.py_1.md",
+      "x": 220,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_test_load_cicids2017",
+      "type": "file",
+      "file": "test_load_cicids2017.py_1.md",
+      "x": 420,
+      "y": 880,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_test_train_rl_defender_config",
+      "type": "file",
+      "file": "test_train_rl_defender_config.py_1.md",
+      "x": 20,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_train_rl_defender",
+      "type": "file",
+      "file": "train_rl_defender.py_1.md",
+      "x": 220,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_validate_checks",
+      "type": "file",
+      "file": "validate_checks.py_1.md",
+      "x": 420,
+      "y": 960,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_validate_leave_one_csv_out",
+      "type": "file",
+      "file": "validate_leave_one_csv_out.py_1.md",
+      "x": 20,
       "y": 1040,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_project_components_defense_research",
+      "id": "n_verify_fixed_test_split",
       "type": "file",
-      "file": "Project Components Defense Research Report.md",
-      "x": 420,
+      "file": "verify_fixed_test_split.py_1.md",
+      "x": 220,
       "y": 1040,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_qrdqn_research_report",
-      "type": "file",
-      "file": "QRDQN Research Report.md",
-      "x": 20,
-      "y": 1120,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_qrdqn_exploration_fraction_005",
-      "type": "file",
-      "file": "QRDQN exploration_fraction=0.005 (fast epsilon decay).md",
-      "x": 220,
-      "y": 1120,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_qrdqn_n_quantiles_200",
-      "type": "file",
-      "file": "QRDQN n_quantiles=200 (implicit default).md",
-      "x": 420,
-      "y": 1120,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_qrdqn_distributional_rl",
-      "type": "file",
-      "file": "QRDQN Distributional RL via Quantile Regression.md",
-      "x": 20,
-      "y": 1200,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_qrdqn_quantile_huber_loss",
-      "type": "file",
-      "file": "Quantile Huber Loss.md",
-      "x": 220,
-      "y": 1200,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_results_rf_day_split",
-      "type": "file",
-      "file": "RF Day Split Result (accuracy=0.621, recall_attack=0.078).md",
-      "x": 420,
-      "y": 1200,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_results_rf_leave_one_out",
-      "type": "file",
-      "file": "RF Leave-One-Out Wednesday Test (accuracy=0.637, recall_attack=0.0056).md",
-      "x": 20,
-      "y": 1280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_results_rf_random_split",
-      "type": "file",
-      "file": "RF Random Split Result (accuracy=0.9988).md",
-      "x": 220,
-      "y": 1280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_run_id_artifact_system",
-      "type": "file",
-      "file": "RUN_ID Artifact System (reproducible runs).md",
-      "x": 420,
-      "y": 1280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_random_forest_baseline",
-      "type": "file",
-      "file": "Random Forest Baseline (n_estimators=200).md",
-      "x": 20,
-      "y": 1360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_results_rf_txt",
-      "type": "file",
-      "file": "Random Forest Baseline Results (CICIDS2017).md",
-      "x": 220,
-      "y": 1360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_reward_config_schema",
-      "type": "file",
-      "file": "Reward Config Schema (tpfpfnomission).md",
-      "x": 420,
-      "y": 1360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_reward_config_historical_vs_current",
-      "type": "file",
-      "file": "Reward Config Historical (fp=-2.0) vs Current (fp=-1.5) Discrepancy.md",
-      "x": 20,
-      "y": 1440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_scaling_utils",
-      "type": "file",
-      "file": "Scaling Utilities (apply_percentile_clipping, apply_z_clipping).md",
-      "x": 220,
-      "y": 1440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_standardscaler_scaled_mask",
-      "type": "file",
-      "file": "StandardScaler applied to full 152-dim (mask scaled too).md",
-      "x": 420,
-      "y": 1440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_standardscaler_fit_train_only",
-      "type": "file",
-      "file": "StandardScaler fitted on train only (anti-leakage).md",
-      "x": 20,
-      "y": 1520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_state_of_the_art_draft",
-      "type": "file",
-      "file": "State of the Art Draft.md",
-      "x": 220,
-      "y": 1520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_state_of_the_art_todo",
-      "type": "file",
-      "file": "State of the Art TODO List.md",
-      "x": 420,
-      "y": 1520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_system_components_defense_research",
-      "type": "file",
-      "file": "System Components Thesis Defense Research Report.md",
-      "x": 20,
-      "y": 1600,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_zscore_clipping",
-      "type": "file",
-      "file": "Z-Score Clipping (post-scaling).md",
-      "x": 220,
-      "y": 1600,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_train_percentiles_npz",
-      "type": "file",
-      "file": "train_percentiles.npz artifact.md",
-      "x": 420,
-      "y": 1600,
       "width": 180,
       "height": 60
     },
     {
       "id": "g1",
       "type": "group",
-      "label": "CICIDS2017 Research & Experiments",
-      "x": 1840,
+      "label": "Test Split Validation",
+      "x": 1620,
       "y": 0,
-      "width": 1760,
-      "height": 2120,
+      "width": 1540,
+      "height": 1420,
       "color": "2"
     },
     {
-      "id": "n_readme_observation_vector_152",
+      "id": "n_src_validate_checks_progresscallback_init",
       "type": "file",
-      "file": "152-Dimensional Observation Vector.md",
-      "x": 1860,
+      "file": ".__init__()_1.md",
+      "x": 1640,
       "y": 80,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_deep_research1_alavizadeh2021",
+      "id": "n_src_validate_checks_progresscallback_on_step",
       "type": "file",
-      "file": "Alavizadeh2021 (Deep Q-Learning for NIDS on NSL-KDD).md",
-      "x": 2060,
+      "file": "._on_step().md",
+      "x": 1840,
       "y": 80,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_agents_md_anti_leakage_policy",
+      "id": "n_src_validate_checks_rationale_150",
       "type": "file",
-      "file": "Anti-Leakage Policy.md",
-      "x": 2260,
+      "file": "Baraja y_train y entrena brevemente. Si el modelo a\u00fan obtiene accuracy     alta.md",
+      "x": 2040,
       "y": 80,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_citation_arp2020_ml_security",
+      "id": "n_basecallback",
       "type": "file",
-      "file": "Arp2020DosDontsMLSecurity.md",
-      "x": 1860,
+      "file": "BaseCallback.md",
+      "x": 1640,
       "y": 160,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_defensa_asymmetric_cost_reward",
+      "id": "n_src_validate_checks_rationale_68",
       "type": "file",
-      "file": "Asymmetric Cost Reward System.md",
-      "x": 2060,
+      "file": "Callback para mostrar progreso cada log_freq timesteps..md",
+      "x": 1840,
       "y": 160,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_gcp_lab_attacker_vm",
+      "id": "n_src_load_cicids2017_rationale_556",
       "type": "file",
-      "file": "Attacker VM (tfg-attacker).md",
-      "x": 2260,
+      "file": "Deterministic, stratified, nested train subsample indices.      Per-class se.md",
+      "x": 2040,
       "y": 160,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_citation_bellemare2017_dist_rl",
+      "id": "n_src_validate_checks_rationale_280",
       "type": "file",
-      "file": "Bellemare2017DistributionalRL.md",
-      "x": 1860,
+      "file": "Entrena en unos CSVs de CICIDS2017 y testea en otros.     Es el split m\u00e1s reali.md",
+      "x": 1640,
       "y": 240,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_cicids2017_experiments_c03_run",
+      "id": "n_src_validate_checks_rationale_88",
       "type": "file",
-      "file": "C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.md",
-      "x": 2060,
+      "file": "Evaluaci\u00f3n directa model.predict(X_testi) vs y_testi.     No pasa por el e.md",
+      "x": 1840,
       "y": 240,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_gcp_lab_cicflowmeter",
+      "id": "n_src_validate_checks_progresscallback",
       "type": "file",
-      "file": "CICFlowMeter (flow feature extractor).md",
-      "x": 2260,
+      "file": "ProgressCallback.md",
+      "x": 2040,
       "y": 240,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_readme_cicids2017_dataset",
+      "id": "n_src_load_cicids2017_rationale_545",
       "type": "file",
-      "file": "CICIDS2017 Dataset.md",
-      "x": 1860,
+      "file": "SHA-256 content hash of an ndarray, prefixed with dtype and shape so that     a.md",
+      "x": 1640,
       "y": 320,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_cicids2017_experiments_history",
+      "id": "n_src_load_cicids2017_rationale_601",
       "type": "file",
-      "file": "CICIDS2017 QRDQN Experiment History.md",
-      "x": 2060,
+      "file": "Unified CICIDS2017 loader with split-mode and preset support.      Parameters.md",
+      "x": 1840,
       "y": 320,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_results_cicids2017_runs",
+      "id": "n_src_load_cicids2017_sha256_of_array",
       "type": "file",
-      "file": "CICIDS2017 Training Run History.md",
-      "x": 2260,
+      "file": "_sha256_of_array().md",
+      "x": 2040,
       "y": 320,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_readme_canonical_schema",
+      "id": "n_tests_test_load_cicids2017_split",
       "type": "file",
-      "file": "Canonical Flow Schema (76 Features).md",
-      "x": 1860,
+      "file": "_split().md",
+      "x": 1640,
       "y": 400,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_deep_research1_cantone2024",
+      "id": "n_src_load_cicids2017_stratified_nested_prefix_indices",
       "type": "file",
-      "file": "Cantone2024 (Cross-Dataset Generalization of ML for NIDS).md",
-      "x": 2060,
+      "file": "_stratified_nested_prefix_indices().md",
+      "x": 1840,
       "y": 400,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_citation_plan_doc",
+      "id": "n_tests_test_load_cicids2017_synthetic_df",
       "type": "file",
-      "file": "Citation Plan.md",
-      "x": 2260,
+      "file": "_synthetic_df().md",
+      "x": 2040,
       "y": 400,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_claims_cross_domain_weakness",
+      "id": "n_src_validate_checks_check_a_direct_eval",
       "type": "file",
-      "file": "Claim Cross-Domain Generalization is Known Weakness.md",
-      "x": 1860,
+      "file": "check_a_direct_eval().md",
+      "x": 1640,
       "y": 480,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_claims_dataset_as_environment",
+      "id": "n_src_validate_checks_check_b_shuffled_labels",
       "type": "file",
-      "file": "Claim Dataset-as-RL-Environment Formulation.md",
-      "x": 2060,
+      "file": "check_b_shuffled_labels().md",
+      "x": 1840,
       "y": 480,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_claims_flow_based_nids",
+      "id": "n_src_validate_checks_check_c_csv_split",
       "type": "file",
-      "file": "Claim Flow-based NIDS is established representation.md",
-      "x": 2260,
+      "file": "check_c_csv_split().md",
+      "x": 2040,
       "y": 480,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_claims_qrdqn_justified",
+      "id": "n_scripts_verify_fixed_test_split_fail",
       "type": "file",
-      "file": "Claim QR-DQN Justified as Distributional RL Choice.md",
-      "x": 1860,
+      "file": "fail().md",
+      "x": 1640,
       "y": 560,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_claims_bank_doc",
+      "id": "n_src_load_cicids2017_load_cicids2017_split",
       "type": "file",
-      "file": "Claims Bank.md",
-      "x": 2060,
+      "file": "load_cicids2017_split().md",
+      "x": 1840,
       "y": 560,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_codex_handoff_doc",
+      "id": "n_scripts_verify_fixed_test_split_main",
       "type": "file",
-      "file": "Codex Handoff for Thesis Research Drafting.md",
-      "x": 2260,
+      "file": "main()_4.md",
+      "x": 2040,
       "y": 560,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_citation_dabney2018_qrdqn",
+      "id": "n_src_validate_checks_main",
       "type": "file",
-      "file": "Dabney2018QRDQN (Distributional RL with Quantile Regression).md",
-      "x": 1860,
+      "file": "main()_8.md",
+      "x": 1640,
       "y": 640,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_gcp_lab_defender_vm",
+      "id": "n_scripts_verify_fixed_test_split_ok",
       "type": "file",
-      "file": "Defender VM (tfg-defender).md",
-      "x": 2060,
+      "file": "ok().md",
+      "x": 1840,
       "y": 640,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_defensa_progreso_tfg",
+      "id": "n_scripts_verify_fixed_test_split_parse_args",
       "type": "file",
-      "file": "Defensa TFG Progreso (Spanish Defense Notes).md",
-      "x": 2260,
+      "file": "parse_args()_2.md",
+      "x": 2040,
       "y": 640,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_defensa_script_tfg",
+      "id": "n_src_validate_checks_parse_args",
       "type": "file",
-      "file": "Defensa TFG Script (Spanish Oral Defense Guide).md",
-      "x": 1860,
+      "file": "parse_args()_5.md",
+      "x": 1640,
       "y": 720,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_deep_research1_distributional_rl_nids_gap",
+      "id": "n_tests_test_load_cicids2017_patched_loader",
       "type": "file",
-      "file": "Distributional RL (QR-DQN) Underrepresented in NIDS.md",
-      "x": 2060,
+      "file": "patched_loader().md",
+      "x": 1840,
       "y": 720,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_phase2_plan_domain_shift_mitigations",
+      "id": "n_tests_test_load_cicids2017_py",
       "type": "file",
-      "file": "Domain Shift Mitigations (scaler, percentilez clipping).md",
-      "x": 2260,
+      "file": "test_load_cicids2017.py.md",
+      "x": 2040,
       "y": 720,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_agent_context_domain_shift_risk",
+      "id": "n_tests_test_load_cicids2017_test_metadata_new_keys",
       "type": "file",
-      "file": "Domain Shift Risk (Phase 2).md",
-      "x": 1860,
+      "file": "test_metadata_new_keys().md",
+      "x": 1640,
       "y": 800,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_requirements_gymnasium",
+      "id": "n_tests_test_load_cicids2017_test_nested_prefix_indices_deterministic",
       "type": "file",
-      "file": "Gymnasium RL Environment API.md",
-      "x": 2060,
+      "file": "test_nested_prefix_indices_deterministic().md",
+      "x": 1840,
       "y": 800,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_deep_research1_layeghy2022",
+      "id": "n_tests_test_load_cicids2017_test_nested_prefix_indices_nested_and_stratified",
       "type": "file",
-      "file": "Layeghy2022 (On Generalisability of ML-based NIDS).md",
-      "x": 2260,
+      "file": "test_nested_prefix_indices_nested_and_stratified().md",
+      "x": 2040,
       "y": 800,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_readme_missingness_mask",
+      "id": "n_tests_test_load_cicids2017_test_scale_true_refits_on_subsample",
       "type": "file",
-      "file": "Missingness Mask (76 Dimensions).md",
-      "x": 1860,
+      "file": "test_scale_true_refits_on_subsample().md",
+      "x": 1640,
       "y": 880,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_citation_mnih2015_dqn",
+      "id": "n_tests_test_load_cicids2017_test_sha256_of_array_stable",
       "type": "file",
-      "file": "Mnih2015DQN (Human-level control via DQN).md",
-      "x": 2060,
+      "file": "test_sha256_of_array_stable().md",
+      "x": 1840,
       "y": 880,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_citation_moustafa_slay2015",
+      "id": "n_tests_test_load_cicids2017_test_train_max_rows_guards",
       "type": "file",
-      "file": "MoustafaSlay2015UNSWNB15.md",
-      "x": 2260,
+      "file": "test_train_max_rows_guards().md",
+      "x": 2040,
       "y": 880,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_readme_nslkdd_dataset",
+      "id": "n_tests_test_load_cicids2017_test_train_max_rows_keeps_test_set_identical",
       "type": "file",
-      "file": "NSL-KDD Dataset (Historical).md",
-      "x": 1860,
+      "file": "test_train_max_rows_keeps_test_set_identical().md",
+      "x": 1640,
       "y": 960,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_nslkdd_dqn_e01",
+      "id": "n_src_validate_checks_py",
       "type": "file",
-      "file": "NSL-KDD E01 DQN Experiment.md",
-      "x": 2060,
+      "file": "validate_checks.py.md",
+      "x": 1840,
       "y": 960,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_nslkdd_rf_e02",
+      "id": "n_src_validate_checks_rationale_1",
       "type": "file",
-      "file": "NSL-KDD E02 Random Forest Experiment.md",
-      "x": 2260,
+      "file": "validate_checks.py \u2014 Validaci\u00f3n de resultados experimentales del agente RL.  I.md",
+      "x": 2040,
       "y": 960,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_nslkdd_experiments_history",
+      "id": "n_scripts_verify_fixed_test_split_py",
       "type": "file",
-      "file": "NSL-KDD Historical Experiments.md",
-      "x": 1860,
+      "file": "verify_fixed_test_split.py.md",
+      "x": 1640,
       "y": 1040,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_readme_phase1",
-      "type": "file",
-      "file": "Phase 1 - Offline Training and Validation.md",
-      "x": 2060,
-      "y": 1040,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_phase2_plan_doc",
-      "type": "file",
-      "file": "Phase 2 Execution Plan.md",
-      "x": 2260,
-      "y": 1040,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_results_p2_phase2_artifacts",
-      "type": "file",
-      "file": "Phase 2 Inference Artifacts.md",
-      "x": 1860,
-      "y": 1120,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_readme_phase2",
-      "type": "file",
-      "file": "Phase 2 Offline Inference.md",
-      "x": 2060,
-      "y": 1120,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_agent_context_phase2_scope",
-      "type": "file",
-      "file": "Phase 2 Scope and Guardrails.md",
-      "x": 2260,
-      "y": 1120,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_gcp_lab_private_lab",
-      "type": "file",
-      "file": "Private Lab Topology (GCP).md",
-      "x": 1860,
-      "y": 1200,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_readme_qrdqn_algorithm",
-      "type": "file",
-      "file": "QRDQN Algorithm.md",
-      "x": 2060,
-      "y": 1200,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_results_rf_baseline_pending",
-      "type": "file",
-      "file": "Random Forest Baseline (Metrics Pending).md",
-      "x": 2260,
-      "y": 1200,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research1_source_matrix",
-      "type": "file",
-      "file": "Research Source Matrix.md",
-      "x": 1860,
-      "y": 1280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research1_ring2019",
-      "type": "file",
-      "file": "Ring2019 (Survey of Network-based IDS Datasets).md",
-      "x": 2060,
-      "y": 1280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research1_scarfone2007",
-      "type": "file",
-      "file": "ScarfoneMell2007 NIST SP800-94 IDPS Guide.md",
-      "x": 2260,
-      "y": 1280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_citation_sharafaldin2018",
-      "type": "file",
-      "file": "Sharafaldin2018CICIDS2017 (CICIDS2017 paper).md",
-      "x": 1860,
-      "y": 1360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research1_state_of_art_structure",
-      "type": "file",
-      "file": "State of the Art Chapter Structure.md",
-      "x": 2060,
-      "y": 1360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_citation_sutton_barto2018",
-      "type": "file",
-      "file": "SuttonBarto2018RL (Reinforcement Learning An Introduction).md",
-      "x": 2260,
-      "y": 1360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_readme_tfg_cyber_ai",
-      "type": "file",
-      "file": "TFG_CYBER_AI Project.md",
-      "x": 1860,
-      "y": 1440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research1_tellache2024",
-      "type": "file",
-      "file": "Tellache2024 (Multi-agent RL NIDS on CICIDS2017).md",
-      "x": 2060,
-      "y": 1440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_readme_validation_check_a",
-      "type": "file",
-      "file": "Validation Check A - Direct Prediction.md",
-      "x": 2260,
-      "y": 1440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_readme_validation_check_b",
-      "type": "file",
-      "file": "Validation Check B - Shuffled Label Anti-Leakage.md",
-      "x": 1860,
-      "y": 1520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_readme_validation_check_c",
-      "type": "file",
-      "file": "Validation Check C - Hard CSVDay Split.md",
-      "x": 2060,
-      "y": 1520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_readme_predict_real_traffic_v2",
-      "type": "file",
-      "file": "predict_real_traffic_v2.py_1.md",
-      "x": 2260,
-      "y": 1520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_requirements_sb3contrib",
-      "type": "file",
-      "file": "sb3-contrib (QRDQN implementation).md",
-      "x": 1860,
-      "y": 1600,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_requirements_stable_baselines3",
-      "type": "file",
-      "file": "stable-baselines3.md",
-      "x": 2060,
-      "y": 1600,
       "width": 180,
       "height": 60
     },
     {
       "id": "g2",
       "type": "group",
-      "label": "RF Baseline Module",
-      "x": 3680,
+      "label": "CICIDS2017 Preprocessing",
+      "x": 3240,
       "y": 0,
       "width": 1320,
-      "height": 1320,
+      "height": 1220,
       "color": "3"
     },
     {
       "id": "n_src_load_cicids2017_cicidsloadconfig",
       "type": "file",
       "file": "CICIDSLoadConfig.md",
-      "x": 3700,
+      "x": 3260,
       "y": 80,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_src_load_cicids2017_rationale_320",
+      "id": "n_src_load_cicids2017_rationale_327",
       "type": "file",
       "file": "Carga CICIDS2017 desde directorio local y lo adapta al esquema can\u00f3nico..md",
-      "x": 3900,
+      "x": 3460,
       "y": 80,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_src_load_cicids2017_rationale_369",
+      "id": "n_src_load_cicids2017_rationale_376",
       "type": "file",
       "file": "Carga CICIDS2017 separando por archivos CSV (train vs test).      En lugar de.md",
-      "x": 4100,
+      "x": 3660,
       "y": 80,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_src_load_cicids2017_rationale_440",
+      "id": "n_src_load_cicids2017_rationale_447",
       "type": "file",
       "file": "Carga CICIDS2017 separando por nombres exactos de archivo CSV.      A diferenc.md",
-      "x": 3700,
+      "x": 3260,
       "y": 160,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_src_load_cicids2017_rationale_193",
+      "id": "n_src_load_cicids2017_rationale_200",
       "type": "file",
       "file": "Carga un CSV individual con l\u00edmite opcional de filas por archivo..md",
-      "x": 3900,
+      "x": 3460,
       "y": 160,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_src_load_cicids2017_rationale_278",
+      "id": "n_src_load_cicids2017_rationale_285",
       "type": "file",
       "file": "Carga una lista de CSVs, aplica preprocesado y devuelve X, y y features..md",
-      "x": 4100,
+      "x": 3660,
       "y": 160,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_src_baseline_random_forest_rationale_25",
+      "id": "n_src_baseline_random_forest_rationale_38",
       "type": "file",
       "file": "Entrena un RandomForestClassifier sobre el dataset y devuelve el modelo..md",
-      "x": 3700,
+      "x": 3260,
       "y": 240,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_src_baseline_random_forest_rationale_44",
+      "id": "n_src_baseline_random_forest_rationale_57",
       "type": "file",
       "file": "Eval\u00faa el Random Forest y muestra matriz de confusi\u00f3n + informe de clasificaci\u00f3n.md",
-      "x": 3900,
+      "x": 3460,
       "y": 240,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_src_load_cicids2017_rationale_223",
+      "id": "n_src_load_cicids2017_rationale_230",
       "type": "file",
       "file": "Limpia CICIDS2017 y devuelve X, y y nombres de features..md",
-      "x": 4100,
+      "x": 3660,
       "y": 240,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_src_load_cicids2017_rationale_73",
+      "id": "n_src_load_cicids2017_rationale_80",
       "type": "file",
       "file": "Lista \u00fanicamente los 8 CSVs oficiales de CICIDS2017 en orden determinista..md",
-      "x": 3700,
+      "x": 3260,
       "y": 320,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_src_load_cicids2017_rationale_298",
+      "id": "n_src_load_cicids2017_rationale_305",
       "type": "file",
       "file": "Resuelve nombres exactos de CSV a rutas reales, preservando el orden de entrada..md",
-      "x": 3900,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_load_cicids2017_rationale_543",
-      "type": "file",
-      "file": "Unified CICIDS2017 loader with split-mode and preset support.      Parameters.md",
-      "x": 4100,
+      "x": 3460,
       "y": 320,
       "width": 180,
       "height": 60
@@ -1213,8 +808,8 @@
       "id": "n_src_load_cicids2017_clean_rows",
       "type": "file",
       "file": "_clean_rows().md",
-      "x": 3700,
-      "y": 400,
+      "x": 3660,
+      "y": 320,
       "width": 180,
       "height": 60
     },
@@ -1222,7 +817,7 @@
       "id": "n_src_load_cicids2017_coerce_numeric_features",
       "type": "file",
       "file": "_coerce_numeric_features().md",
-      "x": 3900,
+      "x": 3260,
       "y": 400,
       "width": 180,
       "height": 60
@@ -1231,7 +826,7 @@
       "id": "n_src_load_cicids2017_drop_identifier_like_columns",
       "type": "file",
       "file": "_drop_identifier_like_columns().md",
-      "x": 4100,
+      "x": 3460,
       "y": 400,
       "width": 180,
       "height": 60
@@ -1240,8 +835,8 @@
       "id": "n_src_load_cicids2017_find_label_column",
       "type": "file",
       "file": "_find_label_column().md",
-      "x": 3700,
-      "y": 480,
+      "x": 3660,
+      "y": 400,
       "width": 180,
       "height": 60
     },
@@ -1249,7 +844,7 @@
       "id": "n_src_load_cicids2017_list_csv_files",
       "type": "file",
       "file": "_list_csv_files().md",
-      "x": 3900,
+      "x": 3260,
       "y": 480,
       "width": 180,
       "height": 60
@@ -1258,7 +853,7 @@
       "id": "n_src_load_cicids2017_load_all_csvs",
       "type": "file",
       "file": "_load_all_csvs().md",
-      "x": 4100,
+      "x": 3460,
       "y": 480,
       "width": 180,
       "height": 60
@@ -1267,8 +862,8 @@
       "id": "n_src_load_cicids2017_load_and_process_csv_paths",
       "type": "file",
       "file": "_load_and_process_csv_paths().md",
-      "x": 3700,
-      "y": 560,
+      "x": 3660,
+      "y": 480,
       "width": 180,
       "height": 60
     },
@@ -1276,7 +871,7 @@
       "id": "n_src_load_cicids2017_load_csv_with_row_limit",
       "type": "file",
       "file": "_load_csv_with_row_limit().md",
-      "x": 3900,
+      "x": 3260,
       "y": 560,
       "width": 180,
       "height": 60
@@ -1285,7 +880,7 @@
       "id": "n_src_load_cicids2017_normalize_columns",
       "type": "file",
       "file": "_normalize_columns().md",
-      "x": 4100,
+      "x": 3460,
       "y": 560,
       "width": 180,
       "height": 60
@@ -1294,8 +889,8 @@
       "id": "n_src_load_cicids2017_prepare_cicids_features",
       "type": "file",
       "file": "_prepare_cicids_features().md",
-      "x": 3700,
-      "y": 640,
+      "x": 3660,
+      "y": 560,
       "width": 180,
       "height": 60
     },
@@ -1303,7 +898,7 @@
       "id": "n_src_load_cicids2017_resolve_exact_csv_names",
       "type": "file",
       "file": "_resolve_exact_csv_names().md",
-      "x": 3900,
+      "x": 3260,
       "y": 640,
       "width": 180,
       "height": 60
@@ -1312,7 +907,7 @@
       "id": "n_src_baseline_random_forest_py",
       "type": "file",
       "file": "baseline_random_forest.py.md",
-      "x": 4100,
+      "x": 3460,
       "y": 640,
       "width": 180,
       "height": 60
@@ -1321,8 +916,8 @@
       "id": "n_src_baseline_random_forest_evaluate_random_forest",
       "type": "file",
       "file": "evaluate_random_forest().md",
-      "x": 3700,
-      "y": 720,
+      "x": 3660,
+      "y": 640,
       "width": 180,
       "height": 60
     },
@@ -1330,7 +925,7 @@
       "id": "n_src_load_cicids2017_list_cicids2017_csv_files",
       "type": "file",
       "file": "list_cicids2017_csv_files().md",
-      "x": 3900,
+      "x": 3260,
       "y": 720,
       "width": 180,
       "height": 60
@@ -1339,7 +934,7 @@
       "id": "n_src_load_cicids2017_py",
       "type": "file",
       "file": "load_cicids2017.py.md",
-      "x": 4100,
+      "x": 3460,
       "y": 720,
       "width": 180,
       "height": 60
@@ -1348,8 +943,8 @@
       "id": "n_src_load_cicids2017_load_cicids2017_binary",
       "type": "file",
       "file": "load_cicids2017_binary().md",
-      "x": 3700,
-      "y": 800,
+      "x": 3660,
+      "y": 720,
       "width": 180,
       "height": 60
     },
@@ -1357,7 +952,7 @@
       "id": "n_src_load_cicids2017_load_cicids2017_csv_split",
       "type": "file",
       "file": "load_cicids2017_csv_split().md",
-      "x": 3900,
+      "x": 3260,
       "y": 800,
       "width": 180,
       "height": 60
@@ -1366,35 +961,17 @@
       "id": "n_src_load_cicids2017_load_cicids2017_exact_csv_split",
       "type": "file",
       "file": "load_cicids2017_exact_csv_split().md",
-      "x": 4100,
+      "x": 3460,
       "y": 800,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_load_cicids2017_load_cicids2017_split",
-      "type": "file",
-      "file": "load_cicids2017_split().md",
-      "x": 3700,
-      "y": 880,
       "width": 180,
       "height": 60
     },
     {
       "id": "n_src_baseline_random_forest_main",
       "type": "file",
-      "file": "main()_3.md",
-      "x": 3900,
-      "y": 880,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tests_test_load_cicids2017_py",
-      "type": "file",
-      "file": "test_load_cicids2017.py.md",
-      "x": 4100,
-      "y": 880,
+      "file": "main()_5.md",
+      "x": 3660,
+      "y": 800,
       "width": 180,
       "height": 60
     },
@@ -1402,8 +979,8 @@
       "id": "n_tests_test_load_cicids2017_test_prepare_cicids_features_binary_labels",
       "type": "file",
       "file": "test_prepare_cicids_features_binary_labels().md",
-      "x": 3700,
-      "y": 960,
+      "x": 3260,
+      "y": 880,
       "width": 180,
       "height": 60
     },
@@ -1411,867 +988,27 @@
       "id": "n_src_baseline_random_forest_train_random_forest",
       "type": "file",
       "file": "train_random_forest().md",
-      "x": 3900,
-      "y": 960,
+      "x": 3460,
+      "y": 880,
       "width": 180,
       "height": 60
     },
     {
       "id": "g3",
       "type": "group",
-      "label": "CICIDS2017 Dataset & Citations",
-      "x": 5080,
+      "label": "Inference Diagnostics",
+      "x": 4640,
       "y": 0,
       "width": 1320,
-      "height": 1320,
+      "height": 1120,
       "color": "4"
-    },
-    {
-      "id": "n_methodology_handoff_76_features_canonical",
-      "type": "file",
-      "file": "76 Canonical Features + 76 Missingness Mask (152 obs).md",
-      "x": 5100,
-      "y": 80,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_dive_canonical_76_features",
-      "type": "file",
-      "file": "76 Canonical Flow Features Schema.md",
-      "x": 5300,
-      "y": 80,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research_report2_apruzzese2022",
-      "type": "file",
-      "file": "APRUZZESE2022 (Cross-Evaluation of ML-based NIDS).md",
-      "x": 5500,
-      "y": 80,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research_report2_arp2024",
-      "type": "file",
-      "file": "ARP2024 (Pitfalls in ML for Computer Security).md",
-      "x": 5100,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_source_map_autonomous_cyber_defense",
-      "type": "file",
-      "file": "Autonomous Cyber Defense (ACD) with DRL.md",
-      "x": 5300,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_dive_bprofile_benign_traffic",
-      "type": "file",
-      "file": "B-Profile System for Benign Traffic Generation.md",
-      "x": 5500,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_experimental_board_branch_a_data_efficiency",
-      "type": "file",
-      "file": "Branch A Data Efficiency (100k-2M training budgets).md",
-      "x": 5100,
-      "y": 240,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_experimental_board_branch_e_strict_splits",
-      "type": "file",
-      "file": "Branch E Strict Split Evaluation Ladder.md",
-      "x": 5300,
-      "y": 240,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research_report2_cantone2024",
-      "type": "file",
-      "file": "CANTONE2024 (Cross-Dataset Generalization of ML for NIDS).md",
-      "x": 5500,
-      "y": 240,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_dive_cicflowmeter",
-      "type": "file",
-      "file": "CICFlowMeter Flow Feature Extraction Tool.md",
-      "x": 5100,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_dive_cicids2017",
-      "type": "file",
-      "file": "CICIDS2017 Dataset_1.md",
-      "x": 5300,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_methodology_handoff_data_efficiency_curve",
-      "type": "file",
-      "file": "Data-Efficiency Curve Protocol.md",
-      "x": 5500,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_nids_datasets_dataset_survey2025",
-      "type": "file",
-      "file": "DatasetSurvey2025 (Network Intrusion Datasets Survey, Limitations, Recommendations).md",
-      "x": 5100,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research_report2_defensible_gap",
-      "type": "file",
-      "file": "Defensible Research Gap for TFG.md",
-      "x": 5300,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_dive_engelen2021",
-      "type": "file",
-      "file": "ENGELEN2021 (Troubleshooting CICIDS2017, WTMC).md",
-      "x": 5500,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_research_index_evaluation_methodology_area",
-      "type": "file",
-      "file": "Evaluation Methodology Research Area.md",
-      "x": 5100,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_experimental_board_big_picture_pipeline",
-      "type": "file",
-      "file": "Experimental Design Board (Big Picture Pipeline).md",
-      "x": 5300,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_methodology_handoff_external_validation_plans",
-      "type": "file",
-      "file": "External Validation Plan ABC.md",
-      "x": 5500,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_experimental_board_152obs_gymnasium",
-      "type": "file",
-      "file": "Gymnasium Environment 152-Dim Observation (76 features + 76 mask).md",
-      "x": 5100,
-      "y": 560,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_methodology_handoff_internal_benchmark",
-      "type": "file",
-      "file": "Internal Benchmark Design (CICIDS2017).md",
-      "x": 5300,
-      "y": 560,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_dive_lanvin2023",
-      "type": "file",
-      "file": "LANVIN2023 (Errors in CICIDS2017 Dataset).md",
-      "x": 5500,
-      "y": 560,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_methodology_handoff_leakage_controls",
-      "type": "file",
-      "file": "Leakage Controls Policy.md",
-      "x": 5100,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_source_map_master_research_map",
-      "type": "file",
-      "file": "Master Research Map (report-source-map.md).md",
-      "x": 5300,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research_report2_permit_block_formulation",
-      "type": "file",
-      "file": "Offline Flow-Level PERMITBLOCK RL Formulation.md",
-      "x": 5500,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research_report2_qrdqn_agent",
-      "type": "file",
-      "file": "QRDQN Agent for PERMITBLOCK.md",
-      "x": 5100,
-      "y": 720,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_methodology_handoff_rf_baseline",
-      "type": "file",
-      "file": "Random Forest Supervised Baseline Protocol.md",
-      "x": 5300,
-      "y": 720,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_readme_research_folder_index",
-      "type": "file",
-      "file": "Research Folder Index (README).md",
-      "x": 5500,
-      "y": 720,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_research_gaps_missing_experiments",
-      "type": "file",
-      "file": "Research Gaps and TODO Experiments List.md",
-      "x": 5100,
-      "y": 800,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_research_index_canonical_map",
-      "type": "file",
-      "file": "Research Index (Canonical Structured Map).md",
-      "x": 5300,
-      "y": 800,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_research3_dataset_eval_pitfalls",
-      "type": "file",
-      "file": "Research3 Dataset Evaluation Pitfalls and Leakage.md",
-      "x": 5500,
-      "y": 800,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_dive_sharafaldin2018",
-      "type": "file",
-      "file": "SHARAFALDIN2018 (Toward Generating a New IDS Dataset).md",
-      "x": 5100,
-      "y": 880,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research_report2_sommerpaxson2010",
-      "type": "file",
-      "file": "SOMMERPAXSON2010 (Outside the Closed World).md",
-      "x": 5300,
-      "y": 880,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_nids_datasets_unswnb15",
-      "type": "file",
-      "file": "UNSW-NB15 Dataset.md",
-      "x": 5500,
-      "y": 880,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_deep_research_report2_yang_drl_2026",
-      "type": "file",
-      "file": "YANG-DRL-2026 (Survey for DRL-based NIDS).md",
-      "x": 5100,
-      "y": 960,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "g4",
-      "type": "group",
-      "label": "RL Training & Validation Patterns",
-      "x": 6480,
-      "y": 0,
-      "width": 1320,
-      "height": 1220,
-      "color": "5"
-    },
-    {
-      "id": "n_contextual_bandit_equivalence",
-      "type": "file",
-      "file": "Classification-as-RL  Contextual Bandit Equivalence.md",
-      "x": 6500,
-      "y": 80,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_dummyvecenv_monitor_wrapper",
-      "type": "file",
-      "file": "DummyVecEnv + Monitor Wrappers.md",
-      "x": 6700,
-      "y": 80,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_episode_mechanics_shuffling",
-      "type": "file",
-      "file": "Episode Mechanics train shuffle  test deterministic.md",
-      "x": 6900,
-      "y": 80,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tune_hparams_objective",
-      "type": "file",
-      "file": "Optuna objective function for QRDQN tuning.md",
-      "x": 6500,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_train_rl_defender_QRDQN",
-      "type": "file",
-      "file": "QRDQN RL model (sb3_contrib).md",
-      "x": 6700,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_RLDatasetDefenderEnv",
-      "type": "file",
-      "file": "RLDatasetDefenderEnv gymnasium environment.md",
-      "x": 6900,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_reward_config",
-      "type": "file",
-      "file": "Reward Config (tpfpfnomission).md",
-      "x": 6500,
-      "y": 240,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_validate_leave_one_csv_out__build_aggregate_results",
-      "type": "file",
-      "file": "_build_aggregate_results fold aggregation.md",
-      "x": 6700,
-      "y": 240,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_compute_reward",
-      "type": "file",
-      "file": "_compute_reward.md",
-      "x": 6900,
-      "y": 240,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tune_hparams__evaluate_f1",
-      "type": "file",
-      "file": "_evaluate_f1 function in tune_hparams.md",
-      "x": 6500,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_baseline_rf_main",
-      "type": "file",
-      "file": "baseline_random_forest main (3-sweep eval).md",
-      "x": 6700,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_validate_checks_check_a_direct_eval",
-      "type": "file",
-      "file": "check_a_direct_eval (direct model evaluation).md",
-      "x": 6900,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_validate_checks_check_b_shuffled_labels",
-      "type": "file",
-      "file": "check_b_shuffled_labels (anti-leakage test).md",
-      "x": 6500,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_validate_checks_check_c_csv_split",
-      "type": "file",
-      "file": "check_c_csv_split (realistic CSV-split eval).md",
-      "x": 6700,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_train_rl_defender_evaluate_model",
-      "type": "file",
-      "file": "evaluate_model function in train_rl_defender.md",
-      "x": 6900,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_validate_leave_one_csv_out_evaluate_model_direct",
-      "type": "file",
-      "file": "evaluate_model_direct (batched leave-one-out eval).md",
-      "x": 6500,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_baseline_rf_evaluate_random_forest",
-      "type": "file",
-      "file": "evaluate_random_forest function.md",
-      "x": 6700,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_load_cicids2017_list_cicids2017_csv_files",
-      "type": "file",
-      "file": "list_cicids2017_csv_files function.md",
-      "x": 6900,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_load_cicids2017_load_cicids2017_binary",
-      "type": "file",
-      "file": "load_cicids2017_binary function.md",
-      "x": 6500,
-      "y": 560,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_load_cicids2017_load_cicids2017_csv_split",
-      "type": "file",
-      "file": "load_cicids2017_csv_split function.md",
-      "x": 6700,
-      "y": 560,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_load_cicids2017_load_cicids2017_exact_csv_split",
-      "type": "file",
-      "file": "load_cicids2017_exact_csv_split function.md",
-      "x": 6900,
-      "y": 560,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_load_cicids2017_load_cicids2017_split",
-      "type": "file",
-      "file": "load_cicids2017_split unified loader.md",
-      "x": 6500,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_train_rl_defender_make_env_fn",
-      "type": "file",
-      "file": "make_env_fn environment factory.md",
-      "x": 6700,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_test_rl_defender_env_test_env_initialization",
-      "type": "file",
-      "file": "test_env_initialization.md",
-      "x": 6900,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_test_rl_defender_env_test_env_step_and_reset",
-      "type": "file",
-      "file": "test_env_step_and_reset.md",
-      "x": 6500,
-      "y": 720,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_test_reward_config_test_reward_logic_tp_fp_tn_fn",
-      "type": "file",
-      "file": "test_reward_logic_tp_fp_tn_fn.md",
-      "x": 6700,
-      "y": 720,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_test_reward_config_test_unknown_label_reward",
-      "type": "file",
-      "file": "test_unknown_label_reward.md",
-      "x": 6900,
-      "y": 720,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_baseline_rf_train_random_forest",
-      "type": "file",
-      "file": "train_random_forest function.md",
-      "x": 6500,
-      "y": 800,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_train_rl_defender_main",
-      "type": "file",
-      "file": "train_rl_defender main training pipeline.md",
-      "x": 6700,
-      "y": 800,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tune_hparams_main",
-      "type": "file",
-      "file": "tune_hparams main Optuna study.md",
-      "x": 6900,
-      "y": 800,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_validate_leave_one_csv_out_main",
-      "type": "file",
-      "file": "validate_leave_one_csv_out main pipeline.md",
-      "x": 6500,
-      "y": 880,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "g5",
-      "type": "group",
-      "label": "RL Environment (Code)",
-      "x": 7880,
-      "y": 0,
-      "width": 1100,
-      "height": 1020,
-      "color": "6"
-    },
-    {
-      "id": "n_rl_defender_env_rldatasetdefenderenv_init",
-      "type": "file",
-      "file": ".__init__().md",
-      "x": 7900,
-      "y": 80,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_rldatasetdefenderenv_compute_reward",
-      "type": "file",
-      "file": "._compute_reward().md",
-      "x": 8100,
-      "y": 80,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_rldatasetdefenderenv_get_observation",
-      "type": "file",
-      "file": "._get_observation().md",
-      "x": 8300,
-      "y": 80,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_rldatasetdefenderenv_close",
-      "type": "file",
-      "file": ".close().md",
-      "x": 7900,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_rldatasetdefenderenv_render",
-      "type": "file",
-      "file": ".render().md",
-      "x": 8100,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_rldatasetdefenderenv_reset",
-      "type": "file",
-      "file": ".reset().md",
-      "x": 8300,
-      "y": 160,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_rldatasetdefenderenv_step",
-      "type": "file",
-      "file": ".step().md",
-      "x": 7900,
-      "y": 240,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_rationale_108",
-      "type": "file",
-      "file": "Calcula la recompensa en funci\u00f3n de la etiqueta real, la acci\u00f3n         y la co.md",
-      "x": 8100,
-      "y": 240,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_train_rl_defender_rationale_59",
-      "type": "file",
-      "file": "Devuelve una funci\u00f3n creadora de entornos para DummyVecEnv..md",
-      "x": 8300,
-      "y": 240,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_rationale_7",
-      "type": "file",
-      "file": "Entorno RL para un defensor que decide PERMITBLOCK sobre muestras etiquetadas..md",
-      "x": 7900,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_train_rl_defender_rationale_79",
-      "type": "file",
-      "file": "Eval\u00faa el agente sobre test set.     Devuelve dict con m\u00e9tricas clave..md",
-      "x": 8100,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_rl_defender_env_rldatasetdefenderenv",
-      "type": "file",
-      "file": "RLDatasetDefenderEnv.md",
-      "x": 8300,
-      "y": 320,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_train_rl_defender_evaluate_model",
-      "type": "file",
-      "file": "evaluate_model().md",
-      "x": 7900,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_train_rl_defender_main",
-      "type": "file",
-      "file": "main()_4.md",
-      "x": 8100,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_train_rl_defender_make_env_fn",
-      "type": "file",
-      "file": "make_env_fn().md",
-      "x": 8300,
-      "y": 400,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_train_rl_defender_parse_args",
-      "type": "file",
-      "file": "parse_args()_1.md",
-      "x": 7900,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_rl_defender_env_py",
-      "type": "file",
-      "file": "rl_defender_env.py.md",
-      "x": 8100,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tests_test_rl_defender_env_test_env_initialization",
-      "type": "file",
-      "file": "test_env_initialization().md",
-      "x": 8300,
-      "y": 480,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tests_test_rl_defender_env_test_env_step_and_reset",
-      "type": "file",
-      "file": "test_env_step_and_reset().md",
-      "x": 7900,
-      "y": 560,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tests_test_reward_config_py",
-      "type": "file",
-      "file": "test_reward_config.py.md",
-      "x": 8100,
-      "y": 560,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tests_test_reward_config_test_reward_logic_tp_fp_tn_fn",
-      "type": "file",
-      "file": "test_reward_logic_tp_fp_tn_fn().md",
-      "x": 8300,
-      "y": 560,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tests_test_rl_defender_env_py",
-      "type": "file",
-      "file": "test_rl_defender_env.py.md",
-      "x": 7900,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tests_test_reward_config_test_unknown_label_reward",
-      "type": "file",
-      "file": "test_unknown_label_reward().md",
-      "x": 8100,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_train_rl_defender_py",
-      "type": "file",
-      "file": "train_rl_defender.py.md",
-      "x": 8300,
-      "y": 640,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_train_rl_defender_rationale_1",
-      "type": "file",
-      "file": "train_rl_defender.py \u2014 Entrenamiento de agente defensor RL sobre CICIDS2017..md",
-      "x": 7900,
-      "y": 720,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "g6",
-      "type": "group",
-      "label": "Scaling & Clipping Utilities",
-      "x": 0,
-      "y": 2200,
-      "width": 1100,
-      "height": 920,
-      "color": "1"
     },
     {
       "id": "n_scaling_utils_rationale_22",
       "type": "file",
       "file": "Clamp each feature to its training percentile range p_low, p_high.      Appl.md",
-      "x": 20,
-      "y": 2280,
+      "x": 4660,
+      "y": 80,
       "width": 180,
       "height": 60
     },
@@ -2279,8 +1016,8 @@
       "id": "n_scaling_utils_rationale_52",
       "type": "file",
       "file": "Clamp scaled features to -max_z, +max_z.      Applied to scaled features a.md",
-      "x": 220,
-      "y": 2280,
+      "x": 4860,
+      "y": 80,
       "width": 180,
       "height": 60
     },
@@ -2288,8 +1025,8 @@
       "id": "n_scripts_predict_real_traffic_v2_rationale_259",
       "type": "file",
       "file": "Compute evaluation metrics when ground-truth columns are present in the flows CS.md",
-      "x": 420,
-      "y": 2280,
+      "x": 5060,
+      "y": 80,
       "width": 180,
       "height": 60
     },
@@ -2297,8 +1034,8 @@
       "id": "n_scripts_predict_real_traffic_v2_rationale_196",
       "type": "file",
       "file": "Compute z-score diagnostics on scaled features (first _N_CANON dims only)..md",
-      "x": 20,
-      "y": 2360,
+      "x": 4660,
+      "y": 160,
       "width": 180,
       "height": 60
     },
@@ -2306,8 +1043,8 @@
       "id": "n_scaling_utils_distribution_shift_defense",
       "type": "file",
       "file": "Distribution Shift Defense via Dual Clipping.md",
-      "x": 220,
-      "y": 2360,
+      "x": 4860,
+      "y": 160,
       "width": 180,
       "height": 60
     },
@@ -2315,8 +1052,8 @@
       "id": "n_scripts_predict_real_traffic_v2_rationale_142",
       "type": "file",
       "file": "If time columns look like seconds (median  1), convert to microseconds..md",
-      "x": 420,
-      "y": 2360,
+      "x": 5060,
+      "y": 160,
       "width": 180,
       "height": 60
     },
@@ -2324,8 +1061,35 @@
       "id": "n_scripts_predict_real_traffic_v2_rationale_165",
       "type": "file",
       "file": "Load QRDQN model, falling back to DQN if sb3_contrib is unavailable..md",
-      "x": 20,
-      "y": 2440,
+      "x": 4660,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_nslkdd_dataset",
+      "type": "file",
+      "file": "NSL-KDD Dataset (historical benchmark).md",
+      "x": 4860,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_optuna_hyperparameter_search",
+      "type": "file",
+      "file": "Optuna Hyperparameter Search.md",
+      "x": 5060,
+      "y": 240,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_project_components_defense_research",
+      "type": "file",
+      "file": "Project Components Defense Research Report.md",
+      "x": 4660,
+      "y": 320,
       "width": 180,
       "height": 60
     },
@@ -2333,8 +1097,17 @@
       "id": "n_scripts_predict_real_traffic_v2_rationale_179",
       "type": "file",
       "file": "Run model.predict in batches to avoid OOM on large flow CSVs..md",
-      "x": 220,
-      "y": 2440,
+      "x": 4860,
+      "y": 320,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scaling_utils",
+      "type": "file",
+      "file": "Scaling Utilities (apply_percentile_clipping, apply_z_clipping).md",
+      "x": 5060,
+      "y": 320,
       "width": 180,
       "height": 60
     },
@@ -2342,8 +1115,8 @@
       "id": "n_scaling_utils_apply_percentile_clipping",
       "type": "file",
       "file": "apply_percentile_clipping().md",
-      "x": 420,
-      "y": 2440,
+      "x": 4660,
+      "y": 400,
       "width": 180,
       "height": 60
     },
@@ -2351,8 +1124,8 @@
       "id": "n_scaling_utils_apply_z_clipping",
       "type": "file",
       "file": "apply_z_clipping().md",
-      "x": 20,
-      "y": 2520,
+      "x": 4860,
+      "y": 400,
       "width": 180,
       "height": 60
     },
@@ -2360,8 +1133,8 @@
       "id": "n_scripts_predict_real_traffic_v2_batched_predict",
       "type": "file",
       "file": "batched_predict()_1.md",
-      "x": 220,
-      "y": 2520,
+      "x": 5060,
+      "y": 400,
       "width": 180,
       "height": 60
     },
@@ -2369,8 +1142,8 @@
       "id": "n_scripts_predict_real_traffic_v2_compute_diagnostics",
       "type": "file",
       "file": "compute_diagnostics().md",
-      "x": 420,
-      "y": 2520,
+      "x": 4660,
+      "y": 480,
       "width": 180,
       "height": 60
     },
@@ -2378,8 +1151,8 @@
       "id": "n_scripts_predict_real_traffic_v2_compute_truth_metrics",
       "type": "file",
       "file": "compute_truth_metrics().md",
-      "x": 20,
-      "y": 2600,
+      "x": 4860,
+      "y": 480,
       "width": 180,
       "height": 60
     },
@@ -2387,17 +1160,17 @@
       "id": "n_scripts_predict_real_traffic_v2_load_model",
       "type": "file",
       "file": "load_model()_1.md",
-      "x": 220,
-      "y": 2600,
+      "x": 5060,
+      "y": 480,
       "width": 180,
       "height": 60
     },
     {
       "id": "n_scripts_predict_real_traffic_v2_main",
       "type": "file",
-      "file": "main()_2.md",
-      "x": 420,
-      "y": 2600,
+      "file": "main()_3.md",
+      "x": 4660,
+      "y": 560,
       "width": 180,
       "height": 60
     },
@@ -2405,17 +1178,17 @@
       "id": "n_scripts_predict_real_traffic_v2_maybe_convert_time_units",
       "type": "file",
       "file": "maybe_convert_time_units()_1.md",
-      "x": 20,
-      "y": 2680,
+      "x": 4860,
+      "y": 560,
       "width": 180,
       "height": 60
     },
     {
       "id": "n_scripts_predict_real_traffic_v2_parse_args",
       "type": "file",
-      "file": "parse_args().md",
-      "x": 220,
-      "y": 2680,
+      "file": "parse_args()_1.md",
+      "x": 5060,
+      "y": 560,
       "width": 180,
       "height": 60
     },
@@ -2423,8 +1196,8 @@
       "id": "n_scripts_predict_real_traffic_v2_py",
       "type": "file",
       "file": "predict_real_traffic_v2.py.md",
-      "x": 420,
-      "y": 2680,
+      "x": 4660,
+      "y": 640,
       "width": 180,
       "height": 60
     },
@@ -2432,8 +1205,8 @@
       "id": "n_scripts_predict_real_traffic_v2_rationale_1",
       "type": "file",
       "file": "predict_real_traffic_v2.py \u2014 Robust Phase 2 offline inference pipeline.  Loads.md",
-      "x": 20,
-      "y": 2760,
+      "x": 4860,
+      "y": 640,
       "width": 180,
       "height": 60
     },
@@ -2441,8 +1214,8 @@
       "id": "n_src_scaling_utils_py",
       "type": "file",
       "file": "scaling_utils.py.md",
-      "x": 220,
-      "y": 2760,
+      "x": 5060,
+      "y": 640,
       "width": 180,
       "height": 60
     },
@@ -2450,8 +1223,8 @@
       "id": "n_scaling_utils_rationale_1",
       "type": "file",
       "file": "scaling_utils.py \u2014 Clipping utilities for outlier handling in RL inference pipel.md",
-      "x": 420,
-      "y": 2760,
+      "x": 4660,
+      "y": 720,
       "width": 180,
       "height": 60
     },
@@ -2459,8 +1232,8 @@
       "id": "n_tests_test_predict_real_traffic_v2_test_compute_diagnostics",
       "type": "file",
       "file": "test_compute_diagnostics().md",
-      "x": 20,
-      "y": 2840,
+      "x": 4860,
+      "y": 720,
       "width": 180,
       "height": 60
     },
@@ -2468,8 +1241,8 @@
       "id": "n_tests_test_predict_real_traffic_v2_test_maybe_convert_time_units",
       "type": "file",
       "file": "test_maybe_convert_time_units().md",
-      "x": 220,
-      "y": 2840,
+      "x": 5060,
+      "y": 720,
       "width": 180,
       "height": 60
     },
@@ -2477,452 +1250,244 @@
       "id": "n_tests_test_predict_real_traffic_v2_py",
       "type": "file",
       "file": "test_predict_real_traffic_v2.py.md",
-      "x": 420,
-      "y": 2840,
+      "x": 4660,
+      "y": 800,
       "width": 180,
       "height": 60
     },
     {
-      "id": "g7",
+      "id": "g4",
       "type": "group",
-      "label": "RL for NIDS Literature",
-      "x": 1840,
-      "y": 2200,
+      "label": "RL Defender Training",
+      "x": 6040,
+      "y": 0,
       "width": 1100,
       "height": 920,
-      "color": "2"
+      "color": "5"
     },
     {
-      "id": "n_research2_alavizadeh2022",
+      "id": "n_src_train_rl_defender_rationale_169",
       "type": "file",
-      "file": "ALAVIZADEH2022 (Deep Q-Learning RL Approach for NIDS).md",
-      "x": 1860,
-      "y": 2280,
+      "file": "Apply optional PyTorch CPU thread limits and report effective values..md",
+      "x": 6060,
+      "y": 80,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_reward_dossier_apt_rl_reward2025",
+      "id": "n_src_train_rl_defender_rationale_198",
       "type": "file",
-      "file": "APT-RL-Reward2025 (Reward Functions for APT Detection in IIoT).md",
-      "x": 2060,
-      "y": 2280,
+      "file": "Devuelve una funci\u00f3n creadora de entornos para DummyVecEnv..md",
+      "x": 6260,
+      "y": 80,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_qrdqn_dossier_bellemare2017",
+      "id": "n_src_train_rl_defender_rationale_222",
       "type": "file",
-      "file": "BELLEMARE2017 (Distributional RL, C51).md",
-      "x": 2260,
-      "y": 2280,
+      "file": "Eval\u00faa el agente sobre test set.     Devuelve dict con m\u00e9tricas clave..md",
+      "x": 6460,
+      "y": 80,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_reward_dossier_cse_ids2022",
+      "id": "n_tests_test_train_rl_defender_config_args",
       "type": "file",
-      "file": "CSE-IDS2022 (Cost-Sensitive Deep Learning for NIDS Class Imbalance).md",
-      "x": 1860,
-      "y": 2360,
+      "file": "_args().md",
+      "x": 6060,
+      "y": 160,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_classification_dossier_classification_as_rl",
+      "id": "n_src_train_rl_defender_package_version",
       "type": "file",
-      "file": "Classification-as-RL Formulation.md",
-      "x": 2060,
-      "y": 2360,
+      "file": "_package_version().md",
+      "x": 6260,
+      "y": 160,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_reward_dossier_cost_sensitive_reward",
+      "id": "n_src_train_rl_defender_collect_environment_metadata",
       "type": "file",
-      "file": "Cost-Sensitive Asymmetric Reward Design.md",
-      "x": 2260,
-      "y": 2360,
+      "file": "collect_environment_metadata().md",
+      "x": 6460,
+      "y": 160,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_qrdqn_dossier_dabney2017",
+      "id": "n_src_train_rl_defender_configure_torch_runtime",
       "type": "file",
-      "file": "DABNEY2017 (QR-DQN, Distributional RL with Quantile Regression, AAAI).md",
-      "x": 1860,
-      "y": 2440,
+      "file": "configure_torch_runtime().md",
+      "x": 6060,
+      "y": 240,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_classification_dossier_dqlids2021",
+      "id": "n_src_train_rl_defender_evaluate_model",
       "type": "file",
-      "file": "DQLIDS2021 (Deep Q-Learning based RL for NIDS, NSL-KDD).md",
-      "x": 2060,
-      "y": 2440,
+      "file": "evaluate_model().md",
+      "x": 6260,
+      "y": 240,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_qrdqn_dossier_dqn_foundation",
+      "id": "n_src_train_rl_defender_main",
       "type": "file",
-      "file": "DQN Foundation (Deep Q-Network).md",
-      "x": 2260,
-      "y": 2440,
+      "file": "main()_6.md",
+      "x": 6460,
+      "y": 240,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_classification_dossier_dqnids2026",
+      "id": "n_src_train_rl_defender_make_env_fn",
       "type": "file",
-      "file": "DQNIDS2026 (DQN-IDS Open-Set RL NIDS, NDSS).md",
-      "x": 1860,
-      "y": 2520,
+      "file": "make_env_fn().md",
+      "x": 6060,
+      "y": 320,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_classification_dossier_dataset_as_environment",
+      "id": "n_src_train_rl_defender_parse_args",
       "type": "file",
-      "file": "Dataset-as-Environment Pattern.md",
-      "x": 2060,
-      "y": 2520,
+      "file": "parse_args()_3.md",
+      "x": 6260,
+      "y": 320,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_reward_dossier_fn_fp_asymmetry",
+      "id": "n_src_train_rl_defender_resolve_checkpoint_freq",
       "type": "file",
-      "file": "FNFP Asymmetry in IDS.md",
-      "x": 2260,
-      "y": 2520,
+      "file": "resolve_checkpoint_freq().md",
+      "x": 6460,
+      "y": 320,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_reward_dossier_lee2002",
+      "id": "n_src_train_rl_defender_resolve_total_timesteps",
       "type": "file",
-      "file": "LEE2002 (Toward Cost-Sensitive Modeling for IDS, CCS).md",
-      "x": 1860,
-      "y": 2600,
+      "file": "resolve_total_timesteps().md",
+      "x": 6060,
+      "y": 400,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_research2_lopezmartin2020",
+      "id": "n_src_train_rl_defender_resolve_training_hyperparams",
       "type": "file",
-      "file": "LopezMartin2020 (DRL for Supervised IDS, Expert Systems with Applications).md",
-      "x": 2060,
-      "y": 2600,
+      "file": "resolve_training_hyperparams().md",
+      "x": 6260,
+      "y": 400,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_research2_lopezmartin2021_rbf",
+      "id": "n_tests_test_train_rl_defender_config_test_checkpoint_frequency_defaults_and_overrides",
       "type": "file",
-      "file": "LopezMartin2021-RBF (Offline RL + RBFNN for NIDS, IEEE Access).md",
-      "x": 2260,
-      "y": 2600,
+      "file": "test_checkpoint_frequency_defaults_and_overrides().md",
+      "x": 6460,
+      "y": 400,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_qrdqn_dossier_mnih2015",
+      "id": "n_tests_test_train_rl_defender_config_test_default_profile_preserves_fast_hyperparams",
       "type": "file",
-      "file": "MNIH2015 (Human-level DQN, Nature).md",
-      "x": 1860,
-      "y": 2680,
+      "file": "test_default_profile_preserves_fast_hyperparams().md",
+      "x": 6060,
+      "y": 480,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_qrdqn_dossier_quantile_regression_loss",
+      "id": "n_tests_test_train_rl_defender_config_test_default_profile_preserves_full_hyperparams",
       "type": "file",
-      "file": "Quantile Huber Loss for Return Distribution.md",
-      "x": 2060,
-      "y": 2680,
+      "file": "test_default_profile_preserves_full_hyperparams().md",
+      "x": 6260,
+      "y": 480,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_classification_dossier_rlcc2023",
+      "id": "n_tests_test_train_rl_defender_config_test_explicit_timesteps_override_main_profile_default",
       "type": "file",
-      "file": "RLCC2023 (Reinforcement Learning Cost-Sensitive Classifier).md",
-      "x": 2260,
-      "y": 2680,
+      "file": "test_explicit_timesteps_override_main_profile_default().md",
+      "x": 6460,
+      "y": 480,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_research2_drl_ids_paper_matrix",
+      "id": "n_tests_test_train_rl_defender_config_test_main_experiment_profile_resolves_fixed_config",
       "type": "file",
-      "file": "Research2 DRL for IDS Paper Matrix.md",
-      "x": 1860,
-      "y": 2760,
+      "file": "test_main_experiment_profile_resolves_fixed_config().md",
+      "x": 6060,
+      "y": 560,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_qrdqn_dossier_risk_aware_policy",
+      "id": "n_tests_test_train_rl_defender_config_py",
       "type": "file",
-      "file": "Risk-Aware Policy via Return Distribution Quantiles.md",
-      "x": 2060,
-      "y": 2760,
+      "file": "test_train_rl_defender_config.py.md",
+      "x": 6260,
+      "y": 560,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_qrdqn_dossier_sb3contrib",
+      "id": "n_src_train_rl_defender_py",
       "type": "file",
-      "file": "SB3-Contrib QRDQN Implementation.md",
-      "x": 2260,
-      "y": 2760,
+      "file": "train_rl_defender.py.md",
+      "x": 6460,
+      "y": 560,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_state_of_art_handoff_safe_positioning",
+      "id": "n_src_train_rl_defender_rationale_1",
       "type": "file",
-      "file": "Safe Thesis Positioning (ExperimentalMethodological Contribution).md",
-      "x": 1860,
-      "y": 2840,
+      "file": "train_rl_defender.py \u2014 Entrenamiento de agente defensor RL sobre CICIDS2017..md",
+      "x": 6060,
+      "y": 640,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_state_of_art_handoff_chapter_structure",
+      "id": "n_src_train_rl_defender_write_json",
       "type": "file",
-      "file": "State of the Art Chapter Handoff.md",
-      "x": 2060,
-      "y": 2840,
+      "file": "write_json().md",
+      "x": 6260,
+      "y": 640,
       "width": 180,
       "height": 60
     },
     {
-      "id": "g8",
+      "id": "g5",
       "type": "group",
-      "label": "Graphify Auto-Update",
-      "x": 3680,
-      "y": 2200,
+      "label": "Canonical Schema Setup",
+      "x": 7220,
+      "y": 0,
       "width": 1100,
       "height": 920,
-      "color": "3"
-    },
-    {
-      "id": "n_test_graphify_auto_update_graphifyautoupdatesemanticsourcetests_test_excludes_personal_research_and_skills_markdown",
-      "type": "file",
-      "file": ".test_excludes_personal_research_and_skills_markdown().md",
-      "x": 3700,
-      "y": 2280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_test_graphify_auto_update_graphifyautoupdatesemanticsourcetests_test_marks_markdown_in_docs_and_experiments_as_semantic_sources",
-      "type": "file",
-      "file": ".test_marks_markdown_in_docs_and_experiments_as_semantic_sources().md",
-      "x": 3900,
-      "y": 2280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_test_graphify_auto_update_graphifyautoupdatesemanticsourcetests",
-      "type": "file",
-      "file": "GraphifyAutoUpdateSemanticSourceTests.md",
-      "x": 4100,
-      "y": 2280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_diff_range",
-      "type": "file",
-      "file": "_diff_range().md",
-      "x": 3700,
-      "y": 2360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update__has_structural_patch",
-      "type": "file",
-      "file": "_has_structural_patch diff analyzer.md",
-      "x": 3900,
-      "y": 2360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_has_structural_patch",
-      "type": "file",
-      "file": "_has_structural_patch().md",
-      "x": 4100,
-      "y": 2360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_is_code",
-      "type": "file",
-      "file": "_is_code().md",
-      "x": 3700,
-      "y": 2440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_is_ignored",
-      "type": "file",
-      "file": "_is_ignored().md",
-      "x": 3900,
-      "y": 2440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update__is_semantic_source",
-      "type": "file",
-      "file": "_is_semantic_source path classifier.md",
-      "x": 4100,
-      "y": 2440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_is_semantic_source",
-      "type": "file",
-      "file": "_is_semantic_source().md",
-      "x": 3700,
-      "y": 2520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_normalize",
-      "type": "file",
-      "file": "_normalize().md",
-      "x": 3900,
-      "y": 2520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_parse_name_status",
-      "type": "file",
-      "file": "_parse_name_status().md",
-      "x": 4100,
-      "y": 2520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update__rebuild_code_graph",
-      "type": "file",
-      "file": "_rebuild_code_graph caller.md",
-      "x": 3700,
-      "y": 2600,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_rebuild_code_graph",
-      "type": "file",
-      "file": "_rebuild_code_graph().md",
-      "x": 3900,
-      "y": 2600,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_rev_exists",
-      "type": "file",
-      "file": "_rev_exists().md",
-      "x": 4100,
-      "y": 2600,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_run_git",
-      "type": "file",
-      "file": "_run_git().md",
-      "x": 3700,
-      "y": 2680,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_write_needs_update",
-      "type": "file",
-      "file": "_write_needs_update().md",
-      "x": 3900,
-      "y": 2680,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_decide_and_run",
-      "type": "file",
-      "file": "decide_and_run().md",
-      "x": 4100,
-      "y": 2680,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_scripts_graphify_auto_update_py",
-      "type": "file",
-      "file": "graphify_auto_update.py.md",
-      "x": 3700,
-      "y": 2760,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_graphify_auto_update_main",
-      "type": "file",
-      "file": "main()_1.md",
-      "x": 3900,
-      "y": 2760,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_test_graphify_auto_update_tests",
-      "type": "file",
-      "file": "test_graphify_auto_update test module.md",
-      "x": 4100,
-      "y": 2760,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_tests_test_graphify_auto_update_py",
-      "type": "file",
-      "file": "test_graphify_auto_update.py.md",
-      "x": 3700,
-      "y": 2840,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "g9",
-      "type": "group",
-      "label": "Deprecated Inference v1",
-      "x": 5080,
-      "y": 2200,
-      "width": 1100,
-      "height": 920,
-      "color": "4"
+      "color": "6"
     },
     {
       "id": "n_src_canonical_schema_canonicalresult",
       "type": "file",
       "file": "CanonicalResult.md",
-      "x": 5100,
-      "y": 2280,
+      "x": 7240,
+      "y": 80,
       "width": 180,
       "height": 60
     },
@@ -2930,8 +1495,8 @@
       "id": "n_src_load_nsl_kdd_rationale_48",
       "type": "file",
       "file": "Carga NSL-KDD localmente, lo preprocesa y devuelve          X_train, y_train,.md",
-      "x": 5300,
-      "y": 2280,
+      "x": 7440,
+      "y": 80,
       "width": 180,
       "height": 60
     },
@@ -2939,8 +1504,8 @@
       "id": "n_src_canonical_schema_rationale_352",
       "type": "file",
       "file": "Devuelve la lista completa de nombres features + m\u00e1scara de missingness..md",
-      "x": 5500,
-      "y": 2280,
+      "x": 7640,
+      "y": 80,
       "width": 180,
       "height": 60
     },
@@ -2948,8 +1513,8 @@
       "id": "n_src_canonical_schema_rationale_347",
       "type": "file",
       "file": "Devuelve la lista de nombres de features can\u00f3nicas (sin m\u00e1scara)..md",
-      "x": 5100,
-      "y": 2360,
+      "x": 7240,
+      "y": 160,
       "width": 180,
       "height": 60
     },
@@ -2957,8 +1522,8 @@
       "id": "n_src_canonical_schema_rationale_282",
       "type": "file",
       "file": "Mapea un DataFrame al esquema can\u00f3nico de features.      Parameters     -----.md",
-      "x": 5300,
-      "y": 2360,
+      "x": 7440,
+      "y": 160,
       "width": 180,
       "height": 60
     },
@@ -2966,8 +1531,8 @@
       "id": "n_src_canonical_schema_rationale_268",
       "type": "file",
       "file": "Resultado de mapear un DataFrame al esquema can\u00f3nico..md",
-      "x": 5500,
-      "y": 2360,
+      "x": 7640,
+      "y": 160,
       "width": 180,
       "height": 60
     },
@@ -2975,8 +1540,8 @@
       "id": "n_src_load_nsl_kdd_ensure_dataset_local_dir",
       "type": "file",
       "file": "_ensure_dataset_local_dir().md",
-      "x": 5100,
-      "y": 2440,
+      "x": 7240,
+      "y": 240,
       "width": 180,
       "height": 60
     },
@@ -2984,8 +1549,8 @@
       "id": "n_scripts_deprecated_predict_real_traffic_batched_predict",
       "type": "file",
       "file": "batched_predict().md",
-      "x": 5300,
-      "y": 2440,
+      "x": 7440,
+      "y": 240,
       "width": 180,
       "height": 60
     },
@@ -2993,8 +1558,8 @@
       "id": "n_src_canonical_schema_py",
       "type": "file",
       "file": "canonical_schema.py.md",
-      "x": 5500,
-      "y": 2440,
+      "x": 7640,
+      "y": 240,
       "width": 180,
       "height": 60
     },
@@ -3002,8 +1567,8 @@
       "id": "n_src_canonical_schema_rationale_1",
       "type": "file",
       "file": "canonical_schema.py \u2014 Definici\u00f3n formal del esquema can\u00f3nico de features (FEATUR.md",
-      "x": 5100,
-      "y": 2520,
+      "x": 7240,
+      "y": 320,
       "width": 180,
       "height": 60
     },
@@ -3011,8 +1576,8 @@
       "id": "n_scripts_deprecated_predict_real_traffic_py",
       "type": "file",
       "file": "deprecated_predict_real_traffic.py.md",
-      "x": 5300,
-      "y": 2520,
+      "x": 7440,
+      "y": 320,
       "width": 180,
       "height": 60
     },
@@ -3020,8 +1585,8 @@
       "id": "n_src_canonical_schema_get_canonical_feature_names",
       "type": "file",
       "file": "get_canonical_feature_names().md",
-      "x": 5500,
-      "y": 2520,
+      "x": 7640,
+      "y": 320,
       "width": 180,
       "height": 60
     },
@@ -3029,8 +1594,8 @@
       "id": "n_src_canonical_schema_get_observation_feature_names",
       "type": "file",
       "file": "get_observation_feature_names().md",
-      "x": 5100,
-      "y": 2600,
+      "x": 7240,
+      "y": 400,
       "width": 180,
       "height": 60
     },
@@ -3038,8 +1603,8 @@
       "id": "n_scripts_deprecated_predict_real_traffic_load_model",
       "type": "file",
       "file": "load_model().md",
-      "x": 5300,
-      "y": 2600,
+      "x": 7440,
+      "y": 400,
       "width": 180,
       "height": 60
     },
@@ -3047,8 +1612,8 @@
       "id": "n_src_load_nsl_kdd_py",
       "type": "file",
       "file": "load_nsl_kdd.py.md",
-      "x": 5500,
-      "y": 2600,
+      "x": 7640,
+      "y": 400,
       "width": 180,
       "height": 60
     },
@@ -3056,8 +1621,8 @@
       "id": "n_src_load_nsl_kdd_load_nsl_kdd_binary",
       "type": "file",
       "file": "load_nsl_kdd_binary().md",
-      "x": 5100,
-      "y": 2680,
+      "x": 7240,
+      "y": 480,
       "width": 180,
       "height": 60
     },
@@ -3065,8 +1630,8 @@
       "id": "n_scripts_deprecated_predict_real_traffic_main",
       "type": "file",
       "file": "main().md",
-      "x": 5300,
-      "y": 2680,
+      "x": 7440,
+      "y": 480,
       "width": 180,
       "height": 60
     },
@@ -3074,8 +1639,8 @@
       "id": "n_src_canonical_schema_map_to_canonical",
       "type": "file",
       "file": "map_to_canonical().md",
-      "x": 5500,
-      "y": 2680,
+      "x": 7640,
+      "y": 480,
       "width": 180,
       "height": 60
     },
@@ -3083,8 +1648,8 @@
       "id": "n_scripts_deprecated_predict_real_traffic_maybe_convert_time_units",
       "type": "file",
       "file": "maybe_convert_time_units().md",
-      "x": 5100,
-      "y": 2760,
+      "x": 7240,
+      "y": 560,
       "width": 180,
       "height": 60
     },
@@ -3092,8 +1657,8 @@
       "id": "n_tests_test_canonical_schema_test_canonical_features_length",
       "type": "file",
       "file": "test_canonical_features_length().md",
-      "x": 5300,
-      "y": 2760,
+      "x": 7440,
+      "y": 560,
       "width": 180,
       "height": 60
     },
@@ -3101,8 +1666,8 @@
       "id": "n_tests_test_canonical_schema_py",
       "type": "file",
       "file": "test_canonical_schema.py.md",
-      "x": 5500,
-      "y": 2760,
+      "x": 7640,
+      "y": 560,
       "width": 180,
       "height": 60
     },
@@ -3110,36 +1675,353 @@
       "id": "n_tests_test_canonical_schema_test_map_to_canonical_mask_logic",
       "type": "file",
       "file": "test_map_to_canonical_mask_logic().md",
-      "x": 5100,
-      "y": 2840,
+      "x": 7240,
+      "y": 640,
       "width": 180,
       "height": 60
     },
     {
-      "id": "g10",
+      "id": "g6",
       "type": "group",
-      "label": "Canonical Feature Schema",
-      "x": 6480,
-      "y": 2200,
+      "label": "Graphify Auto Update",
+      "x": 0,
+      "y": 1500,
       "width": 1100,
-      "height": 920,
-      "color": "5"
+      "height": 720,
+      "color": "1"
     },
     {
-      "id": "n_canonical_schema_CICIDS2017_TO_CANON",
+      "id": "n_graphify_auto_update_diff_range",
       "type": "file",
-      "file": "CICIDS2017_TO_CANON mapping dict.md",
-      "x": 6500,
-      "y": 2280,
+      "file": "_diff_range().md",
+      "x": 20,
+      "y": 1580,
       "width": 180,
       "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update__has_structural_patch",
+      "type": "file",
+      "file": "_has_structural_patch diff analyzer.md",
+      "x": 220,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_has_structural_patch",
+      "type": "file",
+      "file": "_has_structural_patch().md",
+      "x": 420,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_is_code",
+      "type": "file",
+      "file": "_is_code().md",
+      "x": 20,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_is_ignored",
+      "type": "file",
+      "file": "_is_ignored().md",
+      "x": 220,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update__is_semantic_source",
+      "type": "file",
+      "file": "_is_semantic_source path classifier.md",
+      "x": 420,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_is_semantic_source",
+      "type": "file",
+      "file": "_is_semantic_source().md",
+      "x": 20,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_normalize",
+      "type": "file",
+      "file": "_normalize().md",
+      "x": 220,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_parse_name_status",
+      "type": "file",
+      "file": "_parse_name_status().md",
+      "x": 420,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update__rebuild_code_graph",
+      "type": "file",
+      "file": "_rebuild_code_graph caller.md",
+      "x": 20,
+      "y": 1820,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_rebuild_code_graph",
+      "type": "file",
+      "file": "_rebuild_code_graph().md",
+      "x": 220,
+      "y": 1820,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_rev_exists",
+      "type": "file",
+      "file": "_rev_exists().md",
+      "x": 420,
+      "y": 1820,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_run_git",
+      "type": "file",
+      "file": "_run_git().md",
+      "x": 20,
+      "y": 1900,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_write_needs_update",
+      "type": "file",
+      "file": "_write_needs_update().md",
+      "x": 220,
+      "y": 1900,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_decide_and_run",
+      "type": "file",
+      "file": "decide_and_run().md",
+      "x": 420,
+      "y": 1900,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_graphify_auto_update_py",
+      "type": "file",
+      "file": "graphify_auto_update.py.md",
+      "x": 20,
+      "y": 1980,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_graphify_auto_update_main",
+      "type": "file",
+      "file": "main()_2.md",
+      "x": 220,
+      "y": 1980,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g7",
+      "type": "group",
+      "label": "RL Environment Config",
+      "x": 1620,
+      "y": 1500,
+      "width": 1100,
+      "height": 720,
+      "color": "2"
+    },
+    {
+      "id": "n_rl_defender_env_rldatasetdefenderenv_init",
+      "type": "file",
+      "file": ".__init__().md",
+      "x": 1640,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_rldatasetdefenderenv_compute_reward",
+      "type": "file",
+      "file": "._compute_reward().md",
+      "x": 1840,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_rldatasetdefenderenv_get_observation",
+      "type": "file",
+      "file": "._get_observation().md",
+      "x": 2040,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_rldatasetdefenderenv_close",
+      "type": "file",
+      "file": ".close().md",
+      "x": 1640,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_rldatasetdefenderenv_render",
+      "type": "file",
+      "file": ".render().md",
+      "x": 1840,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_rldatasetdefenderenv_reset",
+      "type": "file",
+      "file": ".reset().md",
+      "x": 2040,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_rldatasetdefenderenv_step",
+      "type": "file",
+      "file": ".step().md",
+      "x": 1640,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_rationale_108",
+      "type": "file",
+      "file": "Calcula la recompensa en funci\u00f3n de la etiqueta real, la acci\u00f3n         y la co.md",
+      "x": 1840,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_rationale_7",
+      "type": "file",
+      "file": "Entorno RL para un defensor que decide PERMITBLOCK sobre muestras etiquetadas..md",
+      "x": 2040,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_rldatasetdefenderenv",
+      "type": "file",
+      "file": "RLDatasetDefenderEnv.md",
+      "x": 1640,
+      "y": 1820,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_src_rl_defender_env_py",
+      "type": "file",
+      "file": "rl_defender_env.py.md",
+      "x": 1840,
+      "y": 1820,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_rl_defender_env_test_env_initialization",
+      "type": "file",
+      "file": "test_env_initialization().md",
+      "x": 2040,
+      "y": 1820,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_rl_defender_env_test_env_step_and_reset",
+      "type": "file",
+      "file": "test_env_step_and_reset().md",
+      "x": 1640,
+      "y": 1900,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_reward_config_py",
+      "type": "file",
+      "file": "test_reward_config.py.md",
+      "x": 1840,
+      "y": 1900,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_reward_config_test_reward_logic_tp_fp_tn_fn",
+      "type": "file",
+      "file": "test_reward_logic_tp_fp_tn_fn().md",
+      "x": 2040,
+      "y": 1900,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_rl_defender_env_py",
+      "type": "file",
+      "file": "test_rl_defender_env.py.md",
+      "x": 1640,
+      "y": 1980,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tests_test_reward_config_test_unknown_label_reward",
+      "type": "file",
+      "file": "test_unknown_label_reward().md",
+      "x": 1840,
+      "y": 1980,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g8",
+      "type": "group",
+      "label": "Data Load Tools",
+      "x": 3240,
+      "y": 1500,
+      "width": 1100,
+      "height": 720,
+      "color": "3"
     },
     {
       "id": "n_canonical_schema_CanonicalResult",
       "type": "file",
       "file": "CanonicalResult dataclass.md",
-      "x": 6700,
-      "y": 2280,
+      "x": 3260,
+      "y": 1580,
       "width": 180,
       "height": 60
     },
@@ -3147,26 +2029,8 @@
       "id": "n_canonical_schema_FEATURES_CANON",
       "type": "file",
       "file": "FEATURES_CANON (76 canonical network flow features).md",
-      "x": 6900,
-      "y": 2280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_predict_v1_FLOWMETER_PY_TO_CANON",
-      "type": "file",
-      "file": "FLOWMETER_PY_TO_CANON mapping in v1.md",
-      "x": 6500,
-      "y": 2360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_predict_v2_FLOWMETER_PY_TO_CANON",
-      "type": "file",
-      "file": "FLOWMETER_PY_TO_CANON mapping in v2.md",
-      "x": 6700,
-      "y": 2360,
+      "x": 3460,
+      "y": 1580,
       "width": 180,
       "height": 60
     },
@@ -3174,8 +2038,8 @@
       "id": "n_canonical_schema_missingness_mask",
       "type": "file",
       "file": "Missingness Mask Design (observation = features + mask).md",
-      "x": 6900,
-      "y": 2360,
+      "x": 3660,
+      "y": 1580,
       "width": 180,
       "height": 60
     },
@@ -3183,17 +2047,8 @@
       "id": "n_canonical_schema_NSL_KDD_TO_CANON",
       "type": "file",
       "file": "NSL_KDD_TO_CANON mapping dict (partial).md",
-      "x": 6500,
-      "y": 2440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_load_cicids2017__prepare_cicids_features",
-      "type": "file",
-      "file": "_prepare_cicids_features internal function.md",
-      "x": 6700,
-      "y": 2440,
+      "x": 3260,
+      "y": 1660,
       "width": 180,
       "height": 60
     },
@@ -3201,8 +2056,8 @@
       "id": "n_predict_v1_batched_predict",
       "type": "file",
       "file": "batched_predict in v1.md",
-      "x": 6900,
-      "y": 2440,
+      "x": 3460,
+      "y": 1660,
       "width": 180,
       "height": 60
     },
@@ -3210,8 +2065,8 @@
       "id": "n_predict_v2_batched_predict",
       "type": "file",
       "file": "batched_predict in v2.md",
-      "x": 6500,
-      "y": 2520,
+      "x": 3660,
+      "y": 1660,
       "width": 180,
       "height": 60
     },
@@ -3219,8 +2074,8 @@
       "id": "n_predict_v2_compute_diagnostics",
       "type": "file",
       "file": "compute_diagnostics z-score analysis.md",
-      "x": 6700,
-      "y": 2520,
+      "x": 3260,
+      "y": 1740,
       "width": 180,
       "height": 60
     },
@@ -3228,8 +2083,8 @@
       "id": "n_predict_v2_compute_truth_metrics",
       "type": "file",
       "file": "compute_truth_metrics optional ground-truth eval.md",
-      "x": 6900,
-      "y": 2520,
+      "x": 3460,
+      "y": 1740,
       "width": 180,
       "height": 60
     },
@@ -3237,8 +2092,8 @@
       "id": "n_predict_v1_main",
       "type": "file",
       "file": "deprecated_predict_real_traffic main pipeline.md",
-      "x": 6500,
-      "y": 2600,
+      "x": 3660,
+      "y": 1740,
       "width": 180,
       "height": 60
     },
@@ -3246,8 +2101,8 @@
       "id": "n_predict_v1_load_model",
       "type": "file",
       "file": "load_model (QRDQNDQN fallback) in v1.md",
-      "x": 6700,
-      "y": 2600,
+      "x": 3260,
+      "y": 1820,
       "width": 180,
       "height": 60
     },
@@ -3255,8 +2110,8 @@
       "id": "n_predict_v2_load_model",
       "type": "file",
       "file": "load_model (QRDQNDQN fallback) in v2.md",
-      "x": 6900,
-      "y": 2600,
+      "x": 3460,
+      "y": 1820,
       "width": 180,
       "height": 60
     },
@@ -3264,8 +2119,8 @@
       "id": "n_load_nsl_kdd_load_nsl_kdd_binary",
       "type": "file",
       "file": "load_nsl_kdd_binary function.md",
-      "x": 6500,
-      "y": 2680,
+      "x": 3660,
+      "y": 1820,
       "width": 180,
       "height": 60
     },
@@ -3273,8 +2128,8 @@
       "id": "n_canonical_schema_map_to_canonical",
       "type": "file",
       "file": "map_to_canonical function.md",
-      "x": 6700,
-      "y": 2680,
+      "x": 3260,
+      "y": 1900,
       "width": 180,
       "height": 60
     },
@@ -3282,8 +2137,8 @@
       "id": "n_predict_v2_maybe_convert_time_units",
       "type": "file",
       "file": "maybe_convert_time_units seconds-to-microseconds.md",
-      "x": 6900,
-      "y": 2680,
+      "x": 3460,
+      "y": 1900,
       "width": 180,
       "height": 60
     },
@@ -3291,8 +2146,8 @@
       "id": "n_predict_v2_main",
       "type": "file",
       "file": "predict_real_traffic_v2 main pipeline.md",
-      "x": 6500,
-      "y": 2760,
+      "x": 3660,
+      "y": 1900,
       "width": 180,
       "height": 60
     },
@@ -3300,17 +2155,8 @@
       "id": "n_test_canonical_schema_tests",
       "type": "file",
       "file": "test_canonical_schema test module.md",
-      "x": 6700,
-      "y": 2760,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_test_load_cicids2017_tests",
-      "type": "file",
-      "file": "test_load_cicids2017 test module.md",
-      "x": 6900,
-      "y": 2760,
+      "x": 3260,
+      "y": 1980,
       "width": 180,
       "height": 60
     },
@@ -3318,172 +2164,27 @@
       "id": "n_test_predict_real_traffic_v2_tests",
       "type": "file",
       "file": "test_predict_real_traffic_v2 test module.md",
-      "x": 6500,
-      "y": 2840,
+      "x": 3460,
+      "y": 1980,
       "width": 180,
       "height": 60
     },
     {
-      "id": "g11",
+      "id": "g9",
       "type": "group",
-      "label": "Validation Checks Module",
-      "x": 7880,
-      "y": 2200,
+      "label": "Leave One CSV Out",
+      "x": 4640,
+      "y": 1500,
       "width": 880,
       "height": 620,
-      "color": "6"
-    },
-    {
-      "id": "n_src_validate_checks_progresscallback_init",
-      "type": "file",
-      "file": ".__init__()_1.md",
-      "x": 7900,
-      "y": 2280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_progresscallback_on_step",
-      "type": "file",
-      "file": "._on_step().md",
-      "x": 8100,
-      "y": 2280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_rationale_150",
-      "type": "file",
-      "file": "Baraja y_train y entrena brevemente. Si el modelo a\u00fan obtiene accuracy     alta.md",
-      "x": 8300,
-      "y": 2280,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_basecallback",
-      "type": "file",
-      "file": "BaseCallback.md",
-      "x": 7900,
-      "y": 2360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_rationale_68",
-      "type": "file",
-      "file": "Callback para mostrar progreso cada log_freq timesteps..md",
-      "x": 8100,
-      "y": 2360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_rationale_280",
-      "type": "file",
-      "file": "Entrena en unos CSVs de CICIDS2017 y testea en otros.     Es el split m\u00e1s reali.md",
-      "x": 8300,
-      "y": 2360,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_rationale_88",
-      "type": "file",
-      "file": "Evaluaci\u00f3n directa model.predict(X_testi) vs y_testi.     No pasa por el e.md",
-      "x": 7900,
-      "y": 2440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_progresscallback",
-      "type": "file",
-      "file": "ProgressCallback.md",
-      "x": 8100,
-      "y": 2440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_check_a_direct_eval",
-      "type": "file",
-      "file": "check_a_direct_eval().md",
-      "x": 8300,
-      "y": 2440,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_check_b_shuffled_labels",
-      "type": "file",
-      "file": "check_b_shuffled_labels().md",
-      "x": 7900,
-      "y": 2520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_check_c_csv_split",
-      "type": "file",
-      "file": "check_c_csv_split().md",
-      "x": 8100,
-      "y": 2520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_main",
-      "type": "file",
-      "file": "main()_6.md",
-      "x": 8300,
-      "y": 2520,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_parse_args",
-      "type": "file",
-      "file": "parse_args()_3.md",
-      "x": 7900,
-      "y": 2600,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_py",
-      "type": "file",
-      "file": "validate_checks.py.md",
-      "x": 8100,
-      "y": 2600,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "n_src_validate_checks_rationale_1",
-      "type": "file",
-      "file": "validate_checks.py \u2014 Validaci\u00f3n de resultados experimentales del agente RL.  I.md",
-      "x": 8300,
-      "y": 2600,
-      "width": 180,
-      "height": 60
-    },
-    {
-      "id": "g12",
-      "type": "group",
-      "label": "Leave-One-Out Validation",
-      "x": 0,
-      "y": 3200,
-      "width": 880,
-      "height": 620,
-      "color": "1"
+      "color": "4"
     },
     {
       "id": "n_src_validate_leave_one_csv_out_rationale_80",
       "type": "file",
       "file": "Devuelve una funci\u00f3n creadora de entornos para DummyVecEnv._1.md",
-      "x": 20,
-      "y": 3280,
+      "x": 4660,
+      "y": 1580,
       "width": 180,
       "height": 60
     },
@@ -3491,8 +2192,8 @@
       "id": "n_src_validate_leave_one_csv_out_rationale_156",
       "type": "file",
       "file": "Eval\u00faa el modelo sobre `X_test` frente a `y_test` en inferencia por lotes..md",
-      "x": 220,
-      "y": 3280,
+      "x": 4860,
+      "y": 1580,
       "width": 180,
       "height": 60
     },
@@ -3500,8 +2201,8 @@
       "id": "n_src_validate_leave_one_csv_out_build_aggregate_results",
       "type": "file",
       "file": "_build_aggregate_results().md",
-      "x": 420,
-      "y": 3280,
+      "x": 5060,
+      "y": 1580,
       "width": 180,
       "height": 60
     },
@@ -3509,8 +2210,8 @@
       "id": "n_src_validate_leave_one_csv_out_compute_reward_total",
       "type": "file",
       "file": "_compute_reward_total().md",
-      "x": 20,
-      "y": 3360,
+      "x": 4660,
+      "y": 1660,
       "width": 180,
       "height": 60
     },
@@ -3518,8 +2219,8 @@
       "id": "n_src_validate_leave_one_csv_out_metrics_from_confusion",
       "type": "file",
       "file": "_metrics_from_confusion().md",
-      "x": 220,
-      "y": 3360,
+      "x": 4860,
+      "y": 1660,
       "width": 180,
       "height": 60
     },
@@ -3527,8 +2228,8 @@
       "id": "n_src_validate_leave_one_csv_out_resolve_holdout_csvs",
       "type": "file",
       "file": "_resolve_holdout_csvs().md",
-      "x": 420,
-      "y": 3360,
+      "x": 5060,
+      "y": 1660,
       "width": 180,
       "height": 60
     },
@@ -3536,8 +2237,8 @@
       "id": "n_src_validate_leave_one_csv_out_safe_div",
       "type": "file",
       "file": "_safe_div().md",
-      "x": 20,
-      "y": 3440,
+      "x": 4660,
+      "y": 1740,
       "width": 180,
       "height": 60
     },
@@ -3545,8 +2246,8 @@
       "id": "n_src_validate_leave_one_csv_out_summarize_metric",
       "type": "file",
       "file": "_summarize_metric().md",
-      "x": 220,
-      "y": 3440,
+      "x": 4860,
+      "y": 1740,
       "width": 180,
       "height": 60
     },
@@ -3554,17 +2255,17 @@
       "id": "n_src_validate_leave_one_csv_out_evaluate_model_direct",
       "type": "file",
       "file": "evaluate_model_direct().md",
-      "x": 420,
-      "y": 3440,
+      "x": 5060,
+      "y": 1740,
       "width": 180,
       "height": 60
     },
     {
       "id": "n_src_validate_leave_one_csv_out_main",
       "type": "file",
-      "file": "main()_7.md",
-      "x": 20,
-      "y": 3520,
+      "file": "main()_9.md",
+      "x": 4660,
+      "y": 1820,
       "width": 180,
       "height": 60
     },
@@ -3572,17 +2273,17 @@
       "id": "n_src_validate_leave_one_csv_out_make_env_fn",
       "type": "file",
       "file": "make_env_fn()_1.md",
-      "x": 220,
-      "y": 3520,
+      "x": 4860,
+      "y": 1820,
       "width": 180,
       "height": 60
     },
     {
       "id": "n_src_validate_leave_one_csv_out_parse_args",
       "type": "file",
-      "file": "parse_args()_4.md",
-      "x": 420,
-      "y": 3520,
+      "file": "parse_args()_6.md",
+      "x": 5060,
+      "y": 1820,
       "width": 180,
       "height": 60
     },
@@ -3590,8 +2291,8 @@
       "id": "n_src_validate_leave_one_csv_out_py",
       "type": "file",
       "file": "validate_leave_one_csv_out.py.md",
-      "x": 20,
-      "y": 3600,
+      "x": 4660,
+      "y": 1900,
       "width": 180,
       "height": 60
     },
@@ -3599,27 +2300,218 @@
       "id": "n_src_validate_leave_one_csv_out_rationale_1",
       "type": "file",
       "file": "validate_leave_one_csv_out.py \u2014 Validaci\u00f3n leave-one-exact-CSV-out para CICIDS20.md",
-      "x": 220,
-      "y": 3600,
+      "x": 4860,
+      "y": 1900,
       "width": 180,
       "height": 60
     },
     {
-      "id": "g13",
+      "id": "g10",
       "type": "group",
-      "label": "Hyperparameter Tuning",
-      "x": 1840,
-      "y": 3200,
+      "label": "Hyperparams & Rewards",
+      "x": 6040,
+      "y": 1500,
+      "width": 880,
+      "height": 520,
+      "color": "5"
+    },
+    {
+      "id": "n_tune_hparams_objective",
+      "type": "file",
+      "file": "Optuna objective function for QRDQN tuning.md",
+      "x": 6060,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_RLDatasetDefenderEnv",
+      "type": "file",
+      "file": "RLDatasetDefenderEnv gymnasium environment.md",
+      "x": 6260,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_reward_config",
+      "type": "file",
+      "file": "Reward Config (tpfpfnomission).md",
+      "x": 6460,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_reward_config_schema",
+      "type": "file",
+      "file": "Reward Config Schema (tpfpfnomission).md",
+      "x": 6060,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_rl_defender_env_compute_reward",
+      "type": "file",
+      "file": "_compute_reward.md",
+      "x": 6260,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tune_hparams__evaluate_f1",
+      "type": "file",
+      "file": "_evaluate_f1 function in tune_hparams.md",
+      "x": 6460,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_test_rl_defender_env_test_env_initialization",
+      "type": "file",
+      "file": "test_env_initialization.md",
+      "x": 6060,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_test_rl_defender_env_test_env_step_and_reset",
+      "type": "file",
+      "file": "test_env_step_and_reset.md",
+      "x": 6260,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_test_reward_config_test_reward_logic_tp_fp_tn_fn",
+      "type": "file",
+      "file": "test_reward_logic_tp_fp_tn_fn.md",
+      "x": 6460,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_test_reward_config_test_unknown_label_reward",
+      "type": "file",
+      "file": "test_unknown_label_reward.md",
+      "x": 6060,
+      "y": 1820,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_tune_hparams_main",
+      "type": "file",
+      "file": "tune_hparams main Optuna study.md",
+      "x": 6260,
+      "y": 1820,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g11",
+      "type": "group",
+      "label": "Tensorboard Exports",
+      "x": 7220,
+      "y": 1500,
       "width": 660,
       "height": 420,
-      "color": "2"
+      "color": "6"
+    },
+    {
+      "id": "n_scripts_export_tensorboard_scalars_find_event_dirs",
+      "type": "file",
+      "file": "_find_event_dirs().md",
+      "x": 7240,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_export_tensorboard_scalars_plot_scalar",
+      "type": "file",
+      "file": "_plot_scalar().md",
+      "x": 7440,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_export_tensorboard_scalars_read_scalars",
+      "type": "file",
+      "file": "_read_scalars().md",
+      "x": 7640,
+      "y": 1580,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_export_tensorboard_scalars_safe_filename",
+      "type": "file",
+      "file": "_safe_filename().md",
+      "x": 7240,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_export_tensorboard_scalars_update_artifact_manifest",
+      "type": "file",
+      "file": "_update_artifact_manifest().md",
+      "x": 7440,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_export_tensorboard_scalars_py",
+      "type": "file",
+      "file": "export_tensorboard_scalars.py.md",
+      "x": 7640,
+      "y": 1660,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_export_tensorboard_scalars_main",
+      "type": "file",
+      "file": "main()_1.md",
+      "x": 7240,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_scripts_export_tensorboard_scalars_parse_args",
+      "type": "file",
+      "file": "parse_args().md",
+      "x": 7440,
+      "y": 1740,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g12",
+      "type": "group",
+      "label": "Hyperparam Tuning",
+      "x": 0,
+      "y": 2300,
+      "width": 660,
+      "height": 420,
+      "color": "1"
     },
     {
       "id": "n_src_tune_hparams_rationale_40",
       "type": "file",
       "file": "Evaluate model and return F1 score for attack class..md",
-      "x": 1860,
-      "y": 3280,
+      "x": 20,
+      "y": 2380,
       "width": 180,
       "height": 60
     },
@@ -3627,8 +2519,8 @@
       "id": "n_src_tune_hparams_rationale_69",
       "type": "file",
       "file": "Optuna objective train QRDQN with suggested hparams, return F1 attack..md",
-      "x": 2060,
-      "y": 3280,
+      "x": 220,
+      "y": 2380,
       "width": 180,
       "height": 60
     },
@@ -3636,17 +2528,17 @@
       "id": "n_src_tune_hparams_evaluate_f1",
       "type": "file",
       "file": "_evaluate_f1().md",
-      "x": 2260,
-      "y": 3280,
+      "x": 420,
+      "y": 2380,
       "width": 180,
       "height": 60
     },
     {
       "id": "n_src_tune_hparams_main",
       "type": "file",
-      "file": "main()_5.md",
-      "x": 1860,
-      "y": 3360,
+      "file": "main()_7.md",
+      "x": 20,
+      "y": 2460,
       "width": 180,
       "height": 60
     },
@@ -3654,17 +2546,17 @@
       "id": "n_src_tune_hparams_objective",
       "type": "file",
       "file": "objective().md",
-      "x": 2060,
-      "y": 3360,
+      "x": 220,
+      "y": 2460,
       "width": 180,
       "height": 60
     },
     {
       "id": "n_src_tune_hparams_parse_args",
       "type": "file",
-      "file": "parse_args()_2.md",
-      "x": 2260,
-      "y": 3360,
+      "file": "parse_args()_4.md",
+      "x": 420,
+      "y": 2460,
       "width": 180,
       "height": 60
     },
@@ -3672,8 +2564,8 @@
       "id": "n_src_tune_hparams_py",
       "type": "file",
       "file": "tune_hparams.py.md",
-      "x": 1860,
-      "y": 3440,
+      "x": 20,
+      "y": 2540,
       "width": 180,
       "height": 60
     },
@@ -3681,197 +2573,333 @@
       "id": "n_src_tune_hparams_rationale_1",
       "type": "file",
       "file": "tune_hparams.py -- Optimizacion de hiperparametros con Optuna para QRDQN sobre C.md",
-      "x": 2060,
-      "y": 3440,
+      "x": 220,
+      "y": 2540,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "g13",
+      "type": "group",
+      "label": "State of Art Research",
+      "x": 1620,
+      "y": 2300,
+      "width": 660,
+      "height": 400,
+      "color": "2"
+    },
+    {
+      "id": "n_C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/RESEARCH_INDEX.md",
+      "type": "file",
+      "file": "CUsersRiveroDesktopTFG_CYBER_AIResearchInitial Research for Report - Chapter State Of The ArtRESEARCH_INDEX.md",
+      "x": 1640,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/Research1.md",
+      "type": "file",
+      "file": "CUsersRiveroDesktopTFG_CYBER_AIResearchInitial Research for Report - Chapter State Of The ArtResearch1.md",
+      "x": 1840,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/Research2.md",
+      "type": "file",
+      "file": "CUsersRiveroDesktopTFG_CYBER_AIResearchInitial Research for Report - Chapter State Of The ArtResearch2.md",
+      "x": 2040,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/Research3.md",
+      "type": "file",
+      "file": "CUsersRiveroDesktopTFG_CYBER_AIResearchInitial Research for Report - Chapter State Of The ArtResearch3.md",
+      "x": 1640,
+      "y": 2460,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-source-map.md",
+      "type": "file",
+      "file": "CUsersRiveroDesktopTFG_CYBER_AIResearchInitial Research for Report - Chapter State Of The Artreport-source-map.md",
+      "x": 1840,
+      "y": 2460,
       "width": 180,
       "height": 60
     },
     {
       "id": "g14",
       "type": "group",
-      "label": "NSL-KDD Dataset",
-      "x": 3680,
-      "y": 3200,
+      "label": "Experimental Boards",
+      "x": 3240,
+      "y": 2300,
       "width": 600,
       "height": 400,
       "color": "3"
     },
     {
-      "id": "n_nids_datasets_kddcup99",
+      "id": "n_experimental_board_branch_a_data_efficiency",
       "type": "file",
-      "file": "KDDCup99 Dataset.md",
-      "x": 3700,
-      "y": 3280,
+      "file": "Branch A Data Efficiency (100k-2M training budgets).md",
+      "x": 3260,
+      "y": 2380,
       "width": 180,
       "height": 60
     },
     {
-      "id": "n_nids_datasets_nslkdd",
+      "id": "n_experimental_board_branch_e_strict_splits",
       "type": "file",
-      "file": "NSL-KDD Dataset.md",
-      "x": 3900,
-      "y": 3280,
+      "file": "Branch E Strict Split Evaluation Ladder.md",
+      "x": 3460,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_experimental_board_big_picture_pipeline",
+      "type": "file",
+      "file": "Experimental Design Board (Big Picture Pipeline).md",
+      "x": 3660,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_experimental_board_152obs_gymnasium",
+      "type": "file",
+      "file": "Gymnasium Environment 152-Dim Observation (76 features + 76 mask).md",
+      "x": 3260,
+      "y": 2460,
       "width": 180,
       "height": 60
     },
     {
       "id": "g15",
       "type": "group",
-      "label": "Project Invariants",
-      "x": 5080,
-      "y": 3200,
+      "label": "QRDQN Methods",
+      "x": 4640,
+      "y": 2300,
       "width": 600,
       "height": 400,
       "color": "4"
     },
     {
-      "id": "n_agents_md_project_invariants",
+      "id": "n_C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-qrdqn-deep-distributional-rl.md",
       "type": "file",
-      "file": "Project Invariants.md",
-      "x": 5100,
-      "y": 3280,
+      "file": "CUsersRiveroDesktopTFG_CYBER_AIResearchInitial Research for Report - Chapter State Of The Artreport-qrdqn-deep-distributional-rl.md",
+      "x": 4660,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-reward-and-cost-sensitive-design-dossier.md",
+      "type": "file",
+      "file": "CUsersRiveroDesktopTFG_CYBER_AIResearchInitial Research for Report - Chapter State Of The Artreport-reward-and-cost-sensitive-design-dossier.md",
+      "x": 4860,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_Cost-Sensitive Reward Function",
+      "type": "file",
+      "file": "Cost-Sensitive Reward Function.md",
+      "x": 5060,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_QRDQN",
+      "type": "file",
+      "file": "QRDQN.md",
+      "x": 4660,
+      "y": 2460,
       "width": 180,
       "height": 60
     },
     {
       "id": "g16",
       "type": "group",
-      "label": "CSV-Out Validation Strategy",
-      "x": 6480,
-      "y": 3200,
+      "label": "Features Map",
+      "x": 6040,
+      "y": 2300,
       "width": 600,
       "height": 400,
       "color": "5"
     },
     {
-      "id": "n_readme_leave_one_csv_out",
+      "id": "n_canonical_schema_CICIDS2017_TO_CANON",
       "type": "file",
-      "file": "Leave-One-Exact-CSV-Out Validation.md",
-      "x": 6500,
-      "y": 3280,
+      "file": "CICIDS2017_TO_CANON mapping dict.md",
+      "x": 6060,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_predict_v1_FLOWMETER_PY_TO_CANON",
+      "type": "file",
+      "file": "FLOWMETER_PY_TO_CANON mapping in v1.md",
+      "x": 6260,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_predict_v2_FLOWMETER_PY_TO_CANON",
+      "type": "file",
+      "file": "FLOWMETER_PY_TO_CANON mapping in v2.md",
+      "x": 6460,
+      "y": 2380,
       "width": 180,
       "height": 60
     },
     {
       "id": "g17",
       "type": "group",
-      "label": "Best Run Artifact (C03)",
-      "x": 7880,
-      "y": 3200,
+      "label": "NSLKDD Experiments",
+      "x": 7220,
+      "y": 2300,
       "width": 600,
       "height": 400,
       "color": "6"
     },
     {
-      "id": "n_readme_c03_best_run",
+      "id": "n_nslkdd_dqn_e01",
       "type": "file",
-      "file": "C03 Best Historical Run (CICIDS2017).md",
-      "x": 7900,
-      "y": 3280,
+      "file": "NSL-KDD E01 DQN Experiment.md",
+      "x": 7240,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_nslkdd_rf_e02",
+      "type": "file",
+      "file": "NSL-KDD E02 Random Forest Experiment.md",
+      "x": 7440,
+      "y": 2380,
+      "width": 180,
+      "height": 60
+    },
+    {
+      "id": "n_nslkdd_experiments_history",
+      "type": "file",
+      "file": "NSL-KDD Historical Experiments.md",
+      "x": 7640,
+      "y": 2380,
       "width": 180,
       "height": 60
     },
     {
       "id": "g18",
       "type": "group",
-      "label": "PERMITBLOCK Decision",
+      "label": "Community 18",
       "x": 0,
-      "y": 3900,
+      "y": 2800,
       "width": 600,
       "height": 400,
       "color": "1"
     },
     {
-      "id": "n_readme_permit_block_decision",
+      "id": "n_run_ast_py",
       "type": "file",
-      "file": "PERMITBLOCK Binary Decision.md",
+      "file": "run_ast.py.md",
       "x": 20,
-      "y": 3980,
+      "y": 2880,
       "width": 180,
       "height": 60
     },
     {
       "id": "g19",
       "type": "group",
-      "label": "PyTorch Dependency",
-      "x": 1840,
-      "y": 3900,
+      "label": "Community 19",
+      "x": 1620,
+      "y": 2800,
       "width": 600,
       "height": 400,
       "color": "2"
     },
     {
-      "id": "n_requirements_torch",
+      "id": "n_run_cache_py",
       "type": "file",
-      "file": "PyTorch (torch).md",
-      "x": 1860,
-      "y": 3980,
+      "file": "run_cache.py.md",
+      "x": 1640,
+      "y": 2880,
       "width": 180,
       "height": 60
     },
     {
       "id": "g20",
       "type": "group",
-      "label": "Optuna Dependency",
-      "x": 3680,
-      "y": 3900,
+      "label": "Community 20",
+      "x": 3240,
+      "y": 2800,
       "width": 600,
       "height": 400,
       "color": "3"
     },
     {
-      "id": "n_requirements_optuna",
+      "id": "n_run_detect_py",
       "type": "file",
-      "file": "Optuna (hyperparameter tuning).md",
-      "x": 3700,
-      "y": 3980,
+      "file": "run_detect.py.md",
+      "x": 3260,
+      "y": 2880,
       "width": 180,
       "height": 60
     },
     {
       "id": "g21",
       "type": "group",
-      "label": "Lab Safety Guardrails",
-      "x": 5080,
-      "y": 3900,
+      "label": "Community 21",
+      "x": 4640,
+      "y": 2800,
       "width": 600,
       "height": 400,
       "color": "4"
     },
     {
-      "id": "n_agent_context_lab_safety",
+      "id": "n_load_nsl_kdd_NSL_KDD_COLUMNS",
       "type": "file",
-      "file": "Lab Safety Guardrails.md",
-      "x": 5100,
-      "y": 3980,
+      "file": "NSL_KDD_COLUMNS column schema list.md",
+      "x": 4660,
+      "y": 2880,
       "width": 180,
       "height": 60
     },
     {
       "id": "g22",
       "type": "group",
-      "label": "Documentation Index",
-      "x": 6480,
-      "y": 3900,
+      "label": "Community 22",
+      "x": 6040,
+      "y": 2800,
       "width": 600,
       "height": 400,
       "color": "5"
     },
     {
-      "id": "n_docs_readme_documentation_index",
+      "id": "n_deep_defense_04",
       "type": "file",
-      "file": "Documentation Index.md",
-      "x": 6500,
-      "y": 3980,
+      "file": "Deep Defense Validacion y Lectura de Resultados.md",
+      "x": 6060,
+      "y": 2880,
       "width": 180,
       "height": 60
     },
     {
       "id": "g23",
       "type": "group",
-      "label": "Experiment Archive",
-      "x": 7880,
-      "y": 3900,
+      "label": "Community 23",
+      "x": 7220,
+      "y": 2800,
       "width": 600,
       "height": 400,
       "color": "6"
@@ -3880,165 +2908,171 @@
       "id": "n_experiments_readme_archive",
       "type": "file",
       "file": "Experiment Archive Index.md",
-      "x": 7900,
-      "y": 3980,
+      "x": 7240,
+      "y": 2880,
       "width": 180,
       "height": 60
     },
     {
       "id": "g24",
       "type": "group",
-      "label": "Fair RL Classification",
+      "label": "Community 24",
       "x": 0,
-      "y": 4380,
+      "y": 3280,
       "width": 600,
       "height": 400,
       "color": "1"
     },
     {
-      "id": "n_classification_dossier_fairl_class2024",
+      "id": "n_run_ast",
       "type": "file",
-      "file": "FairRLClass2024 (Balancing the Scales RL for Fair Classification).md",
+      "file": "run_ast.py_1.md",
       "x": 20,
-      "y": 4460,
+      "y": 3360,
       "width": 180,
       "height": 60
     },
     {
       "id": "g25",
       "type": "group",
-      "label": "CIC-IDS2018 Dataset",
-      "x": 1840,
-      "y": 4380,
+      "label": "Community 25",
+      "x": 1620,
+      "y": 3280,
       "width": 600,
       "height": 400,
       "color": "2"
     },
     {
-      "id": "n_nids_datasets_cse_cic_ids2018",
+      "id": "n_run_cache",
       "type": "file",
-      "file": "CSE-CIC-IDS2018 Dataset.md",
-      "x": 1860,
-      "y": 4460,
+      "file": "run_cache.py_1.md",
+      "x": 1640,
+      "y": 3360,
       "width": 180,
       "height": 60
     },
     {
       "id": "g26",
       "type": "group",
-      "label": "Bot-IoT Dataset",
-      "x": 3680,
-      "y": 4380,
+      "label": "Community 26",
+      "x": 3240,
+      "y": 3280,
       "width": 600,
       "height": 400,
       "color": "3"
     },
     {
-      "id": "n_nids_datasets_bot_iot",
+      "id": "n_run_detect",
       "type": "file",
-      "file": "Bot-IoT Dataset.md",
-      "x": 3700,
-      "y": 4460,
+      "file": "run_detect.py_1.md",
+      "x": 3260,
+      "y": 3360,
       "width": 180,
       "height": 60
     },
     {
       "id": "g27",
       "type": "group",
-      "label": "TON_IoT Dataset",
-      "x": 5080,
-      "y": 4380,
+      "label": "Community 27",
+      "x": 4640,
+      "y": 3280,
       "width": 600,
       "height": 400,
       "color": "4"
     },
     {
-      "id": "n_nids_datasets_ton_iot",
+      "id": "n_export_tensorboard_scalars",
       "type": "file",
-      "file": "TON_IoT Dataset.md",
-      "x": 5100,
-      "y": 4460,
+      "file": "export_tensorboard_scalars.py_1.md",
+      "x": 4660,
+      "y": 3360,
       "width": 180,
       "height": 60
     },
     {
       "id": "g28",
       "type": "group",
-      "label": "UGR16 Network Dataset",
-      "x": 6480,
-      "y": 4380,
+      "label": "Community 28",
+      "x": 6040,
+      "y": 3280,
       "width": 600,
       "height": 400,
       "color": "5"
     },
     {
-      "id": "n_nids_datasets_ugr16",
+      "id": "n_requirements_runpod_cu130",
       "type": "file",
-      "file": "UGR'16 Dataset (ISP NetFlow).md",
-      "x": 6500,
-      "y": 4460,
+      "file": "requirements-runpod-cu130.txt.md",
+      "x": 6060,
+      "y": 3360,
       "width": 180,
       "height": 60
     },
     {
       "id": "g29",
       "type": "group",
-      "label": "Flow-Based NIDS Survey",
-      "x": 7880,
-      "y": 4380,
+      "label": "Community 29",
+      "x": 7220,
+      "y": 3280,
       "width": 600,
       "height": 400,
       "color": "6"
     },
     {
-      "id": "n_research1_flow_based_nids_survey",
+      "id": "n_requirements",
       "type": "file",
-      "file": "Research1 Flow-Based NIDS and MLDL Methods Survey.md",
-      "x": 7900,
-      "y": 4460,
+      "file": "requirements.txt.md",
+      "x": 7240,
+      "y": 3360,
       "width": 180,
       "height": 60
     },
     {
       "id": "g30",
       "type": "group",
-      "label": "CICIDS Load Config",
+      "label": "Community 30",
       "x": 0,
-      "y": 4860,
+      "y": 3760,
       "width": 600,
       "height": 400,
       "color": "1"
     },
     {
-      "id": "n_load_cicids2017_CICIDSLoadConfig",
+      "id": "n_reproducibility_md",
       "type": "file",
-      "file": "CICIDSLoadConfig dataclass.md",
+      "file": "reproducibility.md",
       "x": 20,
-      "y": 4940,
+      "y": 3840,
       "width": 180,
       "height": 60
     },
     {
       "id": "g31",
       "type": "group",
-      "label": "NSL-KDD Column Schema",
-      "x": 1840,
-      "y": 4860,
+      "label": "Community 31",
+      "x": 1620,
+      "y": 3760,
       "width": 600,
       "height": 400,
       "color": "2"
     },
     {
-      "id": "n_load_nsl_kdd_NSL_KDD_COLUMNS",
+      "id": "n_C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/RESEARCH_GAPS_AND_TODOS.md",
       "type": "file",
-      "file": "NSL_KDD_COLUMNS column schema list.md",
-      "x": 1860,
-      "y": 4940,
+      "file": "CUsersRiveroDesktopTFG_CYBER_AIResearchInitial Research for Report - Chapter State Of The ArtRESEARCH_GAPS_AND_TODOS.md",
+      "x": 1640,
+      "y": 3840,
       "width": 180,
       "height": 60
     }
   ],
   "edges": [
+    {
+      "id": "e_scripts_deprecated_predict_real_traffic_py_load_cicids2017",
+      "fromNode": "n_scripts_deprecated_predict_real_traffic_py",
+      "toNode": "n_load_cicids2017",
+      "label": "imports_from [EXTRACTED]"
+    },
     {
       "id": "e_scripts_deprecated_predict_real_traffic_py_scripts_deprecated_predict_real_traffic_maybe_convert_time_units",
       "fromNode": "n_scripts_deprecated_predict_real_traffic_py",
@@ -4086,6 +3120,84 @@
       "fromNode": "n_scripts_deprecated_predict_real_traffic_main",
       "toNode": "n_src_canonical_schema_map_to_canonical",
       "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_py_scripts_export_tensorboard_scalars_parse_args",
+      "fromNode": "n_scripts_export_tensorboard_scalars_py",
+      "toNode": "n_scripts_export_tensorboard_scalars_parse_args",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_py_scripts_export_tensorboard_scalars_safe_filename",
+      "fromNode": "n_scripts_export_tensorboard_scalars_py",
+      "toNode": "n_scripts_export_tensorboard_scalars_safe_filename",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_py_scripts_export_tensorboard_scalars_find_event_dirs",
+      "fromNode": "n_scripts_export_tensorboard_scalars_py",
+      "toNode": "n_scripts_export_tensorboard_scalars_find_event_dirs",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_py_scripts_export_tensorboard_scalars_read_scalars",
+      "fromNode": "n_scripts_export_tensorboard_scalars_py",
+      "toNode": "n_scripts_export_tensorboard_scalars_read_scalars",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_py_scripts_export_tensorboard_scalars_plot_scalar",
+      "fromNode": "n_scripts_export_tensorboard_scalars_py",
+      "toNode": "n_scripts_export_tensorboard_scalars_plot_scalar",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_py_scripts_export_tensorboard_scalars_update_artifact_manifest",
+      "fromNode": "n_scripts_export_tensorboard_scalars_py",
+      "toNode": "n_scripts_export_tensorboard_scalars_update_artifact_manifest",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_py_scripts_export_tensorboard_scalars_main",
+      "fromNode": "n_scripts_export_tensorboard_scalars_py",
+      "toNode": "n_scripts_export_tensorboard_scalars_main",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_parse_args_scripts_export_tensorboard_scalars_main",
+      "fromNode": "n_scripts_export_tensorboard_scalars_parse_args",
+      "toNode": "n_scripts_export_tensorboard_scalars_main",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_safe_filename_scripts_export_tensorboard_scalars_main",
+      "fromNode": "n_scripts_export_tensorboard_scalars_safe_filename",
+      "toNode": "n_scripts_export_tensorboard_scalars_main",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_find_event_dirs_scripts_export_tensorboard_scalars_main",
+      "fromNode": "n_scripts_export_tensorboard_scalars_find_event_dirs",
+      "toNode": "n_scripts_export_tensorboard_scalars_main",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_read_scalars_scripts_export_tensorboard_scalars_main",
+      "fromNode": "n_scripts_export_tensorboard_scalars_read_scalars",
+      "toNode": "n_scripts_export_tensorboard_scalars_main",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_plot_scalar_scripts_export_tensorboard_scalars_main",
+      "fromNode": "n_scripts_export_tensorboard_scalars_plot_scalar",
+      "toNode": "n_scripts_export_tensorboard_scalars_main",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_export_tensorboard_scalars_update_artifact_manifest_scripts_export_tensorboard_scalars_main",
+      "fromNode": "n_scripts_export_tensorboard_scalars_update_artifact_manifest",
+      "toNode": "n_scripts_export_tensorboard_scalars_main",
+      "label": "calls [EXTRACTED]"
     },
     {
       "id": "e_scripts_graphify_auto_update_py_graphify_auto_update_run_git",
@@ -4230,18 +3342,6 @@
       "fromNode": "n_graphify_auto_update_is_semantic_source",
       "toNode": "n_graphify_auto_update_decide_and_run",
       "label": "calls [EXTRACTED]"
-    },
-    {
-      "id": "e_graphify_auto_update_is_semantic_source_test_graphify_auto_update_graphifyautoupdatesemanticsourcetests_test_marks_markdown_in_docs_and_experiments_as_semantic_sources",
-      "fromNode": "n_graphify_auto_update_is_semantic_source",
-      "toNode": "n_test_graphify_auto_update_graphifyautoupdatesemanticsourcetests_test_marks_markdown_in_docs_and_experiments_as_semantic_sources",
-      "label": "calls [INFERRED]"
-    },
-    {
-      "id": "e_graphify_auto_update_is_semantic_source_test_graphify_auto_update_graphifyautoupdatesemanticsourcetests_test_excludes_personal_research_and_skills_markdown",
-      "fromNode": "n_graphify_auto_update_is_semantic_source",
-      "toNode": "n_test_graphify_auto_update_graphifyautoupdatesemanticsourcetests_test_excludes_personal_research_and_skills_markdown",
-      "label": "calls [INFERRED]"
     },
     {
       "id": "e_graphify_auto_update_rev_exists_graphify_auto_update_diff_range",
@@ -4448,6 +3548,72 @@
       "label": "calls [INFERRED]"
     },
     {
+      "id": "e_scripts_verify_fixed_test_split_py_scripts_verify_fixed_test_split_parse_args",
+      "fromNode": "n_scripts_verify_fixed_test_split_py",
+      "toNode": "n_scripts_verify_fixed_test_split_parse_args",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_verify_fixed_test_split_py_scripts_verify_fixed_test_split_fail",
+      "fromNode": "n_scripts_verify_fixed_test_split_py",
+      "toNode": "n_scripts_verify_fixed_test_split_fail",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_verify_fixed_test_split_py_scripts_verify_fixed_test_split_ok",
+      "fromNode": "n_scripts_verify_fixed_test_split_py",
+      "toNode": "n_scripts_verify_fixed_test_split_ok",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_verify_fixed_test_split_py_scripts_verify_fixed_test_split_main",
+      "fromNode": "n_scripts_verify_fixed_test_split_py",
+      "toNode": "n_scripts_verify_fixed_test_split_main",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_verify_fixed_test_split_parse_args_scripts_verify_fixed_test_split_main",
+      "fromNode": "n_scripts_verify_fixed_test_split_parse_args",
+      "toNode": "n_scripts_verify_fixed_test_split_main",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_verify_fixed_test_split_fail_scripts_verify_fixed_test_split_main",
+      "fromNode": "n_scripts_verify_fixed_test_split_fail",
+      "toNode": "n_scripts_verify_fixed_test_split_main",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_verify_fixed_test_split_ok_scripts_verify_fixed_test_split_main",
+      "fromNode": "n_scripts_verify_fixed_test_split_ok",
+      "toNode": "n_scripts_verify_fixed_test_split_main",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_scripts_verify_fixed_test_split_main_src_load_cicids2017_load_cicids2017_split",
+      "fromNode": "n_scripts_verify_fixed_test_split_main",
+      "toNode": "n_src_load_cicids2017_load_cicids2017_split",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_scripts_verify_fixed_test_split_main_src_load_cicids2017_stratified_nested_prefix_indices",
+      "fromNode": "n_scripts_verify_fixed_test_split_main",
+      "toNode": "n_src_load_cicids2017_stratified_nested_prefix_indices",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_scripts_verify_fixed_test_split_main_src_load_cicids2017_sha256_of_array",
+      "fromNode": "n_scripts_verify_fixed_test_split_main",
+      "toNode": "n_src_load_cicids2017_sha256_of_array",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_src_baseline_random_forest_py_load_cicids2017",
+      "fromNode": "n_src_baseline_random_forest_py",
+      "toNode": "n_load_cicids2017",
+      "label": "imports_from [EXTRACTED]"
+    },
+    {
       "id": "e_src_baseline_random_forest_py_src_baseline_random_forest_train_random_forest",
       "fromNode": "n_src_baseline_random_forest_py",
       "toNode": "n_src_baseline_random_forest_train_random_forest",
@@ -4472,9 +3638,9 @@
       "label": "calls [EXTRACTED]"
     },
     {
-      "id": "e_src_baseline_random_forest_train_random_forest_src_baseline_random_forest_rationale_25",
+      "id": "e_src_baseline_random_forest_train_random_forest_src_baseline_random_forest_rationale_38",
       "fromNode": "n_src_baseline_random_forest_train_random_forest",
-      "toNode": "n_src_baseline_random_forest_rationale_25",
+      "toNode": "n_src_baseline_random_forest_rationale_38",
       "label": "rationale_for [EXTRACTED]"
     },
     {
@@ -4484,9 +3650,9 @@
       "label": "calls [EXTRACTED]"
     },
     {
-      "id": "e_src_baseline_random_forest_evaluate_random_forest_src_baseline_random_forest_rationale_44",
+      "id": "e_src_baseline_random_forest_evaluate_random_forest_src_baseline_random_forest_rationale_57",
       "fromNode": "n_src_baseline_random_forest_evaluate_random_forest",
-      "toNode": "n_src_baseline_random_forest_rationale_44",
+      "toNode": "n_src_baseline_random_forest_rationale_57",
       "label": "rationale_for [EXTRACTED]"
     },
     {
@@ -4694,6 +3860,18 @@
       "label": "contains [EXTRACTED]"
     },
     {
+      "id": "e_src_load_cicids2017_py_src_load_cicids2017_sha256_of_array",
+      "fromNode": "n_src_load_cicids2017_py",
+      "toNode": "n_src_load_cicids2017_sha256_of_array",
+      "label": "contains [EXTRACTED]"
+    },
+    {
+      "id": "e_src_load_cicids2017_py_src_load_cicids2017_stratified_nested_prefix_indices",
+      "fromNode": "n_src_load_cicids2017_py",
+      "toNode": "n_src_load_cicids2017_stratified_nested_prefix_indices",
+      "label": "contains [EXTRACTED]"
+    },
+    {
       "id": "e_src_load_cicids2017_py_src_load_cicids2017_load_cicids2017_split",
       "fromNode": "n_src_load_cicids2017_py",
       "toNode": "n_src_load_cicids2017_load_cicids2017_split",
@@ -4766,9 +3944,9 @@
       "label": "calls [EXTRACTED]"
     },
     {
-      "id": "e_src_load_cicids2017_list_cicids2017_csv_files_src_load_cicids2017_rationale_73",
+      "id": "e_src_load_cicids2017_list_cicids2017_csv_files_src_load_cicids2017_rationale_80",
       "fromNode": "n_src_load_cicids2017_list_cicids2017_csv_files",
-      "toNode": "n_src_load_cicids2017_rationale_73",
+      "toNode": "n_src_load_cicids2017_rationale_80",
       "label": "rationale_for [EXTRACTED]"
     },
     {
@@ -4832,9 +4010,9 @@
       "label": "calls [EXTRACTED]"
     },
     {
-      "id": "e_src_load_cicids2017_load_csv_with_row_limit_src_load_cicids2017_rationale_193",
+      "id": "e_src_load_cicids2017_load_csv_with_row_limit_src_load_cicids2017_rationale_200",
       "fromNode": "n_src_load_cicids2017_load_csv_with_row_limit",
-      "toNode": "n_src_load_cicids2017_rationale_193",
+      "toNode": "n_src_load_cicids2017_rationale_200",
       "label": "rationale_for [EXTRACTED]"
     },
     {
@@ -4850,9 +4028,9 @@
       "label": "calls [EXTRACTED]"
     },
     {
-      "id": "e_src_load_cicids2017_prepare_cicids_features_src_load_cicids2017_rationale_223",
+      "id": "e_src_load_cicids2017_prepare_cicids_features_src_load_cicids2017_rationale_230",
       "fromNode": "n_src_load_cicids2017_prepare_cicids_features",
-      "toNode": "n_src_load_cicids2017_rationale_223",
+      "toNode": "n_src_load_cicids2017_rationale_230",
       "label": "rationale_for [EXTRACTED]"
     },
     {
@@ -4874,9 +4052,9 @@
       "label": "calls [EXTRACTED]"
     },
     {
-      "id": "e_src_load_cicids2017_load_and_process_csv_paths_src_load_cicids2017_rationale_278",
+      "id": "e_src_load_cicids2017_load_and_process_csv_paths_src_load_cicids2017_rationale_285",
       "fromNode": "n_src_load_cicids2017_load_and_process_csv_paths",
-      "toNode": "n_src_load_cicids2017_rationale_278",
+      "toNode": "n_src_load_cicids2017_rationale_285",
       "label": "rationale_for [EXTRACTED]"
     },
     {
@@ -4886,9 +4064,9 @@
       "label": "calls [EXTRACTED]"
     },
     {
-      "id": "e_src_load_cicids2017_resolve_exact_csv_names_src_load_cicids2017_rationale_298",
+      "id": "e_src_load_cicids2017_resolve_exact_csv_names_src_load_cicids2017_rationale_305",
       "fromNode": "n_src_load_cicids2017_resolve_exact_csv_names",
-      "toNode": "n_src_load_cicids2017_rationale_298",
+      "toNode": "n_src_load_cicids2017_rationale_305",
       "label": "rationale_for [EXTRACTED]"
     },
     {
@@ -4898,9 +4076,9 @@
       "label": "calls [EXTRACTED]"
     },
     {
-      "id": "e_src_load_cicids2017_load_cicids2017_binary_src_load_cicids2017_rationale_320",
+      "id": "e_src_load_cicids2017_load_cicids2017_binary_src_load_cicids2017_rationale_327",
       "fromNode": "n_src_load_cicids2017_load_cicids2017_binary",
-      "toNode": "n_src_load_cicids2017_rationale_320",
+      "toNode": "n_src_load_cicids2017_rationale_327",
       "label": "rationale_for [EXTRACTED]"
     },
     {
@@ -4916,15 +4094,15 @@
       "label": "calls [EXTRACTED]"
     },
     {
-      "id": "e_src_load_cicids2017_load_cicids2017_csv_split_src_load_cicids2017_rationale_369",
+      "id": "e_src_load_cicids2017_load_cicids2017_csv_split_src_load_cicids2017_rationale_376",
       "fromNode": "n_src_load_cicids2017_load_cicids2017_csv_split",
-      "toNode": "n_src_load_cicids2017_rationale_369",
+      "toNode": "n_src_load_cicids2017_rationale_376",
       "label": "rationale_for [EXTRACTED]"
     },
     {
-      "id": "e_src_load_cicids2017_load_cicids2017_exact_csv_split_src_load_cicids2017_rationale_440",
+      "id": "e_src_load_cicids2017_load_cicids2017_exact_csv_split_src_load_cicids2017_rationale_447",
       "fromNode": "n_src_load_cicids2017_load_cicids2017_exact_csv_split",
-      "toNode": "n_src_load_cicids2017_rationale_440",
+      "toNode": "n_src_load_cicids2017_rationale_447",
       "label": "rationale_for [EXTRACTED]"
     },
     {
@@ -4934,9 +4112,51 @@
       "label": "calls [INFERRED]"
     },
     {
-      "id": "e_src_load_cicids2017_load_cicids2017_split_src_load_cicids2017_rationale_543",
+      "id": "e_src_load_cicids2017_sha256_of_array_src_load_cicids2017_load_cicids2017_split",
+      "fromNode": "n_src_load_cicids2017_sha256_of_array",
+      "toNode": "n_src_load_cicids2017_load_cicids2017_split",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_load_cicids2017_sha256_of_array_src_load_cicids2017_rationale_545",
+      "fromNode": "n_src_load_cicids2017_sha256_of_array",
+      "toNode": "n_src_load_cicids2017_rationale_545",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_src_load_cicids2017_sha256_of_array_tests_test_load_cicids2017_test_sha256_of_array_stable",
+      "fromNode": "n_src_load_cicids2017_sha256_of_array",
+      "toNode": "n_tests_test_load_cicids2017_test_sha256_of_array_stable",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_src_load_cicids2017_stratified_nested_prefix_indices_src_load_cicids2017_load_cicids2017_split",
+      "fromNode": "n_src_load_cicids2017_stratified_nested_prefix_indices",
+      "toNode": "n_src_load_cicids2017_load_cicids2017_split",
+      "label": "calls [EXTRACTED]"
+    },
+    {
+      "id": "e_src_load_cicids2017_stratified_nested_prefix_indices_src_load_cicids2017_rationale_556",
+      "fromNode": "n_src_load_cicids2017_stratified_nested_prefix_indices",
+      "toNode": "n_src_load_cicids2017_rationale_556",
+      "label": "rationale_for [EXTRACTED]"
+    },
+    {
+      "id": "e_src_load_cicids2017_stratified_nested_prefix_indices_tests_test_load_cicids2017_test_nested_prefix_indices_nested_and_stratified",
+      "fromNode": "n_src_load_cicids2017_stratified_nested_prefix_indices",
+      "toNode": "n_tests_test_load_cicids2017_test_nested_prefix_indices_nested_and_stratified",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_src_load_cicids2017_stratified_nested_prefix_indices_tests_test_load_cicids2017_test_nested_prefix_indices_deterministic",
+      "fromNode": "n_src_load_cicids2017_stratified_nested_prefix_indices",
+      "toNode": "n_tests_test_load_cicids2017_test_nested_prefix_indices_deterministic",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_src_load_cicids2017_load_cicids2017_split_src_load_cicids2017_rationale_601",
       "fromNode": "n_src_load_cicids2017_load_cicids2017_split",
-      "toNode": "n_src_load_cicids2017_rationale_543",
+      "toNode": "n_src_load_cicids2017_rationale_601",
       "label": "rationale_for [EXTRACTED]"
     },
     {
@@ -4955,6 +4175,12 @@
       "id": "e_src_load_cicids2017_load_cicids2017_split_src_validate_checks_main",
       "fromNode": "n_src_load_cicids2017_load_cicids2017_split",
       "toNode": "n_src_validate_checks_main",
+      "label": "calls [INFERRED]"
+    },
+    {
+      "id": "e_src_load_cicids2017_load_cicids2017_split_tests_test_load_cicids2017_split",
+      "fromNode": "n_src_load_cicids2017_load_cicids2017_split",
+      "toNode": "n_tests_test_load_cicids2017_split",
       "label": "calls [INFERRED]"
     },
     {
@@ -5036,208 +4262,10 @@
       "label": "rationale_for [EXTRACTED]"
     },
     {
-      "id": "e_rl_defender_env_rldatasetdefenderenv_src_train_rl_defender_evaluate_model",
-      "fromNode": "n_rl_defender_env_rldatasetdefenderenv",
-      "toNode": "n_src_train_rl_defender_evaluate_model",
-      "label": "calls [INFERRED]"
-    },
-    {
       "id": "e_rl_defender_env_rldatasetdefenderenv_src_tune_hparams_evaluate_f1",
       "fromNode": "n_rl_defender_env_rldatasetdefenderenv",
       "toNode": "n_src_tune_hparams_evaluate_f1",
       "label": "calls [INFERRED]"
-    },
-    {
-      "id": "e_rl_defender_env_rldatasetdefenderenv_tests_test_reward_config_test_reward_logic_tp_fp_tn_fn",
-      "fromNode": "n_rl_defender_env_rldatasetdefenderenv",
-      "toNode": "n_tests_test_reward_config_test_reward_logic_tp_fp_tn_fn",
-      "label": "calls [INFERRED]"
-    },
-    {
-      "id": "e_rl_defender_env_rldatasetdefenderenv_tests_test_reward_config_test_unknown_label_reward",
-      "fromNode": "n_rl_defender_env_rldatasetdefenderenv",
-      "toNode": "n_tests_test_reward_config_test_unknown_label_reward",
-      "label": "calls [INFERRED]"
-    },
-    {
-      "id": "e_rl_defender_env_rldatasetdefenderenv_tests_test_rl_defender_env_test_env_initialization",
-      "fromNode": "n_rl_defender_env_rldatasetdefenderenv",
-      "toNode": "n_tests_test_rl_defender_env_test_env_initialization",
-      "label": "calls [INFERRED]"
-    },
-    {
-      "id": "e_rl_defender_env_rldatasetdefenderenv_tests_test_rl_defender_env_test_env_step_and_reset",
-      "fromNode": "n_rl_defender_env_rldatasetdefenderenv",
-      "toNode": "n_tests_test_rl_defender_env_test_env_step_and_reset",
-      "label": "calls [INFERRED]"
-    },
-    {
-      "id": "e_rl_defender_env_rldatasetdefenderenv_reset_rl_defender_env_rldatasetdefenderenv_get_observation",
-      "fromNode": "n_rl_defender_env_rldatasetdefenderenv_reset",
-      "toNode": "n_rl_defender_env_rldatasetdefenderenv_get_observation",
-      "label": "calls [EXTRACTED]"
-    },
-    {
-      "id": "e_rl_defender_env_rldatasetdefenderenv_get_observation_rl_defender_env_rldatasetdefenderenv_step",
-      "fromNode": "n_rl_defender_env_rldatasetdefenderenv_get_observation",
-      "toNode": "n_rl_defender_env_rldatasetdefenderenv_step",
-      "label": "calls [EXTRACTED]"
-    },
-    {
-      "id": "e_rl_defender_env_rldatasetdefenderenv_compute_reward_rl_defender_env_rldatasetdefenderenv_step",
-      "fromNode": "n_rl_defender_env_rldatasetdefenderenv_compute_reward",
-      "toNode": "n_rl_defender_env_rldatasetdefenderenv_step",
-      "label": "calls [EXTRACTED]"
-    },
-    {
-      "id": "e_rl_defender_env_rldatasetdefenderenv_compute_reward_rl_defender_env_rationale_108",
-      "fromNode": "n_rl_defender_env_rldatasetdefenderenv_compute_reward",
-      "toNode": "n_rl_defender_env_rationale_108",
-      "label": "rationale_for [EXTRACTED]"
-    },
-    {
-      "id": "e_src_scaling_utils_py_scaling_utils_apply_percentile_clipping",
-      "fromNode": "n_src_scaling_utils_py",
-      "toNode": "n_scaling_utils_apply_percentile_clipping",
-      "label": "contains [EXTRACTED]"
-    },
-    {
-      "id": "e_src_scaling_utils_py_scaling_utils_apply_z_clipping",
-      "fromNode": "n_src_scaling_utils_py",
-      "toNode": "n_scaling_utils_apply_z_clipping",
-      "label": "contains [EXTRACTED]"
-    },
-    {
-      "id": "e_src_scaling_utils_py_scaling_utils_rationale_1",
-      "fromNode": "n_src_scaling_utils_py",
-      "toNode": "n_scaling_utils_rationale_1",
-      "label": "rationale_for [EXTRACTED]"
-    },
-    {
-      "id": "e_scaling_utils_apply_percentile_clipping_scaling_utils_rationale_22",
-      "fromNode": "n_scaling_utils_apply_percentile_clipping",
-      "toNode": "n_scaling_utils_rationale_22",
-      "label": "rationale_for [EXTRACTED]"
-    },
-    {
-      "id": "e_scaling_utils_apply_percentile_clipping_predict_v2_main",
-      "fromNode": "n_scaling_utils_apply_percentile_clipping",
-      "toNode": "n_predict_v2_main",
-      "label": "calls [EXTRACTED]"
-    },
-    {
-      "id": "e_scaling_utils_apply_percentile_clipping_scaling_utils_distribution_shift_defense",
-      "fromNode": "n_scaling_utils_apply_percentile_clipping",
-      "toNode": "n_scaling_utils_distribution_shift_defense",
-      "label": "rationale_for [EXTRACTED]"
-    },
-    {
-      "id": "e_scaling_utils_apply_z_clipping_scaling_utils_rationale_52",
-      "fromNode": "n_scaling_utils_apply_z_clipping",
-      "toNode": "n_scaling_utils_rationale_52",
-      "label": "rationale_for [EXTRACTED]"
-    },
-    {
-      "id": "e_scaling_utils_apply_z_clipping_predict_v2_main",
-      "fromNode": "n_scaling_utils_apply_z_clipping",
-      "toNode": "n_predict_v2_main",
-      "label": "calls [EXTRACTED]"
-    },
-    {
-      "id": "e_scaling_utils_apply_z_clipping_scaling_utils_distribution_shift_defense",
-      "fromNode": "n_scaling_utils_apply_z_clipping",
-      "toNode": "n_scaling_utils_distribution_shift_defense",
-      "label": "rationale_for [EXTRACTED]"
-    },
-    {
-      "id": "e_src_train_rl_defender_py_src_train_rl_defender_make_env_fn",
-      "fromNode": "n_src_train_rl_defender_py",
-      "toNode": "n_src_train_rl_defender_make_env_fn",
-      "label": "contains [EXTRACTED]"
-    },
-    {
-      "id": "e_src_train_rl_defender_py_src_train_rl_defender_evaluate_model",
-      "fromNode": "n_src_train_rl_defender_py",
-      "toNode": "n_src_train_rl_defender_evaluate_model",
-      "label": "contains [EXTRACTED]"
-    },
-    {
-      "id": "e_src_train_rl_defender_py_src_train_rl_defender_parse_args",
-      "fromNode": "n_src_train_rl_defender_py",
-      "toNode": "n_src_train_rl_defender_parse_args",
-      "label": "contains [EXTRACTED]"
-    },
-    {
-      "id": "e_src_train_rl_defender_py_src_train_rl_defender_main",
-      "fromNode": "n_src_train_rl_defender_py",
-      "toNode": "n_src_train_rl_defender_main",
-      "label": "contains [EXTRACTED]"
-    },
-    {
-      "id": "e_src_train_rl_defender_py_src_train_rl_defender_rationale_1",
-      "fromNode": "n_src_train_rl_defender_py",
-      "toNode": "n_src_train_rl_defender_rationale_1",
-      "label": "rationale_for [EXTRACTED]"
-    },
-    {
-      "id": "e_src_train_rl_defender_make_env_fn_src_train_rl_defender_main",
-      "fromNode": "n_src_train_rl_defender_make_env_fn",
-      "toNode": "n_src_train_rl_defender_main",
-      "label": "calls [EXTRACTED]"
-    },
-    {
-      "id": "e_src_train_rl_defender_make_env_fn_src_train_rl_defender_rationale_59",
-      "fromNode": "n_src_train_rl_defender_make_env_fn",
-      "toNode": "n_src_train_rl_defender_rationale_59",
-      "label": "rationale_for [EXTRACTED]"
-    },
-    {
-      "id": "e_src_train_rl_defender_evaluate_model_src_train_rl_defender_main",
-      "fromNode": "n_src_train_rl_defender_evaluate_model",
-      "toNode": "n_src_train_rl_defender_main",
-      "label": "calls [EXTRACTED]"
-    },
-    {
-      "id": "e_src_train_rl_defender_evaluate_model_src_train_rl_defender_rationale_79",
-      "fromNode": "n_src_train_rl_defender_evaluate_model",
-      "toNode": "n_src_train_rl_defender_rationale_79",
-      "label": "rationale_for [EXTRACTED]"
-    },
-    {
-      "id": "e_src_train_rl_defender_parse_args_src_train_rl_defender_main",
-      "fromNode": "n_src_train_rl_defender_parse_args",
-      "toNode": "n_src_train_rl_defender_main",
-      "label": "calls [EXTRACTED]"
-    },
-    {
-      "id": "e_src_tune_hparams_py_src_tune_hparams_evaluate_f1",
-      "fromNode": "n_src_tune_hparams_py",
-      "toNode": "n_src_tune_hparams_evaluate_f1",
-      "label": "contains [EXTRACTED]"
-    },
-    {
-      "id": "e_src_tune_hparams_py_src_tune_hparams_objective",
-      "fromNode": "n_src_tune_hparams_py",
-      "toNode": "n_src_tune_hparams_objective",
-      "label": "contains [EXTRACTED]"
-    },
-    {
-      "id": "e_src_tune_hparams_py_src_tune_hparams_parse_args",
-      "fromNode": "n_src_tune_hparams_py",
-      "toNode": "n_src_tune_hparams_parse_args",
-      "label": "contains [EXTRACTED]"
-    },
-    {
-      "id": "e_src_tune_hparams_py_src_tune_hparams_main",
-      "fromNode": "n_src_tune_hparams_py",
-      "toNode": "n_src_tune_hparams_main",
-      "label": "contains [EXTRACTED]"
-    },
-    {
-      "id": "e_src_tune_hparams_py_src_tune_hparams_rationale_1",
-      "fromNode": "n_src_tune_hparams_py",
-      "toNode": "n_src_tune_hparams_rationale_1",
-      "label": "rationale_for [EXTRACTED]"
     }
   ]
 }

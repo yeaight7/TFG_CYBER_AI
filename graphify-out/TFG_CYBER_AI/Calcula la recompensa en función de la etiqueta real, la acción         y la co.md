@@ -1,12 +1,12 @@
 ---
 source_file: "src/rl_defender_env.py"
 type: "rationale"
-community: "RL Environment (Code)"
+community: "RL Environment Config"
 location: "L108"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/RL_Environment_Code
+  - community/RL_Environment_Config
 ---
 
 # Calcula la recompensa en función de la etiqueta real, la acción         y la co
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[._compute_reward()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/RL_Environment_Code
+#graphify/rationale #graphify/EXTRACTED #community/RL_Environment_Config

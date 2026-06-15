@@ -1,12 +1,12 @@
 ---
 source_file: "src/validate_checks.py"
 type: "rationale"
-community: "Validation Checks Module"
+community: "Test Split Validation"
 location: "L1"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Validation_Checks_Module
+  - community/Test_Split_Validation
 ---
 
 # validate_checks.py — Validación de resultados experimentales del agente RL.  I
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[validate_checks.py]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Validation_Checks_Module
+#graphify/rationale #graphify/EXTRACTED #community/Test_Split_Validation

@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "RF Baseline Module"
-location: "L369"
+community: "CICIDS2017 Preprocessing"
+location: "L376"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/RF_Baseline_Module
+  - community/CICIDS2017_Preprocessing
 ---
 
 # Carga CICIDS2017 separando por archivos CSV (train vs test).      En lugar de
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[load_cicids2017_csv_split()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/RF_Baseline_Module
+#graphify/rationale #graphify/EXTRACTED #community/CICIDS2017_Preprocessing

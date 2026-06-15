@@ -1,12 +1,12 @@
 ---
 source_file: "scripts/graphify_auto_update.py"
 type: "code"
-community: "Graphify Auto-Update"
+community: "Graphify Auto Update"
 location: "L165"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Graphify_Auto-Update
+  - community/Graphify_Auto_Update
 ---
 
 # decide_and_run()
@@ -24,6 +24,6 @@ tags:
 - [[_rebuild_code_graph()]] - `calls` [EXTRACTED]
 - [[_write_needs_update()]] - `calls` [EXTRACTED]
 - [[graphify_auto_update.py]] - `contains` [EXTRACTED]
-- [[main()_1]] - `calls` [EXTRACTED]
+- [[main()_2]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Graphify_Auto-Update
+#graphify/code #graphify/EXTRACTED #community/Graphify_Auto_Update

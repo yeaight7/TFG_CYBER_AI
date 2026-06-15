@@ -1,18 +1,17 @@
 ---
 source_file: "experiments/nslkdd_experiments.md"
 type: "document"
-community: "CICIDS2017 Research & Experiments"
+community: "NSLKDD Experiments"
 location: "experiments/nslkdd_experiments.md#historical-summary-table"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/CICIDS2017_Research__Experiments
+  - community/NSLKDD_Experiments
 ---
 
 # NSL-KDD E01 DQN Experiment
 
 ## Connections
-- [[NSL-KDD Dataset (Historical)]] - `references` [EXTRACTED]
 - [[NSL-KDD Historical Experiments]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/CICIDS2017_Research__Experiments
+#graphify/document #graphify/EXTRACTED #community/NSLKDD_Experiments

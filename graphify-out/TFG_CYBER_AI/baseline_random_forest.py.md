@@ -1,19 +1,20 @@
 ---
 source_file: "src/baseline_random_forest.py"
 type: "code"
-community: "RF Baseline Module"
+community: "CICIDS2017 Preprocessing"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/RF_Baseline_Module
+  - community/CICIDS2017_Preprocessing
 ---
 
 # baseline_random_forest.py
 
 ## Connections
 - [[evaluate_random_forest()]] - `contains` [EXTRACTED]
-- [[main()_3]] - `contains` [EXTRACTED]
+- [[load_cicids2017.py_1]] - `imports_from` [EXTRACTED]
+- [[main()_5]] - `contains` [EXTRACTED]
 - [[train_random_forest()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/RF_Baseline_Module
+#graphify/code #graphify/EXTRACTED #community/CICIDS2017_Preprocessing

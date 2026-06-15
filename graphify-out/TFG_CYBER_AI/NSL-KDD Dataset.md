@@ -1,16 +1,17 @@
 ---
-source_file: "Research/report-NIDS-datasets.md"
-type: "document"
-community: "NSL-KDD Dataset"
+source_file: "GEMINI.md"
+type: "paper"
+community: "Project Overview"
 tags:
-  - graphify/document
+  - graphify/paper
   - graphify/EXTRACTED
-  - community/NSL-KDD_Dataset
+  - community/Project_Overview
 ---
 
 # NSL-KDD Dataset
 
 ## Connections
-- [[KDDCup99 Dataset]] - `conceptually_related_to` [EXTRACTED]
+- [[GEMINI]] - `references` [EXTRACTED]
+- [[README]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/NSL-KDD_Dataset
+#graphify/paper #graphify/EXTRACTED #community/Project_Overview

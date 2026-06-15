@@ -1,4 +1,16 @@
 {
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\run_ast.py": {
+    "mtime": 1781543763.6939387,
+    "hash": "c995c1ba1224e39d2cedf8bec4635f49"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\run_cache.py": {
+    "mtime": 1781543784.5786586,
+    "hash": "e61ac672e2d980ed421dde327469f860"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\run_detect.py": {
+    "mtime": 1781543777.2352476,
+    "hash": "e568ff8b38fc0d3c71ba15a154ad6182"
+  },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\deprecated_predict_real_traffic.py": {
     "mtime": 1777847776.7074897,
     "hash": "302d499b70f8895942d2ea4a129ccabc"
@@ -15,17 +27,21 @@
     "mtime": 1777844436.3126144,
     "hash": "625555e0be85c0410d1a06628d656326"
   },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\verify_fixed_test_split.py": {
+    "mtime": 1781196137.6872795,
+    "hash": "57a7df7cbde805a720318cef3d28e193"
+  },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\baseline_random_forest.py": {
-    "mtime": 1777847838.564096,
-    "hash": "4bbd59185d1cf3372c06f6b14809405d"
+    "mtime": 1781191321.2028222,
+    "hash": "e151635473958b5697682e54604de719"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\canonical_schema.py": {
     "mtime": 1777847838.6193266,
     "hash": "5101334e9715ccd8c5a131195d4b8149"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_cicids2017.py": {
-    "mtime": 1781111790.229964,
-    "hash": "fbd860fe1feb4084e93a666001300171"
+    "mtime": 1781195892.7185814,
+    "hash": "3b37fc3e53f1d59b418f899204c00ad6"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\load_nsl_kdd.py": {
     "mtime": 1777847838.6639986,
@@ -40,8 +56,8 @@
     "hash": "4d0e5ec8c35199d42040b3ca1ea1bc05"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\train_rl_defender.py": {
-    "mtime": 1781111790.231006,
-    "hash": "4f0b12ff2ad42e6a9b1aad61ee5217a0"
+    "mtime": 1781196069.3900197,
+    "hash": "665bfc08236f565135bdec4c50da216c"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\src\\tune_hparams.py": {
     "mtime": 1777847838.7276843,
@@ -60,8 +76,8 @@
     "hash": "e32dafcbc053ee3c5b3fcbe02b48db2f"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_load_cicids2017.py": {
-    "mtime": 1777847838.8099577,
-    "hash": "ab0b875d0c4d359272fbd55be46559f4"
+    "mtime": 1781195964.8800752,
+    "hash": "52ea0772e6c93c4bb5e1736be7f4a4c3"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\tests\\test_predict_real_traffic_v2.py": {
     "mtime": 1777847838.838858,
@@ -80,72 +96,88 @@
     "hash": "06b7b66133c04a43fb3cb72872406315"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\AGENTS.md": {
-    "mtime": 1777150724.084735,
-    "hash": "0ba3ce3cddf63603a89cb4f8b4a516f4"
+    "mtime": 1781219424.8684525,
+    "hash": "5b99e9f2d18a2f7f85b4ab1c899566c5"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\GEMINI.md": {
-    "mtime": 1779048166.53287,
-    "hash": "2948bdaa010944d71e094eecfed3d76e"
+    "mtime": 1781220976.3818712,
+    "hash": "d065dbece0f122d31123c16189b5c25f"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\README.md": {
-    "mtime": 1781111788.8117673,
-    "hash": "bbfa16409405c1dcc551129ed6ce8462"
+    "mtime": 1781219557.679202,
+    "hash": "850d83f0ebc7fb6c6ef897dc22a46016"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\requirements-runpod-cu130.txt": {
+    "mtime": 1781198666.6202667,
+    "hash": "e55da79771119a3678840c58473e525e"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\requirements.txt": {
-    "mtime": 1777148799.0679698,
-    "hash": "1244aac8f5b47e8f7296502c678f3f37"
+    "mtime": 1781198666.618243,
+    "hash": "701995532c0e8f7d553429f85e44d4db"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\AGENT_CONTEXT.md": {
-    "mtime": 1775934798.6180007,
-    "hash": "1dc036adc67128e80018532c2326e923"
+    "mtime": 1781220050.6201112,
+    "hash": "5dfc0070c9e2b56c3d61dcfdc839d145"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\DEFENSA_TFG_PROGRESO.md": {
-    "mtime": 1775934798.6180007,
-    "hash": "17effbf3a1650d6179d595c4197defbe"
+    "mtime": 1781541506.761821,
+    "hash": "6f7e11c6f1f9d34d0370230b8956fe8b"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\DEFENSA_TFG_SCRIPT.md": {
-    "mtime": 1776345281.7156126,
-    "hash": "cbfdf5a1a3fda5e86cd9d3d576ce1c55"
+    "mtime": 1781541506.7597873,
+    "hash": "96047929fe431e139fc0f116f0676896"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\gcp_lab.md": {
-    "mtime": 1777844537.9454958,
-    "hash": "fa2a3c50719c796949c48579ffcea2c0"
+    "mtime": 1781220487.2079413,
+    "hash": "c105345ae93a9f470683bd3fc051796b"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\phase2_plan.md": {
-    "mtime": 1775934798.621009,
-    "hash": "96f5025d3d7aa1a0b33353999fac7f75"
+    "mtime": 1781220864.4068308,
+    "hash": "75248f3a4bf5cbb8528d117c63d3fa65"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\README.md": {
-    "mtime": 1781111788.8127668,
-    "hash": "eda454c610ee3848d08f475b30a3ac37"
+    "mtime": 1781541506.7578034,
+    "hash": "8a9212c1841adec5f9f13bd9d131eec4"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\reproducibility.md": {
+    "mtime": 1781198813.1356566,
+    "hash": "2f3ee5354c0cdc262e9430a4404481dd"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\results.md": {
-    "mtime": 1777844877.268488,
-    "hash": "d83212da188742140a9ddd1971b60eb4"
+    "mtime": 1781220918.7565963,
+    "hash": "443da9c58675b31759c8f87685fb09ca"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\runpod_main_experiment.md": {
-    "mtime": 1781111788.8127668,
-    "hash": "89dc6161f0079fd8274e7474932243b3"
+    "mtime": 1781220053.3387535,
+    "hash": "56247d3fa691f068230711a74bfc6c0b"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\stale_claims_diagnosis_2026-06-15.md": {
+    "mtime": 1781542962.2851148,
+    "hash": "5832e181ee1fdea7d8a64fa9bc8cdc8a"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\tfg_cyber_ai_audit.md": {
+    "mtime": 1781222621.1542923,
+    "hash": "238470c36186e5daf2c08a013c54cda8"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\data-structure-and-canonical-schema-research-report.md": {
-    "mtime": 1776450638.279937,
-    "hash": "3436d6414a3adfb6ca2599afdd4b4d4f"
+    "mtime": 1781541506.7677891,
+    "hash": "3f24c8104c2776e3f32c69bd79c939bc"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\models-parameters-and-validation-thesis-defense-report.md": {
-    "mtime": 1776452908.8179202,
-    "hash": "7e7708ef0dfb42a5679bc880f7b55b9c"
+    "mtime": 1781541506.7638102,
+    "hash": "1da0480e0400bf3fc6fe494489e18883"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\project-components-defense-research-report.md": {
     "mtime": 1776452908.819924,
     "hash": "9f7f31171ee748934d12016b0efbc26e"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\qrdqn-research-report.md": {
-    "mtime": 1776449985.1943274,
-    "hash": "4bbce9e8dfc51065ed71c8c1b4358807"
+    "mtime": 1781541506.7668033,
+    "hash": "56cb56d3fcbb6eb544e37df645de43fb"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\system-components-thesis-defense-report.md": {
-    "mtime": 1776452908.8217416,
-    "hash": "bb5df668e1faea74bd7a7f9dd69713ea"
+    "mtime": 1781541506.7647882,
+    "hash": "66606703d18db312960c2ca771fc42e4"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\deep-defense-research\\01-fundamentos-y-objetivo.md": {
     "mtime": 1776452908.8155103,
@@ -156,8 +188,8 @@
     "hash": "9350f475cf15fe926119ac59a3cf20e1"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\deep-defense-research\\03-entorno-rl-algoritmo-y-entrenamiento.md": {
-    "mtime": 1776452908.8155103,
-    "hash": "bcc1f9da457041f4d1d2144ffc66e94c"
+    "mtime": 1781541506.7588108,
+    "hash": "47b6f2c40be534c44dac0ee64456dd1d"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\deep-defense-research\\04-validacion-y-lectura-de-resultados.md": {
     "mtime": 1776452908.8179202,
@@ -171,13 +203,17 @@
     "mtime": 1776452908.8179202,
     "hash": "2efe99d26f0b9a4519e6dc3a9b4b5120"
   },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\deep-defense-research\\07-artefactos-scripts-tests-y-validacion.md": {
+    "mtime": 1781541506.751809,
+    "hash": "adb1fa82f618d94fbbd10508801c9b04"
+  },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\deep-defense-research\\README.md": {
-    "mtime": 1776452908.8179202,
-    "hash": "0281649d16b77db5a72a14319872de69"
+    "mtime": 1781541506.75579,
+    "hash": "fe227a5f46e212ba4927f844f7a2cd2a"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\experiments\\cicids2017_qrdqn_experiments.md": {
-    "mtime": 1776032277.5072112,
-    "hash": "64fb7479b9d874a384b10ac92fd44f59"
+    "mtime": 1781220892.5944963,
+    "hash": "e6d0b28f2a78dd29ac89ed764b9b8696"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\experiments\\nslkdd_experiments.md": {
     "mtime": 1775934798.62201,
@@ -192,12 +228,12 @@
     "hash": "a7987e851c1a9a4046338abc234e5345"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\report\\drafts\\state_of_the_art.md": {
-    "mtime": 1779035835.2790537,
-    "hash": "da895d106be1dd992583904cd88f43a9"
+    "mtime": 1781220456.3016164,
+    "hash": "b886df41c06e8d592e88fdd9a3f0ea22"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\report\\drafts\\state_of_the_art_todo.md": {
-    "mtime": 1778801039.852043,
-    "hash": "99db21411c7ce54faf49b7d2ed225ca7"
+    "mtime": 1781220443.6610215,
+    "hash": "d4452ee26674c4fdf693e30e92285963"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\Research\\Initial Research for Report - Chapter State Of The Art\\deep-research-report1.md": {
     "mtime": 1779035835.2677846,
@@ -320,8 +356,8 @@
     "hash": "ddf5082ea23fc6384e48fbf06e4e19b6"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\baseline_random_forest_comparison\\results_rf.txt": {
-    "mtime": 1777847774.7243016,
-    "hash": "3ae795a8eaa84849caa3584e9e59ef12"
+    "mtime": 1781191340.0488544,
+    "hash": "943b7a6f2211a2348545cd8ff018b3be"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scratch\\experimental_design_board.html": {
     "mtime": 1778791770.5080369,

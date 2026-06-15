@@ -1,12 +1,12 @@
 ---
 source_file: "tests/test_reward_config.py"
 type: "code"
-community: "RL Environment (Code)"
+community: "RL Environment Config"
 location: "L4"
 tags:
   - graphify/code
-  - graphify/INFERRED
-  - community/RL_Environment_Code
+  - graphify/EXTRACTED
+  - community/RL_Environment_Config
 ---
 
 # test_reward_logic_tp_fp_tn_fn()
@@ -15,4 +15,4 @@ tags:
 - [[RLDatasetDefenderEnv]] - `calls` [INFERRED]
 - [[test_reward_config.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/RL_Environment_Code
+#graphify/code #graphify/EXTRACTED #community/RL_Environment_Config

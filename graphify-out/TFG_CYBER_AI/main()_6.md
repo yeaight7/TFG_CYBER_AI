@@ -1,22 +1,27 @@
 ---
-source_file: "src/validate_checks.py"
+source_file: "src/train_rl_defender.py"
 type: "code"
-community: "Validation Checks Module"
-location: "L447"
+community: "RL Defender Training"
+location: "L358"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Validation_Checks_Module
+  - community/RL_Defender_Training
 ---
 
 # main()
 
 ## Connections
-- [[check_a_direct_eval()]] - `calls` [EXTRACTED]
-- [[check_b_shuffled_labels()]] - `calls` [EXTRACTED]
-- [[check_c_csv_split()]] - `calls` [EXTRACTED]
+- [[collect_environment_metadata()]] - `calls` [EXTRACTED]
+- [[configure_torch_runtime()]] - `calls` [EXTRACTED]
+- [[evaluate_model()]] - `calls` [EXTRACTED]
 - [[load_cicids2017_split()]] - `calls` [INFERRED]
+- [[make_env_fn()]] - `calls` [EXTRACTED]
 - [[parse_args()_3]] - `calls` [EXTRACTED]
-- [[validate_checks.py]] - `contains` [EXTRACTED]
+- [[resolve_checkpoint_freq()]] - `calls` [EXTRACTED]
+- [[resolve_total_timesteps()]] - `calls` [EXTRACTED]
+- [[resolve_training_hyperparams()]] - `calls` [EXTRACTED]
+- [[train_rl_defender.py]] - `contains` [EXTRACTED]
+- [[write_json()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Validation_Checks_Module
+#graphify/code #graphify/EXTRACTED #community/RL_Defender_Training

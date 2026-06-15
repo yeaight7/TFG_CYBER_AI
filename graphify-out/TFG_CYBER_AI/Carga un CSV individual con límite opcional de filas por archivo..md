@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "RF Baseline Module"
-location: "L193"
+community: "CICIDS2017 Preprocessing"
+location: "L200"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/RF_Baseline_Module
+  - community/CICIDS2017_Preprocessing
 ---
 
 # Carga un CSV individual con límite opcional de filas por archivo.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[_load_csv_with_row_limit()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/RF_Baseline_Module
+#graphify/rationale #graphify/EXTRACTED #community/CICIDS2017_Preprocessing

@@ -1,12 +1,12 @@
 ---
 source_file: "tests/test_predict_real_traffic_v2.py"
 type: "code"
-community: "Scaling & Clipping Utilities"
+community: "Inference Diagnostics"
 location: "L15"
 tags:
   - graphify/code
-  - graphify/INFERRED
-  - community/Scaling__Clipping_Utilities
+  - graphify/EXTRACTED
+  - community/Inference_Diagnostics
 ---
 
 # test_compute_diagnostics()
@@ -15,4 +15,4 @@ tags:
 - [[compute_diagnostics()]] - `calls` [INFERRED]
 - [[test_predict_real_traffic_v2.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/Scaling__Clipping_Utilities
+#graphify/code #graphify/EXTRACTED #community/Inference_Diagnostics

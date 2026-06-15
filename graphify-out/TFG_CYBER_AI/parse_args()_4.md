@@ -1,18 +1,18 @@
 ---
-source_file: "src/validate_leave_one_csv_out.py"
+source_file: "src/tune_hparams.py"
 type: "code"
-community: "Leave-One-Out Validation"
-location: "L274"
+community: "Hyperparam Tuning"
+location: "L123"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Leave-One-Out_Validation
+  - community/Hyperparam_Tuning
 ---
 
 # parse_args()
 
 ## Connections
 - [[main()_7]] - `calls` [EXTRACTED]
-- [[validate_leave_one_csv_out.py]] - `contains` [EXTRACTED]
+- [[tune_hparams.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Leave-One-Out_Validation
+#graphify/code #graphify/EXTRACTED #community/Hyperparam_Tuning

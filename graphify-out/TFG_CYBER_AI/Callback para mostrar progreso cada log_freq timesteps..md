@@ -1,12 +1,12 @@
 ---
 source_file: "src/validate_checks.py"
 type: "rationale"
-community: "Validation Checks Module"
+community: "Test Split Validation"
 location: "L68"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Validation_Checks_Module
+  - community/Test_Split_Validation
 ---
 
 # Callback para mostrar progreso cada log_freq timesteps.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[ProgressCallback]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Validation_Checks_Module
+#graphify/rationale #graphify/EXTRACTED #community/Test_Split_Validation

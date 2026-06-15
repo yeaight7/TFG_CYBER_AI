@@ -1,18 +1,18 @@
 ---
-source_file: "src/tune_hparams.py"
+source_file: "scripts/verify_fixed_test_split.py"
 type: "code"
-community: "Hyperparameter Tuning"
-location: "L123"
+community: "Test Split Validation"
+location: "L60"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Hyperparameter_Tuning
+  - community/Test_Split_Validation
 ---
 
 # parse_args()
 
 ## Connections
-- [[main()_5]] - `calls` [EXTRACTED]
-- [[tune_hparams.py]] - `contains` [EXTRACTED]
+- [[main()_4]] - `calls` [EXTRACTED]
+- [[verify_fixed_test_split.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Hyperparameter_Tuning
+#graphify/code #graphify/EXTRACTED #community/Test_Split_Validation

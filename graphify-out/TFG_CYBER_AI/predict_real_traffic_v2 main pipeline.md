@@ -1,12 +1,12 @@
 ---
 source_file: "scripts/predict_real_traffic_v2.py"
 type: "code"
-community: "Canonical Feature Schema"
+community: "Data Load Tools"
 location: "line 353"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Canonical_Feature_Schema
+  - community/Data_Load_Tools
 ---
 
 # predict_real_traffic_v2 main pipeline
@@ -22,4 +22,4 @@ tags:
 - [[map_to_canonical function]] - `calls` [EXTRACTED]
 - [[maybe_convert_time_units seconds-to-microseconds]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Canonical_Feature_Schema
+#graphify/code #graphify/EXTRACTED #community/Data_Load_Tools

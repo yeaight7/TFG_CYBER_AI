@@ -1,14 +1,17 @@
 ---
-source_file: "README.md"
-type: "document"
-community: "CSV-Out Validation Strategy"
-location: "README.md#validation-overview"
+source_file: "src/validate_leave_one_csv_out.py"
+type: "paper"
+community: "Project Overview"
 tags:
-  - graphify/document
-  - graphify/EXTRACTED
-  - community/CSV-Out_Validation_Strategy
+  - graphify/paper
+  - graphify/INFERRED
+  - community/Project_Overview
 ---
 
-# Leave-One-Exact-CSV-Out Validation
+# Leave-one-exact-CSV-out Validation
 
-#graphify/document #graphify/EXTRACTED #community/CSV-Out_Validation_Strategy
+## Connections
+- [[DEFENSA_TFG_PROGRESO]] - `references` [EXTRACTED]
+- [[validate_leave_one_csv_out.py_1]] - `implements` [INFERRED]
+
+#graphify/paper #graphify/INFERRED #community/Project_Overview

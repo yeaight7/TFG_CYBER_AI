@@ -1,19 +1,17 @@
 ---
-source_file: "README.md"
-type: "code"
-community: "CICIDS2017 Research & Experiments"
-location: "scripts/predict_real_traffic_v2.py"
+source_file: "docs/AGENT_CONTEXT.md"
+type: "paper"
+community: "Project Overview"
 tags:
-  - graphify/code
+  - graphify/paper
   - graphify/EXTRACTED
-  - community/CICIDS2017_Research__Experiments
+  - community/Project_Overview
 ---
 
 # predict_real_traffic_v2.py
 
 ## Connections
-- [[Phase 2 Execution Plan]] - `references` [EXTRACTED]
-- [[Phase 2 Offline Inference]] - `references` [EXTRACTED]
-- [[TFG_CYBER_AI Project]] - `references` [EXTRACTED]
+- [[AGENTS]] - `references` [EXTRACTED]
+- [[GEMINI]] - `references` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/CICIDS2017_Research__Experiments
+#graphify/paper #graphify/EXTRACTED #community/Project_Overview

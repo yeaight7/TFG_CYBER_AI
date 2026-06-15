@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "code"
-community: "RF Baseline Module"
-location: "L219"
+community: "CICIDS2017 Preprocessing"
+location: "L226"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/RF_Baseline_Module
+  - community/CICIDS2017_Preprocessing
 ---
 
 # _prepare_cicids_features()
@@ -23,4 +23,4 @@ tags:
 - [[map_to_canonical()]] - `calls` [INFERRED]
 - [[test_prepare_cicids_features_binary_labels()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/RF_Baseline_Module
+#graphify/code #graphify/EXTRACTED #community/CICIDS2017_Preprocessing

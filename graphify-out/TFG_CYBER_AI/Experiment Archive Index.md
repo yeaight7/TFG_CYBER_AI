@@ -1,13 +1,13 @@
 ---
 source_file: "experiments/README.md"
 type: "document"
-community: "Experiment Archive"
+community: "Community 23"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Experiment_Archive
+  - community/Community_23
 ---
 
 # Experiment Archive Index
 
-#graphify/document #graphify/EXTRACTED #community/Experiment_Archive
+#graphify/document #graphify/EXTRACTED #community/Community_23

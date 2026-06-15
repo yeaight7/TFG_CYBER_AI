@@ -1,21 +1,23 @@
 ---
-source_file: "src/train_rl_defender.py"
+source_file: "scripts/verify_fixed_test_split.py"
 type: "code"
-community: "RL Environment (Code)"
-location: "L173"
+community: "Test Split Validation"
+location: "L100"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/RL_Environment_Code
+  - community/Test_Split_Validation
 ---
 
 # main()
 
 ## Connections
-- [[evaluate_model()]] - `calls` [EXTRACTED]
+- [[_sha256_of_array()]] - `calls` [INFERRED]
+- [[_stratified_nested_prefix_indices()]] - `calls` [INFERRED]
+- [[fail()]] - `calls` [EXTRACTED]
 - [[load_cicids2017_split()]] - `calls` [INFERRED]
-- [[make_env_fn()]] - `calls` [EXTRACTED]
-- [[parse_args()_1]] - `calls` [EXTRACTED]
-- [[train_rl_defender.py]] - `contains` [EXTRACTED]
+- [[ok()]] - `calls` [EXTRACTED]
+- [[parse_args()_2]] - `calls` [EXTRACTED]
+- [[verify_fixed_test_split.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/RL_Environment_Code
+#graphify/code #graphify/EXTRACTED #community/Test_Split_Validation

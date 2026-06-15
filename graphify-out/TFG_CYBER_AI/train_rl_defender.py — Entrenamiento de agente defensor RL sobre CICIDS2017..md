@@ -1,12 +1,12 @@
 ---
 source_file: "src/train_rl_defender.py"
 type: "rationale"
-community: "RL Environment (Code)"
+community: "RL Defender Training"
 location: "L1"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/RL_Environment_Code
+  - community/RL_Defender_Training
 ---
 
 # train_rl_defender.py — Entrenamiento de agente defensor RL sobre CICIDS2017.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[train_rl_defender.py]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/RL_Environment_Code
+#graphify/rationale #graphify/EXTRACTED #community/RL_Defender_Training

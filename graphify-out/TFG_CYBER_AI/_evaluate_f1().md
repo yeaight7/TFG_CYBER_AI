@@ -1,12 +1,12 @@
 ---
 source_file: "src/tune_hparams.py"
 type: "code"
-community: "Hyperparameter Tuning"
+community: "Hyperparam Tuning"
 location: "L39"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Hyperparameter_Tuning
+  - community/Hyperparam_Tuning
 ---
 
 # _evaluate_f1()
@@ -17,4 +17,4 @@ tags:
 - [[objective()]] - `calls` [EXTRACTED]
 - [[tune_hparams.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Hyperparameter_Tuning
+#graphify/code #graphify/EXTRACTED #community/Hyperparam_Tuning

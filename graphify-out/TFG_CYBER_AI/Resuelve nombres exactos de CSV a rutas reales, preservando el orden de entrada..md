@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "RF Baseline Module"
-location: "L298"
+community: "CICIDS2017 Preprocessing"
+location: "L305"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/RF_Baseline_Module
+  - community/CICIDS2017_Preprocessing
 ---
 
 # Resuelve nombres exactos de CSV a rutas reales, preservando el orden de entrada.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[_resolve_exact_csv_names()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/RF_Baseline_Module
+#graphify/rationale #graphify/EXTRACTED #community/CICIDS2017_Preprocessing

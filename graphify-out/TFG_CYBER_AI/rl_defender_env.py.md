@@ -1,12 +1,12 @@
 ---
 source_file: "src/rl_defender_env.py"
 type: "code"
-community: "RL Environment (Code)"
+community: "RL Environment Config"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/RL_Environment_Code
+  - community/RL_Environment_Config
 ---
 
 # rl_defender_env.py
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[RLDatasetDefenderEnv]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/RL_Environment_Code
+#graphify/code #graphify/EXTRACTED #community/RL_Environment_Config

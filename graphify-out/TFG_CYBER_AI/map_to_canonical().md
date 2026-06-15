@@ -1,12 +1,12 @@
 ---
 source_file: "src/canonical_schema.py"
 type: "code"
-community: "Deprecated Inference v1"
+community: "Canonical Schema Setup"
 location: "L277"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/Deprecated_Inference_v1
+  - community/Canonical_Schema_Setup
 ---
 
 # map_to_canonical()
@@ -18,7 +18,7 @@ tags:
 - [[canonical_schema.py]] - `contains` [EXTRACTED]
 - [[load_nsl_kdd_binary()]] - `calls` [INFERRED]
 - [[main()]] - `calls` [INFERRED]
-- [[main()_2]] - `calls` [INFERRED]
+- [[main()_3]] - `calls` [INFERRED]
 - [[test_map_to_canonical_mask_logic()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/INFERRED #community/Deprecated_Inference_v1
+#graphify/code #graphify/INFERRED #community/Canonical_Schema_Setup

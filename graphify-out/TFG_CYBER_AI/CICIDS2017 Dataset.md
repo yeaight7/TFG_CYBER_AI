@@ -1,21 +1,17 @@
 ---
-source_file: "README.md"
-type: "document"
-community: "CICIDS2017 Research & Experiments"
-location: "README.md#dataset-versions-cicids2017"
+source_file: "GEMINI.md"
+type: "paper"
+community: "Project Overview"
 tags:
-  - graphify/document
+  - graphify/paper
   - graphify/EXTRACTED
-  - community/CICIDS2017_Research__Experiments
+  - community/Project_Overview
 ---
 
 # CICIDS2017 Dataset
 
 ## Connections
-- [[C03_qrdqn_cicids2017_canonical_full_random_20260223_232439]] - `references` [EXTRACTED]
-- [[Defensa TFG Progreso (Spanish Defense Notes)]] - `references` [EXTRACTED]
-- [[Sharafaldin2018CICIDS2017 (CICIDS2017 paper)]] - `references` [EXTRACTED]
-- [[TFG_CYBER_AI Project]] - `references` [EXTRACTED]
-- [[Tellache2024 (Multi-agent RL NIDS on CICIDS2017)]] - `references` [EXTRACTED]
+- [[GEMINI]] - `references` [EXTRACTED]
+- [[README]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/CICIDS2017_Research__Experiments
+#graphify/paper #graphify/EXTRACTED #community/Project_Overview
