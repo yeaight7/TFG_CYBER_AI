@@ -1,0 +1,333 @@
+\chapter{Metodología}
+
+\section{Visión general metodológica}
+Este capítulo describe el diseño metodológico empleado para construir y evaluar el defensor de ciberseguridad basado en aprendizaje por refuerzo (RL) propuesto. El objetivo no es presentar un sistema de prevención de intrusiones (IPS) listo para producción, sino definir un marco experimental controlado, reproducible y offline para decisiones de seguridad binarias sobre registros de flujos de red. Cada flujo se trata como un único punto de decisión: el defensor observa una representación numérica del flujo y decide si permitirlo (\texttt{PERMIT}) como tráfico benigno o bloquearlo (\texttt{BLOCK}) como tráfico malicioso.
+
+La metodología es deliberadamente conservadora. Los benchmarks públicos de detección de intrusiones pueden producir resultados inflados cuando el preprocesamiento, la construcción de las particiones, los controles de fuga de información y las comparaciones con líneas base son débiles \parencite{Arp2020DosDontsMLSecurity,Engelen2021CICIDSIssues,Lanvin2023Errors}. Por ello, el pipeline se ha diseñado en torno a contratos de datos explícitos, artefactos de ejecución reproducibles, normalización ajustada únicamente sobre datos de entrenamiento, y una validación progresivamente más estricta. La misma representación canónica se utiliza tanto para el benchmark interno de CICIDS2017 como para la inferencia offline sobre tráfico de laboratorio en la Fase 2, de modo que la pregunta experimental no queda ligada a una convención de nomenclatura de CSV concreta ni a un extractor de características particular.
+
+A grandes rasgos, la metodología comprende seis etapas encadenadas:
+\begin{enumerate}
+    \item ingerir los datos CSV de CICIDS2017 a nivel de flujo y mapear las etiquetas a una tarea binaria de defensa;
+    \item eliminar los identificadores susceptibles de provocar fuga de información y normalizar los valores numéricos malformados;
+    \item mapear las columnas específicas de cada extractor a un esquema canónico de características fijo de 76 características;
+    \item añadir una máscara de presencia/ausencia de 76 dimensiones, produciendo observaciones de 152 dimensiones;
+    \item entrenar y evaluar un defensor QRDQN compatible con Gymnasium bajo protocolos de partición controlados;
+    \item comprobar la robustez mediante comprobaciones de validación, líneas base supervisadas e inferencia offline en la Fase 2.
+\end{enumerate}
+
+Este diseño mantiene la tesis dentro de un marco experimental offline. Las salidas \texttt{PERMIT} y \texttt{BLOCK} son predicciones del modelo sobre registros de flujo almacenados. No son órdenes de cortafuegos y no modifican ninguna ruta de red activa.
+
+\section{Fases experimentales}
+La metodología experimental se divide en dos fases. La primera fase comprueba el aprendizaje y la generalización interna sobre un benchmark público. La segunda fase comprueba si el pipeline de preprocesamiento y modelo resultante es capaz de procesar tráfico capturado de forma independiente bajo cambio de dominio.
+
+\subsection{Fase 1: benchmark interno de CICIDS2017}
+La Fase 1 utiliza CICIDS2017 como benchmark interno principal \parencite{Sharafaldin2018CICIDS2017,CICIDS2017Web}. CICIDS2017 es adecuado para esta tesis porque proporciona tráfico benigno y de ataque etiquetado, capturas de paquetes en bruto y CSVs de flujos derivados de una extracción al estilo CICFlowMeter \parencite{Lashkari2017CICFlowMeter}. También contiene múltiples escenarios de ataque en diferentes días de captura, lo que permite diseños de partición más estrictos que una única partición aleatoria entrenamiento-prueba.
+
+La fase no se trata como un sustituto limpio de un entorno de producción. CICIDS2017 tiene problemas conocidos que incluyen flujos duplicados o inconsistentes, errores de etiquetado y de extracción, y sensibilidad a la partición \parencite{Engelen2021CICIDSIssues,Lanvin2023Errors,Liu2022ErrorPrevalenceNIDS}. Por esa razón, la Fase 1 se enmarca como un benchmark interno con controles explícitos. El pipeline elimina los campos de tipo identificador, ajusta la normalización únicamente sobre los datos de entrenamiento, registra las configuraciones de ejecución y evalúa el modelo mediante una escalera de validación. Una puntuación elevada en la partición aleatoria se interpreta como evidencia de que el modelo es capaz de aprender la tarea del benchmark; no se interpreta como preparación para el despliegue.
+
+\subsection{Fase 2: inferencia offline sobre tráfico de laboratorio}
+La Fase 2 evalúa la transferencia más allá de la distribución del benchmark. El tráfico se captura en un entorno de laboratorio privado, se convierte offline en CSVs de flujos, se mapea al mismo esquema canónico, se normaliza con los artefactos de entrenamiento persistidos y se procesa con el modelo entrenado. Esta fase es una prueba de inferencia sobre una distribución externa, no un despliegue en vivo.
+
+El propósito metodológico de la Fase 2 es exponer el cambio de dominio. Los estudios públicos sobre NIDS suelen reportar resultados sólidos dentro del mismo conjunto de datos que se degradan cuando el modelo se evalúa sobre tráfico producido por redes, herramientas de captura, periodos temporales o definiciones de características diferentes \parencite{Apruzzese2022CrossEvaluationNIDS,Layeghy2023CrossDomainNIDS}. La Fase 2 se centra por tanto en la inferencia offline reproducible, los diagnósticos y el seguimiento de artefactos. No garantiza un rendimiento estable en redes empresariales arbitrarias y no implementa bloqueo activo en tiempo real.
+
+\section{Fuente de datos y representación de la entrada}
+La tesis utiliza una representación tabular a nivel de flujo. Esta representación es un compromiso deliberado entre relevancia operativa, manejabilidad y privacidad. Captura el comportamiento estadístico a lo largo de secuencias de paquetes evitando la inspección de la carga útil.
+
+\subsection{CSVs de flujos de CICIDS2017}
+La fuente de datos principal es la publicación de CSVs de flujos de CICIDS2017. Cada fila de un CSV corresponde a un flujo de red bidireccional resumido mediante estadísticas numéricas como duración, conteos de paquetes, totales de bytes, tiempos de llegada entre paquetes, estadísticas de longitud de paquete y conteos de flags TCP. Las representaciones basadas en flujos se utilizan ampliamente en la investigación sobre NIDS porque comprimen el comportamiento de la red en filas numéricas de anchura fija que pueden procesarse mediante métodos estándar de aprendizaje automático \parencite{Sperotto2010FlowIDS,Umer2017FlowIDS}.
+
+El pipeline de carga local espera los ficheros CSV oficiales de CICIDS2017 y admite presupuestos de filas tanto completos como limitados. Los presupuestos limitados permiten pruebas rápidas de humo e iteración ágil; los presupuestos completos son los utilizados en las ejecuciones finales del benchmark. El cargador lee los CSVs grandes en fragmentos, estandariza los nombres de columna eliminando espacios en blanco inconsistentes, identifica la columna de etiqueta de forma robusta y aplica después la limpieza de características antes de cualquier escalado dependiente de la partición.
+
+\subsection{Mapeo de etiquetas binarias}
+CICIDS2017 incluye varias etiquetas de ataque. La tesis las colapsa en una decisión binaria del defensor:
+\begin{itemize}
+    \item etiqueta \texttt{0}: \texttt{BENIGN}, mapeada a la acción deseada \texttt{PERMIT};
+    \item etiqueta \texttt{1}: cualquier clase de ataque, mapeada a la acción deseada \texttt{BLOCK}.
+\end{itemize}
+
+Este mapeo binario se corresponde con el modelo de decisión de primera línea estudiado aquí. Además, hace que el espacio de acciones de RL sea sencillo y auditable. La limitación es que la información sobre la familia de ataque no es el objetivo de aprendizaje principal en la ruta de RL actual. Cualquier análisis de errores por familia debe por tanto estar respaldado por etiquetas de familia preservadas o artefactos independientes; no puede inferirse a partir de las etiquetas binarias por sí solas.
+
+\subsection{Representación tabular a nivel de flujo}
+El sustrato de aprendizaje es una tabla a nivel de flujo en lugar de paquetes en bruto o bytes de carga útil. Esto reduce la dimensionalidad y hace factible el entrenamiento offline a gran escala. También evita algunas complicaciones legales y técnicas de la inspección profunda de paquetes, especialmente cuando las cargas útiles están cifradas \parencite{Sperotto2010FlowIDS,Umer2017FlowIDS}. Sin embargo, la abstracción de flujo pierde el contenido, el orden preciso de los paquetes y parte del contexto de largo alcance entre múltiples flujos. La metodología estudia por tanto un defensor basado en flujos, no un sistema completo de análisis forense de red.
+
+\section{Limpieza de datos y preprocesamiento}
+El preprocesamiento se trata como parte del método experimental, no como un detalle de implementación. En los benchmarks de NIDS, pequeñas decisiones de preprocesamiento pueden cambiar el significado de la tarea al filtrar etiquetas, suprimir flujos malformados o hacer que los datos de prueba influyan en el entrenamiento.
+
+\subsection{Normalización de columnas y coerción numérica}
+Las columnas CSV en bruto pueden contener espacios iniciales, capitalización inconsistente y tipos de datos mixtos. El cargador primero normaliza los nombres de columna y después convierte las columnas de características a valores numéricos. La matriz de características final se representa como \texttt{float32}, mientras que las etiquetas se representan como \texttt{int64}. Este contrato de tipos mantiene estable la interfaz del entorno, el escalador y el modelo en las etapas posteriores.
+
+No se permite que las filas introduzcan cadenas de texto arbitrarias en el modelo. Las columnas de características no numéricas que sobreviven a la eliminación de identificadores quedan excluidas. Esto evita la introducción accidental de cadenas categóricas cuya codificación sería no controlada o específica de un conjunto de datos.
+
+\subsection{Valores inválidos, valores ausentes e imputación}
+La extracción de flujos de red puede producir valores numéricos inválidos. Las características de tasa, por ejemplo, pueden volverse infinitas o indefinidas cuando se calculan sobre una duración nula o casi nula. El pipeline sustituye los infinitos y los valores numéricos ausentes por cero antes del mapeo canónico. Esta elección es pragmática: muchos contadores de flujo, tasas y estadísticas agregadas pueden utilizar de forma segura el cero como marcador de posición neutro cuando se acompaña de una señal explícita de presencia/ausencia.
+
+La imputación por cero sola sería insegura porque el modelo no podría distinguir un cero medido real de un marcador sintético. El esquema canónico empareja por tanto la imputación con una máscara de presencia/ausencia. La máscara hace visible la disponibilidad de características tanto para el modelo como para los diagnósticos posteriores.
+
+\subsection{Exclusión de campos susceptibles de fuga}
+El pipeline de preprocesamiento aplica una política anti-fuga fundamentada en los riesgos de evaluación conocidos en seguridad con ML \parencite{Arp2020DosDontsMLSecurity,Kaufman2011LeakageDataMining}. Se excluyen las direcciones IP de origen y destino, los Flow IDs, las marcas temporales absolutas y los identificadores de endpoints. Los campos de puerto directo también se excluyen porque pueden actuar como indicadores del escenario en conjuntos de datos controlados por scripts. Por ejemplo, un día de ataque puede concentrar tráfico malicioso en servicios concretos, lo que permitiría al modelo memorizar un script de captura en lugar de aprender estadísticas de comportamiento de flujo.
+
+Esta exclusión se aplica antes del mapeo canónico. El modelo recibe por tanto únicamente características estadísticas de flujo y los valores de máscara correspondientes. Si en el futuro se introducen nuevos conjuntos de datos o extractores, sus adaptadores deben preservar la misma política: sin identificadores, sin campos de tiempo absoluto y sin puertos utilizados directamente como atajos de etiqueta.
+
+\section{Esquema canónico de características}
+El esquema canónico es el contrato de datos central de la tesis. Separa la interfaz del modelo de los nombres de columna, el orden y la disponibilidad de características de un extractor concreto.
+
+\subsection{Características canónicas de flujo}
+El esquema define 76 características numéricas de flujo ordenadas. Incluyen duración, conteos de paquetes hacia adelante y hacia atrás, totales de bytes, estadísticas de longitud de paquete, estadísticas de tiempo entre llegadas de flujo y por dirección, tasas de paquetes y bytes, conteos de flags TCP, longitudes de cabecera, tamaños de ventana, estadísticas de subflujos y características de temporización activa/inactiva. Estas características se han elegido porque son estadísticas de flujo y no identificadores, y porque son ampliamente compatibles con la extracción al estilo CICFlowMeter.
+
+Para CICIDS2017, un adaptador mapea las columnas originales del CSV a estos nombres canónicos. Para la Fase 2, el script de inferencia robusta mapea las columnas del extractor de flujos de laboratorio a los mismos nombres canónicos. El modelo se entrena y evalúa por tanto frente a un contrato de características fijo. Este diseño sigue la motivación metodológica más amplia de la estandarización de características en NIDS: la comparación entre dominios resulta más auditable cuando las definiciones de características son explícitas y estables \parencite{Sarhan2021}.
+
+La Tabla~\ref{tab:canonical-groups} enumera los grupos lógicos dentro del esquema de 76 características y el número de características aportadas por cada grupo. La agrupación es informativa; el modelo recibe los 76 valores como un vector plano sin señales de agrupación estructural.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcp{7cm}}
+\toprule
+Grupo de características & Cantidad & Estadísticas representativas \\
+\midrule
+Duración del flujo & 1 & Duración total del flujo bidireccional \\
+Estadísticas de paquetes hacia adelante & 12 & Conteo de paquetes, bytes totales, media/desv.\ típica/mínimo/máximo de longitudes de paquete \\
+Estadísticas de paquetes hacia atrás & 12 & Las mismas estadísticas para la dirección inversa \\
+Agregados bidireccionales & 8 & Conteos combinados, bytes totales, promedios de tasa de ráfaga \\
+Estadísticas de tiempo entre llegadas & 10 & Media, desv.\ típica, mínimo y máximo del tiempo entre llegadas del flujo, hacia adelante y hacia atrás \\
+Conteos de flags TCP & 8 & Conteos de FIN, SYN, RST, PSH, ACK, URG, CWE, ECE \\
+Agregados de longitud de cabecera & 4 & Totales de bytes de cabecera hacia adelante y hacia atrás \\
+Estadísticas de tamaño de ventana & 3 & Tamaño de ventana inicial y medio por dirección \\
+Características de tasa de flujo & 6 & Bytes/s, paquetes/s por dirección y combinados \\
+Estadísticas de subflujos & 6 & Promedios de paquetes y bytes de subflujo por dirección \\
+Temporización activa/inactiva & 6 & Media, desv.\ típica y máximo de las duraciones de los periodos activos e inactivos \\
+\bottomrule
+\end{tabular}
+\caption{Agrupación lógica de las 76 características canónicas de flujo. Todos los grupos se fusionan en un único vector plano antes de la entrada al modelo.}
+\label{tab:canonical-groups}
+\end{table}
+
+\subsection{Máscara de presencia/ausencia}
+Diferentes extractores pueden no proporcionar todas las características canónicas, e incluso una columna fuente presente puede contener valores inválidos. El pipeline produce por tanto una máscara de presencia/ausencia de 76 dimensiones. Para cada característica canónica $x_i$, el valor de máscara correspondiente $m_i$ es:
+\begin{itemize}
+    \item $m_i = 1$ cuando la característica fuente está presente y es válida;
+    \item $m_i = 0$ cuando la característica está ausente o ha tenido que ser imputada.
+\end{itemize}
+
+La máscara desempeña dos funciones metodológicas. En primer lugar, evita la imputación silenciosa: el modelo puede condicionar su decisión a si un valor fue observado o rellenado. En segundo lugar, facilita los diagnósticos de la Fase 2, porque un extractor de laboratorio que carece de muchas características al estilo CICIDS2017 puede detectarse mediante un patrón de máscara diferente en lugar de quedar oculto dentro de un vector numérico denso.
+
+\subsection{Vector de observación final}
+La observación final es:
+\[
+    o = [x_1, x_2, \dots, x_{76}, m_1, m_2, \dots, m_{76}]
+\]
+Esto produce un vector \texttt{float32} de 152 dimensiones. La primera mitad contiene los valores de las características, y la segunda mitad contiene la máscara. El tamaño de la observación es por tanto invariante entre CICIDS2017, las particiones de validación y la inferencia en la Fase 2. Esta invariancia es importante porque la red de política del QRDQN espera una dimensión de entrada fija.
+
+\section{Separación entrenamiento-prueba y escalado}
+La metodología separa el ajuste y la evaluación en cada etapa de preprocesamiento que pueda aprender de los datos. Esto es necesario porque la fuga de información puede producirse no solo a través de columnas, sino también a través de estadísticas como medias globales, varianzas, percentiles y distribuciones de clases.
+
+\subsection{Partición aleatoria estratificada}
+La partición aleatoria estratificada es el primer peldaño de validación. Preserva las proporciones de clases entre entrenamiento y prueba y es útil como comprobación de la capacidad de aprendizaje. Si el modelo no puede aprender bajo esta partición favorable, las evaluaciones más estrictas posteriores tienen pocas probabilidades de tener éxito.
+
+Sin embargo, la partición aleatoria por filas es la evidencia más débil de este proyecto. Los conjuntos de datos de flujos pueden contener registros correlacionados, patrones repetidos y artefactos del contexto de captura. Situar flujos adyacentes o muy similares a ambos lados de la partición puede sobreestimar la generalización \parencite{Lanvin2023Errors,Arp2020DosDontsMLSecurity}. Los resultados de la partición aleatoria se reportan por tanto únicamente como evidencia del benchmark interno.
+
+\subsection{Partición por CSV/día}
+La partición por CSV/día entrena sobre ficheros seleccionados de CICIDS2017 y evalúa sobre ficheros diferentes. Esta partición comprueba si el modelo se transfiere entre días de captura y contextos de ataque. En la implementación mantenida, la partición por día por defecto entrena sobre los patrones del lunes, martes y miércoles, y prueba sobre los patrones del jueves y viernes. Se trata de una configuración más estricta que la partición aleatoria porque ficheros enteros quedan fuera del entrenamiento.
+
+La partición por día también se alinea con la estructura conocida de CICIDS2017: diferentes días contienen diferentes cargas de trabajo benignas y escenarios de ataque. Por ello es más adecuada para revelar si el modelo ha aprendido un comportamiento de flujo general o artefactos específicos de un día.
+
+\subsection{Partición leave-one-exact-CSV-out}
+El protocolo interno más estricto es la validación leave-one-exact-CSV-out. Cada fold retiene un CSV oficial de CICIDS2017 como datos de prueba y entrena con los CSV restantes. El script de validación implementado agrega métricas por fold, incluyendo exactitud, exactitud balanceada, precisión de ataque, recall de ataque, F1 de ataque, precisión de benigno, recall de benigno, tasa de falsos positivos, tasa de falsos negativos, tasa de bloqueo, retorno total y costes temporales.
+
+Este protocolo es metodológicamente importante porque trata cada fichero de captura como una unidad de tipo dominio. Es más sólido que una partición por día basada en subcadenas porque utiliza los nombres de fichero CSV oficiales exactos y evita solapamientos accidentales. En el momento de redacción de este capítulo, la implementación existe, mientras que las métricas agregadas finales solo deben reportarse cuando se disponga de un artefacto de ejecución comprometido.
+
+\subsection{Estandarización ajustada sobre entrenamiento}
+El entrenamiento de redes neuronales es sensible a la escala de las características. El pipeline utiliza por tanto normalización mediante \texttt{StandardScaler}, ajustando el escalador únicamente sobre la partición de entrenamiento y aplicando la transformación ajustada a los datos de prueba. El mismo principio se aplica a los artefactos de inferencia persistidos: el escalador guardado durante el entrenamiento se reutiliza en la Fase 2, en lugar de recalcularse a partir de los flujos de laboratorio.
+
+Para la inferencia robusta en la Fase 2, el pipeline de entrenamiento también persiste los límites de percentiles sobre las características canónicas en bruto. El script de inferencia de la Fase 2 puede aplicar recorte por percentiles sobre las características en bruto y recorte por z-score después del escalado, y luego exportar diagnósticos. Estos controles no se presentan como una solución al cambio de dominio; son salvaguardas que hacen visibles y acotados los valores extremos fuera de distribución durante la inferencia offline.
+
+\section{Formulación del aprendizaje por refuerzo}
+El defensor se implementa como un entorno compatible con Gymnasium \parencite{GymnasiumDocs}. Esto permite que el código estándar de RL basado en valores interactúe con el conjunto de datos de flujos a través de la interfaz habitual \texttt{reset()} y \texttt{step()}.
+
+\subsection{Espacio de observación}
+El espacio de observación es un espacio vectorial continuo de dimensión 152. Cada observación representa un vector de flujo canónico escalado junto con su máscara de presencia/ausencia. Durante el entrenamiento, las observaciones se extraen de la partición de entrenamiento. Durante la evaluación determinista, el entorno itera a través de la partición de prueba sin barajado, lo que permite comparar las predicciones directamente con las etiquetas verdaderas.
+
+\subsection{Espacio de acciones}
+El espacio de acciones es discreto con dos acciones:
+\begin{itemize}
+    \item \texttt{Acción 0 (PERMIT)}: clasificar el flujo como benigno y permitirlo en el modelo de decisión experimental;
+    \item \texttt{Acción 1 (BLOCK)}: clasificar el flujo como malicioso y bloquearlo o generar una alerta en el modelo de decisión experimental.
+\end{itemize}
+
+El valor de la acción está alineado intencionalmente con el valor de la etiqueta binaria: benigno es \texttt{0}, ataque es \texttt{1}. Esto simplifica la evaluación directa porque una acción predicha puede compararse con la etiqueta objetivo sin necesidad de una capa de decodificación adicional.
+
+\subsection{Función de recompensa}
+La función de recompensa codifica costes de seguridad asimétricos \parencite{Lee2002CostSensitiveIDS,Cardenas2006IDSFramework}. Un falso negativo significa que se permite un ataque. Un falso positivo significa que se bloquea tráfico benigno. En muchos escenarios defensivos, los ataques no detectados son más graves que los bloqueos innecesarios, aunque la relación exacta depende del contexto operativo.
+
+La implementación actual utiliza la siguiente configuración de recompensa por defecto:
+\[
+\text{TP}=1.5,\quad \text{FP}=-2.0,\quad \text{FN}=-5.0,\quad \text{TN/omisión}=0.0.
+\]
+La Tabla~\ref{tab:reward-matrix} organiza estos valores como una matriz de decisión para los cuatro resultados posibles.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Decisión del agente & Etiqueta real: Ataque & Etiqueta real: Benigno \\
+\midrule
+\texttt{BLOCK} (Acción 1) & $+1.5$ (Verdadero Positivo) & $-2.0$ (Falso Positivo) \\
+\texttt{PERMIT} (Acción 0) & $-5.0$ (Falso Negativo) & $\phantom{-}0.0$ (Verdadero Negativo) \\
+\bottomrule
+\end{tabular}
+\caption{Matriz de recompensa por defecto para el entorno del defensor binario. Los valores son supuestos experimentales registrados con cada ejecución.}
+\label{tab:reward-matrix}
+\end{table}
+
+La penalización por falso negativo domina la señal de recompensa. Un agente que emite \texttt{PERMIT} en cada observación acumula un retorno muy negativo en tráfico con alta proporción de ataques, mientras que un agente que emite \texttt{BLOCK} en cada observación acumula penalizaciones por falsos positivos sin obtener crédito por detección de ataques. La estructura de recompensa está por tanto diseñada para alejar al agente de políticas constantes degeneradas y conducirlo hacia un comportamiento discriminativo. La recompensa cero para el verdadero negativo es deliberada: recompensar explícitamente cada paso benigno correcto sesgaría al agente hacia maximizar la tasa de permiso en lugar de la calidad de detección. Estos valores son supuestos experimentales, no costes empresariales medidos. Se registran con cada ejecución para que las ejecuciones históricas puedan distinguirse de los valores por defecto actuales.
+
+\subsection{Estructura del episodio}
+Un episodio es una secuencia de decisiones sobre flujos. Al reiniciar, el entorno inicializa un índice sobre la partición seleccionada. Cuando el barajado está activado, el orden de entrenamiento se aleatoriza. En cada paso, el agente recibe una observación, selecciona \texttt{PERMIT} o \texttt{BLOCK}, recibe una recompensa calculada a partir de la etiqueta real y la acción, y avanza al flujo siguiente. Un episodio termina cuando se agota el conjunto de datos o se alcanza un número máximo de pasos configurado.
+
+Este diseño proporciona a los algoritmos estándar de RL un flujo de transiciones manteniendo el entrenamiento offline y seguro. Ninguna acción afecta al conjunto de datos fuente, al flujo siguiente ni al entorno de red.
+
+\subsection{Estado del entorno y protocolo de transición}
+En cada llamada a \texttt{reset()}, el entorno selecciona la partición asignada al modo actual (entrenamiento o evaluación), baraja opcionalmente el índice si el modo de barajado está activo, reinicia el contador de pasos interno y devuelve la primera observación junto con un diccionario de metadatos. En cada llamada a \texttt{step()}, el entorno registra la acción del agente, recupera la etiqueta de verdad del índice de flujo actual, calcula la recompensa escalar a partir de la matriz de recompensa, avanza el índice y devuelve la siguiente observación, la recompensa, un indicador de terminación, un indicador de truncación y el diccionario de metadatos.
+
+La condición de terminación es el agotamiento del conjunto de datos o un número máximo de pasos configurable. En el modo de entrenamiento, el orden barajado garantiza que las transiciones del minibatch muestreen una distribución amplia de tipos de flujo durante un único episodio. En el modo de evaluación, el entorno es determinista: la misma partición recorrida en el mismo orden produce la misma secuencia de observaciones, recompensas y etiquetas. Este determinismo es esencial para la evaluación reproducible porque implica que las diferencias en métricas entre dos modelos guardados reflejan únicamente el comportamiento del modelo y no el ruido de muestreo en el bucle de evaluación.
+
+La separación entre los modos de entrenamiento y evaluación se aplica a nivel del entorno y no se deja al llamante. Pasar el indicador de modo correcto en el momento de la construcción establece tanto el conjunto de índices como el comportamiento de barajado, lo que evita un error frecuente en el que la evaluación hereda accidentalmente el orden barajado de un entorno de entrenamiento.
+
+\subsection{Limitaciones de la formulación conjunto-de-datos-como-entorno}
+Dado que el entorno es un conjunto de datos estático, las acciones del agente no afectan a los estados futuros. Esto no es un problema completo de defensa cibernética autónoma en el que bloquear un flujo podría cambiar el comportamiento posterior del atacante, el estado del host, el enrutamiento o el contexto de alertas. La formulación se asemeja más a un problema de decisión contextual sensible al coste que a un proceso de decisión de Markov rico \parencite{SuttonBarto2018RL,Levine2020OfflineRL}.
+
+Esta limitación es explícita en la metodología. El RL se utiliza aquí para estudiar el aprendizaje de decisiones basadas en valor y sensibles al coste sobre registros de flujo, y para establecer un pipeline offline seguro. Las afirmaciones sobre respuesta adversarial en múltiples pasos, adaptación en línea o defensa cibernética activa quedan fuera del alcance implementado.
+
+\section{Agente QRDQN}
+El algoritmo de RL principal es Quantile Regression Deep Q-Network (QRDQN) \parencite{Dabney2018QRDQN}. QRDQN pertenece a la familia del RL distribucional, que modela una distribución sobre los retornos en lugar de únicamente un retorno esperado \parencite{Bellemare2017DistributionalRL}.
+
+\subsection{Papel algorítmico}
+El DQN estándar aproxima los valores-acción con una red neuronal y selecciona acciones según el retorno esperado estimado \parencite{Mnih2015DQN}. QRDQN extiende esta idea aprendiendo los cuantiles de la distribución del retorno. Esto es relevante para la tesis porque la estructura de recompensa es asimétrica: los falsos negativos conllevan una penalización mucho mayor que la recompensa que generan los permisos benignos correctos. Una visión distribucional puede representar más información sobre la variabilidad del retorno que una única estimación de la media.
+
+La metodología no asume que QRDQN sea inherentemente superior a los clasificadores supervisados para datos de flujo tabulares. En cambio, evalúa QRDQN como el representante principal de RL bajo el mismo preprocesamiento, las mismas particiones y las mismas métricas utilizadas por las líneas base.
+
+\subsection{Función de pérdida de regresión cuantílica}
+QRDQN representa la distribución del retorno de acción mediante $N$ estimaciones de cuantiles aprendidas $\{\theta_i(s, a)\}_{i=1}^{N}$ en puntos medios de cuantil fijos $\hat{\tau}_i = \frac{2i-1}{2N}$ \parencite{Dabney2018QRDQN}. Durante la selección de acción, estos cuantiles se promedian para producir una estimación del retorno esperado, recuperando la regla codiciosa estándar del DQN bajo expectativa.
+
+Para una única transición $(s, a, r, s')$, sea $a^* = \arg\max_a \sum_j \theta_j^-(s', a)$ la acción codiciosa bajo la red objetivo, y sea
+\[
+    \delta_{ij} = r + \gamma\,\theta_j^-(s', a^*) - \theta_i(s, a)
+\]
+el error de diferencia temporal entre el cuantil fuente $i$ y el cuantil objetivo $j$ calculado mediante bootstrapping. QRDQN minimiza la función de pérdida de regresión cuantílica de Huber sumada sobre todos los $N^2$ pares de cuantiles:
+\[
+    \mathcal{L} = \frac{1}{N}\sum_{i=1}^{N}\sum_{j=1}^{N}
+        \bigl|\hat{\tau}_i - \mathbf{1}[\delta_{ij} < 0]\bigr|\cdot L_\kappa(\delta_{ij}),
+\]
+donde $L_\kappa$ es la pérdida de Huber elemento a elemento con umbral $\kappa$:
+\[
+    L_\kappa(\delta) = \begin{cases} \tfrac{1}{2}\delta^2 & \text{si } |\delta| \leq \kappa, \\ \kappa\bigl(|\delta| - \tfrac{1}{2}\kappa\bigr) & \text{en caso contrario.}\end{cases}
+\]
+A diferencia de C51, que representa los retornos sobre un soporte categórico fijo, QRDQN no impone ninguna restricción sobre el soporte de la distribución del retorno y se adapta automáticamente a la escala de las recompensas \parencite{Bellemare2017DistributionalRL}. En el entorno de recompensa asimétrica de esta tesis, la distribución del retorno puede desarrollar colas negativas pronunciadas cuando los eventos de falso negativo son frecuentes, lo que hace que una visión distribucional sea más informativa que una estimación escalar de la media para comprender el comportamiento del agente en torno a la frontera de decisión PERMIT/BLOCK.
+
+\subsection{Estrategia de exploración}
+Durante el entrenamiento, el agente emplea una política $\varepsilon$-greedy. Con probabilidad $\varepsilon$ selecciona una acción uniformemente aleatoria de $\{\texttt{PERMIT}, \texttt{BLOCK}\}$; con probabilidad $1-\varepsilon$ selecciona la acción cuya estimación media de cuantiles es más alta \parencite{Mnih2015DQN}. $\varepsilon$ decae linealmente desde un valor inicial cercano a uno hasta un valor final pequeño a lo largo de una fracción fija del total de pasos de entrenamiento, y luego permanece constante. En el entorno de acción binaria, el presupuesto de exploración es relativamente barato porque solo existen dos alternativas. La fracción de exploración y el valor final de $\varepsilon$ se almacenan en el artefacto de configuración de la ejecución para que las ejecuciones con diferentes programas no se mezclen o comparen en silencio sin tener en cuenta sus diferencias de exploración.
+
+\subsection{Configuración del entrenamiento}
+La implementación utiliza el módulo QRDQN de \texttt{sb3-contrib} \parencite{SB3ContribQRDQNDocs}. El modelo emplea una política de perceptrón multicapa sobre las observaciones de 152 dimensiones. El entrenamiento utiliza un buffer de repetición, actualizaciones por minibatch, una red objetivo y predicción determinista durante la evaluación. El script de entrenamiento mantenido admite preajustes rápidos y completos, modos de partición aleatoria y por día, semillas explícitas, límites de filas configurables y pasos temporales configurables.
+
+Los valores por defecto del preajuste completo actual utilizan lotes más grandes y más pasos de gradiente que el preajuste rápido. Esta separación permite al proyecto ejecutar comprobaciones rápidas de humo sin confundirlas con las ejecuciones finales del benchmark. Cualquier resultado reportado debe incluir el identificador exacto de la ejecución y la configuración.
+
+\subsection{Persistencia del modelo y el preprocesamiento}
+El entrenamiento produce un directorio de ejecución y un artefacto de modelo. El directorio de ejecución almacena la configuración, las métricas, el escalador ajustado y los límites de percentiles de entrenamiento. Persistir los artefactos de preprocesamiento es esencial porque la inferencia en la Fase 2 debe utilizar el mismo estado de normalización que el entrenamiento. Recalcular un escalador sobre el tráfico de laboratorio filtraría información de la distribución de inferencia hacia la interfaz del modelo y haría la ejecución irreproducible.
+
+\section{Línea base supervisada}
+Un método de RL para NIDS a nivel de flujo debe compararse con líneas base supervisadas sólidas. Los datos de flujo tabulares son un entorno donde los modelos basados en árboles, especialmente los Random Forests y los ensamblados con gradient boosting, suelen ser competitivos \parencite{LiuLang2019IDSSurvey,Apruzzese2022CrossEvaluationNIDS}.
+
+\subsection{Línea base con Random Forest}
+La línea base supervisada principal es un clasificador Random Forest. La línea base es metodológicamente útil porque obtiene buenos resultados en datos tabulares, gestiona las interacciones no lineales entre características y requiere menos complejidad de entrenamiento que el RL profundo. También proporciona una comprobación de cordura frente a la sobreestimación del valor de la formulación de RL en una tarea que puede comportarse como una clasificación sensible al coste.
+
+\subsection{Comparación bajo el mismo protocolo}
+La línea base debe consumir la misma representación canónica de observaciones, utilizar los mismos protocolos de partición y reportar las mismas métricas que QRDQN. Esta regla de mismo protocolo evita comparaciones sesgadas. Si la línea base utiliza un preprocesamiento diferente, controles de fuga distintos o particiones más sencillas, la comparación no aísla la contribución algorítmica de QRDQN.
+
+La metodología trata por tanto la comparación con la línea base como un requisito del protocolo y no como un apéndice opcional. También evita afirmar la superioridad de QRDQN hasta que existan artefactos de línea base con la misma partición.
+
+\subsection{Desbalanceo de clases y ponderación sensible al coste}
+CICIDS2017 presenta desbalanceo de clases: los flujos benignos superan sustancialmente en número a los flujos de ataque, y dentro de los flujos de ataque las familias individuales varían en prevalencia. Un Random Forest entrenado con pesos de clase uniformes por defecto tenderá por tanto a sesgar sus predicciones hacia la clase benigna mayoritaria. Para que la comparación sea significativa bajo los supuestos de coste asimétrico de la tesis, la línea base de Random Forest utiliza ponderación de clases balanceada, donde cada clase recibe un peso inversamente proporcional a su frecuencia en la partición de entrenamiento. Esto garantiza que el modelo supervisado no sea penalizado en la misma dirección que la función de recompensa de RL por razones diferentes.
+
+La configuración de los pesos de clase se registra en el artefacto de configuración de la línea base junto al modo de partición, el esquema de características y la semilla de evaluación, de modo que el supuesto de ponderación es trazable. Si la tesis encuentra que el Random Forest con ponderación balanceada alcanza un rendimiento en falsos negativos similar o superior al de QRDQN bajo la recompensa asimétrica, esa comparación es informativa precisamente porque ambos modelos han tenido acceso a mecanismos de sensibilidad al coste comparables. Comparar un QRDQN ajustado al coste frente a un Random Forest sin corrección no aportaría esta evidencia.
+
+\section{Protocolo de escala de entrenamiento y eficiencia de datos}
+La metodología incluye un componente de escala de entrenamiento motivado por una pregunta práctica: ¿cuántos datos de flujo etiquetados necesita cada enfoque antes de alcanzar un rendimiento estable? Esto es relevante porque el tráfico de ataque etiquetado es costoso de obtener, la abundancia de benchmarks no refleja la disponibilidad en el despliegue, y los métodos de RL profundo pueden ser sustancialmente más exigentes en cuanto a muestras que los clasificadores supervisados basados en árboles \parencite{SuttonBarto2018RL,Ring2019DatasetSurvey}.
+
+\subsection{Protocolo de curva de aprendizaje}
+El protocolo de curva de aprendizaje evalúa tanto el agente QRDQN como la línea base de Random Forest con presupuestos de entrenamiento progresivamente mayores, todos extraídos de la misma partición estratificada. El conjunto de evaluación se mantiene constante en todos los presupuestos como la partición de prueba completa, de modo que los cambios en las métricas reflejan únicamente el tamaño de los datos de entrenamiento y no las condiciones de evaluación. Las métricas se registran en cada nivel de presupuesto utilizando el mismo código de evaluación que las ejecuciones principales del benchmark.
+
+Cada presupuesto utiliza un escalador ajustado de nuevo calculado únicamente a partir de las filas incluidas en ese subconjunto de entrenamiento. Los presupuestos más grandes se benefician por tanto de una normalización más representativa sin contaminar la evaluación fija de prueba. Esto significa que los artefactos de preprocesamiento producidos en cada nivel de presupuesto son distintos e independientemente reproducibles.
+
+\subsection{Niveles de presupuesto y comparación}
+Los niveles de presupuesto candidatos incluyen 100\,k, 250\,k, 500\,k, 1\,M y 2\,M registros de flujo. No todos los niveles son alcanzables bajo todos los modos de partición; cuando una partición no produce conjuntos de entrenamiento del tamaño objetivo, se registra el tamaño disponible más cercano. El presupuesto final es la partición de entrenamiento completa bajo la partición seleccionada.
+
+Comparar QRDQN y Random Forest en cada nivel de presupuesto revela si la formulación de RL tiene un requisito de muestras o una trayectoria de convergencia diferente. Si el Random Forest alcanza una meseta de rendimiento estable con sustancialmente menos filas, esto constituye evidencia interna de que la tarea del benchmark no requiere la complejidad de muestras adicional del RL profundo sobre el esquema de características actual. Por el contrario, si el comportamiento de RL sensible al coste mejora desproporcionadamente a medida que crece el presupuesto, los resultados de escala de entrenamiento pueden identificar a qué escala la estructura de recompensa distribucional comienza a aportar una ventaja medible. Todos los resultados de escala de entrenamiento se almacenan bajo el mismo esquema de artefactos de ejecución que los experimentos principales, etiquetados por nivel de presupuesto y semilla, de modo que permanecen recuperables de forma independiente y comparables en experimentos futuros.
+
+\section{Salidas de evaluación y reproducibilidad}
+La reproducibilidad es una restricción de diseño fundamental, especialmente porque la investigación en seguridad con ML suele adolecer de código faltante, detalles de procesamiento de datos incompletos y registros de evaluación incompletos \parencite{Olszewski2023ReproSecurityML}.
+
+\subsection{Métricas}
+Las métricas binarias principales son exactitud, precisión, recall y F1 tanto para la clase benigna como para la de ataque. El análisis también rastrea los conteos de la matriz de confusión: verdaderos positivos, falsos positivos, falsos negativos y verdaderos negativos. Estos conteos son necesarios porque dos modelos con exactitud agregada similar pueden tener implicaciones de seguridad muy diferentes.
+
+La tasa de falsos positivos y la tasa de falsos negativos son especialmente importantes. La tasa de falsos positivos mide la proporción de tráfico benigno bloqueado incorrectamente, lo que se relaciona con la disponibilidad y la carga de trabajo del analista. La tasa de falsos negativos mide la proporción de ataques permitidos incorrectamente, lo que se relaciona directamente con el riesgo de intrusiones no detectadas. El análisis de precisión y recall es particularmente relevante bajo desbalanceo de clases, donde la exactitud sola puede ser engañosa \parencite{Fawcett2006ROC,Saito2015PRROC}.
+
+\subsection{Escalera de validación}
+La escalera de evaluación está ordenada de la evidencia más débil a la más sólida:
+\begin{enumerate}
+    \item partición aleatoria estratificada, utilizada como comprobación de la capacidad de aprendizaje;
+    \item comprobación de predicción directa, que verifica las salidas del modelo frente a las etiquetas de prueba sin depender de los metadatos del entorno;
+    \item comprobación de etiquetas barajadas, que ayuda a detectar fugas de información confirmando que el rendimiento se degrada cuando las etiquetas de entrenamiento se aleatorizan;
+    \item partición por CSV/día, que retiene grupos de captura completos;
+    \item validación leave-one-exact-CSV-out, que retiene cada CSV oficial por turnos;
+    \item inferencia sobre tráfico de laboratorio en la Fase 2, que prueba el pipeline entrenado sobre tráfico capturado de forma independiente.
+\end{enumerate}
+
+Cada peldaño apunta a un modo de fallo diferente. La escalera no hace que ningún resultado individual sea definitivo, pero hace la evaluación más informativa que una única puntuación aleatoria de entrenamiento-prueba.
+
+La partición aleatoria estratificada comprueba si el modelo y la implementación pueden resolver el benchmark en absoluto. Un modelo que falla aquí tiene un problema de entrenamiento o de arquitectura, no un problema de generalización. La comprobación de etiquetas barajadas es un detector de fugas: un modelo que alcanza una exactitud muy por encima de la de la clase mayoritaria en una ejecución con etiquetas barajadas ha aprendido a partir de artefactos correlacionados con las etiquetas en las características y no a partir de estadísticas de flujo reales \parencite{Arp2020DosDontsMLSecurity}. La partición por CSV/día comprueba la generalización temporal y por escenario reteniendo grupos de captura completos; la degradación del rendimiento respecto a la partición aleatoria revela si el modelo depende del contexto específico del día. El protocolo leave-one-exact-CSV-out va más lejos: cada fichero oficial de CICIDS2017 se retiene por turnos, y la distribución de métricas agregada muestra si algún fichero domina el benchmark o si el rendimiento es estable entre escenarios de captura. La inferencia en la Fase 2 es el peldaño final y más estricto, que comprueba si todo el pipeline puede operar sobre tráfico producido fuera del entorno del benchmark.
+
+\subsection{Artefactos de ejecución}
+Toda ejecución de entrenamiento o evaluación significativa debe persistir un \texttt{RUN\_ID} único, un fichero de configuración, métricas y cualquier estado de preprocesamiento necesario para su reutilización exacta. Las ejecuciones de entrenamiento persisten los pesos del modelo y los artefactos del escalador. Las ejecuciones de validación persisten los resultados de validación. Las ejecuciones de inferencia de la Fase 2 persisten las predicciones, las métricas, la configuración y los diagnósticos opcionales.
+
+Esta disciplina de artefactos evita afirmaciones ambiguas. Un resultado solo se trata como medido cuando puede vincularse a una carpeta de ejecución y una configuración específicas. Las ejecuciones históricas no se fusionan en silencio con los valores por defecto actuales; los valores de recompensa, la lógica de partición, el preprocesamiento, los límites de filas y las semillas deben leerse del artefacto.
+
+\section{Pipeline de inferencia offline en la Fase 2}
+El punto de entrada principal de la Fase 2 mantenido es el script de inferencia offline robusta. Acepta un CSV de flujos extraído, un modelo entrenado, un escalador persistido, límites de percentiles opcionales y recorte por z-score opcional. A continuación mapea las columnas de entrada al esquema canónico, aplica la misma representación de características y máscara, escala con el escalador guardado, calcula diagnósticos, predice acciones en lotes y escribe las salidas en un nuevo directorio de ejecución de la Fase 2.
+
+\subsection{Mapeo canónico para flujos de laboratorio}
+Los extractores de flujos de laboratorio pueden utilizar nombres de columna diferentes a los de CICIDS2017. El script de la Fase 2 define por tanto un mapeo explícito de los nombres del extractor a los nombres canónicos. Las columnas de metadatos como la IP de origen, la IP de destino, los puertos, el protocolo y la marca temporal pueden preservarse en los ficheros de salida para su inspección, pero no forman parte del vector de características del modelo. Esto mantiene separadas la interpretabilidad y la entrada al modelo.
+
+\subsection{Diagnósticos de cambio de distribución}
+La inferencia de la Fase 2 calcula diagnósticos sobre las características canónicas escaladas. Los z-scores absolutos elevados indican que los valores de flujo de laboratorio están lejos de la distribución de entrenamiento de CICIDS2017. El script también puede exportar las características con las mayores desviaciones. Estos diagnósticos no son etiquetas y no prueban la corrección, pero ayudan a explicar los cambios en la tasa de bloqueo e identificar discrepancias entre el tráfico del benchmark y el del laboratorio.
+
+Más allá de los z-scores por característica, la salida de diagnóstico registra la proporción de características canónicas que fueron imputadas a partir de la máscara de presencia/ausencia, la media y la varianza de los valores de características escaladas relativas a las estadísticas de entrenamiento, y cualquier característica que caiga consistentemente fuera de los límites de percentiles observados durante el entrenamiento con CICIDS2017. En conjunto, estos indicadores proporcionan un resumen estructurado de la distancia distribucional entre el tráfico de laboratorio y el benchmark, permitiendo una investigación dirigida en lugar de requerir la inspección manual de los registros brutos de predicción.
+
+\subsection{Métricas de verdad cuando están disponibles}
+Si un CSV de flujos de la Fase 2 incluye columnas de verdad como \texttt{truth\_y} o \texttt{truth\_label}, el script puede calcular las mismas métricas binarias utilizadas en la evaluación interna. Si no se dispone de la verdad fundamental, el script reporta estadísticas de predicción como la tasa de bloqueo, la tasa de permiso y los diagnósticos de z-score. Esta distinción es importante: una ejecución de laboratorio no etiquetada, solo benigna o mixta, no puede respaldar las mismas afirmaciones que un conjunto de validación externo etiquetado.
+
+\section{Marco de implementación}
+El pipeline experimental está implementado en Python y se apoya en un conjunto de bibliotecas de código abierto bien establecidas. El componente de RL profundo principal utiliza la extensión \texttt{sb3-contrib} de Stable Baselines3, que proporciona una implementación contrastada de QRDQN con arquitectura de red configurable, buffer de repetición, programa de exploración y actualizaciones de la red objetivo \parencite{SB3ContribQRDQNDocs}. El envoltorio del entorno sigue la API de Gymnasium \parencite{GymnasiumDocs}, haciendo que el conjunto de datos de flujos sea compatible con cualquier bucle de entrenamiento que cumpla con Gymnasium sin cambios en la implementación del algoritmo.
+
+\subsection{Pila de procesamiento de datos y aprendizaje supervisado}
+La carga y el preprocesamiento de datos se apoyan en \texttt{pandas} para la ingesta de CSV, la estandarización de columnas y la lectura fragmentada de ficheros grandes. Las matrices de características se convierten a arrays de \texttt{numpy} y se castean a \texttt{float32} antes de entrar en el entorno de Gymnasium o en la línea base supervisada. La estandarización utiliza \texttt{StandardScaler} de \texttt{scikit-learn}, elegido por su compatibilidad con el protocolo de serialización de \texttt{sklearn}, que permite persistir y recargar los escaladores ajustados sin reimplementación. La línea base de Random Forest también utiliza \texttt{scikit-learn}, consumiendo los mismos arrays de entrada que entran en el entorno de RL. Esta ruta de datos compartida garantiza que cualquier diferencia de rendimiento entre los dos modelos refleje el comportamiento algorítmico y no una discrepancia en el manejo de los datos.
+
+\subsection{Gestión de artefactos}
+Cada ejecución de entrenamiento produce un \texttt{RUN\_ID} único compuesto por una marca temporal y un sufijo aleatorio corto. El directorio de ejecución reúne la política QRDQN serializada, el escalador ajustado, los límites de percentiles, un JSON de configuración y un JSON de métricas. Las ejecuciones de validación y de inferencia de la Fase 2 producen subdirectorios independientes con sus propios registros de configuración y métricas. Este esquema de directorios plano evita dependencias de bases de datos al tiempo que hace las ejecuciones recuperables de forma independiente y comparables mediante inspección del sistema de ficheros.
+
+\subsection{Controles de reproducibilidad}
+Las semillas se fijan para los generadores de números aleatorios de \texttt{numpy}, \texttt{random} y \texttt{torch} al comienzo de cada ejecución. Los reinicios del entorno de Gymnasium también reciben una semilla explícita. Cuando se utilizan múltiples semillas para la estimación de la varianza, cada semilla genera un directorio de ejecución independiente de modo que los resultados por semilla se preservan individualmente en lugar de promediarse en silencio. Estos controles reducen la varianza interna a la ejecución lo suficiente como para distinguir diferencias de rendimiento significativas del ruido, aunque no pueden eliminar todo el indeterminismo derivado del ordenamiento de los kernels de la GPU.
+
+\section{Limitaciones metodológicas}
+La metodología realiza compromisos deliberados que definen la interpretación correcta de los resultados de la tesis. Esta sección organiza esos compromisos en cuatro categorías.
+
+\subsection{Entorno estático y toma de decisiones secuencial}
+La limitación más fundamental es que el entorno de RL es un conjunto de datos estático. Las acciones del agente no alteran las observaciones de flujo futuras, la topología de la red, el comportamiento del atacante ni el estado del sistema. La formulación se asemeja por tanto más a un problema de decisión contextual sensible al coste que a un proceso de decisión de Markov completo \parencite{SuttonBarto2018RL,Levine2020OfflineRL}. Las dependencias secuenciales, las cadenas de ataque de múltiples etapas, la adaptación del atacante y las contramedidas activas del defensor quedan todas fuera del alcance implementado. Las afirmaciones sobre autonomía secuencial, defensa cibernética adaptativa o aprendizaje por refuerzo en línea no están respaldadas por el pipeline actual.
+
+\subsection{Mapeo de etiquetas binarias y detalle por familia de ataque}
+El mapeo de etiquetas binarias colapsa todos los tipos de ataque en una única clase \texttt{BLOCK}. La información sobre la familia de ataque se descarta en la ruta de aprendizaje principal de RL. Este diseño está justificado por el modelo de decisión binario estudiado aquí, pero significa que el agente no puede especializar su calidad de detección para familias de ataque individuales. El análisis de errores por familia requiere etiquetas de ataque preservadas y código de evaluación independiente, y no puede inferirse a partir de las métricas de exactitud binaria reportadas por el pipeline principal.
+
+\subsection{Fragilidad del benchmark y generalización}
+CICIDS2017 sigue siendo un benchmark público controlado con problemas documentados: artefactos de extracción, inconsistencias en las etiquetas, flujos duplicados y sensibilidad a la partición \parencite{Engelen2021CICIDSIssues,Lanvin2023Errors,Liu2022ErrorPrevalenceNIDS}. Incluso con preprocesamiento anti-fuga y protocolos de partición más estrictos, el rendimiento sobre CICIDS2017 no equivale al rendimiento sobre una red de producción. La inferencia de laboratorio en la Fase 2 comprueba el cambio de dominio, pero es inferencia offline sobre una captura privada y no una validación sobre un flujo de producción etiquetado de forma independiente. Una evidencia de generalización más sólida requeriría conjuntos de datos etiquetados externos, múltiples entornos de captura y, en última instancia, un análisis de seguridad para cualquier despliegue activo.
+
+\subsection{Algoritmo único y alcance de la reproducibilidad}
+El algoritmo de RL principal es una única configuración de QRDQN. Los resultados de una sola ejecución no pueden cuantificar la varianza entre ejecuciones a menos que se evalúen múltiples semillas y sus resultados se agreguen \parencite{SuttonBarto2018RL}. La línea base supervisada se limita a Random Forest en la comparación principal; otros modelos tabulares se discuten en la revisión de la literatura pero no forman parte del protocolo evaluado. Estas restricciones de alcance son prácticas: completar el pipeline central y la escalera de validación es metodológicamente más informativo que implementar parcialmente muchas comparaciones. Afirmaciones más sólidas en el futuro requerirían artefactos completos de leave-one-exact-CSV-out, métricas de línea base supervisada con el mismo protocolo, múltiples semillas, tráfico de laboratorio etiquetado más rico y, en última instancia, un análisis de seguridad independiente para cualquier despliegue activo.
