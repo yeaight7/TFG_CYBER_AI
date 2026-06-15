@@ -154,7 +154,7 @@ Esto coincide con:
 
 ### Importante para no decir algo incorrecto
 
-El **mejor run histórico** (`C03_qrdqn_cicids2017_canonical_full_random_20260223_232439`) **no** usó el default actual, sino:
+El **mejor run histórico** (`C03_qrdqn_cicids2017_canonical_full_random_20260223_232439`) usa la misma recompensa que el default actual:
 
 ```python
 tp = 1.5
@@ -345,7 +345,7 @@ El problema real ya no es si el pipeline funciona, sino cuánto generaliza cuand
 ## 12. Riesgos discursivos que conviene evitar
 
 - No digas que Phase 2 ya está “resuelta”.
-- No digas que el best model usa los mismos rewards que el código actual.
+- No generalices la recompensa de un run a todos los runs: C03 coincide con el código actual, pero C01/C02 históricos usaron otra penalización de falso positivo.
 - No cites resultados leave-one-exact-CSV-out como si ya existiera un artefacto completo.
 - No mezcles NSL-KDD como si formara parte del modelo final.
 
