@@ -123,7 +123,7 @@ fn = -5.0
 omission = 0.0
 ```
 
-Es importante señalar que el **mejor run histórico**, el C03 full, no usó exactamente esos valores, sino `fp = -2.0`.
+Es importante señalar que el **mejor run histórico**, el C03 full, usa esos mismos valores. Otros runs históricos anteriores, como C01/C02, sí usaron configuraciones distintas.
 
 Esto conviene decirlo con claridad para no mezclar:
 
