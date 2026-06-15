@@ -42,7 +42,7 @@ graphify-out/*.py
 graphify-out/obsidian/
 graphify-out/obsidian/.obsidian/
 graphify-out/graph.html
-graphify-out/TFG_CYBER_AI/.obsidian/
+# graphify-out/TFG_CYBER_AI/.obsidian/
 
 # random docs
 docs/Personal Research/*.md
