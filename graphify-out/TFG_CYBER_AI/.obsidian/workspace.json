@@ -11,10 +11,17 @@
             "id": "154f9c82dc90f696",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Vista gráfica"
+              "type": "canvas",
+              "state": {
+                "file": "graph.canvas",
+                "viewState": {
+                  "x": 4160,
+                  "y": 2080,
+                  "zoom": -2.8244809820844643
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "graph"
             }
           }
         ]
