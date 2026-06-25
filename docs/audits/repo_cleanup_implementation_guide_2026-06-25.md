@@ -169,10 +169,10 @@ D1, D2 (decisión), D3, D4, D5, R1, R2, R3, C1.
 - [x] `git mv` de los probes según §4 (85 renombres, siguen tracked): a `runs/archive/cicids2017/` los C0x + `MAIN_*fast` (+ `_0`); a `models/archive/` A0x/C0x/`MAIN_*fast`/`rl_defender_dqn`; a `runs/archive/phase2/` los 9 probes feb–abr. **Conservados** en su sitio: MAIN full (+`_0`) + modelo, `baseline_random_forest_comparison`, modelos `rf_*`, y los 3 phase2 vivos (`004121`, `230318`, `_MAIN`). Referencias repunteadas en `results.md`/`DEFENSA_TFG_PROGRESO.md`/`experiments` + docstrings de `validate_checks.py`/`predict_real_traffic_v2.py` (→ MAIN) y default del script deprecated (→ `models/archive/`); `.gitignore` actualizado para los 2 `predictions.csv` movidos.
 - [x] Reencuadrado `experiments/cicids2017_qrdqn_experiments.md`: C0x = probes pre-diseño (sin "best committed"); MAIN centrado como oficial. Verificado: workflow de 3 agentes (2× Sonnet estructura/referencias + 1× Opus reencuadre/consistencia) todos *pass*; sin métricas/paths alterados. Nota: `docs/archive/informe.tex` (borrador obsoleto, "no mantener") conserva una ruta C03 vieja — fuera de alcance.
 
-### Fase 4 — Código
+### Fase 4 — Código — parcial 2026-06-25 (D7 pendiente de confirmación)
 - [x] **D5**: audits consolidados en esta guía; `tfg_cyber_ai_audit.md` y `stale_claims_diagnosis_2026-06-15.md` retirados (HECHO).
-- [ ] Confirmar con `rg` (§8) que no hay código muerto. Reubicar `pcaps/deprecated_*` (B1) y `scratch/`.
-- [ ] **D7** (baja): mapear terminología `Check A/B/C` en methodology si se aplica a `memoria/`.
+- [x] Confirmado **sin código muerto eliminable** (auditoría de referencias por agente): todos los módulos `src/`/`scripts/` están referenciados (imports, tests, CI `ci.yml`, docs/CLI). Notas: `src/load_nsl_kdd.py` no se importa pero se conserva como histórico (§9); `scripts/deprecated_predict_real_traffic.py` es legacy documentado (se conserva, no se elimina). **Reubicados**: `pcaps/deprecated_*` → `pcaps/archive/` (B1 / H3; sin refs de código, verificado) + `README`; `scratch/experimental_design_board.html` → `docs/archive/` y `scratch/` eliminado.
+- [ ] **D7** (baja): mapear terminología `Check A/B/C` en methodology. **PENDIENTE de visto bueno del autor**: toca `memoria/capitulos/metodologia.tex`, protegido por §9 ("no tocar todavía"). Cambio propuesto (1 frase en la "Escalera de validación", reversible) preparado; aplicar solo con confirmación.
 
 ### Fase 5 — Tracking de binarios (decisión 3)
 - [ ] `.gitignore`: añadir `runs/**/events.out.tfevents.*`, `runs/**/model.zip`, `scratch/`.
