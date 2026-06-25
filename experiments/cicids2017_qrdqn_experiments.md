@@ -2,6 +2,8 @@
 
 This document archives the committed CICIDS2017 training, validation, and Phase 2-facing runs built around the current QRDQN pipeline.
 
+> **Official run:** `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` is the project's official result (full data, fixed 566,149-row test partition, 3,000,000 timesteps). Runs C01–C03 are **pre-design probes** — exploration runs from before the experimental design was fixed — and have been archived under `runs/archive/cicids2017/`. They are not official results and their metrics are not comparable to MAIN's fixed test partition.
+
 ## Status
 
 - **Maintained archive**
@@ -44,16 +46,16 @@ The CICIDS2017 + QRDQN branch is the maintained Phase 1 baseline because it intr
 | C01 smoke | `C01_qrdqn_cicids2017_canonical_smoke_20260212_195959` | 50,000 | 5,000 | random | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` | `0.9697` | `0.99958` | `0.96922` | Fast smoke run used to confirm the canonical QRDQN path worked end to end. |
 | C01 full | `C01_qrdqn_cicids2017_canonical_full_20260212_200218` | 250,000 | 100,000 | random | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` | `0.99618` | `0.99980` | `0.99628` | First larger random-split run showing the approach scaled cleanly. |
 | C02 fast | `C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122` | 100,000 | 10,000 | random | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` | `0.9766` | `0.99959` | `0.98123` | Faster preset retained strong attack recall while trading off some benign recall. |
-| C03 full | `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` | 500,000 | 100,000 | random | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` | `0.99859` | `0.99945` | `0.99876` | Best committed historical CICIDS2017 result in the repository. |
+| C03 full | `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` | 500,000 | 100,000 | random | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` | `0.99859` | `0.99945` | `0.99876` | Strongest pre-design probe (not official); measured on a 100,000-row capped test set with a distorted class mix — not comparable to MAIN's fixed test partition. |
 | MAIN full | `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` | 2,830,743 | 3,000,000 | random | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` | `0.99381` | `0.99536` | `0.98445` | Completed full-data canonical main experiment (max_rows=null, seed 42, RunPod RTX 3090). Its 566,149-row test set is the reference benchmark; not comparable to the smaller capped C01-C03 test sets. |
 
-## Best Committed Capped-Test Run (C03)
+## Strongest Pre-Design Probe (C03, not official)
 
 C03 remains the strongest of the early capped-data runs, but its accuracy was measured on a 100,000-row test set with a distorted class mix (test_benign_rate 0.434), so it is **not** comparable to the completed full-data main run (`MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`), whose 566,149-row test set (test_benign_rate 0.803) yields accuracy 0.99381. See the Training-Size Benchmark section.
 
-The strongest committed CICIDS2017 artifact is:
+The strongest of the pre-design probe artifacts is:
 
-- `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/`
+- `runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/`
 
 Key metadata from `config.json`:
 
@@ -86,7 +88,7 @@ Measured metrics from `metrics.json`:
 
 The folder:
 
-- `runs/cicids2017/C03_qrdqn_cicids2017_canonical_fast_day_20260223_231440_0/`
+- `runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_fast_day_20260223_231440_0/`
 
 currently contains only a TensorBoard event file and does not include a committed `config.json` or `metrics.json`. It should therefore be treated as an exploratory or incomplete retained run, not as a measured result.
 
