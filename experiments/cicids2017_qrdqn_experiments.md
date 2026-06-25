@@ -156,7 +156,7 @@ No benchmark training runs are committed yet; results will be reported here and 
 
 The CICIDS2017 QRDQN branch is also the foundation for the maintained Phase 2 offline inference path.
 
-The Phase 2 entry point `scripts/predict_real_traffic_v2.py` takes the model/scaler/percentiles as required arguments (no hardcoded default). The earliest committed Phase 2 v2 runs used the C03 assets, but the newest committed run (`P2v2_pred_20260610_161231`, 2026-06-10) used the full-data main model:
+The Phase 2 entry point `scripts/predict_real_traffic_v2.py` takes the model/scaler/percentiles as required arguments (no hardcoded default). The earliest committed Phase 2 v2 runs used the C03 assets, but the newest committed run (`P2v2_pred_20260610_161231_MAIN`, 2026-06-10) used the full-data main model:
 
 - model: `models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip`
 - scaler: `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib`
