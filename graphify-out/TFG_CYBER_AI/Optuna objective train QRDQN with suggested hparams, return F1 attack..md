@@ -1,12 +1,12 @@
 ---
 source_file: "src/tune_hparams.py"
 type: "rationale"
-community: "Hyperparam Tuning"
+community: "Hparam Tuning"
 location: "L69"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Hyperparam_Tuning
+  - community/Hparam_Tuning
 ---
 
 # Optuna objective: train QRDQN with suggested hparams, return F1 attack.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[objective()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Hyperparam_Tuning
+#graphify/rationale #graphify/EXTRACTED #community/Hparam_Tuning

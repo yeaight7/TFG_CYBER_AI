@@ -1,13 +1,17 @@
 ---
 source_file: "docs/README.md"
 type: "document"
-community: "Documentation Index"
+community: "Core Architecture Docs"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Documentation_Index
+  - community/Core_Architecture_Docs
 ---
 
 # Documentation Index
 
-#graphify/document #graphify/EXTRACTED #community/Documentation_Index
+## Connections
+- [[AGENTS]] - `references` [EXTRACTED]
+- [[README]] - `references` [EXTRACTED]
+
+#graphify/document #graphify/EXTRACTED #community/Core_Architecture_Docs

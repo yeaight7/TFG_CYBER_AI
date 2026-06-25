@@ -1,12 +1,12 @@
 ---
 source_file: "src/train_rl_defender.py"
 type: "rationale"
-community: "RL Defender Training"
+community: "RL Training Core"
 location: "L198"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/RL_Defender_Training
+  - community/RL_Training_Core
 ---
 
 # Devuelve una función creadora de entornos para DummyVecEnv.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[make_env_fn()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/RL_Defender_Training
+#graphify/rationale #graphify/EXTRACTED #community/RL_Training_Core

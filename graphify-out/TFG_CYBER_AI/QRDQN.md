@@ -1,16 +1,17 @@
 ---
 source_file: ""
 type: "concept"
-community: "QRDQN Methods"
+community: "Deep Research Report 1"
 tags:
   - graphify/concept
   - graphify/EXTRACTED
-  - community/QRDQN_Methods
+  - community/Deep_Research_Report_1
 ---
 
 # QRDQN
 
 ## Connections
-- [[CUsersRiveroDesktopTFG_CYBER_AIResearchInitial Research for Report - Chapter State Of The Artreport-qrdqn-deep-distributional-rl]] - `` [EXTRACTED]
+- [[RLDatasetDefenderEnv_1]] - `` [EXTRACTED]
+- [[deep-research-report1]] - `` [EXTRACTED]
 
-#graphify/concept #graphify/EXTRACTED #community/QRDQN_Methods
+#graphify/concept #graphify/EXTRACTED #community/Deep_Research_Report_1

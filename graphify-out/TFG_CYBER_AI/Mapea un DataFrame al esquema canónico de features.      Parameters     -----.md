@@ -1,12 +1,12 @@
 ---
 source_file: "src/canonical_schema.py"
 type: "rationale"
-community: "Canonical Schema Setup"
+community: "Inference (Deprecated)"
 location: "L282"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Canonical_Schema_Setup
+  - community/Inference_Deprecated
 ---
 
 # Mapea un DataFrame al esquema canónico de features.      Parameters     -----
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[map_to_canonical()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Canonical_Schema_Setup
+#graphify/rationale #graphify/EXTRACTED #community/Inference_Deprecated

@@ -1,12 +1,12 @@
 ---
 source_file: "src/train_rl_defender.py"
 type: "code"
-community: "RL Defender Training"
+community: "RL Training Core"
 location: "L70"
 tags:
   - graphify/code
   - graphify/INFERRED
-  - community/RL_Defender_Training
+  - community/RL_Training_Core
 ---
 
 # resolve_training_hyperparams()
@@ -18,4 +18,4 @@ tags:
 - [[test_main_experiment_profile_resolves_fixed_config()]] - `calls` [INFERRED]
 - [[train_rl_defender.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/INFERRED #community/RL_Defender_Training
+#graphify/code #graphify/INFERRED #community/RL_Training_Core

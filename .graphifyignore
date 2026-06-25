@@ -37,3 +37,7 @@ events.out.*
 *.run.xml
 *.toc
 *.gz
+
+graphify-out-backup-*/
+scripts/graphify_auto_update.py
+tests/test_graphify_auto_update.py

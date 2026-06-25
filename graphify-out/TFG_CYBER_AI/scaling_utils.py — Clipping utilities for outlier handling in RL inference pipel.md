@@ -1,12 +1,12 @@
 ---
 source_file: "src/scaling_utils.py"
 type: "rationale"
-community: "Inference Diagnostics"
+community: "Scaling & Clipping Utils"
 location: "L1"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Inference_Diagnostics
+  - community/Scaling__Clipping_Utils
 ---
 
 # scaling_utils.py — Clipping utilities for outlier handling in RL inference pipel
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[scaling_utils.py]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Inference_Diagnostics
+#graphify/rationale #graphify/EXTRACTED #community/Scaling__Clipping_Utils

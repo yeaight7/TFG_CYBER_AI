@@ -1,18 +1,17 @@
 ---
-source_file: "src/train_rl_defender.py"
-type: "paper"
-community: "Project Overview"
+source_file: ""
+type: "concept"
+community: "Deep Research Report 1"
 tags:
-  - graphify/paper
+  - graphify/concept
   - graphify/EXTRACTED
-  - community/Project_Overview
+  - community/Deep_Research_Report_1
 ---
 
 # RLDatasetDefenderEnv
 
 ## Connections
-- [[train_rl_defender.py_1]] - `uses` [EXTRACTED]
-- [[validate_checks.py_1]] - `uses` [EXTRACTED]
-- [[validate_leave_one_csv_out.py_1]] - `uses` [EXTRACTED]
+- [[Cost_Sensitive_Reward]] - `` [EXTRACTED]
+- [[QRDQN]] - `` [EXTRACTED]
 
-#graphify/paper #graphify/EXTRACTED #community/Project_Overview
+#graphify/concept #graphify/EXTRACTED #community/Deep_Research_Report_1

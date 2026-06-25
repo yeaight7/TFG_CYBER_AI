@@ -1,12 +1,12 @@
 ---
 source_file: "src/rl_defender_env.py"
 type: "code"
-community: "RL Environment Config"
+community: "RL Defender Environment"
 location: "L6"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/RL_Environment_Config
+  - community/RL_Defender_Environment
 ---
 
 # RLDatasetDefenderEnv
@@ -28,4 +28,4 @@ tags:
 - [[test_reward_logic_tp_fp_tn_fn()]] - `calls` [INFERRED]
 - [[test_unknown_label_reward()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/RL_Environment_Config
+#graphify/code #graphify/EXTRACTED #community/RL_Defender_Environment

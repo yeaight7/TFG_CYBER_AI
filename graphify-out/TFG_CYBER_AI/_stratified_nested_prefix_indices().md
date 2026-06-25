@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "code"
-community: "Test Split Validation"
+community: "Testing Splits"
 location: "L555"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Test_Split_Validation
+  - community/Testing_Splits
 ---
 
 # _stratified_nested_prefix_indices()
@@ -19,4 +19,4 @@ tags:
 - [[test_nested_prefix_indices_deterministic()]] - `calls` [INFERRED]
 - [[test_nested_prefix_indices_nested_and_stratified()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Test_Split_Validation
+#graphify/code #graphify/EXTRACTED #community/Testing_Splits

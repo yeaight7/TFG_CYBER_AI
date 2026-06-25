@@ -1,12 +1,12 @@
 ---
 source_file: "src/baseline_random_forest.py"
 type: "code"
-community: "CICIDS2017 Preprocessing"
+community: "Baseline Random Forest"
 location: "L31"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/CICIDS2017_Preprocessing
+  - community/Baseline_Random_Forest
 ---
 
 # train_random_forest()
@@ -16,4 +16,4 @@ tags:
 - [[baseline_random_forest.py]] - `contains` [EXTRACTED]
 - [[main()_5]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/CICIDS2017_Preprocessing
+#graphify/code #graphify/EXTRACTED #community/Baseline_Random_Forest

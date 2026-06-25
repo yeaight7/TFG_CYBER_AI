@@ -1,12 +1,12 @@
 ---
 source_file: "src/validate_leave_one_csv_out.py"
 type: "code"
-community: "Leave One CSV Out"
+community: "Leave-One-Out Eval"
 location: "L106"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Leave_One_CSV_Out
+  - community/Leave-One-Out_Eval
 ---
 
 # _metrics_from_confusion()
@@ -18,4 +18,4 @@ tags:
 - [[evaluate_model_direct()]] - `calls` [EXTRACTED]
 - [[validate_leave_one_csv_out.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Leave_One_CSV_Out
+#graphify/code #graphify/EXTRACTED #community/Leave-One-Out_Eval

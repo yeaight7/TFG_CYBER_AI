@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "CICIDS2017 Preprocessing"
+community: "Baseline Random Forest"
 location: "L230"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/CICIDS2017_Preprocessing
+  - community/Baseline_Random_Forest
 ---
 
 # Limpia CICIDS2017 y devuelve X, y y nombres de features.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[_prepare_cicids_features()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/CICIDS2017_Preprocessing
+#graphify/rationale #graphify/EXTRACTED #community/Baseline_Random_Forest

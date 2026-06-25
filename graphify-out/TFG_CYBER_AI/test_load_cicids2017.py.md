@@ -1,12 +1,12 @@
 ---
 source_file: "tests/test_load_cicids2017.py"
 type: "code"
-community: "Test Split Validation"
+community: "Testing Splits"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Test_Split_Validation
+  - community/Testing_Splits
 ---
 
 # test_load_cicids2017.py
@@ -24,4 +24,4 @@ tags:
 - [[test_train_max_rows_guards()]] - `contains` [EXTRACTED]
 - [[test_train_max_rows_keeps_test_set_identical()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Test_Split_Validation
+#graphify/code #graphify/EXTRACTED #community/Testing_Splits

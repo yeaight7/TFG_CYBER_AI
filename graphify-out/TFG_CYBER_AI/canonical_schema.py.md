@@ -1,12 +1,12 @@
 ---
 source_file: "src/canonical_schema.py"
 type: "code"
-community: "Canonical Schema Setup"
+community: "Inference (Deprecated)"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Canonical_Schema_Setup
+  - community/Inference_Deprecated
 ---
 
 # canonical_schema.py
@@ -18,4 +18,4 @@ tags:
 - [[get_observation_feature_names()]] - `contains` [EXTRACTED]
 - [[map_to_canonical()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Canonical_Schema_Setup
+#graphify/code #graphify/EXTRACTED #community/Inference_Deprecated

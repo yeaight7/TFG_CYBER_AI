@@ -1,12 +1,12 @@
 ---
 source_file: "scripts/deprecated_predict_real_traffic.py"
 type: "code"
-community: "Canonical Schema Setup"
+community: "Inference (Deprecated)"
 location: "L158"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Canonical_Schema_Setup
+  - community/Inference_Deprecated
 ---
 
 # main()
@@ -18,4 +18,4 @@ tags:
 - [[map_to_canonical()]] - `calls` [INFERRED]
 - [[maybe_convert_time_units()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Canonical_Schema_Setup
+#graphify/code #graphify/EXTRACTED #community/Inference_Deprecated

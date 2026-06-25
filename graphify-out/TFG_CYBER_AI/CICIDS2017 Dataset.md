@@ -1,17 +1,17 @@
 ---
-source_file: "GEMINI.md"
-type: "paper"
-community: "Project Overview"
+source_file: ""
+type: "concept"
+community: "Datasets & Risks"
 tags:
-  - graphify/paper
-  - graphify/EXTRACTED
-  - community/Project_Overview
+  - graphify/concept
+  - graphify/EXPLICIT
+  - community/Datasets__Risks
 ---
 
 # CICIDS2017 Dataset
 
 ## Connections
-- [[GEMINI]] - `references` [EXTRACTED]
-- [[README]] - `references` [EXTRACTED]
+- [[TemporalScenario Splits]] - `` [INFERRED]
+- [[report-deep-dive]] - `` [EXPLICIT]
 
-#graphify/paper #graphify/EXTRACTED #community/Project_Overview
+#graphify/concept #graphify/EXPLICIT #community/Datasets__Risks

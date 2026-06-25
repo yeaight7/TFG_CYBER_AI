@@ -1,16 +1,4 @@
 {
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\run_ast.py": {
-    "mtime": 1781543763.6939387,
-    "hash": "c995c1ba1224e39d2cedf8bec4635f49"
-  },
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\run_cache.py": {
-    "mtime": 1781543784.5786586,
-    "hash": "e61ac672e2d980ed421dde327469f860"
-  },
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\run_detect.py": {
-    "mtime": 1781543777.2352476,
-    "hash": "e568ff8b38fc0d3c71ba15a154ad6182"
-  },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\scripts\\deprecated_predict_real_traffic.py": {
     "mtime": 1777847776.7074897,
     "hash": "302d499b70f8895942d2ea4a129ccabc"
@@ -104,8 +92,8 @@
     "hash": "d065dbece0f122d31123c16189b5c25f"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\README.md": {
-    "mtime": 1781219557.679202,
-    "hash": "850d83f0ebc7fb6c6ef897dc22a46016"
+    "mtime": 1782388234.1914494,
+    "hash": "77cf9640fab41d7c81a16727ed9300e0"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\requirements-runpod-cu130.txt": {
     "mtime": 1781198666.6202667,
@@ -136,8 +124,8 @@
     "hash": "75248f3a4bf5cbb8528d117c63d3fa65"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\README.md": {
-    "mtime": 1781541506.7578034,
-    "hash": "8a9212c1841adec5f9f13bd9d131eec4"
+    "mtime": 1782388110.2074132,
+    "hash": "5e750e8b457fab5f255555c10fa0676b"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\reproducibility.md": {
     "mtime": 1781198813.1356566,
@@ -151,13 +139,17 @@
     "mtime": 1781220053.3387535,
     "hash": "56247d3fa691f068230711a74bfc6c0b"
   },
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\stale_claims_diagnosis_2026-06-15.md": {
-    "mtime": 1781542962.2851148,
-    "hash": "5832e181ee1fdea7d8a64fa9bc8cdc8a"
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\archive\\README.md": {
+    "mtime": 1782386390.944815,
+    "hash": "e942dce728889fdf07fe940e8d607a3e"
   },
-  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\tfg_cyber_ai_audit.md": {
-    "mtime": 1781222621.1542923,
-    "hash": "238470c36186e5daf2c08a013c54cda8"
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\audits\\README.md": {
+    "mtime": 1782402241.737687,
+    "hash": "65f5dde286539cfffd396de0e57fb98c"
+  },
+  "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\audits\\repo_cleanup_implementation_guide_2026-06-25.md": {
+    "mtime": 1782402228.7484963,
+    "hash": "2ae7d32dc8cdec3bc3983b52299ff135"
   },
   "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\docs\\Personal Research\\data-structure-and-canonical-schema-research-report.md": {
     "mtime": 1781541506.7677891,

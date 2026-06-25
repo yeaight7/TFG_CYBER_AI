@@ -1,12 +1,12 @@
 ---
 source_file: "src/canonical_schema.py"
 type: "code"
-community: "Canonical Schema Setup"
+community: "Inference (Deprecated)"
 location: "L351"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Canonical_Schema_Setup
+  - community/Inference_Deprecated
 ---
 
 # get_observation_feature_names()
@@ -16,4 +16,4 @@ tags:
 - [[canonical_schema.py]] - `contains` [EXTRACTED]
 - [[load_nsl_kdd_binary()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Canonical_Schema_Setup
+#graphify/code #graphify/EXTRACTED #community/Inference_Deprecated

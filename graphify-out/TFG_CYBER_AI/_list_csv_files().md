@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "code"
-community: "CICIDS2017 Preprocessing"
+community: "Baseline Random Forest"
 location: "L69"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/CICIDS2017_Preprocessing
+  - community/Baseline_Random_Forest
 ---
 
 # _list_csv_files()
@@ -17,4 +17,4 @@ tags:
 - [[load_cicids2017_binary()]] - `calls` [EXTRACTED]
 - [[load_cicids2017_csv_split()]] - `calls` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/CICIDS2017_Preprocessing
+#graphify/code #graphify/EXTRACTED #community/Baseline_Random_Forest

@@ -1,12 +1,12 @@
 ---
 source_file: "scripts/export_tensorboard_scalars.py"
 type: "code"
-community: "Tensorboard Exports"
+community: "Tensorboard Export"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Tensorboard_Exports
+  - community/Tensorboard_Export
 ---
 
 # export_tensorboard_scalars.py
@@ -20,4 +20,4 @@ tags:
 - [[main()_1]] - `contains` [EXTRACTED]
 - [[parse_args()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Tensorboard_Exports
+#graphify/code #graphify/EXTRACTED #community/Tensorboard_Export

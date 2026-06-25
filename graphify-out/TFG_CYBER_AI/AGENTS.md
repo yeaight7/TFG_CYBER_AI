@@ -1,21 +1,20 @@
 ---
 source_file: "AGENTS.md"
 type: "document"
-community: "Project Overview"
+community: "Core Architecture Docs"
 tags:
   - graphify/document
   - graphify/EXTRACTED
-  - community/Project_Overview
+  - community/Core_Architecture_Docs
 ---
 
 # AGENTS.md
 
 ## Connections
-- [[Anti-Leakage Policy (drop IPs, timestamps, Flow IDs, ports)]] - `references` [EXTRACTED]
-- [[FEATURES_CANON (Canonical Schema)]] - `references` [EXTRACTED]
-- [[predict_real_traffic_v2.py_1]] - `references` [EXTRACTED]
-- [[train_rl_defender.py_1]] - `references` [EXTRACTED]
-- [[validate_checks.py_1]] - `references` [EXTRACTED]
-- [[validate_leave_one_csv_out.py_1]] - `references` [EXTRACTED]
+- [[Canonical Flow Schema]] - `references` [EXTRACTED]
+- [[Consolidated Results Snapshot]] - `references` [EXTRACTED]
+- [[Documentation Index]] - `references` [EXTRACTED]
+- [[GEMINI]] - `semantically_similar_to` [INFERRED]
+- [[Phase 2 Agent Context]] - `references` [EXTRACTED]
 
-#graphify/document #graphify/EXTRACTED #community/Project_Overview
+#graphify/document #graphify/EXTRACTED #community/Core_Architecture_Docs

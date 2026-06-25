@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "code"
-community: "Test Split Validation"
+community: "Baseline Random Forest"
 location: "L590"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Test_Split_Validation
+  - community/Baseline_Random_Forest
 ---
 
 # load_cicids2017_split()
@@ -25,4 +25,4 @@ tags:
 - [[main()_6]] - `calls` [INFERRED]
 - [[main()_8]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Test_Split_Validation
+#graphify/code #graphify/EXTRACTED #community/Baseline_Random_Forest

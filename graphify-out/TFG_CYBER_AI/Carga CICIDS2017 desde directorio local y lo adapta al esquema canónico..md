@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "CICIDS2017 Preprocessing"
+community: "Baseline Random Forest"
 location: "L327"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/CICIDS2017_Preprocessing
+  - community/Baseline_Random_Forest
 ---
 
 # Carga CICIDS2017 desde directorio local y lo adapta al esquema canónico.
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[load_cicids2017_binary()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/CICIDS2017_Preprocessing
+#graphify/rationale #graphify/EXTRACTED #community/Baseline_Random_Forest

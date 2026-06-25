@@ -1,12 +1,12 @@
 ---
 source_file: "src/train_rl_defender.py"
 type: "code"
-community: "RL Defender Training"
+community: "RL Training Core"
 location: "L1"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/RL_Defender_Training
+  - community/RL_Training_Core
 ---
 
 # train_rl_defender.py
@@ -16,7 +16,6 @@ tags:
 - [[collect_environment_metadata()]] - `contains` [EXTRACTED]
 - [[configure_torch_runtime()]] - `contains` [EXTRACTED]
 - [[evaluate_model()]] - `contains` [EXTRACTED]
-- [[load_cicids2017.py_1]] - `imports_from` [EXTRACTED]
 - [[main()_6]] - `contains` [EXTRACTED]
 - [[make_env_fn()]] - `contains` [EXTRACTED]
 - [[parse_args()_3]] - `contains` [EXTRACTED]
@@ -26,4 +25,4 @@ tags:
 - [[train_rl_defender.py — Entrenamiento de agente defensor RL sobre CICIDS2017.]] - `rationale_for` [EXTRACTED]
 - [[write_json()]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/RL_Defender_Training
+#graphify/code #graphify/EXTRACTED #community/RL_Training_Core

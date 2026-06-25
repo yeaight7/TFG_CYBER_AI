@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "code"
-community: "Test Split Validation"
+community: "Testing Splits"
 location: "L544"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Test_Split_Validation
+  - community/Testing_Splits
 ---
 
 # _sha256_of_array()
@@ -18,4 +18,4 @@ tags:
 - [[main()_4]] - `calls` [INFERRED]
 - [[test_sha256_of_array_stable()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Test_Split_Validation
+#graphify/code #graphify/EXTRACTED #community/Testing_Splits

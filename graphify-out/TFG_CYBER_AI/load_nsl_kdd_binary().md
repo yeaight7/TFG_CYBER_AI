@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_nsl_kdd.py"
 type: "code"
-community: "Canonical Schema Setup"
+community: "Inference (Deprecated)"
 location: "L42"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Canonical_Schema_Setup
+  - community/Inference_Deprecated
 ---
 
 # load_nsl_kdd_binary()
@@ -18,4 +18,4 @@ tags:
 - [[load_nsl_kdd.py]] - `contains` [EXTRACTED]
 - [[map_to_canonical()]] - `calls` [INFERRED]
 
-#graphify/code #graphify/EXTRACTED #community/Canonical_Schema_Setup
+#graphify/code #graphify/EXTRACTED #community/Inference_Deprecated

@@ -1,12 +1,12 @@
 ---
 source_file: "src/validate_checks.py"
 type: "code"
-community: "Test Split Validation"
+community: "Validation Checks"
 location: "L447"
 tags:
   - graphify/code
   - graphify/EXTRACTED
-  - community/Test_Split_Validation
+  - community/Validation_Checks
 ---
 
 # main()
@@ -19,4 +19,4 @@ tags:
 - [[parse_args()_5]] - `calls` [EXTRACTED]
 - [[validate_checks.py]] - `contains` [EXTRACTED]
 
-#graphify/code #graphify/EXTRACTED #community/Test_Split_Validation
+#graphify/code #graphify/EXTRACTED #community/Validation_Checks

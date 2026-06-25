@@ -4,101 +4,117 @@
   "graph": {
     "hyperedges": [
       {
-        "id": "phase2_inference_pipeline",
-        "label": "Phase 2 Real Traffic Inference Pipeline (v2)",
+        "id": "defense_prep_docs",
+        "label": "Defense Preparation",
         "nodes": [
-          "predict_v2_main",
-          "scaling_utils_apply_percentile_clipping",
-          "scaling_utils_apply_z_clipping",
-          "predict_v2_compute_diagnostics",
-          "canonical_schema_map_to_canonical"
-        ],
-        "relation": "implement",
-        "confidence": "EXTRACTED",
-        "confidence_score": 1.0,
-        "source_file": "scripts/predict_real_traffic_v2.py"
-      },
-      {
-        "id": "canonical_schema_pipeline",
-        "label": "Canonical Schema Feature Pipeline (map + mask + scale)",
-        "nodes": [
-          "canonical_schema_map_to_canonical",
-          "canonical_schema_missingness_mask",
-          "load_cicids2017__prepare_cicids_features",
-          "load_nsl_kdd_load_nsl_kdd_binary",
-          "rl_defender_env_RLDatasetDefenderEnv"
+          "docs_DEFENSA_TFG_PROGRESO_md",
+          "docs_DEFENSA_TFG_SCRIPT_md",
+          "data_schema_research_report",
+          "validation_research_report",
+          "components_research_report"
         ],
         "relation": "participate_in",
         "confidence": "INFERRED",
-        "confidence_score": 0.95,
-        "source_file": "src/canonical_schema.py"
+        "confidence_score": 0.85
       },
       {
-        "id": "validation_suite",
-        "label": "Validation Suite",
+        "id": "phase2_docs",
+        "label": "Phase 2 Lab and Inference",
         "nodes": [
-          "validation_check_a",
-          "validation_check_b",
-          "validation_check_c",
-          "leave_one_exact_csv_out"
+          "docs_AGENT_CONTEXT_md",
+          "docs_phase2_plan_md",
+          "docs_gcp_lab_md"
+        ],
+        "relation": "participate_in",
+        "confidence": "INFERRED",
+        "confidence_score": 0.9
+      },
+      {
+        "id": "TFG_Positioning",
+        "nodes": [
+          "deep-research-report2",
+          "QRDQN",
+          "RLDatasetDefenderEnv",
+          "Cost_Sensitive_Reward"
+        ],
+        "description": "The defensible gap involves a QRDQN agent making binary decisions in a defender-centric environment with cost-sensitive rewards.",
+        "confidence_score": 0.95,
+        "is_inferred": true
+      },
+      {
+        "id": "Methodological_Critique",
+        "nodes": [
+          "deep-research-report1",
+          "deep-research-report2",
+          "Phase_2_Inference",
+          "CICIDS2017"
+        ],
+        "description": "Methodological critique stresses that intra-dataset (CICIDS2017) performance is weak without external validation (Phase 2).",
+        "confidence_score": 0.9,
+        "is_inferred": true
+      },
+      {
+        "id": "Rigorous NIDS Evaluation Framework",
+        "nodes": [
+          "Temporal/Scenario Splits",
+          "External Validation (Lab Traffic)",
+          "Cost-Sensitive IDS Reward",
+          "Methodological Risks in NIDS"
+        ],
+        "type": "Shared_Concept",
+        "properties": {
+          "description": "Core methodological pillars to address and mitigate evaluation flaws in RL-based NIDS."
+        }
+      },
+      {
+        "id": "RL Agent Paradigm",
+        "nodes": [
+          "QRDQN Policy Agent",
+          "Dataset-as-Environment",
+          "Binary PERMIT/BLOCK Classification"
+        ],
+        "type": "Shared_Concept",
+        "properties": {
+          "description": "The architectural definition of the cybersecurity agent, using distributional RL in a dataset-driven environment for binary classification."
+        }
+      },
+      {
+        "id": "thesis_methodology_pillars",
+        "label": "Thesis Methodology Pillars",
+        "nodes": [
+          "concept_canonical_feature_schema",
+          "concept_dataset_as_environment",
+          "concept_cost_sensitive_reward",
+          "concept_validation_ladder"
         ],
         "relation": "form",
         "confidence": "INFERRED",
-        "confidence_score": 0.9,
-        "source_file": "docs/README.md"
+        "confidence_score": 0.85,
+        "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md"
       },
       {
-        "id": "tfg_core_artifacts",
-        "label": "TFG Core Logic Scripts",
+        "id": "cicids2017_evaluation_strategy",
+        "label": "CICIDS2017 Evaluation Strategy",
         "nodes": [
-          "load_cicids2017",
-          "train_rl_defender",
-          "validate_checks",
-          "validate_leave_one_csv_out",
-          "baseline_random_forest"
+          "concept_cicids2017_limitations",
+          "concept_validation_ladder",
+          "concept_evaluation_leakage"
         ],
         "relation": "participate_in",
         "confidence": "INFERRED",
-        "confidence_score": 0.8,
-        "source_file": "src/"
+        "confidence_score": 0.9,
+        "source_file": "scratch/experimental_design_board.html"
       }
     ]
   },
   "nodes": [
-    {
-      "label": "run_ast.py",
-      "file_type": "code",
-      "source_file": "run_ast.py",
-      "source_location": "L1",
-      "id": "run_ast_py",
-      "community": 18,
-      "norm_label": "run_ast.py"
-    },
-    {
-      "label": "run_cache.py",
-      "file_type": "code",
-      "source_file": "run_cache.py",
-      "source_location": "L1",
-      "id": "run_cache_py",
-      "community": 19,
-      "norm_label": "run_cache.py"
-    },
-    {
-      "label": "run_detect.py",
-      "file_type": "code",
-      "source_file": "run_detect.py",
-      "source_location": "L1",
-      "id": "run_detect_py",
-      "community": 20,
-      "norm_label": "run_detect.py"
-    },
     {
       "label": "deprecated_predict_real_traffic.py",
       "file_type": "code",
       "source_file": "scripts/deprecated_predict_real_traffic.py",
       "source_location": "L1",
       "id": "scripts_deprecated_predict_real_traffic_py",
-      "community": 5,
+      "community": 3,
       "norm_label": "deprecated_predict_real_traffic.py"
     },
     {
@@ -107,7 +123,7 @@
       "source_file": "scripts/deprecated_predict_real_traffic.py",
       "source_location": "L129",
       "id": "scripts_deprecated_predict_real_traffic_maybe_convert_time_units",
-      "community": 5,
+      "community": 3,
       "norm_label": "maybe_convert_time_units()"
     },
     {
@@ -116,7 +132,7 @@
       "source_file": "scripts/deprecated_predict_real_traffic.py",
       "source_location": "L143",
       "id": "scripts_deprecated_predict_real_traffic_load_model",
-      "community": 5,
+      "community": 3,
       "norm_label": "load_model()"
     },
     {
@@ -125,7 +141,7 @@
       "source_file": "scripts/deprecated_predict_real_traffic.py",
       "source_location": "L151",
       "id": "scripts_deprecated_predict_real_traffic_batched_predict",
-      "community": 5,
+      "community": 3,
       "norm_label": "batched_predict()"
     },
     {
@@ -134,7 +150,7 @@
       "source_file": "scripts/deprecated_predict_real_traffic.py",
       "source_location": "L158",
       "id": "scripts_deprecated_predict_real_traffic_main",
-      "community": 5,
+      "community": 3,
       "norm_label": "main()"
     },
     {
@@ -215,7 +231,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L1",
       "id": "scripts_graphify_auto_update_py",
-      "community": 6,
+      "community": 9,
       "norm_label": "graphify_auto_update.py"
     },
     {
@@ -224,7 +240,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L54",
       "id": "graphify_auto_update_run_git",
-      "community": 6,
+      "community": 9,
       "norm_label": "_run_git()"
     },
     {
@@ -233,7 +249,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L64",
       "id": "graphify_auto_update_normalize",
-      "community": 6,
+      "community": 9,
       "norm_label": "_normalize()"
     },
     {
@@ -242,7 +258,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L68",
       "id": "graphify_auto_update_is_ignored",
-      "community": 6,
+      "community": 9,
       "norm_label": "_is_ignored()"
     },
     {
@@ -251,7 +267,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L73",
       "id": "graphify_auto_update_is_code",
-      "community": 6,
+      "community": 9,
       "norm_label": "_is_code()"
     },
     {
@@ -260,7 +276,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L77",
       "id": "graphify_auto_update_is_semantic_source",
-      "community": 6,
+      "community": 9,
       "norm_label": "_is_semantic_source()"
     },
     {
@@ -269,7 +285,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L94",
       "id": "graphify_auto_update_rev_exists",
-      "community": 6,
+      "community": 9,
       "norm_label": "_rev_exists()"
     },
     {
@@ -278,7 +294,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L99",
       "id": "graphify_auto_update_diff_range",
-      "community": 6,
+      "community": 9,
       "norm_label": "_diff_range()"
     },
     {
@@ -287,7 +303,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L107",
       "id": "graphify_auto_update_parse_name_status",
-      "community": 6,
+      "community": 9,
       "norm_label": "_parse_name_status()"
     },
     {
@@ -296,7 +312,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L124",
       "id": "graphify_auto_update_has_structural_patch",
-      "community": 6,
+      "community": 9,
       "norm_label": "_has_structural_patch()"
     },
     {
@@ -305,7 +321,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L143",
       "id": "graphify_auto_update_write_needs_update",
-      "community": 6,
+      "community": 9,
       "norm_label": "_write_needs_update()"
     },
     {
@@ -314,7 +330,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L154",
       "id": "graphify_auto_update_rebuild_code_graph",
-      "community": 6,
+      "community": 9,
       "norm_label": "_rebuild_code_graph()"
     },
     {
@@ -323,7 +339,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L165",
       "id": "graphify_auto_update_decide_and_run",
-      "community": 6,
+      "community": 9,
       "norm_label": "decide_and_run()"
     },
     {
@@ -332,7 +348,7 @@
       "source_file": "scripts/graphify_auto_update.py",
       "source_location": "L231",
       "id": "graphify_auto_update_main",
-      "community": 6,
+      "community": 9,
       "norm_label": "main()"
     },
     {
@@ -341,7 +357,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L1",
       "id": "scripts_predict_real_traffic_v2_py",
-      "community": 3,
+      "community": 1,
       "norm_label": "predict_real_traffic_v2.py"
     },
     {
@@ -350,7 +366,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L141",
       "id": "scripts_predict_real_traffic_v2_maybe_convert_time_units",
-      "community": 3,
+      "community": 1,
       "norm_label": "maybe_convert_time_units()"
     },
     {
@@ -359,7 +375,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L164",
       "id": "scripts_predict_real_traffic_v2_load_model",
-      "community": 3,
+      "community": 1,
       "norm_label": "load_model()"
     },
     {
@@ -368,7 +384,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L178",
       "id": "scripts_predict_real_traffic_v2_batched_predict",
-      "community": 3,
+      "community": 1,
       "norm_label": "batched_predict()"
     },
     {
@@ -377,7 +393,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L191",
       "id": "scripts_predict_real_traffic_v2_compute_diagnostics",
-      "community": 3,
+      "community": 1,
       "norm_label": "compute_diagnostics()"
     },
     {
@@ -386,7 +402,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L258",
       "id": "scripts_predict_real_traffic_v2_compute_truth_metrics",
-      "community": 3,
+      "community": 1,
       "norm_label": "compute_truth_metrics()"
     },
     {
@@ -395,7 +411,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L314",
       "id": "scripts_predict_real_traffic_v2_parse_args",
-      "community": 3,
+      "community": 1,
       "norm_label": "parse_args()"
     },
     {
@@ -404,7 +420,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L353",
       "id": "scripts_predict_real_traffic_v2_main",
-      "community": 3,
+      "community": 1,
       "norm_label": "main()"
     },
     {
@@ -413,7 +429,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L1",
       "id": "scripts_predict_real_traffic_v2_rationale_1",
-      "community": 3,
+      "community": 1,
       "norm_label": "predict_real_traffic_v2.py \u2014 robust phase 2 offline inference pipeline.  loads"
     },
     {
@@ -422,7 +438,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L142",
       "id": "scripts_predict_real_traffic_v2_rationale_142",
-      "community": 3,
+      "community": 1,
       "norm_label": "if time columns look like seconds (median < 1), convert to microseconds."
     },
     {
@@ -431,7 +447,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L165",
       "id": "scripts_predict_real_traffic_v2_rationale_165",
-      "community": 3,
+      "community": 1,
       "norm_label": "load qrdqn model, falling back to dqn if sb3_contrib is unavailable."
     },
     {
@@ -440,7 +456,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L179",
       "id": "scripts_predict_real_traffic_v2_rationale_179",
-      "community": 3,
+      "community": 1,
       "norm_label": "run model.predict in batches to avoid oom on large flow csvs."
     },
     {
@@ -449,7 +465,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L196",
       "id": "scripts_predict_real_traffic_v2_rationale_196",
-      "community": 3,
+      "community": 1,
       "norm_label": "compute z-score diagnostics on scaled features (first _n_canon dims only)."
     },
     {
@@ -458,7 +474,7 @@
       "source_file": "scripts/predict_real_traffic_v2.py",
       "source_location": "L259",
       "id": "scripts_predict_real_traffic_v2_rationale_259",
-      "community": 3,
+      "community": 1,
       "norm_label": "compute evaluation metrics when ground-truth columns are present in the flows cs"
     },
     {
@@ -467,7 +483,7 @@
       "source_file": "scripts/verify_fixed_test_split.py",
       "source_location": "L1",
       "id": "scripts_verify_fixed_test_split_py",
-      "community": 1,
+      "community": 4,
       "norm_label": "verify_fixed_test_split.py"
     },
     {
@@ -476,7 +492,7 @@
       "source_file": "scripts/verify_fixed_test_split.py",
       "source_location": "L60",
       "id": "scripts_verify_fixed_test_split_parse_args",
-      "community": 1,
+      "community": 4,
       "norm_label": "parse_args()"
     },
     {
@@ -485,7 +501,7 @@
       "source_file": "scripts/verify_fixed_test_split.py",
       "source_location": "L91",
       "id": "scripts_verify_fixed_test_split_fail",
-      "community": 1,
+      "community": 4,
       "norm_label": "fail()"
     },
     {
@@ -494,7 +510,7 @@
       "source_file": "scripts/verify_fixed_test_split.py",
       "source_location": "L96",
       "id": "scripts_verify_fixed_test_split_ok",
-      "community": 1,
+      "community": 4,
       "norm_label": "ok()"
     },
     {
@@ -503,7 +519,7 @@
       "source_file": "scripts/verify_fixed_test_split.py",
       "source_location": "L100",
       "id": "scripts_verify_fixed_test_split_main",
-      "community": 1,
+      "community": 4,
       "norm_label": "main()"
     },
     {
@@ -512,7 +528,7 @@
       "source_file": "src/baseline_random_forest.py",
       "source_location": "L1",
       "id": "src_baseline_random_forest_py",
-      "community": 2,
+      "community": 0,
       "norm_label": "baseline_random_forest.py"
     },
     {
@@ -521,7 +537,7 @@
       "source_file": "src/baseline_random_forest.py",
       "source_location": "L31",
       "id": "src_baseline_random_forest_train_random_forest",
-      "community": 2,
+      "community": 0,
       "norm_label": "train_random_forest()"
     },
     {
@@ -530,7 +546,7 @@
       "source_file": "src/baseline_random_forest.py",
       "source_location": "L52",
       "id": "src_baseline_random_forest_evaluate_random_forest",
-      "community": 2,
+      "community": 0,
       "norm_label": "evaluate_random_forest()"
     },
     {
@@ -539,7 +555,7 @@
       "source_file": "src/baseline_random_forest.py",
       "source_location": "L69",
       "id": "src_baseline_random_forest_main",
-      "community": 2,
+      "community": 0,
       "norm_label": "main()"
     },
     {
@@ -548,7 +564,7 @@
       "source_file": "src/baseline_random_forest.py",
       "source_location": "L38",
       "id": "src_baseline_random_forest_rationale_38",
-      "community": 2,
+      "community": 0,
       "norm_label": "entrena un randomforestclassifier sobre el dataset y devuelve el modelo."
     },
     {
@@ -557,7 +573,7 @@
       "source_file": "src/baseline_random_forest.py",
       "source_location": "L57",
       "id": "src_baseline_random_forest_rationale_57",
-      "community": 2,
+      "community": 0,
       "norm_label": "evalua el random forest y muestra matriz de confusion + informe de clasificacion"
     },
     {
@@ -566,7 +582,7 @@
       "source_file": "src/canonical_schema.py",
       "source_location": "L1",
       "id": "src_canonical_schema_py",
-      "community": 5,
+      "community": 3,
       "norm_label": "canonical_schema.py"
     },
     {
@@ -575,7 +591,7 @@
       "source_file": "src/canonical_schema.py",
       "source_location": "L267",
       "id": "src_canonical_schema_canonicalresult",
-      "community": 5,
+      "community": 3,
       "norm_label": "canonicalresult"
     },
     {
@@ -584,7 +600,7 @@
       "source_file": "src/canonical_schema.py",
       "source_location": "L277",
       "id": "src_canonical_schema_map_to_canonical",
-      "community": 5,
+      "community": 3,
       "norm_label": "map_to_canonical()"
     },
     {
@@ -593,7 +609,7 @@
       "source_file": "src/canonical_schema.py",
       "source_location": "L346",
       "id": "src_canonical_schema_get_canonical_feature_names",
-      "community": 5,
+      "community": 3,
       "norm_label": "get_canonical_feature_names()"
     },
     {
@@ -602,7 +618,7 @@
       "source_file": "src/canonical_schema.py",
       "source_location": "L351",
       "id": "src_canonical_schema_get_observation_feature_names",
-      "community": 5,
+      "community": 3,
       "norm_label": "get_observation_feature_names()"
     },
     {
@@ -611,7 +627,7 @@
       "source_file": "src/canonical_schema.py",
       "source_location": "L1",
       "id": "src_canonical_schema_rationale_1",
-      "community": 5,
+      "community": 3,
       "norm_label": "canonical_schema.py \u2014 definicion formal del esquema canonico de features (featur"
     },
     {
@@ -620,7 +636,7 @@
       "source_file": "src/canonical_schema.py",
       "source_location": "L268",
       "id": "src_canonical_schema_rationale_268",
-      "community": 5,
+      "community": 3,
       "norm_label": "resultado de mapear un dataframe al esquema canonico."
     },
     {
@@ -629,7 +645,7 @@
       "source_file": "src/canonical_schema.py",
       "source_location": "L282",
       "id": "src_canonical_schema_rationale_282",
-      "community": 5,
+      "community": 3,
       "norm_label": "mapea un dataframe al esquema canonico de features.      parameters     -----"
     },
     {
@@ -638,7 +654,7 @@
       "source_file": "src/canonical_schema.py",
       "source_location": "L347",
       "id": "src_canonical_schema_rationale_347",
-      "community": 5,
+      "community": 3,
       "norm_label": "devuelve la lista de nombres de features canonicas (sin mascara)."
     },
     {
@@ -647,7 +663,7 @@
       "source_file": "src/canonical_schema.py",
       "source_location": "L352",
       "id": "src_canonical_schema_rationale_352",
-      "community": 5,
+      "community": 3,
       "norm_label": "devuelve la lista completa de nombres: features + mascara de missingness."
     },
     {
@@ -656,7 +672,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L1",
       "id": "src_load_cicids2017_py",
-      "community": 2,
+      "community": 0,
       "norm_label": "load_cicids2017.py"
     },
     {
@@ -665,7 +681,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L46",
       "id": "src_load_cicids2017_cicidsloadconfig",
-      "community": 2,
+      "community": 0,
       "norm_label": "cicidsloadconfig"
     },
     {
@@ -674,7 +690,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L69",
       "id": "src_load_cicids2017_list_csv_files",
-      "community": 2,
+      "community": 0,
       "norm_label": "_list_csv_files()"
     },
     {
@@ -683,7 +699,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L79",
       "id": "src_load_cicids2017_list_cicids2017_csv_files",
-      "community": 2,
+      "community": 0,
       "norm_label": "list_cicids2017_csv_files()"
     },
     {
@@ -692,7 +708,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L103",
       "id": "src_load_cicids2017_normalize_columns",
-      "community": 2,
+      "community": 0,
       "norm_label": "_normalize_columns()"
     },
     {
@@ -701,7 +717,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L109",
       "id": "src_load_cicids2017_find_label_column",
-      "community": 2,
+      "community": 0,
       "norm_label": "_find_label_column()"
     },
     {
@@ -710,7 +726,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L120",
       "id": "src_load_cicids2017_drop_identifier_like_columns",
-      "community": 2,
+      "community": 0,
       "norm_label": "_drop_identifier_like_columns()"
     },
     {
@@ -719,7 +735,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L146",
       "id": "src_load_cicids2017_coerce_numeric_features",
-      "community": 2,
+      "community": 0,
       "norm_label": "_coerce_numeric_features()"
     },
     {
@@ -728,7 +744,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L155",
       "id": "src_load_cicids2017_clean_rows",
-      "community": 2,
+      "community": 0,
       "norm_label": "_clean_rows()"
     },
     {
@@ -737,7 +753,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L169",
       "id": "src_load_cicids2017_load_all_csvs",
-      "community": 2,
+      "community": 0,
       "norm_label": "_load_all_csvs()"
     },
     {
@@ -746,7 +762,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L199",
       "id": "src_load_cicids2017_load_csv_with_row_limit",
-      "community": 2,
+      "community": 0,
       "norm_label": "_load_csv_with_row_limit()"
     },
     {
@@ -755,7 +771,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L226",
       "id": "src_load_cicids2017_prepare_cicids_features",
-      "community": 2,
+      "community": 0,
       "norm_label": "_prepare_cicids_features()"
     },
     {
@@ -764,7 +780,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L280",
       "id": "src_load_cicids2017_load_and_process_csv_paths",
-      "community": 2,
+      "community": 0,
       "norm_label": "_load_and_process_csv_paths()"
     },
     {
@@ -773,7 +789,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L304",
       "id": "src_load_cicids2017_resolve_exact_csv_names",
-      "community": 2,
+      "community": 0,
       "norm_label": "_resolve_exact_csv_names()"
     },
     {
@@ -782,7 +798,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L324",
       "id": "src_load_cicids2017_load_cicids2017_binary",
-      "community": 2,
+      "community": 0,
       "norm_label": "load_cicids2017_binary()"
     },
     {
@@ -791,7 +807,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L371",
       "id": "src_load_cicids2017_load_cicids2017_csv_split",
-      "community": 2,
+      "community": 0,
       "norm_label": "load_cicids2017_csv_split()"
     },
     {
@@ -800,7 +816,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L441",
       "id": "src_load_cicids2017_load_cicids2017_exact_csv_split",
-      "community": 2,
+      "community": 0,
       "norm_label": "load_cicids2017_exact_csv_split()"
     },
     {
@@ -809,7 +825,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L544",
       "id": "src_load_cicids2017_sha256_of_array",
-      "community": 1,
+      "community": 4,
       "norm_label": "_sha256_of_array()"
     },
     {
@@ -818,7 +834,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L555",
       "id": "src_load_cicids2017_stratified_nested_prefix_indices",
-      "community": 1,
+      "community": 4,
       "norm_label": "_stratified_nested_prefix_indices()"
     },
     {
@@ -827,7 +843,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L590",
       "id": "src_load_cicids2017_load_cicids2017_split",
-      "community": 1,
+      "community": 0,
       "norm_label": "load_cicids2017_split()"
     },
     {
@@ -836,7 +852,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L80",
       "id": "src_load_cicids2017_rationale_80",
-      "community": 2,
+      "community": 0,
       "norm_label": "lista unicamente los 8 csvs oficiales de cicids2017 en orden determinista."
     },
     {
@@ -845,7 +861,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L200",
       "id": "src_load_cicids2017_rationale_200",
-      "community": 2,
+      "community": 0,
       "norm_label": "carga un csv individual con limite opcional de filas por archivo."
     },
     {
@@ -854,7 +870,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L230",
       "id": "src_load_cicids2017_rationale_230",
-      "community": 2,
+      "community": 0,
       "norm_label": "limpia cicids2017 y devuelve x, y y nombres de features."
     },
     {
@@ -863,7 +879,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L285",
       "id": "src_load_cicids2017_rationale_285",
-      "community": 2,
+      "community": 0,
       "norm_label": "carga una lista de csvs, aplica preprocesado y devuelve x, y y features."
     },
     {
@@ -872,7 +888,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L305",
       "id": "src_load_cicids2017_rationale_305",
-      "community": 2,
+      "community": 0,
       "norm_label": "resuelve nombres exactos de csv a rutas reales, preservando el orden de entrada."
     },
     {
@@ -881,7 +897,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L327",
       "id": "src_load_cicids2017_rationale_327",
-      "community": 2,
+      "community": 0,
       "norm_label": "carga cicids2017 desde directorio local y lo adapta al esquema canonico."
     },
     {
@@ -890,7 +906,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L376",
       "id": "src_load_cicids2017_rationale_376",
-      "community": 2,
+      "community": 0,
       "norm_label": "carga cicids2017 separando por archivos csv (train vs test).      en lugar de"
     },
     {
@@ -899,7 +915,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L447",
       "id": "src_load_cicids2017_rationale_447",
-      "community": 2,
+      "community": 0,
       "norm_label": "carga cicids2017 separando por nombres exactos de archivo csv.      a diferenc"
     },
     {
@@ -908,7 +924,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L545",
       "id": "src_load_cicids2017_rationale_545",
-      "community": 1,
+      "community": 4,
       "norm_label": "sha-256 content hash of an ndarray, prefixed with dtype and shape so that     a"
     },
     {
@@ -917,7 +933,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L556",
       "id": "src_load_cicids2017_rationale_556",
-      "community": 1,
+      "community": 4,
       "norm_label": "deterministic, stratified, *nested* train subsample indices.      per-class se"
     },
     {
@@ -926,7 +942,7 @@
       "source_file": "src/load_cicids2017.py",
       "source_location": "L601",
       "id": "src_load_cicids2017_rationale_601",
-      "community": 1,
+      "community": 0,
       "norm_label": "unified cicids2017 loader with split-mode and preset support.      parameters"
     },
     {
@@ -935,7 +951,7 @@
       "source_file": "src/load_nsl_kdd.py",
       "source_location": "L1",
       "id": "src_load_nsl_kdd_py",
-      "community": 5,
+      "community": 3,
       "norm_label": "load_nsl_kdd.py"
     },
     {
@@ -944,7 +960,7 @@
       "source_file": "src/load_nsl_kdd.py",
       "source_location": "L33",
       "id": "src_load_nsl_kdd_ensure_dataset_local_dir",
-      "community": 5,
+      "community": 3,
       "norm_label": "_ensure_dataset_local_dir()"
     },
     {
@@ -953,7 +969,7 @@
       "source_file": "src/load_nsl_kdd.py",
       "source_location": "L42",
       "id": "src_load_nsl_kdd_load_nsl_kdd_binary",
-      "community": 5,
+      "community": 3,
       "norm_label": "load_nsl_kdd_binary()"
     },
     {
@@ -962,7 +978,7 @@
       "source_file": "src/load_nsl_kdd.py",
       "source_location": "L48",
       "id": "src_load_nsl_kdd_rationale_48",
-      "community": 5,
+      "community": 3,
       "norm_label": "carga nsl-kdd localmente, lo preprocesa y devuelve:          x_train, y_train,"
     },
     {
@@ -971,7 +987,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L1",
       "id": "src_rl_defender_env_py",
-      "community": 7,
+      "community": 6,
       "norm_label": "rl_defender_env.py"
     },
     {
@@ -980,7 +996,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L6",
       "id": "rl_defender_env_rldatasetdefenderenv",
-      "community": 7,
+      "community": 6,
       "norm_label": "rldatasetdefenderenv"
     },
     {
@@ -989,7 +1005,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L35",
       "id": "rl_defender_env_rldatasetdefenderenv_init",
-      "community": 7,
+      "community": 6,
       "norm_label": ".__init__()"
     },
     {
@@ -998,7 +1014,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L90",
       "id": "rl_defender_env_rldatasetdefenderenv_reset",
-      "community": 7,
+      "community": 6,
       "norm_label": ".reset()"
     },
     {
@@ -1007,7 +1023,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L103",
       "id": "rl_defender_env_rldatasetdefenderenv_get_observation",
-      "community": 7,
+      "community": 6,
       "norm_label": "._get_observation()"
     },
     {
@@ -1016,7 +1032,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L107",
       "id": "rl_defender_env_rldatasetdefenderenv_compute_reward",
-      "community": 7,
+      "community": 6,
       "norm_label": "._compute_reward()"
     },
     {
@@ -1025,7 +1041,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L142",
       "id": "rl_defender_env_rldatasetdefenderenv_step",
-      "community": 7,
+      "community": 6,
       "norm_label": ".step()"
     },
     {
@@ -1034,7 +1050,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L170",
       "id": "rl_defender_env_rldatasetdefenderenv_render",
-      "community": 7,
+      "community": 6,
       "norm_label": ".render()"
     },
     {
@@ -1043,7 +1059,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L174",
       "id": "rl_defender_env_rldatasetdefenderenv_close",
-      "community": 7,
+      "community": 6,
       "norm_label": ".close()"
     },
     {
@@ -1052,7 +1068,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L7",
       "id": "rl_defender_env_rationale_7",
-      "community": 7,
+      "community": 6,
       "norm_label": "entorno rl para un defensor que decide permit/block sobre muestras etiquetadas."
     },
     {
@@ -1061,7 +1077,7 @@
       "source_file": "src/rl_defender_env.py",
       "source_location": "L108",
       "id": "rl_defender_env_rationale_108",
-      "community": 7,
+      "community": 6,
       "norm_label": "calcula la recompensa en funcion de la etiqueta real, la accion         y la co"
     },
     {
@@ -1070,7 +1086,7 @@
       "source_file": "src/scaling_utils.py",
       "source_location": "L1",
       "id": "src_scaling_utils_py",
-      "community": 3,
+      "community": 1,
       "norm_label": "scaling_utils.py"
     },
     {
@@ -1079,7 +1095,7 @@
       "source_file": "src/scaling_utils.py",
       "source_location": "L17",
       "id": "scaling_utils_apply_percentile_clipping",
-      "community": 3,
+      "community": 1,
       "norm_label": "apply_percentile_clipping()"
     },
     {
@@ -1088,7 +1104,7 @@
       "source_file": "src/scaling_utils.py",
       "source_location": "L48",
       "id": "scaling_utils_apply_z_clipping",
-      "community": 3,
+      "community": 1,
       "norm_label": "apply_z_clipping()"
     },
     {
@@ -1097,7 +1113,7 @@
       "source_file": "src/scaling_utils.py",
       "source_location": "L1",
       "id": "scaling_utils_rationale_1",
-      "community": 3,
+      "community": 1,
       "norm_label": "scaling_utils.py \u2014 clipping utilities for outlier handling in rl inference pipel"
     },
     {
@@ -1106,7 +1122,7 @@
       "source_file": "src/scaling_utils.py",
       "source_location": "L22",
       "id": "scaling_utils_rationale_22",
-      "community": 3,
+      "community": 1,
       "norm_label": "clamp each feature to its training percentile range [p_low, p_high].      appl"
     },
     {
@@ -1115,7 +1131,7 @@
       "source_file": "src/scaling_utils.py",
       "source_location": "L52",
       "id": "scaling_utils_rationale_52",
-      "community": 3,
+      "community": 1,
       "norm_label": "clamp scaled features to [-max_z, +max_z].      applied to scaled features **a"
     },
     {
@@ -1124,7 +1140,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L1",
       "id": "src_train_rl_defender_py",
-      "community": 4,
+      "community": 2,
       "norm_label": "train_rl_defender.py"
     },
     {
@@ -1133,7 +1149,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L62",
       "id": "src_train_rl_defender_resolve_total_timesteps",
-      "community": 4,
+      "community": 2,
       "norm_label": "resolve_total_timesteps()"
     },
     {
@@ -1142,7 +1158,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L70",
       "id": "src_train_rl_defender_resolve_training_hyperparams",
-      "community": 4,
+      "community": 2,
       "norm_label": "resolve_training_hyperparams()"
     },
     {
@@ -1151,7 +1167,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L121",
       "id": "src_train_rl_defender_resolve_checkpoint_freq",
-      "community": 4,
+      "community": 2,
       "norm_label": "resolve_checkpoint_freq()"
     },
     {
@@ -1160,7 +1176,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L134",
       "id": "src_train_rl_defender_package_version",
-      "community": 4,
+      "community": 2,
       "norm_label": "_package_version()"
     },
     {
@@ -1169,7 +1185,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L141",
       "id": "src_train_rl_defender_collect_environment_metadata",
-      "community": 4,
+      "community": 2,
       "norm_label": "collect_environment_metadata()"
     },
     {
@@ -1178,7 +1194,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L165",
       "id": "src_train_rl_defender_configure_torch_runtime",
-      "community": 4,
+      "community": 2,
       "norm_label": "configure_torch_runtime()"
     },
     {
@@ -1187,7 +1203,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L191",
       "id": "src_train_rl_defender_write_json",
-      "community": 4,
+      "community": 2,
       "norm_label": "write_json()"
     },
     {
@@ -1196,7 +1212,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L195",
       "id": "src_train_rl_defender_make_env_fn",
-      "community": 4,
+      "community": 2,
       "norm_label": "make_env_fn()"
     },
     {
@@ -1205,7 +1221,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L215",
       "id": "src_train_rl_defender_evaluate_model",
-      "community": 4,
+      "community": 2,
       "norm_label": "evaluate_model()"
     },
     {
@@ -1214,7 +1230,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L263",
       "id": "src_train_rl_defender_parse_args",
-      "community": 4,
+      "community": 2,
       "norm_label": "parse_args()"
     },
     {
@@ -1223,7 +1239,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L358",
       "id": "src_train_rl_defender_main",
-      "community": 4,
+      "community": 2,
       "norm_label": "main()"
     },
     {
@@ -1232,7 +1248,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L1",
       "id": "src_train_rl_defender_rationale_1",
-      "community": 4,
+      "community": 2,
       "norm_label": "train_rl_defender.py \u2014 entrenamiento de agente defensor rl sobre cicids2017."
     },
     {
@@ -1241,7 +1257,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L169",
       "id": "src_train_rl_defender_rationale_169",
-      "community": 4,
+      "community": 2,
       "norm_label": "apply optional pytorch cpu thread limits and report effective values."
     },
     {
@@ -1250,7 +1266,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L198",
       "id": "src_train_rl_defender_rationale_198",
-      "community": 4,
+      "community": 2,
       "norm_label": "devuelve una funcion creadora de entornos para dummyvecenv."
     },
     {
@@ -1259,7 +1275,7 @@
       "source_file": "src/train_rl_defender.py",
       "source_location": "L222",
       "id": "src_train_rl_defender_rationale_222",
-      "community": 4,
+      "community": 2,
       "norm_label": "evalua el agente sobre test set.     devuelve dict con metricas clave."
     },
     {
@@ -1340,7 +1356,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L1",
       "id": "src_validate_checks_py",
-      "community": 1,
+      "community": 8,
       "norm_label": "validate_checks.py"
     },
     {
@@ -1349,7 +1365,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L67",
       "id": "src_validate_checks_progresscallback",
-      "community": 1,
+      "community": 8,
       "norm_label": "progresscallback"
     },
     {
@@ -1358,7 +1374,7 @@
       "source_file": "",
       "source_location": "",
       "id": "basecallback",
-      "community": 1,
+      "community": 8,
       "norm_label": "basecallback"
     },
     {
@@ -1367,7 +1383,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L69",
       "id": "src_validate_checks_progresscallback_init",
-      "community": 1,
+      "community": 8,
       "norm_label": ".__init__()"
     },
     {
@@ -1376,7 +1392,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L73",
       "id": "src_validate_checks_progresscallback_on_step",
-      "community": 1,
+      "community": 8,
       "norm_label": "._on_step()"
     },
     {
@@ -1385,7 +1401,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L83",
       "id": "src_validate_checks_check_a_direct_eval",
-      "community": 1,
+      "community": 8,
       "norm_label": "check_a_direct_eval()"
     },
     {
@@ -1394,7 +1410,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L141",
       "id": "src_validate_checks_check_b_shuffled_labels",
-      "community": 1,
+      "community": 8,
       "norm_label": "check_b_shuffled_labels()"
     },
     {
@@ -1403,7 +1419,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L271",
       "id": "src_validate_checks_check_c_csv_split",
-      "community": 1,
+      "community": 8,
       "norm_label": "check_c_csv_split()"
     },
     {
@@ -1412,7 +1428,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L399",
       "id": "src_validate_checks_parse_args",
-      "community": 1,
+      "community": 8,
       "norm_label": "parse_args()"
     },
     {
@@ -1421,7 +1437,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L447",
       "id": "src_validate_checks_main",
-      "community": 1,
+      "community": 8,
       "norm_label": "main()"
     },
     {
@@ -1430,7 +1446,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L1",
       "id": "src_validate_checks_rationale_1",
-      "community": 1,
+      "community": 8,
       "norm_label": "validate_checks.py \u2014 validacion de resultados experimentales del agente rl.  i"
     },
     {
@@ -1439,7 +1455,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L68",
       "id": "src_validate_checks_rationale_68",
-      "community": 1,
+      "community": 8,
       "norm_label": "callback para mostrar progreso cada log_freq timesteps."
     },
     {
@@ -1448,7 +1464,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L88",
       "id": "src_validate_checks_rationale_88",
-      "community": 1,
+      "community": 8,
       "norm_label": "evaluacion directa: model.predict(x_test[i]) vs y_test[i].     no pasa por el e"
     },
     {
@@ -1457,7 +1473,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L150",
       "id": "src_validate_checks_rationale_150",
-      "community": 1,
+      "community": 8,
       "norm_label": "baraja y_train y entrena brevemente. si el modelo aun obtiene accuracy     alta"
     },
     {
@@ -1466,7 +1482,7 @@
       "source_file": "src/validate_checks.py",
       "source_location": "L280",
       "id": "src_validate_checks_rationale_280",
-      "community": 1,
+      "community": 8,
       "norm_label": "entrena en unos csvs de cicids2017 y testea en otros.     es el split mas reali"
     },
     {
@@ -1475,7 +1491,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L1",
       "id": "src_validate_leave_one_csv_out_py",
-      "community": 9,
+      "community": 10,
       "norm_label": "validate_leave_one_csv_out.py"
     },
     {
@@ -1484,7 +1500,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L70",
       "id": "src_validate_leave_one_csv_out_safe_div",
-      "community": 9,
+      "community": 10,
       "norm_label": "_safe_div()"
     },
     {
@@ -1493,7 +1509,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L74",
       "id": "src_validate_leave_one_csv_out_make_env_fn",
-      "community": 9,
+      "community": 10,
       "norm_label": "make_env_fn()"
     },
     {
@@ -1502,7 +1518,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L97",
       "id": "src_validate_leave_one_csv_out_compute_reward_total",
-      "community": 9,
+      "community": 10,
       "norm_label": "_compute_reward_total()"
     },
     {
@@ -1511,7 +1527,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L106",
       "id": "src_validate_leave_one_csv_out_metrics_from_confusion",
-      "community": 9,
+      "community": 10,
       "norm_label": "_metrics_from_confusion()"
     },
     {
@@ -1520,7 +1536,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L149",
       "id": "src_validate_leave_one_csv_out_evaluate_model_direct",
-      "community": 9,
+      "community": 10,
       "norm_label": "evaluate_model_direct()"
     },
     {
@@ -1529,7 +1545,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L195",
       "id": "src_validate_leave_one_csv_out_summarize_metric",
-      "community": 9,
+      "community": 10,
       "norm_label": "_summarize_metric()"
     },
     {
@@ -1538,7 +1554,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L205",
       "id": "src_validate_leave_one_csv_out_build_aggregate_results",
-      "community": 9,
+      "community": 10,
       "norm_label": "_build_aggregate_results()"
     },
     {
@@ -1547,7 +1563,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L251",
       "id": "src_validate_leave_one_csv_out_resolve_holdout_csvs",
-      "community": 9,
+      "community": 10,
       "norm_label": "_resolve_holdout_csvs()"
     },
     {
@@ -1556,7 +1572,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L274",
       "id": "src_validate_leave_one_csv_out_parse_args",
-      "community": 9,
+      "community": 10,
       "norm_label": "parse_args()"
     },
     {
@@ -1565,7 +1581,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L311",
       "id": "src_validate_leave_one_csv_out_main",
-      "community": 9,
+      "community": 10,
       "norm_label": "main()"
     },
     {
@@ -1574,7 +1590,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L1",
       "id": "src_validate_leave_one_csv_out_rationale_1",
-      "community": 9,
+      "community": 10,
       "norm_label": "validate_leave_one_csv_out.py \u2014 validacion leave-one-exact-csv-out para cicids20"
     },
     {
@@ -1583,7 +1599,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L80",
       "id": "src_validate_leave_one_csv_out_rationale_80",
-      "community": 9,
+      "community": 10,
       "norm_label": "devuelve una funcion creadora de entornos para dummyvecenv."
     },
     {
@@ -1592,7 +1608,7 @@
       "source_file": "src/validate_leave_one_csv_out.py",
       "source_location": "L156",
       "id": "src_validate_leave_one_csv_out_rationale_156",
-      "community": 9,
+      "community": 10,
       "norm_label": "evalua el modelo sobre `x_test` frente a `y_test` en inferencia por lotes."
     },
     {
@@ -1601,7 +1617,7 @@
       "source_file": "tests/test_canonical_schema.py",
       "source_location": "L1",
       "id": "tests_test_canonical_schema_py",
-      "community": 5,
+      "community": 3,
       "norm_label": "test_canonical_schema.py"
     },
     {
@@ -1610,7 +1626,7 @@
       "source_file": "tests/test_canonical_schema.py",
       "source_location": "L11",
       "id": "tests_test_canonical_schema_test_canonical_features_length",
-      "community": 5,
+      "community": 3,
       "norm_label": "test_canonical_features_length()"
     },
     {
@@ -1619,7 +1635,7 @@
       "source_file": "tests/test_canonical_schema.py",
       "source_location": "L17",
       "id": "tests_test_canonical_schema_test_map_to_canonical_mask_logic",
-      "community": 5,
+      "community": 3,
       "norm_label": "test_map_to_canonical_mask_logic()"
     },
     {
@@ -1628,7 +1644,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L1",
       "id": "tests_test_load_cicids2017_py",
-      "community": 1,
+      "community": 4,
       "norm_label": "test_load_cicids2017.py"
     },
     {
@@ -1637,7 +1653,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L19",
       "id": "tests_test_load_cicids2017_test_prepare_cicids_features_binary_labels",
-      "community": 2,
+      "community": 0,
       "norm_label": "test_prepare_cicids_features_binary_labels()"
     },
     {
@@ -1646,7 +1662,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L39",
       "id": "tests_test_load_cicids2017_synthetic_df",
-      "community": 1,
+      "community": 4,
       "norm_label": "_synthetic_df()"
     },
     {
@@ -1655,7 +1671,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L51",
       "id": "tests_test_load_cicids2017_patched_loader",
-      "community": 1,
+      "community": 4,
       "norm_label": "patched_loader()"
     },
     {
@@ -1664,7 +1680,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L58",
       "id": "tests_test_load_cicids2017_split",
-      "community": 1,
+      "community": 4,
       "norm_label": "_split()"
     },
     {
@@ -1673,7 +1689,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L64",
       "id": "tests_test_load_cicids2017_test_nested_prefix_indices_nested_and_stratified",
-      "community": 1,
+      "community": 4,
       "norm_label": "test_nested_prefix_indices_nested_and_stratified()"
     },
     {
@@ -1682,7 +1698,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L81",
       "id": "tests_test_load_cicids2017_test_nested_prefix_indices_deterministic",
-      "community": 1,
+      "community": 4,
       "norm_label": "test_nested_prefix_indices_deterministic()"
     },
     {
@@ -1691,7 +1707,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L90",
       "id": "tests_test_load_cicids2017_test_train_max_rows_keeps_test_set_identical",
-      "community": 1,
+      "community": 4,
       "norm_label": "test_train_max_rows_keeps_test_set_identical()"
     },
     {
@@ -1700,7 +1716,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L102",
       "id": "tests_test_load_cicids2017_test_train_max_rows_guards",
-      "community": 1,
+      "community": 4,
       "norm_label": "test_train_max_rows_guards()"
     },
     {
@@ -1709,7 +1725,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L113",
       "id": "tests_test_load_cicids2017_test_metadata_new_keys",
-      "community": 1,
+      "community": 4,
       "norm_label": "test_metadata_new_keys()"
     },
     {
@@ -1718,7 +1734,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L129",
       "id": "tests_test_load_cicids2017_test_scale_true_refits_on_subsample",
-      "community": 1,
+      "community": 4,
       "norm_label": "test_scale_true_refits_on_subsample()"
     },
     {
@@ -1727,7 +1743,7 @@
       "source_file": "tests/test_load_cicids2017.py",
       "source_location": "L140",
       "id": "tests_test_load_cicids2017_test_sha256_of_array_stable",
-      "community": 1,
+      "community": 4,
       "norm_label": "test_sha256_of_array_stable()"
     },
     {
@@ -1736,7 +1752,7 @@
       "source_file": "tests/test_predict_real_traffic_v2.py",
       "source_location": "L1",
       "id": "tests_test_predict_real_traffic_v2_py",
-      "community": 3,
+      "community": 1,
       "norm_label": "test_predict_real_traffic_v2.py"
     },
     {
@@ -1745,7 +1761,7 @@
       "source_file": "tests/test_predict_real_traffic_v2.py",
       "source_location": "L5",
       "id": "tests_test_predict_real_traffic_v2_test_maybe_convert_time_units",
-      "community": 3,
+      "community": 1,
       "norm_label": "test_maybe_convert_time_units()"
     },
     {
@@ -1754,7 +1770,7 @@
       "source_file": "tests/test_predict_real_traffic_v2.py",
       "source_location": "L15",
       "id": "tests_test_predict_real_traffic_v2_test_compute_diagnostics",
-      "community": 3,
+      "community": 1,
       "norm_label": "test_compute_diagnostics()"
     },
     {
@@ -1763,7 +1779,7 @@
       "source_file": "tests/test_reward_config.py",
       "source_location": "L1",
       "id": "tests_test_reward_config_py",
-      "community": 7,
+      "community": 6,
       "norm_label": "test_reward_config.py"
     },
     {
@@ -1772,7 +1788,7 @@
       "source_file": "tests/test_reward_config.py",
       "source_location": "L4",
       "id": "tests_test_reward_config_test_reward_logic_tp_fp_tn_fn",
-      "community": 7,
+      "community": 6,
       "norm_label": "test_reward_logic_tp_fp_tn_fn()"
     },
     {
@@ -1781,7 +1797,7 @@
       "source_file": "tests/test_reward_config.py",
       "source_location": "L22",
       "id": "tests_test_reward_config_test_unknown_label_reward",
-      "community": 7,
+      "community": 6,
       "norm_label": "test_unknown_label_reward()"
     },
     {
@@ -1790,7 +1806,7 @@
       "source_file": "tests/test_rl_defender_env.py",
       "source_location": "L1",
       "id": "tests_test_rl_defender_env_py",
-      "community": 7,
+      "community": 6,
       "norm_label": "test_rl_defender_env.py"
     },
     {
@@ -1799,7 +1815,7 @@
       "source_file": "tests/test_rl_defender_env.py",
       "source_location": "L4",
       "id": "tests_test_rl_defender_env_test_env_initialization",
-      "community": 7,
+      "community": 6,
       "norm_label": "test_env_initialization()"
     },
     {
@@ -1808,7 +1824,7 @@
       "source_file": "tests/test_rl_defender_env.py",
       "source_location": "L13",
       "id": "tests_test_rl_defender_env_test_env_step_and_reset",
-      "community": 7,
+      "community": 6,
       "norm_label": "test_env_step_and_reset()"
     },
     {
@@ -1817,7 +1833,7 @@
       "source_file": "tests/test_train_rl_defender_config.py",
       "source_location": "L1",
       "id": "tests_test_train_rl_defender_config_py",
-      "community": 4,
+      "community": 2,
       "norm_label": "test_train_rl_defender_config.py"
     },
     {
@@ -1826,7 +1842,7 @@
       "source_file": "tests/test_train_rl_defender_config.py",
       "source_location": "L15",
       "id": "tests_test_train_rl_defender_config_args",
-      "community": 4,
+      "community": 2,
       "norm_label": "_args()"
     },
     {
@@ -1835,7 +1851,7 @@
       "source_file": "tests/test_train_rl_defender_config.py",
       "source_location": "L22",
       "id": "tests_test_train_rl_defender_config_test_default_profile_preserves_fast_hyperparams",
-      "community": 4,
+      "community": 2,
       "norm_label": "test_default_profile_preserves_fast_hyperparams()"
     },
     {
@@ -1844,7 +1860,7 @@
       "source_file": "tests/test_train_rl_defender_config.py",
       "source_location": "L49",
       "id": "tests_test_train_rl_defender_config_test_default_profile_preserves_full_hyperparams",
-      "community": 4,
+      "community": 2,
       "norm_label": "test_default_profile_preserves_full_hyperparams()"
     },
     {
@@ -1853,7 +1869,7 @@
       "source_file": "tests/test_train_rl_defender_config.py",
       "source_location": "L66",
       "id": "tests_test_train_rl_defender_config_test_main_experiment_profile_resolves_fixed_config",
-      "community": 4,
+      "community": 2,
       "norm_label": "test_main_experiment_profile_resolves_fixed_config()"
     },
     {
@@ -1862,7 +1878,7 @@
       "source_file": "tests/test_train_rl_defender_config.py",
       "source_location": "L100",
       "id": "tests_test_train_rl_defender_config_test_explicit_timesteps_override_main_profile_default",
-      "community": 4,
+      "community": 2,
       "norm_label": "test_explicit_timesteps_override_main_profile_default()"
     },
     {
@@ -1871,1337 +1887,673 @@
       "source_file": "tests/test_train_rl_defender_config.py",
       "source_location": "L109",
       "id": "tests_test_train_rl_defender_config_test_checkpoint_frequency_defaults_and_overrides",
-      "community": 4,
+      "community": 2,
       "norm_label": "test_checkpoint_frequency_defaults_and_overrides()"
-    },
-    {
-      "label": "deprecated_predict_real_traffic main pipeline",
-      "file_type": "code",
-      "source_file": "scripts/deprecated_predict_real_traffic.py",
-      "source_location": "line 158",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v1_main",
-      "community": 8,
-      "norm_label": "deprecated_predict_real_traffic main pipeline"
-    },
-    {
-      "label": "load_model (QRDQN/DQN fallback) in v1",
-      "file_type": "code",
-      "source_file": "scripts/deprecated_predict_real_traffic.py",
-      "source_location": "line 143",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v1_load_model",
-      "community": 8,
-      "norm_label": "load_model (qrdqn/dqn fallback) in v1"
-    },
-    {
-      "label": "batched_predict in v1",
-      "file_type": "code",
-      "source_file": "scripts/deprecated_predict_real_traffic.py",
-      "source_location": "line 151",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v1_batched_predict",
-      "community": 8,
-      "norm_label": "batched_predict in v1"
-    },
-    {
-      "label": "FLOWMETER_PY_TO_CANON mapping in v1",
-      "file_type": "code",
-      "source_file": "scripts/deprecated_predict_real_traffic.py",
-      "source_location": "line 14",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v1_FLOWMETER_PY_TO_CANON",
-      "community": 16,
-      "norm_label": "flowmeter_py_to_canon mapping in v1"
-    },
-    {
-      "label": "_is_semantic_source path classifier",
-      "file_type": "code",
-      "source_file": "scripts/graphify_auto_update.py",
-      "source_location": "line 77",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "graphify_auto_update__is_semantic_source",
-      "community": 6,
-      "norm_label": "_is_semantic_source path classifier"
-    },
-    {
-      "label": "_has_structural_patch diff analyzer",
-      "file_type": "code",
-      "source_file": "scripts/graphify_auto_update.py",
-      "source_location": "line 124",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "graphify_auto_update__has_structural_patch",
-      "community": 6,
-      "norm_label": "_has_structural_patch diff analyzer"
-    },
-    {
-      "label": "_rebuild_code_graph caller",
-      "file_type": "code",
-      "source_file": "scripts/graphify_auto_update.py",
-      "source_location": "line 154",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "graphify_auto_update__rebuild_code_graph",
-      "community": 6,
-      "norm_label": "_rebuild_code_graph caller"
-    },
-    {
-      "label": "predict_real_traffic_v2 main pipeline",
-      "file_type": "code",
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 353",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v2_main",
-      "community": 8,
-      "norm_label": "predict_real_traffic_v2 main pipeline"
-    },
-    {
-      "label": "load_model (QRDQN/DQN fallback) in v2",
-      "file_type": "code",
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 164",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v2_load_model",
-      "community": 8,
-      "norm_label": "load_model (qrdqn/dqn fallback) in v2"
-    },
-    {
-      "label": "batched_predict in v2",
-      "file_type": "code",
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 178",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v2_batched_predict",
-      "community": 8,
-      "norm_label": "batched_predict in v2"
-    },
-    {
-      "label": "compute_diagnostics z-score analysis",
-      "file_type": "code",
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 191",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v2_compute_diagnostics",
-      "community": 8,
-      "norm_label": "compute_diagnostics z-score analysis"
-    },
-    {
-      "label": "compute_truth_metrics optional ground-truth eval",
-      "file_type": "code",
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 258",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v2_compute_truth_metrics",
-      "community": 8,
-      "norm_label": "compute_truth_metrics optional ground-truth eval"
-    },
-    {
-      "label": "maybe_convert_time_units seconds-to-microseconds",
-      "file_type": "code",
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 141",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v2_maybe_convert_time_units",
-      "community": 8,
-      "norm_label": "maybe_convert_time_units seconds-to-microseconds"
-    },
-    {
-      "label": "FLOWMETER_PY_TO_CANON mapping in v2",
-      "file_type": "code",
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 49",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_v2_FLOWMETER_PY_TO_CANON",
-      "community": 16,
-      "norm_label": "flowmeter_py_to_canon mapping in v2"
-    },
-    {
-      "label": "FEATURES_CANON (76 canonical network flow features)",
-      "file_type": "code",
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 45",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "canonical_schema_FEATURES_CANON",
-      "community": 8,
-      "norm_label": "features_canon (76 canonical network flow features)"
-    },
-    {
-      "label": "CanonicalResult dataclass",
-      "file_type": "code",
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 267",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "canonical_schema_CanonicalResult",
-      "community": 8,
-      "norm_label": "canonicalresult dataclass"
-    },
-    {
-      "label": "map_to_canonical function",
-      "file_type": "code",
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 277",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "canonical_schema_map_to_canonical",
-      "community": 8,
-      "norm_label": "map_to_canonical function"
-    },
-    {
-      "label": "CICIDS2017_TO_CANON mapping dict",
-      "file_type": "code",
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 155",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "canonical_schema_CICIDS2017_TO_CANON",
-      "community": 16,
-      "norm_label": "cicids2017_to_canon mapping dict"
-    },
-    {
-      "label": "NSL_KDD_TO_CANON mapping dict (partial)",
-      "file_type": "code",
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 243",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "canonical_schema_NSL_KDD_TO_CANON",
-      "community": 8,
-      "norm_label": "nsl_kdd_to_canon mapping dict (partial)"
-    },
-    {
-      "label": "Missingness Mask Design (observation = features + mask)",
-      "file_type": "rationale",
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 11",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "canonical_schema_missingness_mask",
-      "community": 8,
-      "norm_label": "missingness mask design (observation = features + mask)"
-    },
-    {
-      "label": "load_nsl_kdd_binary function",
-      "file_type": "code",
-      "source_file": "src/load_nsl_kdd.py",
-      "source_location": "line 42",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "load_nsl_kdd_load_nsl_kdd_binary",
-      "community": 8,
-      "norm_label": "load_nsl_kdd_binary function"
-    },
-    {
-      "label": "NSL_KDD_COLUMNS column schema list",
-      "file_type": "code",
-      "source_file": "src/load_nsl_kdd.py",
-      "source_location": "line 15",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "load_nsl_kdd_NSL_KDD_COLUMNS",
-      "community": 21,
-      "norm_label": "nsl_kdd_columns column schema list"
-    },
-    {
-      "label": "RLDatasetDefenderEnv gymnasium environment",
-      "file_type": "code",
-      "source_file": "src/rl_defender_env.py",
-      "source_location": "line 6",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "rl_defender_env_RLDatasetDefenderEnv",
-      "community": 10,
-      "norm_label": "rldatasetdefenderenv gymnasium environment"
-    },
-    {
-      "label": "Reward Config (tp/fp/fn/omission)",
-      "file_type": "rationale",
-      "source_file": "src/rl_defender_env.py",
-      "source_location": "line 18",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "rl_defender_env_reward_config",
-      "community": 10,
-      "norm_label": "reward config (tp/fp/fn/omission)"
-    },
-    {
-      "label": "_compute_reward",
-      "file_type": "code",
-      "source_file": "src/rl_defender_env.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "rl_defender_env_compute_reward",
-      "community": 10,
-      "norm_label": "_compute_reward"
-    },
-    {
-      "label": "Distribution Shift Defense via Dual Clipping",
-      "file_type": "rationale",
-      "source_file": "src/scaling_utils.py",
-      "source_location": "line 1",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "scaling_utils_distribution_shift_defense",
-      "community": 3,
-      "norm_label": "distribution shift defense via dual clipping"
-    },
-    {
-      "label": "Scaling Utilities (apply_percentile_clipping, apply_z_clipping)",
-      "file_type": "code",
-      "source_file": "src/scaling_utils.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "scaling_utils",
-      "community": 3,
-      "norm_label": "scaling utilities (apply_percentile_clipping, apply_z_clipping)"
-    },
-    {
-      "label": "Optuna objective function for QRDQN tuning",
-      "file_type": "code",
-      "source_file": "src/tune_hparams.py",
-      "source_location": "line 60",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "tune_hparams_objective",
-      "community": 10,
-      "norm_label": "optuna objective function for qrdqn tuning"
-    },
-    {
-      "label": "tune_hparams main Optuna study",
-      "file_type": "code",
-      "source_file": "src/tune_hparams.py",
-      "source_location": "line 132",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "tune_hparams_main",
-      "community": 10,
-      "norm_label": "tune_hparams main optuna study"
-    },
-    {
-      "label": "_evaluate_f1 function in tune_hparams",
-      "file_type": "code",
-      "source_file": "src/tune_hparams.py",
-      "source_location": "line 39",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "tune_hparams__evaluate_f1",
-      "community": 10,
-      "norm_label": "_evaluate_f1 function in tune_hparams"
-    },
-    {
-      "label": "test_canonical_schema test module",
-      "file_type": "code",
-      "source_file": "tests/test_canonical_schema.py",
-      "source_location": "line 1",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "test_canonical_schema_tests",
-      "community": 8,
-      "norm_label": "test_canonical_schema test module"
-    },
-    {
-      "label": "test_predict_real_traffic_v2 test module",
-      "file_type": "code",
-      "source_file": "tests/test_predict_real_traffic_v2.py",
-      "source_location": "line 1",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "test_predict_real_traffic_v2_tests",
-      "community": 8,
-      "norm_label": "test_predict_real_traffic_v2 test module"
-    },
-    {
-      "label": "test_reward_logic_tp_fp_tn_fn",
-      "file_type": "code",
-      "source_file": "tests/test_reward_config.py",
-      "source_location": "line 4",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "test_reward_config_test_reward_logic_tp_fp_tn_fn",
-      "community": 10,
-      "norm_label": "test_reward_logic_tp_fp_tn_fn"
-    },
-    {
-      "label": "test_unknown_label_reward",
-      "file_type": "code",
-      "source_file": "tests/test_reward_config.py",
-      "source_location": "line 22",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "test_reward_config_test_unknown_label_reward",
-      "community": 10,
-      "norm_label": "test_unknown_label_reward"
-    },
-    {
-      "label": "Reward Config Schema (tp/fp/fn/omission)",
-      "file_type": "rationale",
-      "source_file": "tests/test_reward_config.py",
-      "source_location": "line 8",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "reward_config_schema",
-      "community": 10,
-      "norm_label": "reward config schema (tp/fp/fn/omission)"
-    },
-    {
-      "label": "test_env_initialization",
-      "file_type": "code",
-      "source_file": "tests/test_rl_defender_env.py",
-      "source_location": "line 4",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "test_rl_defender_env_test_env_initialization",
-      "community": 10,
-      "norm_label": "test_env_initialization"
-    },
-    {
-      "label": "test_env_step_and_reset",
-      "file_type": "code",
-      "source_file": "tests/test_rl_defender_env.py",
-      "source_location": "line 13",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "test_rl_defender_env_test_env_step_and_reset",
-      "community": 10,
-      "norm_label": "test_env_step_and_reset"
-    },
-    {
-      "label": "Project Components Defense Research Report",
-      "file_type": "document",
-      "source_file": "docs/Personal Research/project-components-defense-research-report.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": "Javier Rivero",
-      "contributor": null,
-      "id": "project_components_defense_research",
-      "community": 3,
-      "norm_label": "project components defense research report"
-    },
-    {
-      "label": "Optuna Hyperparameter Search",
-      "file_type": "rationale",
-      "source_file": "docs/Personal Research/project-components-defense-research-report.md",
-      "source_location": "section 2.2",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "optuna_hyperparameter_search",
-      "community": 3,
-      "norm_label": "optuna hyperparameter search"
-    },
-    {
-      "label": "Deep Defense: Fundamentos y Objetivo",
-      "file_type": "document",
-      "source_file": "docs/Personal Research/deep-defense-research/01-fundamentos-y-objetivo.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": "Javier Rivero",
-      "contributor": null,
-      "id": "deep_defense_01",
-      "community": 0,
-      "norm_label": "deep defense: fundamentos y objetivo"
-    },
-    {
-      "label": "Binary Action Space: PERMIT(0) / BLOCK(1)",
-      "file_type": "rationale",
-      "source_file": "docs/Personal Research/deep-defense-research/01-fundamentos-y-objetivo.md",
-      "source_location": "section 1",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "permit_block_action_space",
-      "community": 0,
-      "norm_label": "binary action space: permit(0) / block(1)"
-    },
-    {
-      "label": "Deep Defense: Datos, Esquema Canonico y Preprocesado",
-      "file_type": "document",
-      "source_file": "docs/Personal Research/deep-defense-research/02-datos-esquema-canonico-y-preprocesado.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": "Javier Rivero",
-      "contributor": null,
-      "id": "deep_defense_02",
-      "community": 0,
-      "norm_label": "deep defense: datos, esquema canonico y preprocesado"
-    },
-    {
-      "label": "Anti-Leakage Policy (drop IPs, timestamps, Flow IDs, ports)",
-      "file_type": "rationale",
-      "source_file": "docs/Personal Research/deep-defense-research/02-datos-esquema-canonico-y-preprocesado.md",
-      "source_location": "section 4",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "anti_leakage_policy",
-      "community": 0,
-      "norm_label": "anti-leakage policy (drop ips, timestamps, flow ids, ports)"
-    },
-    {
-      "label": "CICIDS2017 Dataset (8 CSVs, 5-day capture)",
-      "file_type": "document",
-      "source_file": "docs/Personal Research/deep-defense-research/02-datos-esquema-canonico-y-preprocesado.md",
-      "source_location": "section 1",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "cicids2017_dataset",
-      "community": 0,
-      "norm_label": "cicids2017 dataset (8 csvs, 5-day capture)"
-    },
-    {
-      "label": "NSL-KDD Dataset (historical benchmark)",
-      "file_type": "document",
-      "source_file": "docs/Personal Research/deep-defense-research/02-datos-esquema-canonico-y-preprocesado.md",
-      "source_location": "section 1",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "nslkdd_dataset",
-      "community": 3,
-      "norm_label": "nsl-kdd dataset (historical benchmark)"
-    },
-    {
-      "label": "Deep Defense: Validacion y Lectura de Resultados",
-      "file_type": "document",
-      "source_file": "docs/Personal Research/deep-defense-research/04-validacion-y-lectura-de-resultados.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": "Javier Rivero",
-      "contributor": null,
-      "id": "deep_defense_04",
-      "community": 22,
-      "norm_label": "deep defense: validacion y lectura de resultados"
-    },
-    {
-      "label": "Deep Defense: Phase 2 - Laboratorio, Inferencia y Riesgos",
-      "file_type": "document",
-      "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": "Javier Rivero",
-      "contributor": null,
-      "id": "deep_defense_05",
-      "community": 0,
-      "norm_label": "deep defense: phase 2 - laboratorio, inferencia y riesgos"
-    },
-    {
-      "label": "Phase 2: Offline Inference on Lab Traffic",
-      "file_type": "rationale",
-      "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
-      "source_location": "section 1",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "phase2_offline_inference",
-      "community": 0,
-      "norm_label": "phase 2: offline inference on lab traffic"
-    },
-    {
-      "label": "Deep Defense: Glosario y Preguntas de Tribunal",
-      "file_type": "document",
-      "source_file": "docs/Personal Research/deep-defense-research/06-glosario-y-preguntas-tribunal.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": "Javier Rivero",
-      "contributor": null,
-      "id": "deep_defense_06",
-      "community": 0,
-      "norm_label": "deep defense: glosario y preguntas de tribunal"
-    },
-    {
-      "label": "NSL-KDD Historical Experiments",
-      "file_type": "document",
-      "source_file": "experiments/nslkdd_experiments.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": "Javier Rivero Iglesias",
-      "contributor": null,
-      "id": "nslkdd_experiments_history",
-      "community": 17,
-      "norm_label": "nsl-kdd historical experiments"
-    },
-    {
-      "label": "NSL-KDD E01 DQN Experiment",
-      "file_type": "document",
-      "source_file": "experiments/nslkdd_experiments.md",
-      "source_location": "experiments/nslkdd_experiments.md#historical-summary-table",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "nslkdd_dqn_e01",
-      "community": 17,
-      "norm_label": "nsl-kdd e01 dqn experiment"
-    },
-    {
-      "label": "NSL-KDD E02 Random Forest Experiment",
-      "file_type": "document",
-      "source_file": "experiments/nslkdd_experiments.md",
-      "source_location": "experiments/nslkdd_experiments.md#historical-summary-table",
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "nslkdd_rf_e02",
-      "community": 17,
-      "norm_label": "nsl-kdd e02 random forest experiment"
-    },
-    {
-      "label": "Experiment Archive Index",
-      "file_type": "document",
-      "source_file": "experiments/README.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "experiments_readme_archive",
-      "community": 23,
-      "norm_label": "experiment archive index"
-    },
-    {
-      "label": "Experimental Design Board (Big Picture Pipeline)",
-      "file_type": "document",
-      "source_file": "scratch/experimental_design_board.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "experimental_board_big_picture_pipeline",
-      "community": 14,
-      "norm_label": "experimental design board (big picture pipeline)"
-    },
-    {
-      "label": "Gymnasium Environment: 152-Dim Observation (76 features + 76 mask)",
-      "file_type": "rationale",
-      "source_file": "scratch/experimental_design_board.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "rationale": "Each row from CICIDS2017 mapped through canonical schema to 76 flow features plus 76 missingness-mask values forming a 152-dimensional observation vector for QRDQN agent.",
-      "id": "experimental_board_152obs_gymnasium",
-      "community": 14,
-      "norm_label": "gymnasium environment: 152-dim observation (76 features + 76 mask)"
-    },
-    {
-      "label": "Branch A: Data Efficiency (100k-2M training budgets)",
-      "file_type": "rationale",
-      "source_file": "scratch/experimental_design_board.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "rationale": "Evaluates whether model performance stabilizes before full training budget; uses same internal test set across all budget sizes; compares QRDQN vs RF curves.",
-      "id": "experimental_board_branch_a_data_efficiency",
-      "community": 14,
-      "norm_label": "branch a: data efficiency (100k-2m training budgets)"
-    },
-    {
-      "label": "Branch E: Strict Split Evaluation Ladder",
-      "file_type": "rationale",
-      "source_file": "scratch/experimental_design_board.html",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "rationale": "Random split (sanity), temporal split, per-CSV split, leave-one-exact-CSV-out \u00e2\u20ac\u201d progressively stronger internal generalization checks to avoid leakage and inflated metrics.",
-      "id": "experimental_board_branch_e_strict_splits",
-      "community": 14,
-      "norm_label": "branch e: strict split evaluation ladder"
-    },
-    {
-      "label": "run_ast.py",
-      "file_type": "code",
-      "source_file": "run_ast.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "run_ast",
-      "community": 24,
-      "norm_label": "run_ast.py"
-    },
-    {
-      "label": "run_cache.py",
-      "file_type": "code",
-      "source_file": "run_cache.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "run_cache",
-      "community": 25,
-      "norm_label": "run_cache.py"
-    },
-    {
-      "label": "run_detect.py",
-      "file_type": "code",
-      "source_file": "run_detect.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "run_detect",
-      "community": 26,
-      "norm_label": "run_detect.py"
-    },
-    {
-      "label": "export_tensorboard_scalars.py",
-      "file_type": "code",
-      "source_file": "scripts/export_tensorboard_scalars.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "export_tensorboard_scalars",
-      "community": 27,
-      "norm_label": "export_tensorboard_scalars.py"
-    },
-    {
-      "label": "verify_fixed_test_split.py",
-      "file_type": "code",
-      "source_file": "scripts/verify_fixed_test_split.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "verify_fixed_test_split",
-      "community": 0,
-      "norm_label": "verify_fixed_test_split.py"
-    },
-    {
-      "label": "baseline_random_forest.py",
-      "file_type": "code",
-      "source_file": "src/baseline_random_forest.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "baseline_random_forest",
-      "community": 0,
-      "norm_label": "baseline_random_forest.py"
-    },
-    {
-      "label": "load_cicids2017.py",
-      "file_type": "code",
-      "source_file": "src/load_cicids2017.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "load_cicids2017",
-      "community": 0,
-      "norm_label": "load_cicids2017.py"
-    },
-    {
-      "label": "train_rl_defender.py",
-      "file_type": "code",
-      "source_file": "src/train_rl_defender.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "train_rl_defender",
-      "community": 0,
-      "norm_label": "train_rl_defender.py"
-    },
-    {
-      "label": "validate_checks.py",
-      "file_type": "code",
-      "source_file": "src/validate_checks.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "validate_checks",
-      "community": 0,
-      "norm_label": "validate_checks.py"
-    },
-    {
-      "label": "validate_leave_one_csv_out.py",
-      "file_type": "code",
-      "source_file": "src/validate_leave_one_csv_out.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "validate_leave_one_csv_out",
-      "community": 0,
-      "norm_label": "validate_leave_one_csv_out.py"
-    },
-    {
-      "label": "test_load_cicids2017.py",
-      "file_type": "code",
-      "source_file": "tests/test_load_cicids2017.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "test_load_cicids2017",
-      "community": 0,
-      "norm_label": "test_load_cicids2017.py"
-    },
-    {
-      "label": "test_train_rl_defender_config.py",
-      "file_type": "code",
-      "source_file": "tests/test_train_rl_defender_config.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "test_train_rl_defender_config",
-      "community": 0,
-      "norm_label": "test_train_rl_defender_config.py"
     },
     {
       "label": "AGENTS.md",
       "file_type": "document",
       "source_file": "AGENTS.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "agents_md",
-      "community": 0,
+      "id": "AGENTS_md",
+      "community": 5,
       "norm_label": "agents.md"
     },
     {
       "label": "GEMINI.md",
       "file_type": "document",
       "source_file": "GEMINI.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "gemini_md",
-      "community": 0,
+      "id": "GEMINI_md",
+      "community": 5,
       "norm_label": "gemini.md"
     },
     {
       "label": "README.md",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "readme_md",
-      "community": 0,
+      "id": "README_md",
+      "community": 5,
       "norm_label": "readme.md"
     },
     {
-      "label": "requirements-runpod-cu130.txt",
-      "file_type": "document",
+      "label": "RunPod Requirements",
+      "file_type": "code",
       "source_file": "requirements-runpod-cu130.txt",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "requirements_runpod_cu130",
-      "community": 28,
-      "norm_label": "requirements-runpod-cu130.txt"
+      "id": "requirements_runpod_cu130_txt",
+      "community": 5,
+      "norm_label": "runpod requirements"
     },
     {
-      "label": "requirements.txt",
-      "file_type": "document",
+      "label": "Local Requirements",
+      "file_type": "code",
       "source_file": "requirements.txt",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "requirements",
-      "community": 29,
-      "norm_label": "requirements.txt"
+      "id": "requirements_txt",
+      "community": 5,
+      "norm_label": "local requirements"
     },
     {
-      "label": "AGENT_CONTEXT.md",
+      "label": "Phase 2 Agent Context",
       "file_type": "document",
       "source_file": "docs/AGENT_CONTEXT.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "agent_context_md",
-      "community": 0,
-      "norm_label": "agent_context.md"
+      "id": "docs_AGENT_CONTEXT_md",
+      "community": 5,
+      "norm_label": "phase 2 agent context"
     },
     {
-      "label": "DEFENSA_TFG_PROGRESO.md",
+      "label": "Defense Progress Notes",
       "file_type": "document",
       "source_file": "docs/DEFENSA_TFG_PROGRESO.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "defensa_tfg_progreso_md",
-      "community": 0,
-      "norm_label": "defensa_tfg_progreso.md"
+      "id": "docs_DEFENSA_TFG_PROGRESO_md",
+      "community": 16,
+      "norm_label": "defense progress notes"
     },
     {
-      "label": "DEFENSA_TFG_SCRIPT.md",
+      "label": "Defense Script",
       "file_type": "document",
       "source_file": "docs/DEFENSA_TFG_SCRIPT.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "defensa_tfg_script_md",
-      "community": 0,
-      "norm_label": "defensa_tfg_script.md"
+      "id": "docs_DEFENSA_TFG_SCRIPT_md",
+      "community": 16,
+      "norm_label": "defense script"
     },
     {
-      "label": "gcp_lab.md",
+      "label": "GCP Lab Setup",
       "file_type": "document",
       "source_file": "docs/gcp_lab.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "gcp_lab_md",
-      "community": 0,
-      "norm_label": "gcp_lab.md"
+      "id": "docs_gcp_lab_md",
+      "community": 5,
+      "norm_label": "gcp lab setup"
     },
     {
-      "label": "phase2_plan.md",
+      "label": "Phase 2 Plan",
       "file_type": "document",
       "source_file": "docs/phase2_plan.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "phase2_plan_md",
-      "community": 0,
-      "norm_label": "phase2_plan.md"
+      "id": "docs_phase2_plan_md",
+      "community": 5,
+      "norm_label": "phase 2 plan"
     },
     {
-      "label": "reproducibility.md",
+      "label": "Documentation Index",
+      "file_type": "document",
+      "source_file": "docs/README.md",
+      "id": "docs_README_md",
+      "community": 5,
+      "norm_label": "documentation index"
+    },
+    {
+      "label": "Reproducibility Notes",
       "file_type": "document",
       "source_file": "docs/reproducibility.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "reproducibility_md",
-      "community": 30,
-      "norm_label": "reproducibility.md"
+      "id": "docs_reproducibility_md",
+      "community": 5,
+      "norm_label": "reproducibility notes"
     },
     {
-      "label": "FEATURES_CANON (Canonical Schema)",
-      "file_type": "paper",
-      "source_file": "AGENTS.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "features_canon",
-      "community": 0,
-      "norm_label": "features_canon (canonical schema)"
+      "label": "Consolidated Results Snapshot",
+      "file_type": "document",
+      "source_file": "docs/results.md",
+      "id": "docs_results_md",
+      "community": 5,
+      "norm_label": "consolidated results snapshot"
     },
     {
-      "label": "Missingness Mask",
-      "file_type": "paper",
-      "source_file": "AGENTS.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "missingness_mask",
-      "community": 0,
-      "norm_label": "missingness mask"
+      "label": "RunPod Main Experiment Guide",
+      "file_type": "document",
+      "source_file": "docs/runpod_main_experiment.md",
+      "id": "docs_runpod_main_experiment_md",
+      "community": 5,
+      "norm_label": "runpod main experiment guide"
     },
     {
-      "label": "CICIDS2017 Dataset",
-      "file_type": "paper",
-      "source_file": "GEMINI.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "cicids2017",
-      "community": 0,
-      "norm_label": "cicids2017 dataset"
+      "label": "Archive Documentation Index",
+      "file_type": "document",
+      "source_file": "docs/archive/README.md",
+      "id": "docs_archive_README_md",
+      "community": 17,
+      "norm_label": "archive documentation index"
     },
     {
-      "label": "NSL-KDD Dataset",
-      "file_type": "paper",
-      "source_file": "GEMINI.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "nsl_kdd",
-      "community": 0,
-      "norm_label": "nsl-kdd dataset"
+      "label": "Audits Index",
+      "file_type": "document",
+      "source_file": "docs/audits/README.md",
+      "id": "docs_audits_README_md",
+      "community": 5,
+      "norm_label": "audits index"
     },
     {
-      "label": "QRDQN RL Algorithm",
-      "file_type": "paper",
-      "source_file": "src/train_rl_defender.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "qrdqn",
-      "community": 0,
-      "norm_label": "qrdqn rl algorithm"
+      "label": "Repo Cleanup Implementation Guide",
+      "file_type": "document",
+      "source_file": "docs/audits/repo_cleanup_implementation_guide_2026-06-25.md",
+      "id": "repo_cleanup_implementation_guide",
+      "community": 5,
+      "norm_label": "repo cleanup implementation guide"
     },
     {
-      "label": "RLDatasetDefenderEnv",
-      "file_type": "paper",
-      "source_file": "src/train_rl_defender.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "rl_dataset_defender_env",
-      "community": 0,
-      "norm_label": "rldatasetdefenderenv"
+      "label": "Data Structure and Canonical Schema Research",
+      "file_type": "document",
+      "source_file": "docs/Personal Research/data-structure-and-canonical-schema-research-report.md",
+      "id": "data_schema_research_report",
+      "community": 5,
+      "norm_label": "data structure and canonical schema research"
     },
     {
-      "label": "Validation Check A (Direct Eval)",
-      "file_type": "paper",
-      "source_file": "src/validate_checks.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "validation_check_a",
-      "community": 0,
-      "norm_label": "validation check a (direct eval)"
+      "label": "Models, Parameters and Validation Research",
+      "file_type": "document",
+      "source_file": "docs/Personal Research/models-parameters-and-validation-thesis-defense-report.md",
+      "id": "validation_research_report",
+      "community": 18,
+      "norm_label": "models, parameters and validation research"
     },
     {
-      "label": "Validation Check B (Shuffled Labels)",
-      "file_type": "paper",
-      "source_file": "src/validate_checks.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "validation_check_b",
-      "community": 0,
-      "norm_label": "validation check b (shuffled labels)"
+      "label": "Project Components Research",
+      "file_type": "document",
+      "source_file": "docs/Personal Research/project-components-defense-research-report.md",
+      "id": "components_research_report",
+      "community": 19,
+      "norm_label": "project components research"
     },
     {
-      "label": "Validation Check C (CSV Split)",
-      "file_type": "paper",
-      "source_file": "src/validate_checks.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "validation_check_c",
-      "community": 0,
-      "norm_label": "validation check c (csv split)"
-    },
-    {
-      "label": "Leave-one-exact-CSV-out Validation",
-      "file_type": "paper",
-      "source_file": "src/validate_leave_one_csv_out.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "leave_one_exact_csv_out",
-      "community": 0,
-      "norm_label": "leave-one-exact-csv-out validation"
-    },
-    {
-      "label": "predict_real_traffic_v2.py",
-      "file_type": "paper",
-      "source_file": "docs/AGENT_CONTEXT.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "predict_real_traffic_v2",
-      "community": 0,
-      "norm_label": "predict_real_traffic_v2.py"
-    },
-    {
-      "label": "Domain Shift",
-      "file_type": "paper",
-      "source_file": "docs/AGENT_CONTEXT.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "domain_shift",
-      "community": 0,
-      "norm_label": "domain shift"
-    },
-    {
-      "label": "Private Lab",
-      "file_type": "paper",
-      "source_file": "docs/gcp_lab.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "private_lab",
-      "community": 0,
-      "norm_label": "private lab"
-    },
-    {
-      "label": "REWARD_CONFIG",
-      "file_type": "paper",
-      "source_file": "src/train_rl_defender.py",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "id": "reward_config",
-      "community": 0,
-      "norm_label": "reward_config"
-    },
-    {
-      "type": "document",
-      "name": "report-qrdqn-deep-distributional-rl.md",
-      "description": "Foundation of the QRDQN approach, quantile regression, and risk-sensitive RL rationale",
+      "label": "Canonical Flow Schema",
       "file_type": "concept",
-      "id": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-qrdqn-deep-distributional-rl.md",
-      "community": 15,
+      "id": "Canonical_Flow_Schema",
+      "community": 5,
+      "norm_label": "canonical flow schema"
+    },
+    {
+      "label": "Phase 2 Offline Inference",
+      "file_type": "concept",
+      "id": "Phase_2_Offline_Inference",
+      "community": 5,
+      "norm_label": "phase 2 offline inference"
+    },
+    {
+      "label": "MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+      "file_type": "concept",
+      "id": "RUN_MAIN",
+      "community": 5,
+      "norm_label": "main_qrdqn_cicids2017_canonical_full_random_20260609_193655"
+    },
+    {
+      "type": "file",
+      "name": "qrdqn-research-report.md",
+      "description": "High-level theory and implementation details for QRDQN.",
+      "file_type": "concept",
+      "id": "qrdqn-research-report",
+      "community": 20,
       "norm_label": ""
     },
     {
-      "type": "document",
-      "name": "report-reward-and-cost-sensitive-design-dossier.md",
-      "description": "Conceptual basis for FP/FN cost-sensitive reward design",
+      "type": "file",
+      "name": "system-components-thesis-defense-report.md",
+      "description": "Project pipeline and phase architecture.",
       "file_type": "concept",
-      "id": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-reward-and-cost-sensitive-design-dossier.md",
-      "community": 15,
+      "id": "system-components-thesis-defense-report",
+      "community": 21,
       "norm_label": ""
     },
     {
-      "type": "document",
-      "name": "report-source-map.md",
-      "description": "Master taxonomy of RL-IDS literature",
+      "type": "file",
+      "name": "deep-research-report1.md",
+      "description": "Research dossier outlining the state of the art chapter structure, methodological critique, and literature references.",
       "file_type": "concept",
-      "id": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-source-map.md",
-      "community": 13,
+      "id": "deep-research-report1",
+      "community": 14,
       "norm_label": ""
     },
     {
-      "type": "document",
-      "name": "Research1.md",
-      "description": "Detailed literature dossier and methodological critiques",
+      "type": "file",
+      "name": "deep-research-report2.md",
+      "description": "Defines the defensible gap for the thesis: offline, flow-level, defender-centric binary PERMIT/BLOCK with cost-sensitive reward.",
       "file_type": "concept",
-      "id": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/Research1.md",
-      "community": 13,
+      "id": "deep-research-report2",
+      "community": 14,
       "norm_label": ""
     },
     {
-      "type": "document",
-      "name": "Research2.md",
-      "description": "Detailed literature dossier and methodological critiques",
+      "type": "file",
+      "name": "state_of_the_art_todo.md",
+      "description": "Tracks citations, verifications, and writing risks for the state of the art chapter.",
       "file_type": "concept",
-      "id": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/Research2.md",
-      "community": 13,
+      "id": "state_of_the_art_todo",
+      "community": 14,
       "norm_label": ""
     },
     {
-      "type": "document",
-      "name": "Research3.md",
-      "description": "Detailed literature dossier and methodological critiques",
-      "file_type": "concept",
-      "id": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/Research3.md",
-      "community": 13,
-      "norm_label": ""
-    },
-    {
-      "type": "document",
-      "name": "RESEARCH_GAPS_AND_TODOS.md",
-      "description": "High-level research planning",
-      "file_type": "concept",
-      "id": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/RESEARCH_GAPS_AND_TODOS.md",
-      "community": 31,
-      "norm_label": ""
-    },
-    {
-      "type": "document",
-      "name": "RESEARCH_INDEX.md",
-      "description": "Consolidated evidence index",
-      "file_type": "concept",
-      "id": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/RESEARCH_INDEX.md",
-      "community": 13,
-      "norm_label": ""
-    },
-    {
-      "type": "concept",
+      "type": "Algorithm",
       "name": "QRDQN",
-      "description": "Quantile Regression DQN from sb3-contrib",
+      "description": "Quantile Regression DQN, a distributional RL algorithm used as the agent in the TFG.",
       "file_type": "concept",
       "id": "QRDQN",
+      "community": 14,
+      "norm_label": ""
+    },
+    {
+      "type": "Dataset",
+      "name": "CICIDS2017",
+      "description": "Primary benchmark public dataset for training the RL defender.",
+      "file_type": "concept",
+      "id": "CICIDS2017",
+      "community": 22,
+      "norm_label": ""
+    },
+    {
+      "type": "Environment",
+      "name": "RLDatasetDefenderEnv",
+      "description": "Gymnasium environment simulating a defender making binary PERMIT/BLOCK decisions.",
+      "file_type": "concept",
+      "id": "RLDatasetDefenderEnv",
+      "community": 14,
+      "norm_label": ""
+    },
+    {
+      "type": "Concept",
+      "name": "Phase 2 (Inference)",
+      "description": "Offline inference on lab-captured traffic to validate the model's robustness against domain shift.",
+      "file_type": "concept",
+      "id": "Phase_2_Inference",
+      "community": 14,
+      "norm_label": ""
+    },
+    {
+      "type": "Concept",
+      "name": "Cost-Sensitive Reward",
+      "description": "Reward function that penalizes false negatives (FN) more heavily than false positives (FP).",
+      "file_type": "concept",
+      "id": "Cost_Sensitive_Reward",
+      "community": 14,
+      "norm_label": ""
+    },
+    {
+      "type": "File",
+      "properties": {
+        "description": "Details the classification-as-RL formulation, framing NIDS as an environment."
+      },
+      "file_type": "concept",
+      "id": "report-classification-dossier.md",
+      "community": 13,
+      "norm_label": ""
+    },
+    {
+      "type": "File",
+      "properties": {
+        "description": "Deep dive into CICIDS2017 flaws, preprocessing requirements, and evaluation."
+      },
+      "file_type": "concept",
+      "id": "report-deep-dive.md",
       "community": 15,
       "norm_label": ""
     },
     {
-      "type": "concept",
-      "name": "Cost-Sensitive Reward Function",
-      "description": "FN-heavy penalties for RL defender",
+      "type": "File",
+      "properties": {
+        "description": "Dataset comparison table, focusing on historical evolution from KDDCup99 to modern sets."
+      },
       "file_type": "concept",
-      "id": "Cost-Sensitive Reward Function",
+      "id": "report-NIDS-datasets.md",
+      "community": 23,
+      "norm_label": ""
+    },
+    {
+      "type": "File",
+      "properties": {
+        "description": "Theoretical and implementation background for applying QRDQN to NIDS."
+      },
+      "file_type": "concept",
+      "id": "report-qrdqn-deep-distributional-rl.md",
+      "community": 13,
+      "norm_label": ""
+    },
+    {
+      "type": "File",
+      "properties": {
+        "description": "Dossier on reward and cost-sensitive design for NIDS, highlighting FP/FN asymmetries."
+      },
+      "file_type": "concept",
+      "id": "report-reward-and-cost-sensitive-design-dossier.md",
+      "community": 13,
+      "norm_label": ""
+    },
+    {
+      "type": "File",
+      "properties": {
+        "description": "Master research map grouping literature by taxonomy (datasets, ML, RL, methodology, etc.)."
+      },
+      "file_type": "concept",
+      "id": "report-source-map.md",
       "community": 15,
       "norm_label": ""
+    },
+    {
+      "type": "File",
+      "properties": {
+        "description": "Executive source map covering flow-based NIDS, DRL for IDS, and methodological warnings."
+      },
+      "file_type": "concept",
+      "id": "Research1.md",
+      "community": 24,
+      "norm_label": ""
+    },
+    {
+      "type": "File",
+      "properties": {
+        "description": "Deep dive into DRL-IDS literature, noting dominance of DQN, lack of distributional RL, and poor evaluation practices."
+      },
+      "file_type": "concept",
+      "id": "Research2.md",
+      "community": 13,
+      "norm_label": ""
+    },
+    {
+      "type": "File",
+      "properties": {
+        "description": "Dataset comparison matrix and deep dive into CICIDS2017 limitations and leakage risks."
+      },
+      "file_type": "concept",
+      "id": "Research3.md",
+      "community": 15,
+      "norm_label": ""
+    },
+    {
+      "type": "Concept",
+      "properties": {
+        "description": "Action space for the agent classifying flows into benign (PERMIT) or malicious (BLOCK)."
+      },
+      "file_type": "concept",
+      "id": "Binary PERMIT/BLOCK Classification",
+      "community": 13,
+      "norm_label": ""
+    },
+    {
+      "type": "Concept",
+      "properties": {
+        "description": "Reward function design where False Negatives (FN) incur a higher penalty than False Positives (FP) due to higher risk."
+      },
+      "file_type": "concept",
+      "id": "Cost-Sensitive IDS Reward",
+      "community": 13,
+      "norm_label": ""
+    },
+    {
+      "type": "Concept",
+      "properties": {
+        "description": "RL formulation where each dataset record acts as an environment state and classification acts as an action."
+      },
+      "file_type": "concept",
+      "id": "Dataset-as-Environment",
+      "community": 13,
+      "norm_label": ""
+    },
+    {
+      "type": "Concept",
+      "properties": {
+        "description": "Common pitfalls like random row-wise splits, temporal leakage, class imbalance, and lack of external validation."
+      },
+      "file_type": "concept",
+      "id": "Methodological Risks in NIDS",
+      "community": 15,
+      "norm_label": ""
+    },
+    {
+      "type": "Concept",
+      "properties": {
+        "description": "Splitting datasets chronologically or by scenario to prevent leakage, as opposed to random row-wise splits."
+      },
+      "file_type": "concept",
+      "id": "Temporal/Scenario Splits",
+      "community": 15,
+      "norm_label": ""
+    },
+    {
+      "type": "Concept",
+      "properties": {
+        "description": "Using independent lab-captured traffic to validate models and address poor cross-dataset generalization."
+      },
+      "file_type": "concept",
+      "id": "External Validation (Lab Traffic)",
+      "community": 15,
+      "norm_label": ""
+    },
+    {
+      "type": "Dataset",
+      "properties": {
+        "description": "Primary dataset for offline training/validation, features realistic traffic but suffers from temporal leakage under random splits."
+      },
+      "file_type": "concept",
+      "id": "CICIDS2017 Dataset",
+      "community": 15,
+      "norm_label": ""
+    },
+    {
+      "type": "Algorithm",
+      "properties": {
+        "description": "Distributional Deep RL model used as the core defender agent, learning risk-sensitive policies."
+      },
+      "file_type": "concept",
+      "id": "QRDQN Policy Agent",
+      "community": 13,
+      "norm_label": ""
+    },
+    {
+      "label": "Research Gap Positioning",
+      "file_type": "document",
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "doc_research_gap_positioning",
+      "community": 7,
+      "norm_label": "research gap positioning"
+    },
+    {
+      "label": "State of Art Expansion",
+      "file_type": "document",
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "doc_state_of_art_expansion",
+      "community": 7,
+      "norm_label": "state of art expansion"
+    },
+    {
+      "label": "Methodological Pitfalls in NIDS",
+      "file_type": "document",
+      "source_file": "Research/Research - State of the Art/Methodological-Pitfalls-Evaluation-Protocols-Leakage-Metrics-and-Validation-ChatGPT-2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "doc_methodological_pitfalls",
+      "community": 7,
+      "norm_label": "methodological pitfalls in nids"
+    },
+    {
+      "label": "NIDS Traffic Representation",
+      "file_type": "document",
+      "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "doc_nids_traffic_representation",
+      "community": 7,
+      "norm_label": "nids traffic representation"
+    },
+    {
+      "label": "RL and DRL Cyber Defense",
+      "file_type": "document",
+      "source_file": "Research/Research - State of the Art/RL-DRL-Distributional-RL-and-Cyber-Defense-Context-ChatGPT-1.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "doc_rl_drl_cyber_defense",
+      "community": 7,
+      "norm_label": "rl and drl cyber defense"
+    },
+    {
+      "label": "Supervised ML/DL Baselines for IDS",
+      "file_type": "document",
+      "source_file": "Research/Research - State of the Art/Supervised-ML-DL-Baselines-RL-for-IDS-Literature-and-Research-Gap-Perplexity-2.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "doc_supervised_ml_dl_ids",
+      "community": 7,
+      "norm_label": "supervised ml/dl baselines for ids"
+    },
+    {
+      "label": "Random Forest Results",
+      "file_type": "document",
+      "source_file": "runs/cicids2017/baseline_random_forest_comparison/results_rf.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "doc_results_rf",
+      "community": 7,
+      "norm_label": "random forest results"
+    },
+    {
+      "label": "Experimental Design Board",
+      "file_type": "document",
+      "source_file": "scratch/experimental_design_board.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "doc_experimental_design_board",
+      "community": 7,
+      "norm_label": "experimental design board"
+    },
+    {
+      "label": "CICIDS2017 Limitations",
+      "file_type": "concept",
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_cicids2017_limitations",
+      "community": 7,
+      "norm_label": "cicids2017 limitations"
+    },
+    {
+      "label": "Canonical Feature Schema",
+      "file_type": "concept",
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_canonical_feature_schema",
+      "community": 7,
+      "norm_label": "canonical feature schema"
+    },
+    {
+      "label": "Validation Ladder",
+      "file_type": "concept",
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_validation_ladder",
+      "community": 7,
+      "norm_label": "validation ladder"
+    },
+    {
+      "label": "Dataset as Environment",
+      "file_type": "concept",
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_dataset_as_environment",
+      "community": 7,
+      "norm_label": "dataset as environment"
+    },
+    {
+      "label": "Data Efficiency Experiments",
+      "file_type": "concept",
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_data_efficiency_experiments",
+      "community": 7,
+      "norm_label": "data efficiency experiments"
+    },
+    {
+      "label": "Distributional RL (QRDQN)",
+      "file_type": "concept",
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_distributional_rl_qrdqn",
+      "community": 7,
+      "norm_label": "distributional rl (qrdqn)"
+    },
+    {
+      "label": "Supervised Baselines (Random Forest)",
+      "file_type": "concept",
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_supervised_baselines_rf",
+      "community": 7,
+      "norm_label": "supervised baselines (random forest)"
+    },
+    {
+      "label": "Cost-Sensitive Reward",
+      "file_type": "concept",
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_cost_sensitive_reward",
+      "community": 7,
+      "norm_label": "cost-sensitive reward"
+    },
+    {
+      "label": "Evaluation Leakage",
+      "file_type": "concept",
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "concept_evaluation_leakage",
+      "community": 7,
+      "norm_label": "evaluation leakage"
     }
   ],
   "links": [
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "scripts/deprecated_predict_real_traffic.py",
-      "source_location": "L117",
-      "weight": 1.0,
-      "source": "scripts_deprecated_predict_real_traffic_py",
-      "target": "load_cicids2017",
-      "confidence_score": 1.0
-    },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
@@ -3733,47 +3085,6 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/graphify_auto_update.py",
-      "source_location": "line 205",
-      "weight": 1.0,
-      "source": "graphify_auto_update_decide_and_run",
-      "target": "graphify_auto_update__is_semantic_source"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/graphify_auto_update.py",
-      "source_location": "line 202",
-      "weight": 1.0,
-      "source": "graphify_auto_update_decide_and_run",
-      "target": "graphify_auto_update__has_structural_patch"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/graphify_auto_update.py",
-      "source_location": "line 217",
-      "weight": 1.0,
-      "source": "graphify_auto_update_decide_and_run",
-      "target": "graphify_auto_update__rebuild_code_graph"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "L41",
-      "weight": 1.0,
-      "source": "scripts_predict_real_traffic_v2_py",
-      "target": "scaling_utils",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "scripts/predict_real_traffic_v2.py",
@@ -4118,17 +3429,6 @@
       "weight": 1.0,
       "source": "scripts_verify_fixed_test_split_main",
       "target": "src_load_cicids2017_sha256_of_array"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/baseline_random_forest.py",
-      "source_location": "L16",
-      "weight": 1.0,
-      "source": "src_baseline_random_forest_py",
-      "target": "load_cicids2017",
-      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -5408,26 +4708,6 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 396",
-      "weight": 1.0,
-      "source": "predict_v2_main",
-      "target": "scaling_utils_apply_percentile_clipping"
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/scaling_utils.py",
-      "source_location": "line 1",
-      "weight": 1.0,
-      "source": "scaling_utils_distribution_shift_defense",
-      "target": "scaling_utils_apply_percentile_clipping"
-    },
-    {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "src/scaling_utils.py",
@@ -5435,37 +4715,6 @@
       "weight": 1.0,
       "source": "scaling_utils_rationale_52",
       "target": "scaling_utils_apply_z_clipping",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 412",
-      "weight": 1.0,
-      "source": "predict_v2_main",
-      "target": "scaling_utils_apply_z_clipping"
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/scaling_utils.py",
-      "source_location": "line 1",
-      "weight": 1.0,
-      "source": "scaling_utils_distribution_shift_defense",
-      "target": "scaling_utils_apply_z_clipping"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/train_rl_defender.py",
-      "source_location": "L38",
-      "weight": 1.0,
-      "source": "src_train_rl_defender_py",
-      "target": "load_cicids2017",
       "confidence_score": 1.0
     },
     {
@@ -5817,17 +5066,6 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/tune_hparams.py",
-      "source_location": "L25",
-      "weight": 1.0,
-      "source": "src_tune_hparams_py",
-      "target": "load_cicids2017",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/tune_hparams.py",
@@ -5928,17 +5166,6 @@
       "weight": 1.0,
       "source": "src_tune_hparams_main",
       "target": "src_tune_hparams_parse_args",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/validate_checks.py",
-      "source_location": "L47",
-      "weight": 1.0,
-      "source": "src_validate_checks_py",
-      "target": "load_cicids2017",
       "confidence_score": 1.0
     },
     {
@@ -6134,17 +5361,6 @@
       "weight": 1.0,
       "source": "src_validate_checks_main",
       "target": "src_validate_checks_parse_args",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/validate_leave_one_csv_out.py",
-      "source_location": "L31",
-      "weight": 1.0,
-      "source": "src_validate_leave_one_csv_out_py",
-      "target": "load_cicids2017",
       "confidence_score": 1.0
     },
     {
@@ -6633,17 +5849,6 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "tests/test_train_rl_defender_config.py",
-      "source_location": "L8",
-      "weight": 1.0,
-      "source": "tests_test_train_rl_defender_config_py",
-      "target": "train_rl_defender",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_train_rl_defender_config.py",
@@ -6748,1185 +5953,703 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/deprecated_predict_real_traffic.py",
-      "source_location": "line 186",
-      "weight": 1.0,
-      "source": "predict_v1_main",
-      "target": "canonical_schema_map_to_canonical"
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "AGENTS.md",
+      "source": "AGENTS_md",
+      "target": "GEMINI_md"
     },
     {
-      "relation": "calls",
+      "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "scripts/deprecated_predict_real_traffic.py",
-      "source_location": "line 193",
-      "weight": 1.0,
-      "source": "predict_v1_main",
-      "target": "predict_v1_load_model"
+      "source_file": "AGENTS.md",
+      "source": "AGENTS_md",
+      "target": "docs_README_md"
     },
     {
-      "relation": "calls",
+      "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "scripts/deprecated_predict_real_traffic.py",
-      "source_location": "line 194",
-      "weight": 1.0,
-      "source": "predict_v1_main",
-      "target": "predict_v1_batched_predict"
+      "source_file": "AGENTS.md",
+      "source": "AGENTS_md",
+      "target": "docs_AGENT_CONTEXT_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source": "AGENTS_md",
+      "target": "docs_results_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source": "AGENTS_md",
+      "target": "Canonical_Flow_Schema"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "GEMINI.md",
+      "source": "GEMINI_md",
+      "target": "Canonical_Flow_Schema"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/README.md",
+      "source": "docs_README_md",
+      "target": "README_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source": "README_md",
+      "target": "docs_results_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runpod_main_experiment.md",
+      "source": "docs_runpod_main_experiment_md",
+      "target": "requirements_runpod_cu130_txt"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/reproducibility.md",
+      "source": "docs_reproducibility_md",
+      "target": "requirements_runpod_cu130_txt"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/reproducibility.md",
+      "source": "docs_reproducibility_md",
+      "target": "requirements_txt"
     },
     {
       "relation": "conceptually_related_to",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 7",
-      "weight": 1.0,
-      "source": "predict_v2_main",
-      "target": "predict_v1_main"
-    },
-    {
-      "relation": "semantically_similar_to",
       "confidence": "INFERRED",
       "confidence_score": 0.95,
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 47",
-      "weight": 1.0,
-      "source": "predict_v1_FLOWMETER_PY_TO_CANON",
-      "target": "predict_v2_FLOWMETER_PY_TO_CANON"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 383",
-      "weight": 1.0,
-      "source": "predict_v2_main",
-      "target": "canonical_schema_map_to_canonical"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 380",
-      "weight": 1.0,
-      "source": "predict_v2_main",
-      "target": "predict_v2_maybe_convert_time_units"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 416",
-      "weight": 1.0,
-      "source": "predict_v2_main",
-      "target": "predict_v2_compute_diagnostics"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 425",
-      "weight": 1.0,
-      "source": "predict_v2_main",
-      "target": "predict_v2_load_model"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 426",
-      "weight": 1.0,
-      "source": "predict_v2_main",
-      "target": "predict_v2_batched_predict"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/predict_real_traffic_v2.py",
-      "source_location": "line 447",
-      "weight": 1.0,
-      "source": "predict_v2_main",
-      "target": "predict_v2_compute_truth_metrics"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_predict_real_traffic_v2.py",
-      "source_location": "line 3",
-      "weight": 1.0,
-      "source": "test_predict_real_traffic_v2_tests",
-      "target": "predict_v2_compute_diagnostics"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_predict_real_traffic_v2.py",
-      "source_location": "line 3",
-      "weight": 1.0,
-      "source": "test_predict_real_traffic_v2_tests",
-      "target": "predict_v2_maybe_convert_time_units"
+      "source_file": "docs/AGENT_CONTEXT.md",
+      "source": "docs_AGENT_CONTEXT_md",
+      "target": "Phase_2_Offline_Inference"
     },
     {
       "relation": "semantically_similar_to",
       "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 155",
-      "weight": 1.0,
-      "source": "canonical_schema_CICIDS2017_TO_CANON",
-      "target": "predict_v2_FLOWMETER_PY_TO_CANON"
+      "confidence_score": 0.9,
+      "source_file": "docs/DEFENSA_TFG_SCRIPT.md",
+      "source": "docs_DEFENSA_TFG_SCRIPT_md",
+      "target": "docs_DEFENSA_TFG_PROGRESO_md"
     },
     {
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 317",
-      "weight": 1.0,
-      "source": "canonical_schema_map_to_canonical",
-      "target": "canonical_schema_FEATURES_CANON"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_canonical_schema.py",
-      "source_location": "line 12",
-      "weight": 1.0,
-      "source": "test_canonical_schema_tests",
-      "target": "canonical_schema_FEATURES_CANON"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 336",
-      "weight": 1.0,
-      "source": "canonical_schema_map_to_canonical",
-      "target": "canonical_schema_CanonicalResult"
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 11",
-      "weight": 1.0,
-      "source": "canonical_schema_missingness_mask",
-      "target": "canonical_schema_CanonicalResult"
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/canonical_schema.py",
-      "source_location": "line 11",
-      "weight": 1.0,
-      "source": "canonical_schema_missingness_mask",
-      "target": "canonical_schema_map_to_canonical"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/load_nsl_kdd.py",
-      "source_location": "line 137",
-      "weight": 1.0,
-      "source": "load_nsl_kdd_load_nsl_kdd_binary",
-      "target": "canonical_schema_map_to_canonical"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_canonical_schema.py",
-      "source_location": "line 17",
-      "weight": 1.0,
-      "source": "test_canonical_schema_tests",
-      "target": "canonical_schema_map_to_canonical"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/load_nsl_kdd.py",
-      "source_location": "line 137",
-      "weight": 1.0,
-      "source": "load_nsl_kdd_load_nsl_kdd_binary",
-      "target": "canonical_schema_NSL_KDD_TO_CANON"
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/rl_defender_env.py",
-      "source_location": "line 18",
-      "weight": 1.0,
-      "source": "rl_defender_env_reward_config",
-      "target": "rl_defender_env_RLDatasetDefenderEnv"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/tune_hparams.py",
-      "source_location": "line 87",
-      "weight": 1.0,
-      "source": "tune_hparams_objective",
-      "target": "rl_defender_env_RLDatasetDefenderEnv"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/tune_hparams.py",
-      "source_location": "line 41",
-      "weight": 1.0,
-      "source": "tune_hparams__evaluate_f1",
-      "target": "rl_defender_env_RLDatasetDefenderEnv"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_reward_config.py",
-      "source_location": "line 9",
-      "weight": 1.0,
-      "source": "test_reward_config_test_reward_logic_tp_fp_tn_fn",
-      "target": "rl_defender_env_RLDatasetDefenderEnv"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_reward_config.py",
-      "source_location": "line 25",
-      "weight": 1.0,
-      "source": "test_reward_config_test_unknown_label_reward",
-      "target": "rl_defender_env_RLDatasetDefenderEnv"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_rl_defender_env.py",
-      "source_location": "line 7",
-      "weight": 1.0,
-      "source": "test_rl_defender_env_test_env_initialization",
-      "target": "rl_defender_env_RLDatasetDefenderEnv"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_rl_defender_env.py",
-      "source_location": "line 15",
-      "weight": 1.0,
-      "source": "test_rl_defender_env_test_env_step_and_reset",
-      "target": "rl_defender_env_RLDatasetDefenderEnv"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_reward_config.py",
-      "source_location": "line 17",
-      "weight": 1.0,
-      "source": "test_reward_config_test_reward_logic_tp_fp_tn_fn",
-      "target": "rl_defender_env_compute_reward"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_reward_config.py",
-      "source_location": "line 27",
-      "weight": 1.0,
-      "source": "test_reward_config_test_unknown_label_reward",
-      "target": "rl_defender_env_compute_reward"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/project-components-defense-research-report.md",
-      "source_location": "section 3.3",
-      "weight": 1.0,
-      "source": "project_components_defense_research",
-      "target": "scaling_utils"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/tune_hparams.py",
-      "source_location": "line 152",
-      "weight": 1.0,
-      "source": "tune_hparams_main",
-      "target": "tune_hparams_objective"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/tune_hparams.py",
-      "source_location": "line 116",
-      "weight": 1.0,
-      "source": "tune_hparams_objective",
-      "target": "tune_hparams__evaluate_f1"
-    },
-    {
-      "relation": "implements",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/test_reward_config.py",
-      "source_location": "line 8",
-      "weight": 1.0,
-      "source": "test_reward_config_test_reward_logic_tp_fp_tn_fn",
-      "target": "reward_config_schema"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/project-components-defense-research-report.md",
-      "source_location": "section 2.2",
-      "weight": 1.0,
-      "source": "project_components_defense_research",
-      "target": "optuna_hyperparameter_search"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/project-components-defense-research-report.md",
-      "source_location": "section 4.1",
-      "weight": 1.0,
-      "source": "project_components_defense_research",
-      "target": "nslkdd_dataset"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/deep-defense-research/01-fundamentos-y-objetivo.md",
-      "source_location": "section 1",
-      "weight": 1.0,
-      "source": "deep_defense_01",
-      "target": "permit_block_action_space"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/deep-defense-research/01-fundamentos-y-objetivo.md",
-      "source_location": "section 3",
-      "weight": 1.0,
-      "source": "deep_defense_01",
-      "target": "phase2_offline_inference"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/deep-defense-research/06-glosario-y-preguntas-tribunal.md",
-      "source_location": "section 2",
-      "weight": 1.0,
-      "source": "deep_defense_06",
-      "target": "permit_block_action_space"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/deep-defense-research/02-datos-esquema-canonico-y-preprocesado.md",
-      "source_location": "section 1",
-      "weight": 1.0,
-      "source": "deep_defense_02",
-      "target": "cicids2017_dataset"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/deep-defense-research/02-datos-esquema-canonico-y-preprocesado.md",
-      "source_location": "section 1",
-      "weight": 1.0,
-      "source": "deep_defense_02",
-      "target": "nslkdd_dataset"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/deep-defense-research/02-datos-esquema-canonico-y-preprocesado.md",
-      "source_location": "section 3",
-      "weight": 1.0,
-      "source": "deep_defense_02",
-      "target": "missingness_mask"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/deep-defense-research/02-datos-esquema-canonico-y-preprocesado.md",
-      "source_location": "section 4",
-      "weight": 1.0,
-      "source": "deep_defense_02",
-      "target": "anti_leakage_policy"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "agents_md",
-      "target": "anti_leakage_policy"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "GEMINI.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "gemini_md",
-      "target": "anti_leakage_policy"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/DEFENSA_TFG_PROGRESO.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_progreso_md",
-      "target": "anti_leakage_policy"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
-      "source_location": "section 1",
-      "weight": 1.0,
-      "source": "deep_defense_05",
-      "target": "phase2_offline_inference"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "GEMINI.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "gemini_md",
-      "target": "phase2_offline_inference"
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "docs/AGENT_CONTEXT.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "agent_context_md",
-      "target": "phase2_offline_inference"
+      "source_file": "docs/phase2_plan.md",
+      "source": "docs_phase2_plan_md",
+      "target": "docs_gcp_lab_md"
     },
     {
       "relation": "conceptually_related_to",
       "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "docs/gcp_lab.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "gcp_lab_md",
-      "target": "phase2_offline_inference"
+      "confidence_score": 0.95,
+      "source_file": "docs/phase2_plan.md",
+      "source": "docs_phase2_plan_md",
+      "target": "Phase_2_Offline_Inference"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/results.md",
+      "source": "docs_results_md",
+      "target": "RUN_MAIN"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/audits/repo_cleanup_implementation_guide_2026-06-25.md",
+      "source": "repo_cleanup_implementation_guide",
+      "target": "docs_results_md"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/runpod_main_experiment.md",
+      "source": "docs_runpod_main_experiment_md",
+      "target": "RUN_MAIN"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/audits/README.md",
+      "source": "docs_audits_README_md",
+      "target": "repo_cleanup_implementation_guide"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/audits/repo_cleanup_implementation_guide_2026-06-25.md",
+      "source": "repo_cleanup_implementation_guide",
+      "target": "RUN_MAIN"
     },
     {
       "relation": "rationale_for",
       "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "docs/phase2_plan.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "phase2_plan_md",
-      "target": "phase2_offline_inference"
+      "confidence_score": 0.95,
+      "source_file": "docs/Personal Research/data-structure-and-canonical-schema-research-report.md",
+      "source": "data_schema_research_report",
+      "target": "Canonical_Flow_Schema"
     },
     {
-      "relation": "references",
-      "confidence": "EXTRACTED",
+      "relationship": "discusses",
+      "description": "Discusses QRDQN as a technically plausible and underrepresented algorithm in NIDS.",
       "confidence_score": 1.0,
-      "source_file": "experiments/nslkdd_experiments.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "nslkdd_experiments_history",
-      "target": "nslkdd_dqn_e01"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "experiments/nslkdd_experiments.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "nslkdd_experiments_history",
-      "target": "nslkdd_rf_e02"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scratch/experimental_design_board.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "experimental_board_big_picture_pipeline",
-      "target": "experimental_board_152obs_gymnasium"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scratch/experimental_design_board.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "experimental_board_big_picture_pipeline",
-      "target": "experimental_board_branch_a_data_efficiency"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scratch/experimental_design_board.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "experimental_board_big_picture_pipeline",
-      "target": "experimental_board_branch_e_strict_splits"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/verify_fixed_test_split.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "verify_fixed_test_split",
-      "target": "load_cicids2017"
-    },
-    {
-      "relation": "semantically_similar_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.75,
-      "source_file": "src/",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "load_cicids2017",
-      "target": "baseline_random_forest"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/train_rl_defender.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "train_rl_defender",
-      "target": "load_cicids2017"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/validate_checks.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_checks",
-      "target": "load_cicids2017"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/validate_leave_one_csv_out.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_leave_one_csv_out",
-      "target": "load_cicids2017"
-    },
-    {
-      "relation": "tests",
-      "confidence": "INFERRED",
-      "confidence_score": 0.9,
-      "source_file": "tests/test_load_cicids2017.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "test_load_cicids2017",
-      "target": "load_cicids2017"
-    },
-    {
-      "relation": "uses",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/train_rl_defender.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "train_rl_defender",
-      "target": "rl_dataset_defender_env"
-    },
-    {
-      "relation": "uses",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/train_rl_defender.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "train_rl_defender",
-      "target": "qrdqn"
-    },
-    {
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/train_rl_defender.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "train_rl_defender",
-      "target": "reward_config"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/train_rl_defender.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "train_rl_defender",
-      "target": "features_canon"
-    },
-    {
-      "relation": "tests",
-      "confidence": "INFERRED",
-      "confidence_score": 0.9,
-      "source_file": "tests/test_train_rl_defender_config.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "test_train_rl_defender_config",
-      "target": "train_rl_defender"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "agents_md",
-      "target": "train_rl_defender"
-    },
-    {
-      "relation": "uses",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/validate_checks.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_checks",
-      "target": "rl_dataset_defender_env"
-    },
-    {
-      "relation": "uses",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/validate_checks.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_checks",
-      "target": "qrdqn"
-    },
-    {
-      "relation": "implements",
-      "confidence": "INFERRED",
-      "confidence_score": 0.9,
-      "source_file": "src/validate_checks.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_checks",
-      "target": "validation_check_a"
-    },
-    {
-      "relation": "implements",
-      "confidence": "INFERRED",
-      "confidence_score": 0.9,
-      "source_file": "src/validate_checks.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_checks",
-      "target": "validation_check_b"
-    },
-    {
-      "relation": "implements",
-      "confidence": "INFERRED",
-      "confidence_score": 0.9,
-      "source_file": "src/validate_checks.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_checks",
-      "target": "validation_check_c"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "agents_md",
-      "target": "validate_checks"
-    },
-    {
-      "relation": "semantically_similar_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "src/",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_leave_one_csv_out",
-      "target": "validate_checks"
-    },
-    {
-      "relation": "uses",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/validate_leave_one_csv_out.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_leave_one_csv_out",
-      "target": "rl_dataset_defender_env"
-    },
-    {
-      "relation": "uses",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/validate_leave_one_csv_out.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_leave_one_csv_out",
-      "target": "qrdqn"
-    },
-    {
-      "relation": "implements",
-      "confidence": "INFERRED",
-      "confidence_score": 0.9,
-      "source_file": "src/validate_leave_one_csv_out.py",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "validate_leave_one_csv_out",
-      "target": "leave_one_exact_csv_out"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "agents_md",
-      "target": "validate_leave_one_csv_out"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "agents_md",
-      "target": "features_canon"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "agents_md",
-      "target": "predict_real_traffic_v2"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "GEMINI.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "gemini_md",
-      "target": "features_canon"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "GEMINI.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "gemini_md",
-      "target": "cicids2017"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "GEMINI.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "gemini_md",
-      "target": "nsl_kdd"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "GEMINI.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "gemini_md",
-      "target": "predict_real_traffic_v2"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "readme_md",
-      "target": "features_canon"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "readme_md",
-      "target": "cicids2017"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "readme_md",
-      "target": "nsl_kdd"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "readme_md",
-      "target": "qrdqn"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "readme_md",
-      "target": "validation_check_a"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "readme_md",
-      "target": "validation_check_b"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "readme_md",
-      "target": "validation_check_c"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/AGENT_CONTEXT.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "agent_context_md",
-      "target": "domain_shift"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/DEFENSA_TFG_PROGRESO.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_progreso_md",
-      "target": "features_canon"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/DEFENSA_TFG_PROGRESO.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_progreso_md",
-      "target": "qrdqn"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/DEFENSA_TFG_PROGRESO.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_progreso_md",
-      "target": "validation_check_a"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/DEFENSA_TFG_PROGRESO.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_progreso_md",
-      "target": "validation_check_b"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/DEFENSA_TFG_PROGRESO.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_progreso_md",
-      "target": "validation_check_c"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/DEFENSA_TFG_PROGRESO.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_progreso_md",
-      "target": "leave_one_exact_csv_out"
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "docs/DEFENSA_TFG_PROGRESO.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_progreso_md",
-      "target": "domain_shift"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/DEFENSA_TFG_SCRIPT.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_script_md",
-      "target": "features_canon"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/DEFENSA_TFG_SCRIPT.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_script_md",
-      "target": "qrdqn"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/DEFENSA_TFG_SCRIPT.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "defensa_tfg_script_md",
-      "target": "domain_shift"
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "docs/gcp_lab.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "gcp_lab_md",
-      "target": "private_lab"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/phase2_plan.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "phase2_plan_md",
-      "target": "private_lab"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "docs/phase2_plan.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "phase2_plan_md",
-      "target": "domain_shift"
-    },
-    {
-      "type": "discusses",
-      "confidence_score": 1.0,
-      "relationship_type": "EXTRACTED",
-      "source": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-qrdqn-deep-distributional-rl.md",
+      "is_inferred": false,
+      "source": "deep-research-report1",
       "target": "QRDQN"
     },
     {
-      "type": "semantically_similar_to",
-      "confidence_score": 0.9,
-      "relationship_type": "INFERRED",
-      "source": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-qrdqn-deep-distributional-rl.md",
-      "target": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-reward-and-cost-sensitive-design-dossier.md"
-    },
-    {
-      "type": "discusses",
-      "confidence_score": 1.0,
-      "relationship_type": "EXTRACTED",
-      "source": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-reward-and-cost-sensitive-design-dossier.md",
-      "target": "Cost-Sensitive Reward Function"
-    },
-    {
-      "type": "semantically_similar_to",
+      "relationship": "semantically_similar_to",
+      "description": "Both track and organize the content and references for the state of the art chapter.",
       "confidence_score": 0.8,
-      "relationship_type": "INFERRED",
-      "source": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/RESEARCH_INDEX.md",
-      "target": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/report-source-map.md"
+      "is_inferred": true,
+      "source": "state_of_the_art_todo",
+      "target": "deep-research-report1"
     },
     {
-      "type": "indexes",
-      "confidence_score": 0.9,
-      "relationship_type": "INFERRED",
-      "source": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/RESEARCH_INDEX.md",
-      "target": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/Research1.md"
+      "relationship": "justifies",
+      "description": "Justifies the cost-sensitive reward as a response to the FN/FP cost asymmetry in NIDS.",
+      "confidence_score": 1.0,
+      "is_inferred": false,
+      "source": "deep-research-report2",
+      "target": "Cost_Sensitive_Reward"
     },
     {
-      "type": "indexes",
+      "relationship": "justifies",
+      "description": "Justifies the lab phase as an external validation for domain shift robustness.",
       "confidence_score": 0.9,
-      "relationship_type": "INFERRED",
-      "source": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/RESEARCH_INDEX.md",
-      "target": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/Research2.md"
+      "is_inferred": true,
+      "source": "deep-research-report2",
+      "target": "Phase_2_Inference"
     },
     {
-      "type": "indexes",
+      "relationship": "trained_on",
+      "description": "QRDQN is the agent trained in the RLDatasetDefenderEnv.",
+      "confidence_score": 1.0,
+      "is_inferred": false,
+      "source": "QRDQN",
+      "target": "RLDatasetDefenderEnv"
+    },
+    {
+      "relationship": "uses",
+      "description": "The environment uses a cost-sensitive reward favoring FP over FN.",
+      "confidence_score": 1.0,
+      "is_inferred": false,
+      "source": "RLDatasetDefenderEnv",
+      "target": "Cost_Sensitive_Reward"
+    },
+    {
+      "type": "defined_in",
+      "confidence": "EXPLICIT",
+      "source": "Dataset-as-Environment",
+      "target": "report-classification-dossier.md",
+      "confidence_score": 1.0
+    },
+    {
+      "type": "defined_in",
+      "confidence": "EXPLICIT",
+      "source": "Binary PERMIT/BLOCK Classification",
+      "target": "report-classification-dossier.md",
+      "confidence_score": 1.0
+    },
+    {
+      "type": "critiqued_in",
+      "confidence": "EXPLICIT",
+      "source": "CICIDS2017 Dataset",
+      "target": "report-deep-dive.md",
+      "confidence_score": 1.0
+    },
+    {
+      "type": "defined_in",
+      "confidence": "EXPLICIT",
+      "source": "QRDQN Policy Agent",
+      "target": "report-qrdqn-deep-distributional-rl.md",
+      "confidence_score": 1.0
+    },
+    {
+      "type": "defined_in",
+      "confidence": "EXPLICIT",
+      "source": "Cost-Sensitive IDS Reward",
+      "target": "report-reward-and-cost-sensitive-design-dossier.md",
+      "confidence_score": 1.0
+    },
+    {
+      "type": "mentions",
+      "confidence": "EXPLICIT",
+      "source": "report-source-map.md",
+      "target": "Methodological Risks in NIDS",
+      "confidence_score": 1.0
+    },
+    {
+      "type": "defined_in",
+      "confidence": "EXPLICIT",
+      "source": "Dataset-as-Environment",
+      "target": "Research2.md",
+      "confidence_score": 1.0
+    },
+    {
+      "type": "defined_in",
+      "confidence": "EXPLICIT",
+      "source": "Methodological Risks in NIDS",
+      "target": "Research3.md",
+      "confidence_score": 1.0
+    },
+    {
+      "type": "rationale_for",
+      "confidence": "INFERRED",
+      "source": "Cost-Sensitive IDS Reward",
+      "target": "Binary PERMIT/BLOCK Classification",
+      "confidence_score": 0.5
+    },
+    {
+      "type": "semantically_similar_to",
+      "confidence": "AMBIGUOUS",
+      "source": "Dataset-as-Environment",
+      "target": "Cost-Sensitive IDS Reward",
+      "confidence_score": 0.2
+    },
+    {
+      "type": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "source": "QRDQN Policy Agent",
+      "target": "Dataset-as-Environment",
+      "confidence_score": 0.5
+    },
+    {
+      "type": "mitigates",
+      "confidence": "INFERRED",
+      "source": "Temporal/Scenario Splits",
+      "target": "Methodological Risks in NIDS",
+      "confidence_score": 0.5
+    },
+    {
+      "type": "mitigates",
+      "confidence": "INFERRED",
+      "source": "External Validation (Lab Traffic)",
+      "target": "Methodological Risks in NIDS",
+      "confidence_score": 0.5
+    },
+    {
+      "type": "rationale_for",
+      "confidence": "INFERRED",
+      "source": "Temporal/Scenario Splits",
+      "target": "CICIDS2017 Dataset",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_research_gap_positioning",
+      "target": "concept_cicids2017_limitations"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_research_gap_positioning",
+      "target": "concept_canonical_feature_schema"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_research_gap_positioning",
+      "target": "concept_dataset_as_environment"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_research_gap_positioning",
+      "target": "concept_cost_sensitive_reward"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_research_gap_positioning",
+      "target": "concept_evaluation_leakage"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_research_gap_positioning",
+      "target": "concept_supervised_baselines_rf"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_research_gap_positioning",
+      "target": "concept_data_efficiency_experiments"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_research_gap_positioning",
+      "target": "concept_distributional_rl_qrdqn"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_state_of_art_expansion",
+      "target": "concept_cicids2017_limitations"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_state_of_art_expansion",
+      "target": "concept_canonical_feature_schema"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_state_of_art_expansion",
+      "target": "concept_dataset_as_environment"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_state_of_art_expansion",
+      "target": "concept_data_efficiency_experiments"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Research - State of the Art/Methodological-Pitfalls-Evaluation-Protocols-Leakage-Metrics-and-Validation-ChatGPT-2.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_methodological_pitfalls",
+      "target": "concept_evaluation_leakage"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Research - State of the Art/Methodological-Pitfalls-Evaluation-Protocols-Leakage-Metrics-and-Validation-ChatGPT-2.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_methodological_pitfalls",
+      "target": "concept_validation_ladder"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Research - State of the Art/Methodological-Pitfalls-Evaluation-Protocols-Leakage-Metrics-and-Validation-ChatGPT-2.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_methodological_pitfalls",
+      "target": "concept_cicids2017_limitations"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_nids_traffic_representation",
+      "target": "concept_canonical_feature_schema"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_nids_traffic_representation",
+      "target": "concept_cicids2017_limitations"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Research - State of the Art/RL-DRL-Distributional-RL-and-Cyber-Defense-Context-ChatGPT-1.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_rl_drl_cyber_defense",
+      "target": "concept_distributional_rl_qrdqn"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Research - State of the Art/RL-DRL-Distributional-RL-and-Cyber-Defense-Context-ChatGPT-1.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_rl_drl_cyber_defense",
+      "target": "concept_dataset_as_environment"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Research - State of the Art/Supervised-ML-DL-Baselines-RL-for-IDS-Literature-and-Research-Gap-Perplexity-2.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_supervised_ml_dl_ids",
+      "target": "concept_supervised_baselines_rf"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Research/Research - State of the Art/Supervised-ML-DL-Baselines-RL-for-IDS-Literature-and-Research-Gap-Perplexity-2.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_supervised_ml_dl_ids",
+      "target": "concept_dataset_as_environment"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "runs/cicids2017/baseline_random_forest_comparison/results_rf.txt",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_results_rf",
+      "target": "concept_supervised_baselines_rf"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "runs/cicids2017/baseline_random_forest_comparison/results_rf.txt",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_results_rf",
+      "target": "concept_evaluation_leakage"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "runs/cicids2017/baseline_random_forest_comparison/results_rf.txt",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_results_rf",
+      "target": "concept_canonical_feature_schema"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scratch/experimental_design_board.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_experimental_design_board",
+      "target": "concept_validation_ladder"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scratch/experimental_design_board.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_experimental_design_board",
+      "target": "concept_canonical_feature_schema"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scratch/experimental_design_board.html",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "doc_experimental_design_board",
+      "target": "concept_distributional_rl_qrdqn"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
       "confidence_score": 0.9,
-      "relationship_type": "INFERRED",
-      "source": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/RESEARCH_INDEX.md",
-      "target": "C:/Users/Rivero/Desktop/TFG_CYBER_AI/Research/Initial Research for Report - Chapter State Of The Art/Research3.md"
+      "source_file": null,
+      "source_location": null,
+      "weight": 1.0,
+      "source": "concept_evaluation_leakage",
+      "target": "concept_validation_ladder"
     }
   ],
   "hyperedges": [
     {
-      "id": "phase2_inference_pipeline",
-      "label": "Phase 2 Real Traffic Inference Pipeline (v2)",
+      "id": "defense_prep_docs",
+      "label": "Defense Preparation",
       "nodes": [
-        "predict_v2_main",
-        "scaling_utils_apply_percentile_clipping",
-        "scaling_utils_apply_z_clipping",
-        "predict_v2_compute_diagnostics",
-        "canonical_schema_map_to_canonical"
-      ],
-      "relation": "implement",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/predict_real_traffic_v2.py"
-    },
-    {
-      "id": "canonical_schema_pipeline",
-      "label": "Canonical Schema Feature Pipeline (map + mask + scale)",
-      "nodes": [
-        "canonical_schema_map_to_canonical",
-        "canonical_schema_missingness_mask",
-        "load_cicids2017__prepare_cicids_features",
-        "load_nsl_kdd_load_nsl_kdd_binary",
-        "rl_defender_env_RLDatasetDefenderEnv"
+        "docs_DEFENSA_TFG_PROGRESO_md",
+        "docs_DEFENSA_TFG_SCRIPT_md",
+        "data_schema_research_report",
+        "validation_research_report",
+        "components_research_report"
       ],
       "relation": "participate_in",
       "confidence": "INFERRED",
-      "confidence_score": 0.95,
-      "source_file": "src/canonical_schema.py"
+      "confidence_score": 0.85
     },
     {
-      "id": "validation_suite",
-      "label": "Validation Suite",
+      "id": "phase2_docs",
+      "label": "Phase 2 Lab and Inference",
       "nodes": [
-        "validation_check_a",
-        "validation_check_b",
-        "validation_check_c",
-        "leave_one_exact_csv_out"
+        "docs_AGENT_CONTEXT_md",
+        "docs_phase2_plan_md",
+        "docs_gcp_lab_md"
+      ],
+      "relation": "participate_in",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9
+    },
+    {
+      "id": "TFG_Positioning",
+      "nodes": [
+        "deep-research-report2",
+        "QRDQN",
+        "RLDatasetDefenderEnv",
+        "Cost_Sensitive_Reward"
+      ],
+      "description": "The defensible gap involves a QRDQN agent making binary decisions in a defender-centric environment with cost-sensitive rewards.",
+      "confidence_score": 0.95,
+      "is_inferred": true
+    },
+    {
+      "id": "Methodological_Critique",
+      "nodes": [
+        "deep-research-report1",
+        "deep-research-report2",
+        "Phase_2_Inference",
+        "CICIDS2017"
+      ],
+      "description": "Methodological critique stresses that intra-dataset (CICIDS2017) performance is weak without external validation (Phase 2).",
+      "confidence_score": 0.9,
+      "is_inferred": true
+    },
+    {
+      "id": "Rigorous NIDS Evaluation Framework",
+      "nodes": [
+        "Temporal/Scenario Splits",
+        "External Validation (Lab Traffic)",
+        "Cost-Sensitive IDS Reward",
+        "Methodological Risks in NIDS"
+      ],
+      "type": "Shared_Concept",
+      "properties": {
+        "description": "Core methodological pillars to address and mitigate evaluation flaws in RL-based NIDS."
+      }
+    },
+    {
+      "id": "RL Agent Paradigm",
+      "nodes": [
+        "QRDQN Policy Agent",
+        "Dataset-as-Environment",
+        "Binary PERMIT/BLOCK Classification"
+      ],
+      "type": "Shared_Concept",
+      "properties": {
+        "description": "The architectural definition of the cybersecurity agent, using distributional RL in a dataset-driven environment for binary classification."
+      }
+    },
+    {
+      "id": "thesis_methodology_pillars",
+      "label": "Thesis Methodology Pillars",
+      "nodes": [
+        "concept_canonical_feature_schema",
+        "concept_dataset_as_environment",
+        "concept_cost_sensitive_reward",
+        "concept_validation_ladder"
       ],
       "relation": "form",
       "confidence": "INFERRED",
-      "confidence_score": 0.9,
-      "source_file": "docs/README.md"
+      "confidence_score": 0.85,
+      "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/research_gap_positioning.md"
     },
     {
-      "id": "tfg_core_artifacts",
-      "label": "TFG Core Logic Scripts",
+      "id": "cicids2017_evaluation_strategy",
+      "label": "CICIDS2017 Evaluation Strategy",
       "nodes": [
-        "load_cicids2017",
-        "train_rl_defender",
-        "validate_checks",
-        "validate_leave_one_csv_out",
-        "baseline_random_forest"
+        "concept_cicids2017_limitations",
+        "concept_validation_ladder",
+        "concept_evaluation_leakage"
       ],
       "relation": "participate_in",
       "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "src/"
+      "confidence_score": 0.9,
+      "source_file": "scratch/experimental_design_board.html"
     }
   ],
-  "built_at_commit": "8450e783d649cb09d2718dc9370627fd804caeea"
+  "built_at_commit": "78281d807ebde04592b1f50970c7c7c6781ca1db"
 }

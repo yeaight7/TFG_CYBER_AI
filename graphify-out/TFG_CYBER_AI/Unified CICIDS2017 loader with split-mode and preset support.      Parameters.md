@@ -1,12 +1,12 @@
 ---
 source_file: "src/load_cicids2017.py"
 type: "rationale"
-community: "Test Split Validation"
+community: "Baseline Random Forest"
 location: "L601"
 tags:
   - graphify/rationale
   - graphify/EXTRACTED
-  - community/Test_Split_Validation
+  - community/Baseline_Random_Forest
 ---
 
 # Unified CICIDS2017 loader with split-mode and preset support.      Parameters
@@ -14,4 +14,4 @@ tags:
 ## Connections
 - [[load_cicids2017_split()]] - `rationale_for` [EXTRACTED]
 
-#graphify/rationale #graphify/EXTRACTED #community/Test_Split_Validation
+#graphify/rationale #graphify/EXTRACTED #community/Baseline_Random_Forest
