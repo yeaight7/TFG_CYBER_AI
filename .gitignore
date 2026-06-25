@@ -44,6 +44,5 @@ graphify-out/obsidian/.obsidian/
 graphify-out/graph.html
 # graphify-out/TFG_CYBER_AI/.obsidian/
 
-# random docs
-docs/Personal Research/*.md
-docs/Personal Research/deep-defense-research/*.md
+# Personal Research: tracked as Markdown only (single source format).
+# Derived .tex/.pdf were removed to avoid 3 copies of the same research notes.
