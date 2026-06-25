@@ -157,7 +157,7 @@ def batched_predict(model, X: np.ndarray, batch_size: int = 4096) -> np.ndarray:
 
 def main():
     flows_csv = REPO / "pcaps" / "flows.csv"  # <- change
-    model_zip = REPO / "models" / "C01_qrdqn_cicids2017_canonical_full_20260212_200218.zip"  # <- change if needed
+    model_zip = REPO / "models" / "archive" / "C01_qrdqn_cicids2017_canonical_full_20260212_200218.zip"  # <- change if needed
 
     run_id = "P2_pred_" + datetime.now().strftime("%Y%m%d_%H%M%S")
     out_dir = REPO / "runs" / "phase2" / run_id
