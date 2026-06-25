@@ -123,7 +123,7 @@ fn = -5.0
 omission = 0.0
 ```
 
-Es importante señalar que el **mejor run histórico**, el C03 full, usa esos mismos valores. Otros runs históricos anteriores, como C01/C02, sí usaron configuraciones distintas.
+Es importante señalar que tanto el run oficial (MAIN) como el probe histórico C03 usan esos mismos valores. Otros runs anteriores, como C01/C02, sí usaron una penalización de falso positivo distinta.
 
 Esto conviene decirlo con claridad para no mezclar:
 
@@ -142,17 +142,19 @@ La ventaja es que no solo estima un valor esperado simple, sino una distribució
 
 ## 11. Resultados principales en CICIDS2017
 
-El mejor artefacto comprometido en el repositorio es:
+El **run oficial** del proyecto es:
 
-- `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439`
+- `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` (datos completos, partición de test fija de 566 149 filas, 3 000 000 timesteps)
 
 Con resultados de:
 
-- accuracy: **0.99859**
-- recall de ataque: **0.99945** (sensitivity)
-- F1 de ataque: **0.99876**
+- accuracy: **0.99381**
+- recall de ataque: **0.99536** (sensitivity)
+- F1 de ataque: **0.98445**
 
-Es decir, en el dataset offline el rendimiento es extremadamente alto.
+El mejor **probe histórico** (previo al diseño experimental, no oficial) es `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439`: accuracy **0.99859**, recall ataque **0.99945**, F1 ataque **0.99876**, pero sobre un test de 100 000 filas con mezcla de clases distorsionada (no comparable con la partición fija de MAIN).
+
+Es decir, en el dataset offline el rendimiento es muy alto; en la defensa conviene presentar MAIN como resultado oficial y los `C0x` como exploración previa.
 
 ---
 
@@ -229,9 +231,9 @@ El script mantenido para esto es:
 
 La conclusión importante de Phase 2 no es que el problema esté completamente resuelto, sino que el pipeline ya detectó un reto real: el **domain shift**.
 
-Hay artefactos comprometidos en el repositorio con comportamientos distintos sobre tráfico benigno real.
+El run Phase 2 con el modelo oficial (MAIN) sobre tráfico sintético etiquetado es `P2v2_pred_20260610_161231_MAIN` (`pcaps/synthetic_real_traffic.csv`): block_rate **0.252**, accuracy **0.991862**, F1 ataque **0.983801**. Es un benchmark sintético y no debe mezclarse con los resultados internos de CICIDS2017.
 
-Por ejemplo:
+Además, hay artefactos benign-only comprometidos con comportamientos distintos sobre tráfico benigno real:
 
 - `P2v2_pred_20260224_004121`: bloquea el 100 % de `flows_benign.csv`
 - `P2v2_pred_20260408_230318`: permite el 100 % de `flows_benign.csv`
