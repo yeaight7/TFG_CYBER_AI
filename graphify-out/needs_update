@@ -1,4 +1,0 @@
-timestamp: 2026-06-25T17:36:54.959157+00:00
-reason: semantic sources changed - run `graphify .` for a full refresh
-paths:
-- docs/audits/repo_cleanup_implementation_guide_2026-06-25.md
