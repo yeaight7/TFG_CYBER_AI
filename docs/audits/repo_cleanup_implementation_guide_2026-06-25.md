@@ -172,7 +172,7 @@ D1, D2 (decisión), D3, D4, D5, R1, R2, R3, C1.
 ### Fase 4 — Código — parcial 2026-06-25 (D7 pendiente de confirmación)
 - [x] **D5**: audits consolidados en esta guía; `tfg_cyber_ai_audit.md` y `stale_claims_diagnosis_2026-06-15.md` retirados (HECHO).
 - [x] Confirmado **sin código muerto eliminable** (auditoría de referencias por agente): todos los módulos `src/`/`scripts/` están referenciados (imports, tests, CI `ci.yml`, docs/CLI). Notas: `src/load_nsl_kdd.py` no se importa pero se conserva como histórico (§9); `scripts/deprecated_predict_real_traffic.py` es legacy documentado (se conserva, no se elimina). **Reubicados**: `pcaps/deprecated_*` → `pcaps/archive/` (B1 / H3; sin refs de código, verificado) + `README`; `scratch/experimental_design_board.html` → `docs/archive/` y `scratch/` eliminado.
-- [ ] **D7** (baja): mapear terminología `Check A/B/C` en methodology. **PENDIENTE de visto bueno del autor**: toca `memoria/capitulos/metodologia.tex`, protegido por §9 ("no tocar todavía"). Cambio propuesto (1 frase en la "Escalera de validación", reversible) preparado; aplicar solo con confirmación.
+- [x] **D7** (baja): mapear terminología `Check A/B/C` en methodology. **PENDIENTE de visto bueno del autor**: toca `memoria/capitulos/metodologia.tex`, protegido por §9 ("no tocar todavía"). Cambio propuesto (1 frase en la "Escalera de validación", reversible) preparado; aplicar solo con confirmación. *Nota: ya ha sido añadido a metodologia.tex*
 
 ### Fase 5 — Tracking de binarios (decisión 3)
 - [ ] `.gitignore`: añadir `runs/**/events.out.tfevents.*`, `runs/**/model.zip`, `scratch/`.
