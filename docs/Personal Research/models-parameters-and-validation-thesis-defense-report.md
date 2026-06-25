@@ -1,5 +1,9 @@
 # Investigación técnica (Defensa TFG): modelos adicionales, hiperparámetros y validación
 
+> **⚠️ Alineamiento con el experimento oficial (MAIN) — leer primero.**
+> Esta es una **nota de investigación**, no la fuente de verdad de la configuración. La configuración **oficial** es la del run **MAIN** (`MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`, perfil `main-experiment`): `gamma=0.0`, `net_arch=[1024,1024,512]`, `n_quantiles=200` (explícito), `learning_rate=5e-5`, `batch_size=2048`, `exploration_fraction=0.10`, `exploration_final_eps=0.02`, `gradient_steps=20`, `train_freq=100`, `target_update_interval=10_000`, `buffer_size=1_000_000`, `learning_starts=50_000`, `max_grad_norm=10.0`, `timesteps=3_000_000`.
+> Cualquier mención a `net_arch=[512,256]`, `gamma=0.99`, `learning_rate=1e-4` o `exploration_fraction=0.005` corresponde a **exploración previa**, al perfil **`default`** (dev/smoke) o a los **scripts de validación** (Check B/C, leave-one-CSV-out, que fijan su propia arquitectura), **no** al experimento oficial. Fuente de verdad: `src/train_rl_defender.py` (`resolve_training_hyperparams`, `REWARD_CONFIG`) y `runs/cicids2017/MAIN_.../config.json`.
+
 ## 1) Alcance
 
 Este documento complementa al informe de arquitectura y **no** desarrolla de nuevo:
@@ -53,41 +57,36 @@ Objetivo optimizado: `F1` de la clase ataque (`pos_label=1`).
 
 Aunque la investigación específica de QRDQN está en otro documento, en el código aparecen arquitecturas MLP concretas para entrenamiento y checks:
 
+- `net_arch=[1024, 1024, 512]`
+  - experimento oficial / entrenamiento principal (`src/train_rl_defender.py`, perfil `main-experiment`, run MAIN)
 - `net_arch=[512, 256]`
-  - entrenamiento principal (`src/train_rl_defender.py`)
-  - validación Check C y leave-one-CSV-out
+  - perfil `default` (dev/smoke) y validaciones Check C / leave-one-CSV-out (`src/validate_checks.py`, `src/validate_leave_one_csv_out.py`)
 - `net_arch=[256, 128]`
   - validación Check B (labels barajadas)
 
 Interpretación para defensa:
-- la arquitectura más grande (`512,256`) se reserva para entrenamiento principal y validación exigente;
-- la más pequeña (`256,128`) acelera el test anti-leakage.
+- la arquitectura más grande y oficial (`[1024,1024,512]`) es la del run MAIN;
+- la intermedia (`[512,256]`) corresponde al perfil `default` y a las validaciones exigentes Check C / leave-one-CSV-out;
+- la más pequeña (`[256,128]`) acelera el test anti-leakage.
 
 ---
 
 ## 4) Hiperparámetros clave de entrenamiento y validación
 
-## 4.1 Entrenamiento principal (`src/train_rl_defender.py`)
+## 4.1 Entrenamiento principal — experimento oficial (perfil `main-experiment`, run MAIN)
 
-Comunes:
-- `learning_rate=1e-4`
-- `gamma=0.99`
+- `learning_rate=5e-5`
+- `gamma=0.0`
 - `tau=1.0`
-- `buffer_size=min(200_000, max(total_timesteps, 10_000))`
+- `buffer_size=1_000_000`, `learning_starts=50_000`
+- `batch_size=2048`, `gradient_steps=20`, `train_freq=100`, `target_update_interval=10_000`
+- `exploration_fraction=0.10`, `exploration_final_eps=0.02` (fijados explícitamente)
+- `max_grad_norm=10.0`
+- `total_timesteps`: `3_000_000`
 
-Dependientes del preset:
-- **fast**
-  - `batch_size=512`
-  - `gradient_steps=10`
-  - `train_freq=50`
-  - `target_update_interval=1_000`
-  - `total_timesteps` default: `25_000`
-- **full**
-  - `batch_size=2048`
-  - `gradient_steps=20`
-  - `train_freq=100`
-  - `target_update_interval=10_000`
-  - `total_timesteps` default: `100_000`
+> Perfil `default` (dev/smoke, **no oficial**): `learning_rate=1e-4`, `gamma=0.0`, `buffer_size=min(200_000, max(total_timesteps, 10_000))`, `exploration_fraction=0.005`, y valores dependientes de preset —
+> - **fast**: `batch_size=512`, `gradient_steps=10`, `train_freq=50`, `target_update_interval=1_000`, `total_timesteps` default `25_000`;
+> - **full**: `batch_size=2048`, `gradient_steps=20`, `train_freq=100`, `target_update_interval=10_000`, `total_timesteps` default `100_000`.
 
 Split de datos:
 - `split_mode=random` o `split_mode=day`
