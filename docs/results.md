@@ -23,17 +23,15 @@ REWARD_CONFIG = {
 
 ## CICIDS2017 Training Runs
 
-### Summary
+The **official trunk** is the MAIN run (full data, fixed test partition). Secondary runs (same design, fewer training rows) form the training-size benchmark (pending). The earlier `C0x` runs were **pre-design probes** (exploration before the experimental design was fixed); they are kept below as a historical appendix only and are **not** part of the official results.
 
-| Run | Rows | Timesteps | Split | Accuracy | Recall attack | F1 attack | Reward config |
-|-----|------|-----------|-------|----------|---------------|-----------|---------------|
-| C01 smoke | 50,000 | 5,000 | random | 0.9697 | 0.9996 | 0.9692 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
-| C01 full | 250,000 | 100,000 | random | 0.9962 | 0.9998 | 0.9963 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
-| C02 fast | 100,000 | 10,000 | random | 0.9766 | 0.9996 | 0.9812 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
-| **C03 full** | 500,000 | 100,000 | random | **0.99859** | **0.99945** | **0.99876** | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` |
-| **MAIN full** | 2,830,743 | 3,000,000 | random | **0.99381** | **0.99536** | **0.98445** | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` |
+### Official run (MAIN)
 
-The `Rows` column lists total rows loaded before the split (the historical `max_rows` semantics); the MAIN run's train/test partition is detailed below.
+| Run | Train / test rows | Timesteps | Split | Accuracy | Recall attack | F1 attack | Reward config |
+|-----|-------------------|-----------|-------|----------|---------------|-----------|---------------|
+| **MAIN full** | 2,264,594 / 566,149 | 3,000,000 | random (fixed test) | **0.99381** | **0.99536** | **0.98445** | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` |
+
+Secondary runs (training-size benchmark, fewer `--train-max-rows` over the same fixed test partition) are tracked under [Training-Size Benchmark](#training-size-benchmark-fixed-test-partition) (pending).
 
 ### Main Committed Run (full data)
 
@@ -60,7 +58,20 @@ Metrics from `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_202606
 | Recall benign | `0.99343` |
 | F1 benign | `0.99613` |
 
-### Historical Run C03
+### Historical pre-design probes (C0x) — not part of the official trunk
+
+These runs were exploratory probes launched **before** the experimental design was fixed (different `max_rows`, timesteps, and — for C01/C02 — a different false-positive reward). They are retained for traceability only and are slated for archival (`runs/archive/`); they must not be presented as official results.
+
+| Run | Rows | Timesteps | Split | Accuracy | Recall attack | F1 attack | Reward config |
+|-----|------|-----------|-------|----------|---------------|-----------|---------------|
+| C01 smoke | 50,000 | 5,000 | random | 0.9697 | 0.9996 | 0.9692 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
+| C01 full | 250,000 | 100,000 | random | 0.9962 | 0.9998 | 0.9963 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
+| C02 fast | 100,000 | 10,000 | random | 0.9766 | 0.9996 | 0.9812 | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` |
+| C03 full | 500,000 | 100,000 | random | 0.99859 | 0.99945 | 0.99876 | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` |
+
+The `Rows` column lists total rows loaded before the split (the historical `max_rows` semantics). C03 is the strongest probe; its detail follows.
+
+#### C03 (best historical probe)
 
 C03 used `max_rows=500000`; its 100,000-row test set has a distorted class mix (benign rate ≈0.434) and is NOT comparable with the main run's 566,149-row test set (benign rate ≈0.803).
 
@@ -201,7 +212,7 @@ This later artifact shows that Phase 2 behaviour is sensitive to configuration a
 
 Artifact:
 
-- `runs/phase2/P2v2_pred_20260610_161231/`
+- `runs/phase2/P2v2_pred_20260610_161231_MAIN/`
 
 | Field | Value |
 |-------|-------|
@@ -233,10 +244,12 @@ NSL-KDD remains historical benchmarking material only.
 
 ### Training
 
-- `runs/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/`
-- `runs/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/`
-- `runs/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/`
-- `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/`
+- `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/` (official run)
+- Historical pre-design probes (C0x):
+  - `runs/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/`
+  - `runs/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/`
+  - `runs/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/`
+  - `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/`
 
 ### Validation
 
@@ -248,7 +261,7 @@ NSL-KDD remains historical benchmarking material only.
 
 - `runs/phase2/P2v2_pred_20260224_004121/`
 - `runs/phase2/P2v2_pred_20260408_230318/`
-- `runs/phase2/P2v2_pred_20260610_161231/`
+- `runs/phase2/P2v2_pred_20260610_161231_MAIN/`
 
 ### Models
 
@@ -257,23 +270,23 @@ NSL-KDD remains historical benchmarking material only.
 
 ## Random Forest Baseline
 
-The supervised Random Forest baseline has been updated to match the QRDQN evaluation splits strictly. 
+The supervised Random Forest baseline is run over the canonical schema. Only the **Random Split** sweep shares an identical test set with a QRDQN run (the MAIN fixed partition); the day-based sweeps partition the capture days **differently** from QRDQN Check C, so they are not a strict same-split comparison (see notes below). 
 
 **Execution Protocol:**
 Run `uv run python src/baseline_random_forest.py` to generate the latest metrics. This will execute three sweeps across the canonical schema:
-1. **Random Split (full)**
-2. **Day Split (Check C)**
-3. **Leave-One-Out (Wednesday test)**
+1. **Random Split (full)** — test = **566,149 rows (benign 454,620 / attack 111,529), byte-identical to MAIN's fixed test partition** (seed 42).
+2. **Day Split** — train on Mon/Tue/Wed/Thu CSVs (2,127,498 rows), test on the 3 **Friday** CSVs (703,245 rows). *Note:* QRDQN Check C trains Mon–Wed and tests Thu+Fri — a different day partition.
+3. **Leave-One-Out (Wednesday test)** — train on 7 CSVs, test on Wednesday (692,703 rows).
 
 Sweep results committed to `runs/cicids2017/baseline_random_forest_comparison/results_rf.txt`.
 
 ### Baseline Metrics
 
-| Split | F1 Attack | Precision | Recall | Notes |
-|-------|-----------|-----------|--------|-------|
-| Random | 0.9971 | 0.9964 | 0.9977 | Compare against QRDQN main run / C03 |
-| Check C | 0.1446 | 0.9935 | 0.0780 | Compare against QRDQN Check C (RL f1 0.6258) |
-| Leave-One-Out | 0.0111 | 0.9712 | 0.0056 | Wednesday-test domain shift |
+| Split | Test rows | F1 Attack | Precision | Recall | Notes |
+|-------|-----------|-----------|-----------|--------|-------|
+| Random | 566,149 | 0.9971 | 0.9964 | 0.9977 | Same fixed test partition as MAIN → directly comparable (QRDQN MAIN F1 attack 0.98445). |
+| Day Split | 703,245 (Fri only) | 0.1446 | 0.9935 | 0.0780 | **Not the same test set as QRDQN Check C** (Thu+Fri, 1,162,213 rows, train Mon–Wed). Same day-shift family → **directional** comparison only vs QRDQN Check C (RL F1 attack 0.6258). |
+| Leave-One-Out | 692,703 (Wed) | 0.0111 | 0.9712 | 0.0056 | Wednesday held-out; domain-shift stress. |
 
 ## Open Documentation Gap
 
