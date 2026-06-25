@@ -1,22 +1,26 @@
 # QRDQN en Stable Baselines3 para el TFG
 
+> **⚠️ Alineamiento con el experimento oficial (MAIN) — leer primero.**
+> Esta es una **nota de investigación** redactada contra una versión anterior del script; **no** es la fuente de verdad de la configuración. La configuración **oficial** es la del run **MAIN** (`MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`, perfil `main-experiment`): `gamma=0.0`, `net_arch=[1024,1024,512]`, `n_quantiles=200` (**explícito** en `policy_kwargs`), `learning_rate=5e-5`, `batch_size=2048`, `exploration_fraction=0.10` (**explícito**), `exploration_final_eps=0.02`, `gradient_steps=20`, `train_freq=100`, `target_update_interval=10_000`, `buffer_size=1_000_000`, `learning_starts=50_000`, `max_grad_norm=10.0`, `timesteps=3_000_000`.
+> En el código actual, `n_quantiles` y los parámetros de exploración **ya se fijan explícitamente** (no son implícitos). Cualquier mención a `net_arch=[512,256]`, `gamma=0.99`, `learning_rate=1e-4` o `exploration_fraction=0.005` corresponde a **exploración previa** o al perfil **`default`** (dev/smoke), **no** al experimento oficial. Fuente de verdad: `src/train_rl_defender.py` (`resolve_training_hyperparams`, `REWARD_CONFIG`) y `runs/cicids2017/MAIN_.../config.json`.
+
 ## Resumen ejecutivo
 
 La implementación de **QR-DQN** en el ecosistema de Stable Baselines vive en **SB3-Contrib**, no en el núcleo de Stable Baselines3, y convierte a DQN en un método **distribucional**: en vez de aprender un único escalar \(Q(s,a)\), aprende una **distribución aproximada de retornos** por acción usando \(N\) cuantiles. En la práctica de SB3, esa distribución se representa como un tensor de forma \((\text{batch}, N, |\mathcal A|)\), se entrena con **quantile Huber loss**, y la acción codiciosa se elige por la **media de los cuantiles**, es decir, por el retorno esperado implícito en la distribución. Por tanto, QRDQN aprende más información que DQN, pero **no es risk-sensitive por defecto**: sigue actuando según la esperanza matemática salvo que se modifique explícitamente el criterio de decisión.
 
 Desde la perspectiva teórica, QR-DQN nace para cerrar la brecha entre la teoría distribucional de Marc G. Bellemare, Will Dabney, y Rémi Munos en C51 y una implementación entrenable por descenso de gradiente. C51 fija los soportes \(z_i\) y aprende probabilidades; QR-DQN “transpone” esa idea: fija probabilidades uniformes y aprende las **localizaciones** de los cuantiles. Esto evita la proyección categórica de C51 y elimina la necesidad de fijar manualmente cotas como \(V_{\min}\) y \(V_{\max}\).
 
-En tu repositorio `yeaight7/TFG_CYBER_AI`, QRDQN es el algoritmo principal para un problema discreto binario de ciberdefensa sobre **CICIDS2017**, con observaciones de **152 dimensiones** y acciones **0=PERMIT**, **1=BLOCK**. La arquitectura elegida es `MlpPolicy` con `net_arch=[512, 256]`, `learning_rate=1e-4`, `gamma=0.99`, `tau=1.0`, `train_freq` de 50 o 100 y `gradient_steps` de 10 o 20 según preset. El mejor artefacto consolidado del repositorio es el run `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439`, con accuracy 0.99859 y F1 de ataque 0.99876 en random split; sin embargo, la validación dura por día/CSV cae de forma importante, lo que demuestra que la generalización real es bastante más difícil que el escenario aleatorio.
+En tu repositorio `yeaight7/TFG_CYBER_AI`, QRDQN es el algoritmo principal para un problema discreto binario de ciberdefensa sobre **CICIDS2017**, con observaciones de **152 dimensiones** y acciones **0=PERMIT**, **1=BLOCK**. La configuración oficial (run MAIN, perfil `main-experiment`) es `MlpPolicy` con `net_arch=[1024, 1024, 512]`, `learning_rate=5e-5`, `gamma=0.0`, `tau=1.0`, `train_freq=100`, `gradient_steps=20` y `batch_size=2048` (el perfil `default` dev/smoke usa `[512, 256]`, `learning_rate=1e-4`, `train_freq` 50/100 y `gradient_steps` 10/20 según preset). El run `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` —un *probe* previo al diseño experimental— reporta accuracy 0.99859 y F1 de ataque 0.99876 en random split; sin embargo, la validación dura por día/CSV cae de forma importante, lo que demuestra que la generalización real es bastante más difícil que el escenario aleatorio.
 
-La conclusión práctica para tu TFG es clara: QRDQN está bien alineado con tu problema porque el espacio de acciones es discreto y porque el aprendizaje distribucional puede capturar mejor colas, multimodalidad y asimetrías del retorno inducidas por una recompensa con falsos negativos muy penalizados. Pero, en SB3, esa ventaja depende mucho de detalles de implementación: **número de cuantiles**, rapidez del decaimiento de \(\varepsilon\), tamaño del batch, frecuencia de actualización de la red objetivo y diseño de la recompensa. En tu repo, además, algunas decisiones se heredan por defecto de SB3-Contrib y no están declaradas explícitamente, lo que conviene dejar muy claro en la memoria para evitar ambigüedades metodológicas.
+La conclusión práctica para tu TFG es clara: QRDQN está bien alineado con tu problema porque el espacio de acciones es discreto y porque el aprendizaje distribucional puede capturar mejor colas, multimodalidad y asimetrías del retorno inducidas por una recompensa con falsos negativos muy penalizados. Pero, en SB3, esa ventaja depende mucho de detalles de implementación: **número de cuantiles**, rapidez del decaimiento de \(\varepsilon\), tamaño del batch, frecuencia de actualización de la red objetivo y diseño de la recompensa. En versiones anteriores del script algunas decisiones (`n_quantiles`, exploración) se heredaban por defecto de SB3-Contrib; en el experimento oficial actual (perfil `main-experiment`) **se fijan explícitamente**, lo que conviene dejar muy claro en la memoria para evitar ambigüedades metodológicas.
 
 ## Supuestos y lagunas del repositorio
 
 Antes de entrar en teoría e implementación, conviene fijar varios supuestos y señalar qué información **no** queda completamente cerrada en el repo.
 
 - **La versión exacta de SB3 y SB3-Contrib no está fijada**, solo un mínimo: `stable-baselines3>=2.3` y `sb3-contrib>=2.3`. Por eso, para reproducibilidad estricta, la interpretación de defaults debe hacerse respecto a la familia de versiones **2.3+**, no a una única release inmutable. Esto importa especialmente porque en SB3-Contrib v2.3.0 cambió el default de `learning_starts` de 50 000 a 100.
-- **`n_quantiles` no se fija explícitamente en tu script de entrenamiento**, así que hay que inferir que usas el default oficial de la política QRDQN, que es **200 cuantiles**. Ese dato es metodológicamente importante porque determina el tamaño de la cabeza de salida, el coste computacional y la granularidad con la que aproximas la distribución.
-- **Los parámetros de exploración tampoco se fijan explícitamente** en tu repositorio. Por tanto, se heredan los defaults de QRDQN en SB3-Contrib: `exploration_fraction=0.005`, `exploration_initial_eps=1.0` y `exploration_final_eps=0.01`. Esto tiene una consecuencia práctica importante: con 100 000 timesteps, la caída lineal de \(\varepsilon\) termina aproximadamente en los **primeros 500 pasos**; con 25 000 timesteps, en los **primeros 125 pasos**. Para una tesis, este detalle merece mención explícita porque afecta mucho al régimen de exploración real.
+- **`n_quantiles` se fija explícitamente en `policy_kwargs` (=200)** en el experimento oficial; coincide además con el default oficial de la política QRDQN (200 cuantiles). Ese dato es metodológicamente importante porque determina el tamaño de la cabeza de salida, el coste computacional y la granularidad con la que aproximas la distribución. (En versiones antiguas del script no estaba fijado y había que inferirlo del default.)
+- **Los parámetros de exploración se fijan explícitamente** en el experimento oficial (perfil `main-experiment`): `exploration_fraction=0.10`, `exploration_initial_eps=1.0` y `exploration_final_eps=0.02`. El perfil `default` (dev/smoke) usa en cambio `exploration_fraction=0.005` / `exploration_final_eps=0.01`, cercano al default de SB3-Contrib. Para ese 0.005 del perfil `default`: con 100 000 timesteps, la caída lineal de \(\varepsilon\) termina aproximadamente en los **primeros 500 pasos**; con 25 000 timesteps, en los **primeros 125 pasos**. Para una tesis, este detalle merece mención explícita porque afecta mucho al régimen de exploración real.
 - **El script `train_rl_defender.py` contiene una inconsistencia documental interna**: en la ayuda de `--timesteps` se habla de un default de “500k full, 5k fast”, pero el código efectivo en `main()` asigna `25_000` para `fast` y `100_000` para `full`. En una defensa oral, esto conviene reconocerlo como una discrepancia de documentación del script, no como un resultado científico.
 - **Los resultados históricos no coinciden necesariamente con los defaults actuales del código**. El reward actual por defecto usa `tp=1.5`, `fp=-2.0`, `fn=-5.0`, `omission=0.0`, que coincide con C03 y MAIN, pero no con todos los runs históricos anteriores. En tu memoria conviene separar con nitidez “**defaults del código actual**” frente a “**settings del artefacto reportado**”.
 - **La validación leave-one-exact-CSV-out está implementada, pero no hay un artefacto agregado comprometido en `runs/validation/`**. Por tanto, esa parte debe presentarse como “workflow implementado” y no como resultado medido cerrado.
@@ -137,7 +141,7 @@ En cuanto al **replay buffer**, QRDQN hereda la lógica genérica de `OffPolicyA
 
 La **red objetivo** se actualiza con `polyak_update`. Si `tau=1.0`, esto equivale a una **copia dura** cada `target_update_interval`; si `tau<1`, pasa a ser una actualización blanda tipo Polyak. En tu repo usas `tau=1.0`, así que estás en modo hard target update. Ese punto conviene defenderlo explícitamente porque mucha gente asume “Polyak” y en realidad en tu código se comporta como una copia periódica.
 
-La **exploración** es \(\varepsilon\)-greedy. Mientras `deterministic=False`, QRDQN compara un aleatorio con `exploration_rate`; si se explora, la acción es uniforme en el espacio discreto; si no, delega en la política QRDQN. La tasa \(\varepsilon\) sigue una programación lineal entre `exploration_initial_eps` y `exploration_final_eps` a lo largo de `exploration_fraction`. Esto es importante en tu caso porque no la sobreescribes, así que te quedas con el decaimiento rápido por defecto de QRDQN.
+La **exploración** es \(\varepsilon\)-greedy. Mientras `deterministic=False`, QRDQN compara un aleatorio con `exploration_rate`; si se explora, la acción es uniforme en el espacio discreto; si no, delega en la política QRDQN. La tasa \(\varepsilon\) sigue una programación lineal entre `exploration_initial_eps` y `exploration_final_eps` a lo largo de `exploration_fraction`. En el experimento oficial **sí sobreescribes** la exploración (`exploration_fraction=0.10`), de modo que el decaimiento de \(\varepsilon\) es mucho más gradual que el default 0.005 de QRDQN; el perfil `default` (dev/smoke) sí deja el decaimiento rápido por defecto.
 
 El **optimizador** por defecto es `Adam`. Si el usuario no pasa `optimizer_class` en `policy_kwargs`, el constructor de QRDQN inyecta `Adam` y fija además `optimizer_kwargs={"eps": 0.01 / batch_size}`. Ese detalle es poco conocido y muy defendible en una oral: en tu preset `full`, con `batch_size=2048`, el epsilon del Adam implícito es aproximadamente \(4.88\times 10^{-6}\); en `fast`, con `batch_size=512`, es aproximadamente \(1.95\times 10^{-5}\). No es solo “Adam por defecto”: el `eps` queda **acoplado al batch size**.
 
@@ -160,7 +164,7 @@ flowchart LR
 
 Ese esquema resume exactamente cómo la política QRDQN transforma la observación en cuantiles por acción y, a partir de ellos, en valores esperados por acción para la política greedy.
 
-En tu repo, la arquitectura concreta es más grande que la default: `MlpPolicy` con `net_arch=[512, 256]`. Como el entorno `RLDatasetDefenderEnv` tiene observaciones de 152 dimensiones y acciones discretas binarias, y como `n_quantiles` no se especifica, el cabezal de salida es de **400** neuronas \((2 \text{ acciones} \times 200 \text{ cuantiles})\). Por tanto, la forma de salida es \((B, 200, 2)\).
+En tu repo, la arquitectura concreta es bastante más grande que la default: el experimento oficial (perfil `main-experiment`) usa `MlpPolicy` con `net_arch=[1024, 1024, 512]` (el perfil `default` dev/smoke usa `[512, 256]`). Como el entorno `RLDatasetDefenderEnv` tiene observaciones de 152 dimensiones y acciones discretas binarias, y como `n_quantiles=200` se fija explícitamente, el cabezal de salida es de **400** neuronas \((2 \text{ acciones} \times 200 \text{ cuantiles})\). Por tanto, la forma de salida es \((B, 200, 2)\).
 
 Para una MLP vectorial con extractor sin parámetros, el recuento de parámetros de la red online es:
 
@@ -168,7 +172,11 @@ Para una MLP vectorial con extractor sin parámetros, el recuento de parámetros
 (dh_1+h_1) + (h_1h_2+h_2) + (h_2AN + AN),
 \]
 
-donde \(d\) es la dimensión de observación, \(A\) el número de acciones y \(N\) el número de cuantiles. La red objetivo duplica exactamente ese tamaño, aunque no se optimiza por gradiente. Aplicado a tu caso:
+donde \(d\) es la dimensión de observación, \(A\) el número de acciones y \(N\) el número de cuantiles. La red objetivo duplica exactamente ese tamaño, aunque no se optimiza por gradiente.
+
+Aplicado al **experimento oficial** (perfil `main-experiment`, `net_arch=[1024,1024,512]`, es decir \(h_1=1024\), \(h_2=1024\), \(h_3=512\)), añadiendo el término de la tercera capa oculta \((h_2 h_3 + h_3)\): la red online suma **1 936 272 parámetros** (156 672 en la primera capa + 1 049 600 en la segunda + 524 800 en la tercera + 205 200 en la salida) y **3 872 544** contando online + target.
+
+Aplicado al **perfil `default`** (`net_arch=[512,256]`):
 
 - \(d=152\)
 - \(A=2\)
@@ -188,22 +196,22 @@ En la API pública de `QRDQN`, los únicos argumentos realmente **obligatorios**
 | --------------------------- | --------------: | ---------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------- |
 | `policy`                  |              — | tipo de política (`MlpPolicy`, `CnnPolicy`, `MultiInputPolicy`) | depende de observación                                               | **Sí**: `"MlpPolicy"`                        |
 | `env`                     |              — | entorno Gym/Gymnasium o VecEnv                                         | obligatorio                                                           | **Sí**: `DummyVecEnv(Monitor(...))`          |
-| `learning_rate`           |        `5e-5` | ritmo de aprendizaje; puede ser constante o schedule                   | más alto acelera, pero arriesga inestabilidad                        | **Sí**: `1e-4`                               |
-| `buffer_size`             |   `1_000_000` | tamaño máximo del replay buffer                                      | buffers grandes estabilizan, pero consumen RAM                        | **Sí**: función de `timesteps`, cap en 200k |
-| `learning_starts`         |         `100` | warm-up antes de entrenar                                              | demasiado bajo: targets ruidosos; demasiado alto: retrasa aprendizaje | **Implícito**: default 100                     |
-| `batch_size`              |          `32` | tamaño de minibatch                                                   | mayor batch reduce varianza, aumenta coste/memoria                    | **Sí**: `512` / `2048`                     |
+| `learning_rate`           |        `5e-5` | ritmo de aprendizaje; puede ser constante o schedule                   | más alto acelera, pero arriesga inestabilidad                        | **Sí**: `5e-5` (main) / `1e-4` (default) |
+| `buffer_size`             |   `1_000_000` | tamaño máximo del replay buffer                                      | buffers grandes estabilizan, pero consumen RAM                        | **Sí**: `1_000_000` (main) / `min(200k, max(timesteps, 10k))` (default) |
+| `learning_starts`         |         `100` | warm-up antes de entrenar                                              | demasiado bajo: targets ruidosos; demasiado alto: retrasa aprendizaje | **Sí**: `50_000` (main) / `100` (default) |
+| `batch_size`              |          `32` | tamaño de minibatch                                                   | mayor batch reduce varianza, aumenta coste/memoria                    | **Sí**: `2048` (main) / `512`–`2048` (default) |
 | `tau`                     |         `1.0` | soft update de target;`1.0` = hard copy                              | `<1` blando; `1` duro                                             | **Sí**: `1.0`                                |
-| `gamma`                   |        `0.99` | descuento                                                              | más alto: horizonte largo; más bajo: más miope                     | **Sí**: `0.99`                               |
-| `train_freq`              |           `4` | frecuencia de updates                                                  | controla cadencia entre datos y gradientes                            | **Sí**: `50` / `100`                       |
-| `gradient_steps`          |           `1` | nº de pasos de gradiente por ciclo                                    | más alto = más compute por igual experiencia                        | **Sí**: `10` / `20`                        |
+| `gamma`                   |        `0.99` | descuento                                                              | más alto: horizonte largo; más bajo: más miope                     | **Sí**: `0.0` |
+| `train_freq`              |           `4` | frecuencia de updates                                                  | controla cadencia entre datos y gradientes                            | **Sí**: `100` (main) / `50`–`100` (default) |
+| `gradient_steps`          |           `1` | nº de pasos de gradiente por ciclo                                    | más alto = más compute por igual experiencia                        | **Sí**: `20` (main) / `10`–`20` (default) |
 | `replay_buffer_class`     |        `None` | clase de buffer                                                        | custom buffer si se quiere extender                                   | **No**                                          |
 | `replay_buffer_kwargs`    |        `None` | kwargs del buffer                                                      | p.ej.`handle_timeout_termination`                                   | **No**                                          |
 | `optimize_memory_usage`   |       `False` | variante memory-efficient                                              | ahorra memoria, añade complejidad                                    | **No**                                          |
-| `target_update_interval`  |       `10000` | cada cuántos pasos se actualiza target                                | pequeño = más reactivo; grande = más estable pero más lento       | **Sí**: `1000` / `10000`                   |
-| `exploration_fraction`    |       `0.005` | fracción del entrenamiento donde cae\(\varepsilon\)                   | más grande = exploración prolongada                                 | **Implícito**                                  |
-| `exploration_initial_eps` |         `1.0` | \(\varepsilon\) inicial                                                | normalmente alto                                                      | **Implícito**                                  |
-| `exploration_final_eps`   |        `0.01` | \(\varepsilon\) final                                                  | más alto = más exploración residual                                | **Implícito**                                  |
-| `max_grad_norm`           |        `None` | clipping de gradiente                                                  | puede mejorar estabilidad                                             | **Implícito**: sin clipping                    |
+| `target_update_interval`  |       `10000` | cada cuántos pasos se actualiza target                                | pequeño = más reactivo; grande = más estable pero más lento       | **Sí**: `10000` (main) / `1000`–`10000` (default) |
+| `exploration_fraction`    |       `0.005` | fracción del entrenamiento donde cae\(\varepsilon\)                   | más grande = exploración prolongada                                 | **Sí**: `0.10` (main) / `0.005` (default) |
+| `exploration_initial_eps` |         `1.0` | \(\varepsilon\) inicial                                                | normalmente alto                                                      | **Sí**: `1.0` |
+| `exploration_final_eps`   |        `0.01` | \(\varepsilon\) final                                                  | más alto = más exploración residual                                | **Sí**: `0.02` (main) / `0.01` (default) |
+| `max_grad_norm`           |        `None` | clipping de gradiente                                                  | puede mejorar estabilidad                                             | **Sí**: `10.0` (main) / `None` (default) |
 | `stats_window_size`       |         `100` | ventana para logging                                                   | afecta solo a métricas agregadas                                     | **Implícito**                                  |
 | `tensorboard_log`         |        `None` | directorio TensorBoard                                                 | útil para monitorización                                            | **Sí**                                         |
 | `policy_kwargs`           |        `None` | kwargs internos de la política                                        | donde se pasa `net_arch`, `n_quantiles`, etc.                     | **Sí**                                         |
@@ -220,8 +228,8 @@ Aunque el usuario normalmente no instancia `QRDQNPolicy` a mano, para una memori
 
 | Parámetro                    | Default oficial                                                                | Papel                                                                   | En tu repo                              |
 | :---------------------------- | :----------------------------------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------- |
-| `n_quantiles`               | `200`                                                                        | nº de cuantiles por acción; afecta resolución distribucional y coste | **Implícito**                    |
-| `net_arch`                  | `[64,64]` en MLP, `[]` con `NatureCNN`                                   | profundidad/anchura MLP                                                 | **Sí**: `[512,256]`            |
+| `n_quantiles`               | `200`                                                                        | nº de cuantiles por acción; afecta resolución distribucional y coste | **Sí**: `200` (explícito) |
+| `net_arch`                  | `[64,64]` en MLP, `[]` con `NatureCNN`                                   | profundidad/anchura MLP                                                 | **Sí**: `[1024,1024,512]` (main) / `[512,256]` (default) |
 | `activation_fn`             | `ReLU`                                                                       | no linealidad                                                           | **Implícito**                    |
 | `features_extractor_class`  | `FlattenExtractor`                                                           | extractor para observación vectorial                                   | **Implícito**                    |
 | `features_extractor_kwargs` | `None`                                                                       | configuración del extractor                                            | **No**                            |
@@ -234,26 +242,32 @@ La política oficial crea dos redes independientes del mismo tamaño, copia peso
 ### Fragmento relevante de tu repositorio
 
 ```python
+# Experimento oficial: perfil `main-experiment` (run MAIN)
 model = QRDQN(
     "MlpPolicy",
     vec_env,
     seed=seed,
-    policy_kwargs=dict(net_arch=[512, 256]),
-    learning_rate=lr,
-    buffer_size=min(200_000, max(total_timesteps, 10_000)),
-    batch_size=batch_size,
-    gradient_steps=gradient_steps,
-    gamma=0.99,
+    policy_kwargs=dict(net_arch=[1024, 1024, 512], n_quantiles=200),
+    learning_rate=5e-5,
+    buffer_size=1_000_000,
+    learning_starts=50_000,
+    batch_size=2048,
+    gradient_steps=20,
+    gamma=0.0,
     tau=1.0,
-    train_freq=train_freq,
-    target_update_interval=target_update_interval,
+    train_freq=100,
+    target_update_interval=10_000,
+    exploration_initial_eps=1.0,
+    exploration_final_eps=0.02,
+    exploration_fraction=0.10,
+    max_grad_norm=10.0,
     verbose=1,
     device=device,
     tensorboard_log=tb_log_dir,
 )
 ```
 
-Este bloque resume con fidelidad qué hiperparámetros fijas de forma explícita y cuáles dejas a default en tu entrenamiento principal.
+Este bloque refleja el perfil `main-experiment` (run MAIN): `n_quantiles`, exploración, arquitectura y demás hiperparámetros se fijan de forma **explícita**. El perfil `default` (dev/smoke) usa en cambio `net_arch=[512,256]`, `learning_rate=1e-4`, `gamma=0.0`, `exploration_fraction=0.005` y valores dependientes de preset.
 
 ## Consideraciones prácticas, evaluación y reproducibilidad
 
@@ -267,7 +281,7 @@ El gran resultado positivo de tu repo es el rendimiento en random split: el run 
 
 Para el tuning, los rangos que ya exploras con Optuna en tu repo son razonables y, de hecho, merecen aparecer en la memoria: `learning_rate` entre \(10^{-5}\) y \(10^{-3}\) en log-space, `batch_size` en \(\{256,512,1024,2048\}\), `gradient_steps` en \(\{10,50,100\}\), `net_arch` entre `[256,128]`, `[512,256]` y `[256,256]`, `gamma` entre 0.95 y 0.999, y `train_freq` en \(\{50,100,200\}\). Eso ya constituye una exploración metodológicamente defendible, porque cubre capacidad de red, horizonte temporal, intensidad de actualización y rapidez de aprendizaje.
 
-Dicho eso, si hubiera que señalar **los primeros dos hiperparámetros críticos** a revisar en tu canalización concreta, serían estos. Primero, `exploration_fraction`, porque al heredarse el default 0.005 puede que estés explorando demasiado poco durante casi todo el entrenamiento. Segundo, `n_quantiles`, porque 200 es un default razonable en Atari pero quizá no sea óptimo para un problema tabular/vectorial de clasificación secuencial con dos acciones y recompensas relativamente compactas. Ni tu script principal ni tus configs comprometidos lo exponen todavía de forma explícita.
+Dicho eso, si hubiera que señalar **los primeros dos hiperparámetros críticos** a revisar en tu canalización concreta, serían estos. Primero, `exploration_fraction`: el experimento oficial lo fija en `0.10` (el perfil `default` usa el `0.005` cercano al de SB3); conviene discutir si `0.10` aporta suficiente exploración para tu problema. Segundo, `n_quantiles`, porque 200 es un default razonable en Atari pero quizá no sea óptimo para un problema tabular/vectorial de clasificación secuencial con dos acciones y recompensas relativamente compactas. Ambos se fijan ya de forma **explícita** en el experimento oficial (`policy_kwargs` y argumentos de exploración); la discusión pertinente es su **valor**, no si están declarados.
 
 En coste computacional, QRDQN es más caro que DQN sobre todo por la cabeza \(A\times N\) y por la pérdida entre conjuntos de cuantiles. En tu problema eso no es dramático porque \(A=2\), pero con muchos actions o imágenes el coste escala deprisa. A cambio, el paper original de QR-DQN reporta mejor rendimiento que C51 y mejoras sustanciales sobre el estado del arte de su momento en Atari, incluyendo un aumento mediano del 33 % sobre C51 al usar Huber quantile regression. Para el TFG, la formulación prudente es: **hay evidencia fuerte de mejora en benchmarks discretos clásicos, pero no debe extrapolarse sin más a ciberseguridad tabular**.
 
@@ -313,9 +327,9 @@ La posibilidad de acceder a `quantile_net`, la forma `(batch, N, A)` y la selecc
 - **¿En qué se diferencia QRDQN de C51 en una frase?**C51 fija los soportes y aprende probabilidades; QRDQN fija probabilidades uniformes y aprende las localizaciones de los cuantiles. Por eso QRDQN no necesita \(V_{\min}\) ni \(V_{\max}\).
 - **Si QRDQN aprende distribución, por qué dices que no es “risk-sensitive”?**Porque en SB3 la acción se elige con `argmax` de la **media** de cuantiles. La distribución se aprende y se puede analizar, pero la política por defecto sigue maximizando esperanza.
 - **¿Tu implementación usa prioritized replay, Double DQN o dueling?**No de forma nativa. El QRDQN de SB3-Contrib usa el esqueleto off-policy estándar con `ReplayBuffer` y muestreo normal; además, la selección bootstrap se hace sobre la target net, no en esquema Double DQN. Tu repo tampoco inyecta un buffer custom ni una arquitectura dueling.
-- **¿Cuál es el hiperparámetro más “silencioso” de tu implementación?**Probablemente `exploration_fraction`, porque no se fija en el repo y el default de QRDQN es 0.005. Eso implica que \(\varepsilon\) cae muy deprisa, lo que puede reducir exploración real más de lo intuitivo.
-- **¿Qué gain te aporta `n_quantiles`?**Controla la resolución con la que aproximas la distribución. Más cuantiles significan mayor detalle en colas y forma, pero también más coste y una cabeza de salida más grande. En SB3 el default es 200 y en tu repo se está usando inferidamente ese valor.
+- **¿Cuál es el hiperparámetro más “silencioso” de tu implementación?**Históricamente era `exploration_fraction` (se heredaba el default `0.005` de QRDQN, con \(\varepsilon\) cayendo muy deprisa). En el experimento oficial **ya se fija explícitamente** en `0.10`; el matiz fino que conviene comentar es el **ritmo de decaimiento** de \(\varepsilon\) y su efecto en la exploración real.
+- **¿Qué gain te aporta `n_quantiles`?**Controla la resolución con la que aproximas la distribución. Más cuantiles significan mayor detalle en colas y forma, pero también más coste y una cabeza de salida más grande. En SB3 el default es 200 y en tu repo se fija explícitamente ese valor (200) en `policy_kwargs`.
 - **¿Por qué no basta con reportar accuracy de random split?**Porque tu propio repositorio muestra que el rendimiento en split aleatorio es casi perfecto, pero cae de forma notable en el split duro por día/CSV. Eso indica que el verdadero reto es la **generalización fuera de distribución**, no el ajuste en condiciones i.i.d. aproximadas.
 - **¿Qué aspecto de tu repo hace más creíble el trabajo?**Que no te quedas en un único score: guardas artefactos por `RUN_ID`, diferencias defaults actuales de settings históricos, usas validaciones anti-leakage y por día/CSV, y documentas explícitamente las lagunas donde todavía no hay artefacto comprometido. Eso mejora la trazabilidad experimental.
 - **¿Cuál sería una mejora inmediata para la memoria del TFG?**
-  Fijar en texto y, si es posible, en código los parámetros implícitos heredados de SB3-Contrib: versión exacta, `n_quantiles`, exploración y `optimizer_kwargs`. Eso evita reproducibilidades ambiguas y muestra dominio real de la implementación.
+  `n_quantiles` y la exploración ya se fijan en código en el experimento oficial; el cierre pendiente es **pinear la versión exacta** de SB3/SB3-Contrib y documentar `optimizer_kwargs`. Eso evita reproducibilidades ambiguas y muestra dominio real de la implementación.
