@@ -35,7 +35,9 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 - [experiments/cicids2017_qrdqn_experiments.md](experiments/cicids2017_qrdqn_experiments.md): maintained CICIDS2017 + QRDQN run history
 - [docs/DEFENSA_TFG_PROGRESO.md](docs/DEFENSA_TFG_PROGRESO.md): Spanish defense notes
 - [docs/DEFENSA_TFG_SCRIPT.md](docs/DEFENSA_TFG_SCRIPT.md): Spanish defense script
-- [report/report.tex](report/report.tex): thesis report source draft
+- [memoria/memoria.tex](memoria/memoria.tex): **canonical thesis (Spanish)** — official source
+- [report/report.tex](report/report.tex): English thesis draft — parked (may lag new sections)
+- [docs/audits/](docs/audits/): dated read-only repository audits
 
 ## Repository Structure
 
@@ -45,12 +47,15 @@ TFG_CYBER_AI/
 ├── .github/                   # Agent guidance and coding/review agent instructions
 ├── datasets/                  # Local datasets (also tracked via git lfs)
 ├── docs/                      # Documentation, results, Phase 2 guides, defense material
-|   └── Personal Research/     # Personal stuff to guide and track for personal use
+|   ├── Personal Research/     # Personal research/defense notes (.tex/.pdf tracked; .md gitignored)
+|   ├── audits/                # Dated read-only repository audits
+|   └── archive/               # Obsolete docs kept for history (e.g. informe.* draft)
 ├── experiments/               # Experiment archive notes: historical and maintained timelines
 ├── lab/                       # Lab-related assets
+├── memoria/                   # Canonical thesis (Spanish) — official source
 ├── models/                    # Trained model files (tracked)
 ├── pcaps/                     # Extracted flows and captures used for Phase 2 work (tracked)
-├── report/                    # Thesis report and sources
+├── report/                    # English thesis draft — parked (may lag new sections)
 ├── runs/                      # Run artifacts: config.json, metrics.json, validation_results.json, etc. (tracked)
 ├── scripts/                   # Phase 2 and utility scripts
 └── src/                       # Training, validation, adapters, environment, utilities
