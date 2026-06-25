@@ -12,7 +12,7 @@ Implementa tres checks para verificar que las métricas son genuinas:
 
 Uso:
     # Ejecutar todos los checks con el modelo entrenado
-    python src/validate_checks.py --model models/C01_qrdqn_cicids2017_canonical_full_20260212_200218.zip
+    python src/validate_checks.py --model models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip
 
     # Solo Check A (rápido, no re-entrena)
     python src/validate_checks.py --model models/<MODEL>.zip --checks A
