@@ -1,4 +1,4 @@
-timestamp: 2026-06-25T17:14:33.961228+00:00
+timestamp: 2026-06-25T17:36:54.959157+00:00
 reason: semantic sources changed - run `graphify .` for a full refresh
 paths:
-- experiments/cicids2017_qrdqn_experiments.md
+- docs/audits/repo_cleanup_implementation_guide_2026-06-25.md
