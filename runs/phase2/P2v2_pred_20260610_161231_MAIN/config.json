@@ -1,0 +1,11 @@
+{
+  "run_id": "P2v2_pred_20260610_161231_MAIN",
+  "flows_csv": "pcaps/synthetic_real_traffic.csv",
+  "model_zip": "models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip",
+  "scaler": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib",
+  "percentiles": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz",
+  "clip_z": 10.0,
+  "no_scale": false,
+  "mask_semantics": "1=present,0=missing",
+  "note": "Robust Phase 2 offline inference (v2) on extracted flows.csv"
+}
