@@ -73,7 +73,7 @@ Generado en `c97b734c` (anterior a `memoria/`). Contiene `Reward Config Historic
 - `docs/results.md` (≈204, 251), `docs/AGENT_CONTEXT.md` (≈54), `docs/phase2_plan.md` (≈119, 134), `experiments/cicids2017_qrdqn_experiments.md` (≈159), y la propia `docs/audits/stale_claims_diagnosis_2026-06-15.md` (136, 137, 150).
 → actualizar todas a `..._161231_MAIN`.
 
-**H1 · Inversión de trackability (Personal Research).** `.gitignore` ignora `docs/Personal Research/**/*.md` mientras `.tex`+`.pdf` sí se versionan. La fuente editable (`.md`) no entra en git. `docs/README.md` enlaza a `Personal Research/deep-defense-research/README.md`, que está ignorado (solo existe `README.tex/.pdf`). → decisión de tracking + fix de enlace (§6.2).
+**H1 · Inversión de trackability (Personal Research) — RESUELTO 2026-06-25.** Antes `.gitignore` ignoraba los `.md` (fuente) mientras versionaba `.tex`+`.pdf` (derivados). Ahora se versiona **solo el `.md`**; `.tex`/`.pdf` eliminados; enlace de `docs/README.md` apuntado al `.md`. Notas marcadas como investigación, no fuente de verdad.
 
 **R2 · Comparación RF "Check C" con splits distintos.** `baseline_random_forest_comparison/results_rf.txt` Sweep-2 (day split) testea solo Viernes (3 CSV); el Check C de QRDQN testea Jueves+Viernes (n_test 1.162.213). `docs/results.md` invita a compararlos directamente. → aclarar o realinear. Nota: el RF **random split** (test 566.149 = idéntico al de MAIN) sí es baseline oficial alineado con MAIN.
 
@@ -135,9 +135,7 @@ D1, D2 (decisión), D3, D4, D5, R1, R2, R3, C1.
 - `report/` (EN) = canónica en inglés, **aparcada** por ahora (se acepta que quede algo desactualizada en secciones nuevas). Se conserva en sitio.
 - `docs/informe.tex` / `.pdf` = borrador inicial **obsoleto** de la memoria → **archivado** en `docs/archive/` (ver §10).
 
-**6.2 — Tracking de `docs/Personal Research/` (ABIERTO):** Opción A (recomendada si son fuente de defensa): versionar los `.md` (quitar de `.gitignore`) y arreglar el enlace de `docs/README.md`. Opción B: tratar `.tex` como fuente, dejar `.md` como borrador local y no basar claims versionados en ellos.
-
-> Mientras no decidas 6.2 no recompiles `.tex/.pdf`.
+**6.2 — Tracking de `docs/Personal Research/` (RESUELTO 2026-06-25):** son notas de investigación (Deep Research), **no fuentes de verdad** — los valores que mencionen (p.ej. un `gamma`) son ilustrativos, no canónicos. Se conserva **solo el `.md`** (formato fuente único); se eliminaron los `.tex` y `.pdf` derivados y se quitó el ignore de los `.md`. No se pierde contenido: los `.md` eran superconjunto (incluían `07-artefactos-...` que no tenía `.tex`).
 
 ---
 
@@ -219,5 +217,6 @@ git status --short; uv run ruff check .; uv run pytest tests/
 ## 10. Reorg de `docs/` ya ejecutada (2026-06-25)
 - Creado `docs/audits/` con `tfg_cyber_ai_audit.md`, `stale_claims_diagnosis_2026-06-15.md` y esta guía (+ `README.md` índice).
 - Creado `docs/archive/` con `informe.tex` / `informe.pdf` (borrador obsoleto de la memoria) (+ `README.md`).
-- `docs/README.md` y `README.md` (raíz) actualizados: tesis canónica = `memoria/`; `report/` (EN) aparcada; índice de auditorías; enlace de Personal Research apuntado al `.tex` tracked.
-- **Pendiente (requiere estar al teclado, ver Fases 3/5):** archivar probes de `runs/`/`models/`, destrackear binarios, decidir §6.2.
+- `docs/README.md` y `README.md` (raíz) actualizados: tesis canónica = `memoria/`; `report/` (EN) aparcada; índice de auditorías.
+- **Personal Research (§6.2 resuelto):** se conserva solo `.md`; eliminados `.tex`+`.pdf` derivados; `.gitignore` ya no ignora los `.md`; enlace de `docs/README.md` apuntado al `.md`. Marcadas como investigación, no fuente de verdad.
+- **Pendiente (requiere estar al teclado, ver Fases 3/5):** archivar probes de `runs/`/`models/`, destrackear binarios pesados de `runs/`.
