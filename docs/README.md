@@ -14,11 +14,13 @@ This directory contains the maintained project documentation used for developmen
 | [gcp_lab.md](gcp_lab.md) | Author, contributors | Private lab setup guide | Maintained |
 | [runpod_main_experiment.md](runpod_main_experiment.md) | Author, contributors | Single main RunPod training run guide | Maintained |
 | [reproducibility.md](reproducibility.md) | Author, contributors | Dependency and environment reproduction notes | Maintained |
-| [Personal Research/deep-defense-research/README.md](Personal%20Research/deep-defense-research/README.md) | Author | Deep multi-file thesis/defense research pack (Spanish) | Maintained |
+| [Personal Research/deep-defense-research/README.tex](Personal%20Research/deep-defense-research/README.tex) | Author | Deep multi-file thesis/defense research pack (Spanish; `.md` sources gitignored, `.tex`/`.pdf` tracked) | Maintained |
 | [../experiments/README.md](../experiments/README.md) | Author, reviewers | Historical experiment archive index | Maintained |
 | [DEFENSA_TFG_PROGRESO.md](DEFENSA_TFG_PROGRESO.md) | Author | Spanish defense preparation notes | Maintained, Spanish by design |
 | [DEFENSA_TFG_SCRIPT.md](DEFENSA_TFG_SCRIPT.md) | Author | Spanish defense script | Maintained, Spanish by design |
-| [informe.tex](informe.tex) / [informe.pdf](informe.pdf) | Author, evaluators | LaTeX source and compiled thesis submission report | Maintained |
+| [../memoria/memoria.tex](../memoria/memoria.tex) | Author, evaluators, tribunal | Canonical thesis (Spanish) — official source | Maintained |
+| [../report/report.tex](../report/report.tex) | Author | English thesis draft — parked (may lag new sections) | Historical |
+| [audits/](audits/) | Author | Dated read-only repository audits (historical snapshots) | Reference |
 
 ## Reading Order
 
@@ -45,3 +47,4 @@ If you are new to the repository, read in this order:
 - Historical material should be clearly marked as historical.
 - Results should only be presented as authoritative if backed by artifacts under `runs/`.
 - If code and documentation disagree, update the documentation to match the current code and artifact state.
+- Obsolete drafts live in [archive/](archive/) (e.g. the superseded `informe.tex`/`.pdf`, an early draft of the Spanish thesis `memoria/`).
