@@ -174,14 +174,15 @@ D1, D2 (decisión), D3, D4, D5, R1, R2, R3, C1.
 - [x] Confirmado **sin código muerto eliminable** (auditoría de referencias por agente): todos los módulos `src/`/`scripts/` están referenciados (imports, tests, CI `ci.yml`, docs/CLI). Notas: `src/load_nsl_kdd.py` no se importa pero se conserva como histórico (§9); `scripts/deprecated_predict_real_traffic.py` es legacy documentado (se conserva, no se elimina). **Reubicados**: `pcaps/deprecated_*` → `pcaps/archive/` (B1 / H3; sin refs de código, verificado) + `README`; `scratch/experimental_design_board.html` → `docs/archive/` y `scratch/` eliminado.
 - [x] **D7** (baja): mapear terminología `Check A/B/C` en methodology. **PENDIENTE de visto bueno del autor**: toca `memoria/capitulos/metodologia.tex`, protegido por §9 ("no tocar todavía"). Cambio propuesto (1 frase en la "Escalera de validación", reversible) preparado; aplicar solo con confirmación. *Nota: ya ha sido añadido a metodologia.tex*
 
-### Fase 5 — Tracking de binarios (decisión 3)
-- [ ] `.gitignore`: añadir `runs/**/events.out.tfevents.*`, `runs/**/model.zip`, `scratch/`.
-- [ ] `git rm --cached` de esos artefactos ya commiteados (no borrar de disco; **no** `filter-repo`/BFG).
-- [ ] Mantener tracked: `models/MAIN_*full_*193655.zip`, JSON pequeños del run MAIN, probes archivados (`.zip` + JSON), futuros secundarios.
-- [ ] **H3**: borrar/archivar `pcaps/deprecated_*`.
+### Fase 5 — Tracking de binarios (decisión 3) — COMPLETADA 2026-06-25
+- [x] `.gitignore`: añadido `runs/**/events.out.tfevents.*`, `runs/**/model.zip`, `scratch/`.
+- [x] `git rm --cached` de esos artefactos ya commiteados (no borrar de disco; **no** `filter-repo`/BFG). Aplica a copias `model.zip` dentro de `runs/`, incluidos duplicados archivados; los zips canónicos siguen en `models/` / `models/archive/`.
+- [x] Mantener tracked: `models/MAIN_*full_*193655.zip`, JSON pequeños del run MAIN, zips de probes en `models/archive/` + JSON pequeños, futuros secundarios.
+- [x] Eventos TensorBoard destrackeados en todo `runs/**`, incluido el evento histórico bajo `runs/nslkdd/`; no toca modelos NSL-KDD ni artefactos `.joblib`.
+- [x] **H3**: `pcaps/deprecated_*` ya archivado en Fase 4; verificado sin ficheros tracked en la raíz de `pcaps/`.
 
-### Fase 6 — Validación final
-- [ ] Correr §8. `ruff` + `pytest` verdes; `git status` sin cambios accidentales.
+### Fase 6 — Validación final — COMPLETADA 2026-06-25
+- [x] Correr §8. `ruff` + `pytest` verdes; `git status` revisado sin cambios accidentales fuera del scope de Fase 5/6.
 
 ---
 
@@ -195,15 +196,16 @@ rg -n "gamma|net_arch|n_quantiles|exploration_fraction|REWARD_CONFIG" src/train_
 rg --no-ignore -n "gamma=0.99|net_arch=\[?512|exploration_fraction.*0.005" "docs/Personal Research"
 
 # Claim falso fp=-1.5 (solo en graphify-out stale; debe desaparecer al regenerar)
-rg --no-ignore -n "fp=-1.5|Current \(fp=-1.5\)"
+rg --no-ignore -n "fp=-1.5|Current \(fp=-1.5\)" --glob "!docs/audits/**"
 
 # Rutas Phase 2 viejas sin _MAIN (deben quedar 0 tras R3)
-rg -n "P2v2_pred_20260610_161231(?!_MAIN)" docs experiments README.md
+rg -P -n "P2v2_pred_20260610_161231(?!_MAIN)" docs experiments README.md --glob "!docs/audits/**"
 
 # Referencias antes de archivar probes
 rg -n "C01_|C02_|C03_|A01_|A02_|rl_defender_dqn|MAIN_.*fast_random" --glob '!graphify-out' --glob '!docs/audits'
 
-# Enlace roto a fichero ignorado
+# README de Personal Research versionado y no ignorado (check-ignore debe no devolver nada)
+git ls-files "docs/Personal Research/deep-defense-research/README.md"
 git check-ignore "docs/Personal Research/deep-defense-research/README.md"
 
 # Optuna
