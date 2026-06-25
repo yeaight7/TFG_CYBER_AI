@@ -190,7 +190,7 @@ Métricas:
 
 Artefacto:
 
-- `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/`
+- `runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/`
 
 C03 es un **probe previo al diseño experimental** (no oficial): `max_rows=500 000`, test de 100 000 filas con mezcla de clases distorsionada, **no comparable** con la partición de test fija de MAIN.
 
