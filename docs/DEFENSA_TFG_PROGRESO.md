@@ -154,7 +154,7 @@ Esto coincide con:
 
 ### Importante para no decir algo incorrecto
 
-El **mejor run histórico** (`C03_qrdqn_cicids2017_canonical_full_random_20260223_232439`) usa la misma recompensa que el default actual:
+El run oficial (`MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`) y el probe histórico C03 usan la misma recompensa que el default actual:
 
 ```python
 tp = 1.5
@@ -172,11 +172,27 @@ Por tanto, en la defensa conviene distinguir siempre entre:
 
 ## 7. Resultados que sí puedes afirmar con respaldo
 
-### Mejor run histórico en CICIDS2017
+### Run oficial (MAIN) en CICIDS2017
+
+Artefacto:
+
+- `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/`
+
+Es el **run oficial** del proyecto: datos completos, perfil `main-experiment`, partición de test fija de **566 149** filas, **3 000 000** timesteps.
+
+Métricas:
+
+- accuracy: **0.99381**
+- recall ataque: **0.99536**
+- F1 ataque: **0.98445**
+
+### C03 (mejor probe histórico, previo al diseño)
 
 Artefacto:
 
 - `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/`
+
+C03 es un **probe previo al diseño experimental** (no oficial): `max_rows=500 000`, test de 100 000 filas con mezcla de clases distorsionada, **no comparable** con la partición de test fija de MAIN.
 
 Métricas:
 
@@ -186,8 +202,9 @@ Métricas:
 
 Mensaje útil en defensa:
 
-- el pipeline alcanza rendimiento muy alto en CICIDS2017
-- pero ese rendimiento no debe extrapolarse automáticamente a tráfico real
+- el run oficial MAIN alcanza rendimiento muy alto sobre la partición de test fija completa
+- los runs `C0x` (incluido C03) fueron exploración previa al diseño: contexto histórico, no resultado oficial
+- ese rendimiento no debe extrapolarse automáticamente a tráfico real
 
 ### Check A
 
@@ -260,6 +277,18 @@ Cómo contarlo:
 - un laboratorio privado documentado
 - un pipeline de inferencia offline robusto
 - artefactos reales en `runs/phase2/`
+
+### Run Phase 2 con el modelo oficial (MAIN)
+
+El run Phase 2 etiquetado con el modelo oficial es:
+
+- `runs/phase2/P2v2_pred_20260610_161231_MAIN/` (flows: `pcaps/synthetic_real_traffic.csv`, modelo MAIN)
+  - block_rate: **0.252364**
+  - accuracy: **0.991862**
+  - recall ataque: **0.988452**
+  - F1 ataque: **0.983801**
+
+Es un benchmark sobre tráfico sintético etiquetado; no debe mezclarse con los resultados internos de CICIDS2017 ni con los runs benign-only de abajo.
 
 ### Qué no debes simplificar demasiado
 
