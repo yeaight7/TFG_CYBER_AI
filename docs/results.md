@@ -88,7 +88,7 @@ C03 used `max_rows=500000`; its 100,000-row test set has a distorted class mix (
 | Gradient steps | `20` |
 | Reward config | `tp=1.5, fp=-2.0, fn=-5.0, omission=0.0` |
 
-Metrics from `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/metrics.json`:
+Metrics from `runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/metrics.json`:
 
 | Metric | Value |
 |--------|-------|
@@ -246,10 +246,10 @@ NSL-KDD remains historical benchmarking material only.
 
 - `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/` (official run)
 - Historical pre-design probes (C0x):
-  - `runs/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/`
-  - `runs/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/`
-  - `runs/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/`
-  - `runs/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/`
+  - `runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/`
+  - `runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/`
+  - `runs/archive/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/`
+  - `runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/`
 
 ### Validation
 
@@ -265,7 +265,7 @@ NSL-KDD remains historical benchmarking material only.
 
 ### Models
 
-- `models/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip`
+- `models/archive/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439.zip`
 - `models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip`
 
 ## Random Forest Baseline
