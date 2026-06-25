@@ -51,7 +51,7 @@ runs/phase2/<RUN_ID>/
 └── diagnostics.json   # optional, when exported
 ```
 
-When `predictions.csv` is too large to commit directly, it may be committed compressed as `predictions.csv.gz` together with a `predictions_head_10000.csv` sample (e.g. `runs/phase2/P2v2_pred_20260610_161231/`). The script itself always writes `predictions.csv` at run time.
+When `predictions.csv` is too large to commit directly, it may be committed compressed as `predictions.csv.gz` together with a `predictions_head_10000.csv` sample (e.g. `runs/phase2/P2v2_pred_20260610_161231_MAIN/`). The script itself always writes `predictions.csv` at run time.
 
 ## Maintained Entry Point
 
