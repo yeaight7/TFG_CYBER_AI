@@ -1,8 +1,8 @@
 # Guía de implementación — limpieza y realineamiento del repo TFG_CYBER_AI
 
-**Fecha:** 2026-06-25 · **Rev. 2** (reencuadre del marco de runs/hiperparámetros tras decisiones del autor).
-**Tipo:** auditoría read-only + plan de implementación por fases (checklist).
-**Estado al escribirla:** `HEAD = 61770a6`. Único cambio sin commitear: este documento. **Nada más implementado.**
+**Fecha:** 2026-06-25 · **Rev. 3** (consolida y reemplaza los audits previos; reencuadre del marco de runs/hiperparámetros).
+**Tipo:** auditoría read-only + plan por fases (checklist). **Único audit vivo** del repo: consolida `tfg_cyber_ai_audit.md` y `stale_claims_diagnosis_2026-06-15.md` (retirados 2026-06-25; en historia git). Ver §11.
+**Estado:** reorg de `docs/` y limpieza de Personal Research ya ejecutadas/commiteadas. El resto del plan (Fases 1–6) sigue pendiente.
 **Alcance auditado:** docs `.md`/`.tex` (grep), código `src/`/`scripts/`/`tests/`, `.gitignore` + tracking, JSON pequeños citados en `docs/results.md`. No se leyeron PDFs, datasets, PCAPs ni recorridos completos de `runs/`.
 
 ## 0. Cómo usar esta guía
@@ -70,7 +70,7 @@ Generado en `c97b734c` (anterior a `memoria/`). Contiene `Reward Config Historic
 **R1 · `test_set_sha256` aspiracional presentado como hecho.** `.github/AGENT_CONTEXT.md` dice "every load records `test_set_sha256`…", pero `MAIN/config.json → split_metadata` solo tiene conteos/ratios, sin hash; el manifiesto de referencia está "pending mint on RunPod". → marcar como mecanismo futuro.
 
 **R3 (NUEVO) · Rutas de Phase 2 rotas tras el rename `_MAIN`.** El dir se renombró a `runs/phase2/P2v2_pred_20260610_161231_MAIN/` (commit 61770a6), pero docs mantenidos siguen apuntando a la ruta vieja sin `_MAIN`:
-- `docs/results.md` (≈204, 251), `docs/AGENT_CONTEXT.md` (≈54), `docs/phase2_plan.md` (≈119, 134), `experiments/cicids2017_qrdqn_experiments.md` (≈159), y la propia `docs/audits/stale_claims_diagnosis_2026-06-15.md` (136, 137, 150).
+- `docs/results.md` (≈204, 251), `docs/AGENT_CONTEXT.md` (≈54), `docs/phase2_plan.md` (≈119, 134), `experiments/cicids2017_qrdqn_experiments.md` (≈159).
 → actualizar todas a `..._161231_MAIN`.
 
 **H1 · Inversión de trackability (Personal Research) — RESUELTO 2026-06-25.** Antes `.gitignore` ignoraba los `.md` (fuente) mientras versionaba `.tex`+`.pdf` (derivados). Ahora se versiona **solo el `.md`**; `.tex`/`.pdf` eliminados; enlace de `docs/README.md` apuntado al `.md`. Notas marcadas como investigación, no fuente de verdad.
@@ -81,8 +81,12 @@ Generado en `c97b734c` (anterior a `memoria/`). Contiene `Reward Config Historic
 
 - **D3 · README docmap → tesis equivocada.** `README.md` lista `report/report.tex` como "thesis report source draft"; la canónica ahora es `memoria/`. `docs/README.md` no lista `memoria/`. → corregir docs.
 - **D4 · Tablas oficiales de `docs/results.md`.** Hoy la tabla "CICIDS2017 Training Runs" lista C01/C02/C03 y omite MAIN en "Artifact Locations > Training". Por decisión 2: dejar tablas oficiales = **MAIN + secundarios**; mover C0x a apéndice histórico; añadir el dir de artefactos de MAIN.
-- **D5 · Dos docs de auditoría tracked y huérfanos.** `docs/audits/tfg_cyber_ai_audit.md` (audita `report/` como tesis viva → parcialmente stale) y `docs/audits/stale_claims_diagnosis_2026-06-15.md`. Ninguno en el índice `docs/README.md`. → mover a `docs/audits/` (con este doc) + indexar.
+- **D5 · Audits previos consolidados y retirados (HECHO 2026-06-25).** `tfg_cyber_ai_audit.md` y `stale_claims_diagnosis_2026-06-15.md` se revisaron, sus ítems útiles se volcaron aquí (§11) y se eliminaron (historia en git). Esta guía es el **único audit vivo**.
 - **C1 · Optuna desincronizado.** `optuna==4.9.0` en `requirements.txt` pero **no en `pyproject.toml`**; `src/tune_hparams.py` lo importa y CI usa `uv sync`. → añadir a `pyproject.toml` o marcar `tune_hparams` opcional.
+- **C2 · README sin descarga/SHA de CICIDS2017** (de `tfg_cyber_ai_audit`). `README.md` no da link de descarga ni hash del release → riesgo de usar una variante distinta del dataset. → añadir URL + SHA-256 (o nota de procedencia).
+- **D6 · DEFENSA: Phase 2 solo benign-only + MAIN ausente** (de `stale_claims` 3.1, ampliado). `DEFENSA_TFG_PROGRESO.md` (≈271/274) narra Phase 2 solo con runs benign-only (`block_rate 1.0/0.0`); no cita el run etiquetado `..._161231_MAIN`. Los `DEFENSA_*` centran C03 ("mejor run histórico") y **no mencionan MAIN**. → añadir el run etiquetado y centrar MAIN; C0x = probes pre-diseño.
+- **D7 · (baja) terminología Check A/B/C** (de `tfg_cyber_ai_audit`). El texto de methodology no mapea a los nombres `Check A/B/C` del código. `report/` aparcado → baja prioridad; aplicar a `memoria/` si interesa.
+- **R4 · (menor) z-score post-clipping** (de `stale_claims` 5.2). En `predict_real_traffic_v2.py`, `compute_diagnostics()` corre tras `apply_z_clipping()` con `--clip-z`; los `z_abs_*` describen el estado post-clipping, no el drift bruto. → matizar en docs Phase 2 si se documenta el drift.
 
 ### P2/P3 — higiene de artefactos tracked
 - **H2 · Binarios/generados versionados sin regla global** (ver decisión 3): `runs/**/events.out.tfevents.*`, dirs `*_0/` (solo TB), `runs/**/model.zip` (duplican `models/`). → destrackear + `.gitignore`.
@@ -137,6 +141,9 @@ D1, D2 (decisión), D3, D4, D5, R1, R2, R3, C1.
 
 **6.2 — Tracking de `docs/Personal Research/` (RESUELTO 2026-06-25):** son notas de investigación (Deep Research), **no fuentes de verdad** — los valores que mencionen (p.ej. un `gamma`) son ilustrativos, no canónicos. Se conserva **solo el `.md`** (formato fuente único); se eliminaron los `.tex` y `.pdf` derivados y se quitó el ignore de los `.md`. No se pierde contenido: los `.md` eran superconjunto (incluían `07-artefactos-...` que no tenía `.tex`).
 
+**6.3 — Framing prospectivo de la introducción (DECISIÓN DELIBERADA — no re-flaggear):** el `tfg_cyber_ai_audit` marcó como "overclaiming" que la introducción presente la comparación empírica QRDQN vs RF como contribución. **No es overclaiming: es intencional** — los resultados se completarán y la redacción se adelanta a ese punto. El texto vigente en `report/` y `memoria/` (`introduccion.tex:29`) ya está en tono neutro/prospectivo ("designed to produce honest evidence… without overclaiming"). **No suavizar más** (sería *underclaiming*).
+> **Checkpoint futuro (al cerrar resultados):** verificar que la introducción y la sección de resultados de `memoria/` **y** `report/` reflejen los resultados ya logrados. El riesgo real es olvidar endurecer el texto cuando toque, no el overclaim.
+
 ---
 
 ## 7. Plan por fases (checklist)
@@ -153,15 +160,18 @@ D1, D2 (decisión), D3, D4, D5, R1, R2, R3, C1.
 - [ ] **D3**: `README.md` docmap → `memoria/` (marcar `report/` histórico).
 - [ ] **D4**: reestructurar `docs/results.md` → tablas oficiales = MAIN + secundarios; C0x a apéndice histórico; añadir dir de artefactos de MAIN.
 - [ ] **C1**: añadir `optuna==4.9.0` a `pyproject.toml` (o marcar `tune_hparams` opcional).
+- [ ] **C2**: añadir URL de descarga + SHA-256 (o nota de procedencia) de CICIDS2017 a `README.md`.
+- [ ] **D6**: en `DEFENSA_*`, añadir el run Phase 2 etiquetado `..._161231_MAIN` y centrar MAIN como run oficial (C0x = probes).
 
 ### Fase 3 — Archivado de probes (decisión 1)
 - [ ] Crear `runs/archive/` y `models/archive/` + `archive/README.md`.
 - [ ] `git mv` de los probes según la tabla de §4.
 - [ ] Reencuadrar `experiments/cicids2017_qrdqn_experiments.md`: C0x = probes pre-diseño (no "best committed").
 
-### Fase 4 — Auditorías y código
-- [ ] **D5**: crear `docs/audits/`, mover los 3 docs de auditoría, indexarlos en `docs/README.md`.
+### Fase 4 — Código
+- [x] **D5**: audits consolidados en esta guía; `tfg_cyber_ai_audit.md` y `stale_claims_diagnosis_2026-06-15.md` retirados (HECHO).
 - [ ] Confirmar con `rg` (§8) que no hay código muerto. Reubicar `pcaps/deprecated_*` (B1) y `scratch/`.
+- [ ] **D7** (baja): mapear terminología `Check A/B/C` en methodology si se aplica a `memoria/`.
 
 ### Fase 5 — Tracking de binarios (decisión 3)
 - [ ] `.gitignore`: añadir `runs/**/events.out.tfevents.*`, `runs/**/model.zip`, `scratch/`.
@@ -207,7 +217,7 @@ git status --short; uv run ruff check .; uv run pytest tests/
 ## 9. No tocar todavía
 - **`datasets/`, `memoria/`, run+modelo MAIN (`models/MAIN_*full_*193655.zip`)** — evidencia oficial viva.
 - **`src/` (lógica), `tests/`, CI** — sin código muerto; fuera del alcance de limpieza.
-- **Bug fast-preset** (`max_rows` carga Lunes-benigno primero → learn-to-PERMIT): documentado en `docs/audits/tfg_cyber_ai_audit.md §6`. Es corrección de **código**, no limpieza — aparte.
+- **Bug fast-preset** (`max_rows` carga Lunes-benigno primero → learn-to-PERMIT; `load_cicids2017.py:535` `fast=100_000`): heredado del `tfg_cyber_ai_audit` (retirado). Corrección de **código**, no limpieza — track aparte.
 - **`.tex/.pdf` compilados** — no recompilar hasta resolver §6.
 - **Historia git** — solo `.gitignore` + `git rm --cached`; nada de reescritura.
 - **Experimentos secundarios** — aún no existen; al crearlos, comparten test fijo y perfil `main-experiment`.
@@ -215,8 +225,24 @@ git status --short; uv run ruff check .; uv run pytest tests/
 ---
 
 ## 10. Reorg de `docs/` ya ejecutada (2026-06-25)
-- Creado `docs/audits/` con `tfg_cyber_ai_audit.md`, `stale_claims_diagnosis_2026-06-15.md` y esta guía (+ `README.md` índice).
+- Creado `docs/audits/` (con `README.md` índice). Esta guía vive ahí; los dos audits previos se consolidaron en §11 y se eliminaron.
 - Creado `docs/archive/` con `informe.tex` / `informe.pdf` (borrador obsoleto de la memoria) (+ `README.md`).
 - `docs/README.md` y `README.md` (raíz) actualizados: tesis canónica = `memoria/`; `report/` (EN) aparcada; índice de auditorías.
 - **Personal Research (§6.2 resuelto):** se conserva solo `.md`; eliminados `.tex`+`.pdf` derivados; `.gitignore` ya no ignora los `.md`; enlace de `docs/README.md` apuntado al `.md`. Marcadas como investigación, no fuente de verdad.
 - **Pendiente (requiere estar al teclado, ver Fases 3/5):** archivar probes de `runs/`/`models/`, destrackear binarios pesados de `runs/`.
+
+---
+
+## 11. Carry-forward de auditorías previas (consolidado 2026-06-25)
+
+Los dos audits previos se revisaron contra el estado actual y se **retiraron** (historia en git). Resueltos descartados; ítems útiles volcados aquí.
+
+**De `stale_claims_diagnosis_2026-06-15.md`:**
+- Resueltos (descartados): hiperparámetros en Personal Research (reencuadrados como investigación, §6.2); warning de `--timesteps`; "C03 como artefacto actual" (DEFENSA ya dice "histórico"); `.md` ignorado (§6.2 / H1).
+- Vivos: **3.1 → D6** (Phase 2 en DEFENSA), **5.1 → D4** (MAIN en results.md), **5.2 → R4** (z-score, menor).
+
+**De `tfg_cyber_ai_audit.md`:**
+- Resueltos/descartados: overclaiming de la introducción (no era defecto — decisión deliberada, §6.3).
+- Vivos: **optuna → C1**, **dataset SHA/descarga → C2**, **fast-preset → §9** (código, aparte), **`.gitignore` global → H2 / Fase 5**, **terminología Check A/B/C → D7** (baja).
+
+Resultado: esta guía es el **único audit vivo**; todo lo pendiente está en §3 + Fases.
