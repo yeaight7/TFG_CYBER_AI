@@ -30,6 +30,9 @@ synthetic*
 runs/archive/phase2/P2v2_pred_20260412_004102/predictions.csv
 runs/archive/phase2/P2v2_pred_20260412_004624/predictions.csv
 runs/cicids2017/*/checkpoints/
+runs/**/events.out.tfevents.*
+runs/**/model.zip
+scratch/
 
 # large models type shi
 models/rf_cicids2017_canonical_20260504_000432.joblib
