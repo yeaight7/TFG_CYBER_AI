@@ -116,7 +116,7 @@ python scripts/predict_real_traffic_v2.py \
   --export-diagnostics
 ```
 
-(El run `P2v2_pred_20260610_161231` ya utilizó este modelo.)
+(El run `P2v2_pred_20260610_161231_MAIN` ya utilizó este modelo.)
 
 ### 7. Store Run Artifacts
 
@@ -131,7 +131,7 @@ runs/phase2/<RUN_ID>/
 └── diagnostics.json   # opcional
 ```
 
-Nota: runs anteriores a P2v2_pred_20260610_161231 contienen `predictions.csv` sin comprimir.
+Nota: runs anteriores a P2v2_pred_20260610_161231_MAIN contienen `predictions.csv` sin comprimir.
 
 ### 8. Review the Results
 
