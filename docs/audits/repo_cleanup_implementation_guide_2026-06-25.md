@@ -151,7 +151,7 @@ D1, D2 (decisión), D3, D4, D5, R1, R2, R3, C1.
 ### Fase 1 — Claims peligrosos (P0)
 - [ ] **D1**: corregir hiperparámetros en los docs de defensa. Texto canónico a insertar:
   > Config oficial (run MAIN, perfil `main-experiment`): `gamma=0.0`, `net_arch=[1024,1024,512]`, `n_quantiles=200` (explícito), `exploration_fraction=0.10`, `lr=5e-5`, `timesteps=3_000_000`. Los valores `[512,256]`, `gamma=0.99` o `exploration_fraction=0.005` fueron exploración previa / perfil `default`, no el experimento oficial.
-- [ ] **D2**: `graphify .` para regenerar desde `HEAD`, **o** marcar `GRAPH_REPORT.md` stale + suavizar la regla "empezar por el grafo" en `AGENTS.md`.
+- [x] **D2**: `graphify .` para regenerar desde `HEAD`, **o** marcar `GRAPH_REPORT.md` stale + suavizar la regla "empezar por el grafo" en `AGENTS.md`. **DONE WITH GEMINI CLI**
 
 ### Fase 2 — Documentación obsoleta (P1/P2)
 - [ ] **R3**: actualizar todas las rutas a `runs/phase2/P2v2_pred_20260610_161231_MAIN/` (results.md, AGENT_CONTEXT.md, phase2_plan.md, experiments/...).
