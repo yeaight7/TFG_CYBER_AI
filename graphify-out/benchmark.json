@@ -1,64 +1,30 @@
 {
-  "corpus_tokens": 146560,
-  "corpus_words": 109920,
-  "nodes": 413,
-  "edges": 596,
-  "avg_query_tokens": 4254,
-  "reduction_ratio": 34.5,
+  "corpus_tokens": 220758,
+  "corpus_words": 165569,
+  "nodes": 265,
+  "edges": 396,
+  "avg_query_tokens": 2315,
+  "reduction_ratio": 95.4,
   "per_question": [
     {
-      "question": "how does authentication work",
-      "query_tokens": 3488,
-      "reduction": 42.0
-    },
-    {
       "question": "what is the main entry point",
-      "query_tokens": 3379,
-      "reduction": 43.4
+      "query_tokens": 1102,
+      "reduction": 200.3
     },
     {
       "question": "how are errors handled",
-      "query_tokens": 3125,
-      "reduction": 46.9
+      "query_tokens": 3695,
+      "reduction": 59.7
     },
     {
       "question": "what connects the data layer to the api",
-      "query_tokens": 5685,
-      "reduction": 25.8
+      "query_tokens": 1513,
+      "reduction": 145.9
     },
     {
       "question": "what are the core abstractions",
-      "query_tokens": 5597,
-      "reduction": 26.2
+      "query_tokens": 2952,
+      "reduction": 74.8
     }
-  ],
-  "domain_queries": [
-    {
-      "question": "Why do CICIDS2017_TO_CANON and FLOWMETER_PY_TO_CANON exist as two separate feature mappings",
-      "query_tokens": 3906,
-      "reduction": 37.5
-    },
-    {
-      "question": "How does the canonical schema connect to the RL environment and training pipeline",
-      "query_tokens": 8561,
-      "reduction": 17.1
-    },
-    {
-      "question": "What is the multi-stage validation strategy and how do checks A B C and leave-one-out relate",
-      "query_tokens": 7109,
-      "reduction": 20.6
-    },
-    {
-      "question": "How does QRDQN hyperparameter tuning work and what parameters does Optuna optimize",
-      "query_tokens": 3295,
-      "reduction": 44.5
-    },
-    {
-      "question": "What is the Phase 2 real traffic inference pipeline and how does it handle domain shift",
-      "query_tokens": 6079,
-      "reduction": 24.1
-    }
-  ],
-  "domain_avg_query_tokens": 5790,
-  "domain_reduction_ratio": 25.3
+  ]
 }
