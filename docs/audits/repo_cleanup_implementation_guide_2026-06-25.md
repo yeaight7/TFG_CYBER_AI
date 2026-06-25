@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-06-25 · **Rev. 3** (consolida y reemplaza los audits previos; reencuadre del marco de runs/hiperparámetros).
 **Tipo:** auditoría read-only + plan por fases (checklist). **Único audit vivo** del repo: consolida `tfg_cyber_ai_audit.md` y `stale_claims_diagnosis_2026-06-15.md` (retirados 2026-06-25; en historia git). Ver §11.
-**Estado:** reorg de `docs/`, limpieza de Personal Research, **Fase 1 (D1 + D2)** y **Fase 2 (R3, R1, R2, D3, D4, C1, C2, D6)** ya ejecutadas. Fases 3–6 pendientes.
+**Estado:** reorg de `docs/`, limpieza de Personal Research, **Fase 1 (D1 + D2)**, **Fase 2 (R3, R1, R2, D3, D4, C1, C2, D6)** y **Fase 3 (archivado de probes)** ya ejecutadas. Fases 4–6 pendientes.
 **Alcance auditado:** docs `.md`/`.tex` (grep), código `src/`/`scripts/`/`tests/`, `.gitignore` + tracking, JSON pequeños citados en `docs/results.md`. No se leyeron PDFs, datasets, PCAPs ni recorridos completos de `runs/`.
 
 ## 0. Cómo usar esta guía
@@ -164,10 +164,10 @@ D1, D2 (decisión), D3, D4, D5, R1, R2, R3, C1.
 - [x] **C2**: `README.md` — fuente oficial UNB CIC-IDS2017 + tabla de integridad SHA-256 (8 CSV curados, hashes/ tamaños verificados).
 - [x] **D6**: `DEFENSA_TFG_PROGRESO.md` y `DEFENSA_TFG_SCRIPT.md` — MAIN centrado como run oficial, C03 reencuadrado como probe pre-diseño, run Phase 2 `..._161231_MAIN` añadido. (Consistencia decisión 2: Results Snapshot de `README.md` y `.github/AGENT_CONTEXT.md` también reencuadrados; ejemplo Quickstart Phase 2 del README ahora usa el modelo MAIN.) Verificado: auditoría adversarial 6 agentes + checker numérico (métricas MAIN/Phase2, 8 hashes y tamaños de dataset, optuna) todos *pass*.
 
-### Fase 3 — Archivado de probes (decisión 1)
-- [ ] Crear `runs/archive/` y `models/archive/` + `archive/README.md`.
-- [ ] `git mv` de los probes según la tabla de §4.
-- [ ] Reencuadrar `experiments/cicids2017_qrdqn_experiments.md`: C0x = probes pre-diseño (no "best committed").
+### Fase 3 — Archivado de probes (decisión 1) — COMPLETADA 2026-06-25
+- [x] Creados `runs/archive/` (cicids2017 + phase2) y `models/archive/` + `README.md` en ambos (nota: probes exploratorios pre-diseño, no oficiales; el run oficial es MAIN).
+- [x] `git mv` de los probes según §4 (85 renombres, siguen tracked): a `runs/archive/cicids2017/` los C0x + `MAIN_*fast` (+ `_0`); a `models/archive/` A0x/C0x/`MAIN_*fast`/`rl_defender_dqn`; a `runs/archive/phase2/` los 9 probes feb–abr. **Conservados** en su sitio: MAIN full (+`_0`) + modelo, `baseline_random_forest_comparison`, modelos `rf_*`, y los 3 phase2 vivos (`004121`, `230318`, `_MAIN`). Referencias repunteadas en `results.md`/`DEFENSA_TFG_PROGRESO.md`/`experiments` + docstrings de `validate_checks.py`/`predict_real_traffic_v2.py` (→ MAIN) y default del script deprecated (→ `models/archive/`); `.gitignore` actualizado para los 2 `predictions.csv` movidos.
+- [x] Reencuadrado `experiments/cicids2017_qrdqn_experiments.md`: C0x = probes pre-diseño (sin "best committed"); MAIN centrado como oficial. Verificado: workflow de 3 agentes (2× Sonnet estructura/referencias + 1× Opus reencuadre/consistencia) todos *pass*; sin métricas/paths alterados. Nota: `docs/archive/informe.tex` (borrador obsoleto, "no mantener") conserva una ruta C03 vieja — fuera de alcance.
 
 ### Fase 4 — Código
 - [x] **D5**: audits consolidados en esta guía; `tfg_cyber_ai_audit.md` y `stale_claims_diagnosis_2026-06-15.md` retirados (HECHO).
