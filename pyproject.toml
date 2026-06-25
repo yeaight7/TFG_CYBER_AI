@@ -21,6 +21,10 @@ dev = [
     "ruff==0.15.12",
     "graphifyy==0.7.0"
 ]
+# Optional: hyperparameter tuning (src/tune_hparams.py). Installed by CI via `uv sync --all-extras`.
+tune = [
+    "optuna==4.9.0",
+]
 
 [tool.uv.sources]
 torch = [
