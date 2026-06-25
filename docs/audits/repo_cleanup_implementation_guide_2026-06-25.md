@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-06-25 · **Rev. 3** (consolida y reemplaza los audits previos; reencuadre del marco de runs/hiperparámetros).
 **Tipo:** auditoría read-only + plan por fases (checklist). **Único audit vivo** del repo: consolida `tfg_cyber_ai_audit.md` y `stale_claims_diagnosis_2026-06-15.md` (retirados 2026-06-25; en historia git). Ver §11.
-**Estado:** reorg de `docs/` y limpieza de Personal Research ya ejecutadas/commiteadas. El resto del plan (Fases 1–6) sigue pendiente.
+**Estado:** reorg de `docs/`, limpieza de Personal Research, **Fase 1 (D1 + D2)** y **Fase 2 (R3, R1, R2, D3, D4, C1, C2, D6)** ya ejecutadas. Fases 3–6 pendientes.
 **Alcance auditado:** docs `.md`/`.tex` (grep), código `src/`/`scripts/`/`tests/`, `.gitignore` + tracking, JSON pequeños citados en `docs/results.md`. No se leyeron PDFs, datasets, PCAPs ni recorridos completos de `runs/`.
 
 ## 0. Cómo usar esta guía
@@ -59,8 +59,9 @@ CI (`.github/workflows/ci.yml`): `uv sync --all-extras`, check esquema `==76`, `
 
 ### P0 — claims peligrosos para la defensa
 
-**D1 · Hiperparámetros antiguos presentados como actuales en docs de defensa TRACKED.**
+**D1 · Hiperparámetros antiguos presentados como actuales en docs de defensa TRACKED. — RESUELTO 2026-06-25.**
 `docs/Personal Research/qrdqn-research-report.{md,tex,pdf}`, `models-parameters-and-validation-thesis-defense-report.*`, `deep-defense-research/03-...*` describen `gamma=0.99`, `net_arch=[512,256]` como arquitectura principal y `n_quantiles`/exploración como "implícitos". Realidad oficial (§1.1): `gamma=0.0`, `[1024,1024,512]`, `n_quantiles=200` explícito, `exploration_fraction=0.10`. No eran errores en su día (exploración), pero hoy esos docs **presentan valores no-oficiales como el config principal**. **Riesgo:** el tribunal lee un PDF que no cuadra con el run MAIN. La diagnosis del 15-jun solo cubrió los `.md` (ignorados); aquí lo crítico son los `.tex/.pdf` versionados.
+> **Resolución:** los `.tex/.pdf` ya no existían (eliminados en H1); solo quedaban los `.md`. En los 3 `.md` afectados se añadió un *callout* canónico (config oficial MAIN) y se corrigieron quirúrgicamente las afirmaciones que presentaban valores no-oficiales como config principal o que llamaban "implícitos" a `n_quantiles`/exploración (ya explícitos). Se preservaron: defaults de la librería SB3, rangos de tuning Optuna, configs de los validadores y la teoría QRDQN. Verificado con greps §8 + auditoría adversarial (4 agentes, todos *pass*; recuento de parámetros oficial 1.936.272 online recalculado OK).
 
 **D2 · `graphify-out/` stale con claim objetivamente falso.**
 Generado en `c97b734c` (anterior a `memoria/`). Contiene `Reward Config Historical (fp=-2.0) vs Current (fp=-1.5) Discrepancy.md` (fp=-1.5 nunca fue actual) y nodos `net_arch=512,256 (main training)`, `exploration_fraction=0.005`, `n_quantiles (implicit default)`. **Riesgo agravado:** `AGENTS.md` ordena a los agentes empezar por el grafo. → regenerar (`graphify .`) o marcar stale + suavizar `AGENTS.md`.
@@ -148,20 +149,20 @@ D1, D2 (decisión), D3, D4, D5, R1, R2, R3, C1.
 
 ## 7. Plan por fases (checklist)
 
-### Fase 1 — Claims peligrosos (P0)
-- [ ] **D1**: corregir hiperparámetros en los docs de defensa. Texto canónico a insertar:
+### Fase 1 — Claims peligrosos (P0) — COMPLETADA 2026-06-25
+- [x] **D1**: corregir hiperparámetros en los docs de defensa (callout canónico + correcciones quirúrgicas en `qrdqn-research-report.md`, `models-parameters-and-validation-thesis-defense-report.md`, `deep-defense-research/03-...md`; ver §3·D1 resolución). Texto canónico insertado:
   > Config oficial (run MAIN, perfil `main-experiment`): `gamma=0.0`, `net_arch=[1024,1024,512]`, `n_quantiles=200` (explícito), `exploration_fraction=0.10`, `lr=5e-5`, `timesteps=3_000_000`. Los valores `[512,256]`, `gamma=0.99` o `exploration_fraction=0.005` fueron exploración previa / perfil `default`, no el experimento oficial.
 - [x] **D2**: `graphify .` para regenerar desde `HEAD`, **o** marcar `GRAPH_REPORT.md` stale + suavizar la regla "empezar por el grafo" en `AGENTS.md`. **DONE WITH GEMINI CLI**
 
-### Fase 2 — Documentación obsoleta (P1/P2)
-- [ ] **R3**: actualizar todas las rutas a `runs/phase2/P2v2_pred_20260610_161231_MAIN/` (results.md, AGENT_CONTEXT.md, phase2_plan.md, experiments/...).
-- [ ] **R1**: marcar `test_set_sha256` como mecanismo previsto (pendiente de mint); aclarar que MAIN no lo incluye.
-- [ ] **R2**: aclarar en `docs/results.md` que el day-split RF (Viernes) ≠ Check C QRDQN (Thu+Fri); mantener RF random-split como baseline oficial de MAIN.
-- [ ] **D3**: `README.md` docmap → `memoria/` (marcar `report/` histórico).
-- [ ] **D4**: reestructurar `docs/results.md` → tablas oficiales = MAIN + secundarios; C0x a apéndice histórico; añadir dir de artefactos de MAIN.
-- [ ] **C1**: añadir `optuna==4.9.0` a `pyproject.toml` (o marcar `tune_hparams` opcional).
-- [ ] **C2**: añadir URL de descarga + SHA-256 (o nota de procedencia) de CICIDS2017 a `README.md`.
-- [ ] **D6**: en `DEFENSA_*`, añadir el run Phase 2 etiquetado `..._161231_MAIN` y centrar MAIN como run oficial (C0x = probes).
+### Fase 2 — Documentación obsoleta (P1/P2) — COMPLETADA 2026-06-25
+- [x] **R3**: rutas Phase 2 → `..._161231_MAIN` en `results.md`, `phase2_plan.md`, `docs/AGENT_CONTEXT.md`, `experiments/...md` (6 refs; única ocurrencia "desnuda" restante = el comando `rg` literal de §8).
+- [x] **R1**: `.github/AGENT_CONTEXT.md` aclarado — el código actual sí registra `test_set_sha256` (`src/load_cicids2017.py`), pero el `config.json` comprometido de MAIN es anterior (solo conteos/ratios); manifiesto de referencia pendiente de mint.
+- [x] **R2**: `docs/results.md` — RF random-split = partición de test fija de MAIN (566 149, baseline oficial alineado); RF day-split (Viernes, 703 245) ≠ Check C QRDQN (Thu+Fri, 1 162 213) → comparación direccional, no estricta.
+- [x] **D3**: ya resuelto — `README.md` y `docs/README.md` ya listan `memoria/` como canónica oficial y `report/` como aparcada/histórica (sin cambios necesarios).
+- [x] **D4**: `docs/results.md` reestructurado → tabla oficial = MAIN; C0x movidos a apéndice "probes pre-diseño"; dir de artefactos de MAIN añadido a Artifact Locations.
+- [x] **C1**: `optuna==4.9.0` añadido a `pyproject.toml` como extra `tune` (lo instala CI vía `uv sync --all-extras`).
+- [x] **C2**: `README.md` — fuente oficial UNB CIC-IDS2017 + tabla de integridad SHA-256 (8 CSV curados, hashes/ tamaños verificados).
+- [x] **D6**: `DEFENSA_TFG_PROGRESO.md` y `DEFENSA_TFG_SCRIPT.md` — MAIN centrado como run oficial, C03 reencuadrado como probe pre-diseño, run Phase 2 `..._161231_MAIN` añadido. (Consistencia decisión 2: Results Snapshot de `README.md` y `.github/AGENT_CONTEXT.md` también reencuadrados; ejemplo Quickstart Phase 2 del README ahora usa el modelo MAIN.) Verificado: auditoría adversarial 6 agentes + checker numérico (métricas MAIN/Phase2, 8 hashes y tamaños de dataset, optuna) todos *pass*.
 
 ### Fase 3 — Archivado de probes (decisión 1)
 - [ ] Crear `runs/archive/` y `models/archive/` + `archive/README.md`.
