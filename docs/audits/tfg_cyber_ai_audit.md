@@ -2,10 +2,10 @@
 
 ## 1. Executive Summary
 
-This audit assesses the alignment between the current codebase, documentation, and thesis report (`report/`) of the `yeaight7/TFG_CYBER_AI` repository. 
+This audit assesses the alignment between the current codebase, documentation, and thesis report (`report/`) of the `yeaight7/TFG_CYBER_AI` repository.
 
 **Current repository/documentation alignment:**
-The repository demonstrates an exceptionally high degree of internal coherence. The canonical invariants (152-dimensional observation vector, strict missingness-mask semantics, binary PERMIT/BLOCK actions, and explicit anti-leakage policy) are rigidly enforced in code and accurately described in the methodology documentation. 
+The repository demonstrates an exceptionally high degree of internal coherence. The canonical invariants (152-dimensional observation vector, strict missingness-mask semantics, binary PERMIT/BLOCK actions, and explicit anti-leakage policy) are rigidly enforced in code and accurately described in the methodology documentation.
 
 **Biggest code/report mismatches:**
 - **Overclaiming in the Introduction:** `report/chapters/introduction.tex` describes the empirical comparative evaluation (RL vs Baseline) as an achieved, completed contribution, whereas the rest of the documentation and the codebase correctly reflect that final results are pending.
@@ -30,10 +30,10 @@ The repository demonstrates an exceptionally high degree of internal coherence. 
 - **Fixed Canonical Schema:** 76 flow-based features.
 - **Observation Vector:** 152 dimensions (76 features + 76 missingness mask values where 1=present, 0=imputed).
 - **CICIDS2017 Adapter:** Robust loader with explicit drops for leakage-prone fields (IPs, Timestamp, Flow ID, direct port proxies).
-- **RL Environment:** Contextual bandit disguised as an RL environment (`rl_defender_env.py`). The agent evaluates independent flows step-by-step with no temporal state transitions. 
+- **RL Environment:** Contextual bandit disguised as an RL environment (`rl_defender_env.py`). The agent evaluates independent flows step-by-step with no temporal state transitions.
 - **Reward Function:** Fixed asymmetrical cost matrix (`tp=1.5, fp=-2.0, fn=-5.0, omission=0.0`).
 - **QRDQN Agent:** Stable-Baselines3 / sb3-contrib integration.
-- **Validation Suite:** 
+- **Validation Suite:**
   - Check A (Direct prediction vs test set)
   - Check B (Shuffled-label anti-leakage)
   - Check C (Hard CSV/day split)
@@ -93,7 +93,7 @@ The repository demonstrates an exceptionally high degree of internal coherence. 
 
 ## 5. Experiment and Reproducibility Audit
 
-**Can a fresh user reproduce the main experiments?**  
+**Can a fresh user reproduce the main experiments?**
 **Yes.** The `docs/runpod_main_experiment.md` and `docs/reproducibility.md` guides are highly explicit. The `RUN_ID` tracking and explicitly persisted artifacts ensure a clear relationship between the codebase and runs.
 
 **Exact commands that appear valid:**
@@ -164,14 +164,14 @@ All documented CLI commands (`--smoke`, `--preset full`, `--split-mode day`, `--
 
 ## 11. Current Alignment Verdict
 
-**Is the current unfinished repository internally coherent?**  
+**Is the current unfinished repository internally coherent?**
 Yes. The codebase enforces its technical invariants beautifully. The execution of the canonical mapping and missingness masks is particularly impressive.
 
-**Is `report/` aligned with the current implementation and intended direction?**  
+**Is `report/` aligned with the current implementation and intended direction?**
 Mostly yes. The methodology and scope chapters correctly treat the project as an experimental Phase 1 prototype pending final Phase 2 validation. Only the Introduction steps out of bounds by claiming empirical results are already completed.
 
-**What must be corrected soon to avoid accumulating thesis debt?**  
-The `max_rows` truncation issue in the fast preset. If left unfixed, it will cause immense confusion during debugging because the agent will appear to "fail" by always permitting traffic, when in reality it is acting perfectly optimally for the biased data it received. 
+**What must be corrected soon to avoid accumulating thesis debt?**
+The `max_rows` truncation issue in the fast preset. If left unfixed, it will cause immense confusion during debugging because the agent will appear to "fail" by always permitting traffic, when in reality it is acting perfectly optimally for the biased data it received.
 
-**What can wait until after implementation/results are more mature?**  
-Finalizing the results section, writing the conclusions, and implementing any live-blocking logic. 
+**What can wait until after implementation/results are more mature?**
+Finalizing the results section, writing the conclusions, and implementing any live-blocking logic.
