@@ -170,6 +170,22 @@ Por tanto, en la defensa conviene distinguir siempre entre:
 
 ---
 
+## 6b. Formulación RL: por qué gamma = 0
+
+El run oficial usa **`gamma = 0.0`** (`config.json`; ambos perfiles de `resolve_training_hyperparams`). Es una decisión deliberada, no un descuido.
+
+Con `gamma = 0`, el objetivo de QRDQN `δ = r + γ·θ⁻(s',a*) − θ(s,a)` se reduce a `δ = r − θ(s,a)`: desaparece el término de bootstrap y cada flujo se trata como una **decisión de un solo paso**. Como el dataset no reacciona a la acción del agente (sin dependencia temporal entre flujos), la formulación es, con honestidad, un **bandit contextual de coste asimétrico**, no un MDP secuencial.
+
+Si el tribunal pregunta *"¿en qué se diferencia de un clasificador?"*:
+
+- se entrena por **aprendizaje de valor sobre una matriz de coste asimétrica explícita** (FN −5 ≫ FP −2), no por cross-entropy; el coste vive en la recompensa, no en un `class_weight`;
+- la decisión es el `argmax` del valor aprendido entre PERMIT/BLOCK;
+- la cabeza **distributional** de QRDQN sigue aportando con gamma = 0: modela la *distribución* del retorno (no solo la media) en la frontera de decisión.
+
+Se presenta abiertamente como una formulación cost-sensitive de un solo paso, sin afirmar autonomía secuencial.
+
+---
+
 ## 7. Resultados que sí puedes afirmar con respaldo
 
 ### Run oficial (MAIN) en CICIDS2017
@@ -282,13 +298,13 @@ Cómo contarlo:
 
 El run Phase 2 etiquetado con el modelo oficial es:
 
-- `runs/phase2/P2v2_pred_20260610_161231_MAIN/` (flows: `pcaps/synthetic_real_traffic.csv`, modelo MAIN)
+- `runs/phase2/P2v2_pred_20260610_161231_MAIN/` (flows: `pcaps/lab_capture_traffic.csv`, modelo MAIN)
   - block_rate: **0.252364**
   - accuracy: **0.991862**
   - recall ataque: **0.988452**
   - F1 ataque: **0.983801**
 
-Es un benchmark sobre tráfico sintético etiquetado; no debe mezclarse con los resultados internos de CICIDS2017 ni con los runs benign-only de abajo.
+Es un benchmark de laboratorio sobre **tráfico real capturado y etiquetado** (generado por el operador en un laboratorio doméstico aislado, no adversarial; validez externa limitada); no debe mezclarse con los resultados internos de CICIDS2017 ni con los runs benign-only de abajo.
 
 ### Qué no debes simplificar demasiado
 
