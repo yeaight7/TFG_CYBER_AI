@@ -67,9 +67,9 @@ This plan turns the audit's findings into ordered, trackable work items so the t
 | G2 | Untrack `graphify-out/`; regenerate/clear stale `fp=-1.5` node | Med | none | [x] untracked (306 files) + gitignored; semantic cache deleted (node gone) |
 | G3 | Switch git email to GitHub noreply **going-forward** (no rewrite, per D-6) | Med | none | [x] local user.email→noreply; history note in reproducibility.md |
 | G4 | Keep CICIDS in LFS + attribution; **drop legacy NSL-KDD** (per D-8) | Med | none | [x] CICIDS terms note (README+repro); NSL-KDD untracked+gitignored+legacy-flagged (5 docs) |
-| F2 | Pin CI to Python 3.12; add uv cache; consider CPU torch for tests | Med | none | [ ] |
-| F3 | Document/extend the CI verification + LFS limitation | Med | none | [ ] |
-| M16 | State MAIN hyperparams are hand-set, not Optuna-derived | Med | none | [ ] |
+| F2 | Pin CI to Python 3.12; add uv cache; consider CPU torch for tests | Med | none | [x] ci.yml: py3.12 + UV_PYTHON + enable-cache (CPU-torch skipped: would break lock coherence) |
+| F3 | Document/extend the CI verification + LFS limitation | Med | none | [x] reproducibility.md "CI scope" section (LFS hash = local only; split logic unit-tested in CI) |
+| M16 | State MAIN hyperparams are hand-set, not Optuna-derived | Med | none | [x] metodologia.tex subsection + experiments callout (MAIN outside tune_hparams search space) |
 
 ### Phase 3 — Documentation alignment
 | ID | Task | Sev | Compute | Status |
@@ -154,7 +154,15 @@ _(Per **D-6**, all of Workstream G is **going-forward only** — no `git lfs mig
 
 **Validation:** `uv run pytest tests/` → **33 passed** (27 + 6 new `test_bootstrap_ci`); `uv run ruff check` on all changed source → clean; D2/D3 smoke train (`--preset fast`) produced a manifest with checksums + relative paths; A4 `--from-model` end-to-end match confirmed. **Change set:** 8 files modified, 3 new, 315 files untracked via `git rm --cached` (306 graphify-out + 8 NSL-KDD + 1 model; no history rewrite per D-6). **Nothing committed.**
 
-**Remaining in Phase 2 (second half):** F2 (CI → Python 3.12 + uv cache), F3 (CI verification scope + LFS note), M16 (state MAIN hyperparams hand-set, not Optuna). A6 already done.
+### Phase 2 second-half — execution log (2026-06-27)
+
+- **F2** — `.github/workflows/ci.yml`: `python-version: "3.12"` (matches MAIN 3.12.3), job-level `UV_PYTHON: "3.12"`, and `enable-cache: true` on `setup-uv` (caches the ~2.5 GB cu130 torch wheel across runs). The CPU-torch swap was **not** done: forcing a different torch wheel in CI would diverge from `uv.lock` and break lock coherence — documented in F3 instead.
+- **F3** — new "Continuous integration: what CI does and does not verify" section in `docs/reproducibility.md`: the byte-identical seed-42 SHA-256 (`test_partition_reference_seed42.json`) is a **local** check (CICIDS CSVs are LFS, not pulled in CI), but the split/scaler/hash **logic** is already exercised in CI by `tests/test_load_cicids2017.py` (`test_nested_prefix_indices_deterministic`, `test_train_max_rows_keeps_test_set_identical`, `test_scale_true_refits_on_subsample`, `test_sha256_of_array_stable`); local verify commands documented (`verify_fixed_test_split.py [--skip-count-check]`).
+- **M16** — added `\subsection{Procedencia de los hiperparámetros}` to `memoria/capitulos/metodologia.tex` and a "Hyperparameter provenance" callout to `experiments/cicids2017_qrdqn_experiments.md`: MAIN (`gamma=0.0`, `[1024,1024,512]`, `gradient_steps=20`) is a hand-set fixed profile **outside** the `tune_hparams.py` search space (`gamma∈[0.95,0.999]`, `net_arch∈{[256,128],[512,256],[256,256]}`, `gradient_steps∈{10,50,100}`), so it could not be an Optuna output. `report/` (EN) re-sync deferred to I6.
+
+**Validation:** `uv run pytest tests/` → **33 passed**; `uv run ruff check .` → clean; `ci.yml` parses (py3.12 / cache / UV_PYTHON confirmed); `memoria/memoria.pdf` **rebuilt** with `latexmk` (exit 0, no LaTeX errors) — the M16 subsection compiles. **Change set (this half):** `ci.yml`, `docs/reproducibility.md`, `memoria/capitulos/metodologia.tex`, `experiments/cicids2017_qrdqn_experiments.md`, rebuilt `memoria/memoria.pdf`. **Nothing committed.**
+
+**Remaining in Phase 2:** none — first + second half complete. A6 was already done. (Next phases: 3 docs alignment, 4 thesis chapters, 5 low-priority cleanup.)
 
 ---
 
