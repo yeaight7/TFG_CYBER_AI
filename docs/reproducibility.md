@@ -92,3 +92,18 @@ Implication: a Phase-2 run that uses `--percentiles` / `--clip-z` applies a tran
 ## Git history note (institutional email)
 
 Commits **before 2026-06-27** were authored with an institutional email (`…@al.uloyola.es`). Going forward, commits use the author's GitHub `noreply` address (decision D-6). Per D-6 the existing history is **accepted and not rewritten** (no `git filter-repo` / force-push): the historical address remains in past commits by design, documented here rather than scrubbed.
+
+## Continuous integration: what CI does and does not verify
+
+CI (`.github/workflows/ci.yml`) runs on Python **3.12** (matching the MAIN training environment, `environment.json` 3.12.3), installs the locked dependencies with `uv sync --all-extras`, and runs the unit tests, the canonical-schema dimension check, and Ruff. The uv download/build store is cached (`enable-cache: true`) so the large `cu130` torch wheel (~2.5 GB) is fetched only once.
+
+**What CI cannot verify:** the byte-identical **SHA-256 of the fixed seed-42 test partition** (`runs/cicids2017/test_partition_reference_seed42.json`) can only be checked against the real CICIDS2017 CSVs, which live in **git LFS and are not pulled in CI** (large, and gated by dataset terms). So the reproducibility hash is a **local** check.
+
+**What CI does verify (the split/hash logic, on synthetic data):** `tests/test_load_cicids2017.py` exercises split determinism and invariants without the real dataset — `test_nested_prefix_indices_deterministic`, `test_train_max_rows_keeps_test_set_identical`, `test_scale_true_refits_on_subsample`, and `test_sha256_of_array_stable`. These run in CI, so a regression in the partition/scaler/hashing logic would be caught even though the real-data hash is not recomputed.
+
+**To verify the real-data hash locally:** `git lfs pull`, then run
+
+```bash
+python scripts/verify_fixed_test_split.py            # counts + SHA-256 + scaler match
+python scripts/verify_fixed_test_split.py --skip-count-check   # hash/scaler only (still needs the CSVs)
+```
