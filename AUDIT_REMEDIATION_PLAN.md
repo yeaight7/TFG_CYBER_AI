@@ -48,7 +48,7 @@ This plan turns the audit's findings into ordered, trackable work items so the t
 |----|------|-----|---------|--------|
 | A2 | Leakage-free evaluation of the *actual* MAIN model on a day/CSV holdout | High | cheap | [-] skip (D-9: don't surface generalization gap) |
 | A3 | Reframe headline as in-distribution + leakage caveat (docs + thesis) | Critical | none | [x] light — D1 reproducibility note; headline left as-is per D-9 |
-| A4 | Bootstrap-CI the existing MAIN test metrics (no retrain) | Med | cheap | [ ] deferred — CI would touch headline; confirm vs D-9 |
+| A4 | Bootstrap-CI the existing MAIN test metrics (no retrain) | Med | cheap | [x] stratified bootstrap; additive only (headline NOT reframed, no dupe caveat); end-to-end verified |
 | A5 | Add operational metrics (balanced-acc, MCC, FPR/FNR) to eval | Med | cheap | [x] (PR-AUC omitted: discrete-action agent has no score) |
 | B1 | Disclose `gamma=0` / contextual-bandit framing in docs | High | none | [x] |
 | I1 | Disclose `gamma=0` in thesis methodology (specialize the loss) | High | none | [x] memoria/ (ES); report/ EN re-sync pending (I6) |
@@ -61,12 +61,12 @@ This plan turns the audit's findings into ordered, trackable work items so the t
 ### Phase 2 — Reproducibility, hygiene, deps
 | ID | Task | Sev | Compute | Status |
 |----|------|-----|---------|--------|
-| D2 | Explicit top-of-`main()` RNG seeding | Med | none | [ ] |
-| D3 | Relative paths + artifact SHA-256 in config/manifest writer | Med | none | [ ] |
+| D2 | Explicit top-of-`main()` RNG seeding | Med | none | [x] random/np/torch/cuda seeded at top of main(); smoke-verified |
+| D3 | Relative paths + artifact SHA-256 in config/manifest writer | Med | none | [x] additive `checksums_sha256`+`relative_paths` in manifest; smoke-verified |
 | A6 | Unify the 3 metric implementations into one shared fn (`labels=[0,1]`) | Med | none | [x] src/metrics_utils.py (train+predict+RF; validate_loco still has its own) |
-| G2 | Untrack `graphify-out/`; regenerate/clear stale `fp=-1.5` node | Med | none | [ ] |
-| G3 | Switch git email to GitHub noreply **going-forward** (no rewrite, per D-6) | Med | none | [ ] |
-| G4 | Keep CICIDS in LFS + attribution; **drop legacy NSL-KDD** (per D-8) | Med | none | [ ] |
+| G2 | Untrack `graphify-out/`; regenerate/clear stale `fp=-1.5` node | Med | none | [x] untracked (306 files) + gitignored; semantic cache deleted (node gone) |
+| G3 | Switch git email to GitHub noreply **going-forward** (no rewrite, per D-6) | Med | none | [x] local user.email→noreply; history note in reproducibility.md |
+| G4 | Keep CICIDS in LFS + attribution; **drop legacy NSL-KDD** (per D-8) | Med | none | [x] CICIDS terms note (README+repro); NSL-KDD untracked+gitignored+legacy-flagged (5 docs) |
 | F2 | Pin CI to Python 3.12; add uv cache; consider CPU torch for tests | Med | none | [ ] |
 | F3 | Document/extend the CI verification + LFS limitation | Med | none | [ ] |
 | M16 | State MAIN hyperparams are hand-set, not Optuna-derived | Med | none | [ ] |
@@ -139,7 +139,22 @@ _(Per **D-6**, all of Workstream G is **going-forward only** — no `git lfs mig
 
 **New files:** `src/metrics_utils.py`, `tests/test_metrics_utils.py`, `pcaps/README.md`, `runs/cicids2017/test_partition_reference_seed42.json`. **Renamed (gitignored):** the two Phase-2 CSVs. Nothing committed.
 
-**Remaining in Phase 1:** A2 (skipped), A4 (deferred — needs owner OK vs D-9). Everything else done.
+**Remaining in Phase 1:** A2 (skipped). A4 resolved below (owner approved 2026-06-27).
+
+### Phase 1 (A4) + Phase 2 first-half — execution log (2026-06-27)
+
+**Owner approved A4** ("A4 then Phase 2"). A4 is **additive only**: the headline is NOT reframed and NO duplicate caveat is surfaced (consistent with D-9).
+
+- **A4** — new `scripts/bootstrap_ci.py` + `tests/test_bootstrap_ci.py` (6 tests). Recovers the exact MAIN confusion cells `(tn,fp,fn,tp)=(451631,2989,518,111011)` from the full-precision `metrics.json` + class totals, self-validates against every published metric (tol 1e-9), then **stratified** percentile-bootstraps (per-class binomial, conditioning on the fixed seed-42 class totals; `--unstratified` = unconditional multinomial). 95% CIs are tight (±0.0002–0.001): recall_attack 0.99536 `[0.99495, 0.99575]`, FPR 0.00658 `[0.00634, 0.00681]`, accuracy 0.99381 `[0.99360, 0.99401]`. `--from-model` re-ran the **saved MAIN model** over the reproduced split and regenerated the identical confusion matrix (logs model sha256 + n_test). Artifact `runs/validation/bootstrap_ci_seed42.json`; CI + operational-metrics table added to `results.md`, framed as test-set **sampling** precision (explicitly NOT training-seed variance). **Adversarially reviewed** (ml-experiment-reviewer → "sound-with-nits"); all nits fixed (stratified resampling, full-precision recovery wording, scope wording, model-provenance fields).
+- **D2** — `random`/`np.random`/`torch`/`torch.cuda` seeded at top of `main()` (`train_rl_defender.py`); does not alter the seed-42 split (own `random_state`).
+- **D3** — completion-block writer now adds `checksums_sha256` + `relative_paths` (model/scaler/percentiles/feature_names) to `artifact_manifest.json` (additive; committed MAIN absolute paths kept as informational). Verified by a fast smoke train.
+- **G2** — `git rm -r --cached graphify-out/` (306 files) + blanket `graphify-out/` gitignore; deleted `graphify-out/cache/semantic/` so the fabricated `fp=-1.5` node is unreadable (only remaining hits are the audit docs describing it).
+- **G3** — `git config --local user.email 132207361+yeaight7@users.noreply.github.com` (owner's own noreply, already in history); historical institutional-email exposure documented in `reproducibility.md` (accepted, not scrubbed, per D-6).
+- **G4** — `git rm --cached datasets/nsl_kdd/** models/rf_nslkdd.joblib` + gitignored; CICIDS2017 attribution + **redistribution-terms** note added (README provenance + `reproducibility.md`); NSL-KDD flagged legacy/dropped in README status table, `src/load_nsl_kdd.py` docstring, `experiments/nslkdd_experiments.md`, `.github/AGENT_CONTEXT.md`.
+
+**Validation:** `uv run pytest tests/` → **33 passed** (27 + 6 new `test_bootstrap_ci`); `uv run ruff check` on all changed source → clean; D2/D3 smoke train (`--preset fast`) produced a manifest with checksums + relative paths; A4 `--from-model` end-to-end match confirmed. **Change set:** 8 files modified, 3 new, 315 files untracked via `git rm --cached` (306 graphify-out + 8 NSL-KDD + 1 model; no history rewrite per D-6). **Nothing committed.**
+
+**Remaining in Phase 2 (second half):** F2 (CI → Python 3.12 + uv cache), F3 (CI verification scope + LFS note), M16 (state MAIN hyperparams hand-set, not Optuna). A6 already done.
 
 ---
 
