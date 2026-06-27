@@ -102,9 +102,9 @@ Metrics from `runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_full_random
 
 ### Training-Size Benchmark (Fixed Test Partition)
 
-Internal benchmark to justify the full-data main experiment. Smaller runs use `--train-max-rows` (train-only subsampling AFTER the split): the test partition is byte-identical to the main run's 566,149-row test set (seed 42; benign 454,620 / attack 111,529), verified per run via `split_metadata.test_set_sha256` against the reference manifest `runs/cicids2017/test_partition_reference_seed42.json` (pending mint on RunPod). Timesteps scale proportionally with train size. Protocol details: [../experiments/cicids2017_qrdqn_experiments.md](../experiments/cicids2017_qrdqn_experiments.md).
+Internal benchmark to justify the full-data main experiment. Smaller runs use `--train-max-rows` (train-only subsampling AFTER the split): the test partition is byte-identical to the main run's 566,149-row test set (seed 42; benign 454,620 / attack 111,529), verified per run via `split_metadata.test_set_sha256` against the reference manifest `runs/cicids2017/test_partition_reference_seed42.json` (minted 2026-06-27; the reproduced split's scaler `mean_`/`scale_` match the committed MAIN scaler, confirming the committed artifacts correspond to the seed-42 split). Timesteps scale proportionally with train size. Protocol details: [../experiments/cicids2017_qrdqn_experiments.md](../experiments/cicids2017_qrdqn_experiments.md).
 
-These results are an **internal CICIDS2017 benchmark only** — random stratified split with a fixed held-out test partition. They are not comparable to, and must not be mixed with, the Phase 2 offline-inference results, which measure distribution shift on real lab traffic.
+These results are an **internal CICIDS2017 benchmark only** — random stratified split with a fixed held-out test partition. They are not comparable to, and must not be mixed with, the Phase 2 offline-inference results, which measure distribution shift on operator-generated lab traffic (real captured packets, closed home lab; limited external validity).
 
 No benchmark training artifacts are committed yet; the table below will be filled only from committed `runs/cicids2017/` artifacts.
 
@@ -208,7 +208,7 @@ Artifact:
 
 This later artifact shows that Phase 2 behaviour is sensitive to configuration and run conditions, which is exactly why documentation must cite the specific run artifact.
 
-### Labeled Synthetic-Traffic Artifact (main model)
+### Labeled Lab-Capture Artifact (main model)
 
 Artifact:
 
@@ -216,7 +216,7 @@ Artifact:
 
 | Field | Value |
 |-------|-------|
-| Flows CSV | `pcaps/synthetic_real_traffic.csv` |
+| Flows CSV | `pcaps/lab_capture_traffic.csv` |
 | Model | `models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip` |
 | Block rate | `0.252364` |
 | Accuracy | `0.991862` |
@@ -224,7 +224,7 @@ Artifact:
 | Recall attack | `0.988452` |
 | F1 attack | `0.983801` |
 
-This Phase 2 metric is a synthetic-traffic benchmark and must not be mixed with the internal CICIDS2017 test results.
+This Phase 2 metric is an operator-generated lab-capture benchmark (real captured packets, closed home lab; limited external validity) and must not be mixed with the internal CICIDS2017 test results.
 
 ## NSL-KDD Historical Benchmark
 
