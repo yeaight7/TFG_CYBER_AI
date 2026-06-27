@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1b1e4294`
+- Built from commit: `d044ebbd`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -344,24 +344,24 @@ Cohesion: 0.15
 Nodes (12): 1. The Literature Landscape, 2. What Is Partially Covered and Leaves Room for Contribution, 3. What Is Weakly Validated in the Literature, 4. Defensible Research Gap, 5. Claims That Must Not Appear in the Thesis, 6. Evidence Mapping, 7. Thesis-Ready Sentences, Research Gap and Thesis Positioning (+4 more)
 
 ### Community 49 - "Community 49"
-Cohesion: 0.15
-Nodes (13): code:bibtex (@misc{Varonis2023FlowMonitoring,), code:bibtex (@misc{Faddom2023NetFlowIPFIX,), code:bibtex (@article{ContextNetFlow2026,), code:bibtex (@article{FlowTutorial2025,), code:bibtex (@article{TemporalNetFlow2025,), code:bibtex (@article{DeploymentFramework2026,), code:bibtex (@article{TONIoTLeakage2026,), Deployment-oriented and transfer-aware evaluation (+5 more)
-
-### Community 50 - "Community 50"
 Cohesion: 0.17
 Nodes (11): 03 — Entorno RL, algoritmo y entrenamiento, 1) Entorno RL: qué modela exactamente, 2) Recompensa actual por defecto, 3) Sobre el algoritmo principal, 4) Hiperparámetros relevantes en el experimento oficial (perfil `main-experiment`, run MAIN), 5) Presets y timesteps, 6) Artefactos que deja cada entrenamiento, 7) Baseline y tuning (complemento) (+3 more)
 
-### Community 51 - "Community 51"
+### Community 50 - "Community 50"
 Cohesion: 0.17
 Nodes (11): 05 — Phase 2: laboratorio, inferencia y riesgos abiertos, 1) Qué es exactamente Phase 2 hoy, 2) Flujo operativo resumido, 3) Endurecimiento técnico de la v2, 4) Artefactos esperados de cada run Phase 2, 5) Hallazgo central de Phase 2 (honesto), 6) Laboratorio privado y seguridad operacional, 7) Qué faltaría para pasar a bloqueo activo (+3 more)
 
-### Community 52 - "Community 52"
+### Community 51 - "Community 51"
 Cohesion: 0.17
 Nodes (11): Archived Follow-Up Ideas, DQN vs Random Forest, Historical Interpretation, Historical Summary Table, Legacy Architecture Notes, Main Takeaways, NSL-KDD Historical Experiments, Reward-System Sensitivity (+3 more)
 
-### Community 53 - "Community 53"
+### Community 52 - "Community 52"
 Cohesion: 0.17
 Nodes (11): Administrative: Citation Key Mismatches in Existing Draft, Citation Notes, Cumulative Citation Status, Second revised pass — 2026-05-16, Section A — CICIDS2017 Quality Concerns, Section B — Canonical Feature Schema and the Case for a Fixed Representation, Section C — Reinforcement Learning for Intrusion Detection: Named Prior Works, Section D — The Dataset-as-Environment Design: Named Precedent (+3 more)
+
+### Community 53 - "Community 53"
+Cohesion: 0.17
+Nodes (12): code:bibtex (@article{MaliciousBehavior2021,), code:bibtex (@misc{Stamus2024IDSTypes,), code:bibtex (@misc{Varonis2023FlowMonitoring,), code:bibtex (@misc{Faddom2023NetFlowIPFIX,), code:bibtex (@article{DeploymentFramework2026,), code:bibtex (@article{TONIoTLeakage2026,), Deployment-oriented and transfer-aware evaluation, Entries to adjust or verify (+4 more)
 
 ### Community 54 - "Community 54"
 Cohesion: 0.18
@@ -476,8 +476,8 @@ Cohesion: 0.5
 Nodes (3): Overview, References, State of the Art on NIDS and Network-Flow Representations for a Flow-Level RL Defender
 
 ### Community 82 - "Community 82"
-Cohesion: 0.67
-Nodes (3): code:bibtex (@article{MaliciousBehavior2021,), code:bibtex (@misc{Stamus2024IDSTypes,), NIDS fundamentals and taxonomies
+Cohesion: 0.5
+Nodes (4): code:bibtex (@article{ContextNetFlow2026,), code:bibtex (@article{FlowTutorial2025,), code:bibtex (@article{TemporalNetFlow2025,), Flow-based NIDS and feature engineering
 
 ## Ambiguous Edges - Review These
 - `Cost-Sensitive IDS Reward` → `Dataset-as-Environment`  [AMBIGUOUS]
