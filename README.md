@@ -149,7 +149,7 @@ Run robust Phase 2 offline inference:
 
 ```bash
 python scripts/predict_real_traffic_v2.py \
-  --flows pcaps/synthetic_real_traffic.csv \
+  --flows pcaps/lab_capture_traffic.csv \
   --model models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip \
   --scaler runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib \
   --percentiles runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz \
