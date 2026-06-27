@@ -5,12 +5,12 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1448 nodes · 1528 edges · 95 communities (83 shown, 12 thin omitted)
+- 1448 nodes · 1528 edges · 96 communities (84 shown, 12 thin omitted)
 - Extraction: 95% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 65 edges (avg confidence: 0.78)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c8372ce7`
+- Built from commit: `1b1e4294`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -101,7 +101,7 @@
 - [[_COMMUNITY_Community 83|Community 83]]
 - [[_COMMUNITY_Community 84|Community 84]]
 - [[_COMMUNITY_Community 85|Community 85]]
-- [[_COMMUNITY_Community 87|Community 87]]
+- [[_COMMUNITY_Community 86|Community 86]]
 - [[_COMMUNITY_Community 88|Community 88]]
 - [[_COMMUNITY_Community 89|Community 89]]
 - [[_COMMUNITY_Community 90|Community 90]]
@@ -109,6 +109,7 @@
 - [[_COMMUNITY_Community 92|Community 92]]
 - [[_COMMUNITY_Community 93|Community 93]]
 - [[_COMMUNITY_Community 94|Community 94]]
+- [[_COMMUNITY_Community 95|Community 95]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Defensa TFG — Guion oral actualizado` - 20 edges
@@ -144,7 +145,7 @@
 - **Thesis Methodology Pillars** — concept_canonical_feature_schema, concept_dataset_as_environment, concept_cost_sensitive_reward, concept_validation_ladder [INFERRED 0.85]
 - **CICIDS2017 Evaluation Strategy** — concept_cicids2017_limitations, concept_validation_ladder, concept_evaluation_leakage [INFERRED 0.90]
 
-## Communities (95 total, 12 thin omitted)
+## Communities (96 total, 12 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
@@ -291,60 +292,60 @@ Cohesion: 0.12
 Nodes (15): 02 — Datos, esquema canónico y preprocesado, 1) Datasets y su papel, 2) Decisión arquitectónica clave: esquema canónico, 3) Máscara de missingness (semántica), 4) Política anti-leakage, 5) Preprocesado en CICIDS2017, 6) Modos de split y por qué importan, 7) Puntos finos que conviene dominar (+7 more)
 
 ### Community 36 - "Community 36"
-Cohesion: 0.12
-Nodes (16): code:bibtex (@article{MaliciousBehavior2021,), code:bibtex (@misc{Stamus2024IDSTypes,), code:bibtex (@misc{Varonis2023FlowMonitoring,), code:bibtex (@misc{Faddom2023NetFlowIPFIX,), code:bibtex (@article{ContextNetFlow2026,), code:bibtex (@article{FlowTutorial2025,), code:bibtex (@article{TemporalNetFlow2025,), code:bibtex (@article{DeploymentFramework2026,) (+8 more)
-
-### Community 37 - "Community 37"
 Cohesion: 0.18
 Nodes (12): BaseCallback, check_a_direct_eval(), check_b_shuffled_labels(), check_c_csv_split(), main(), parse_args(), ProgressCallback, validate_checks.py — Validación de resultados experimentales del agente RL.  I (+4 more)
 
-### Community 38 - "Community 38"
+### Community 37 - "Community 37"
 Cohesion: 0.13
 Nodes (14): 10. Methodological Pitfalls in ML-Based NIDS, 11. External Validation and Lab-Captured Traffic, 12. Positioning of This Thesis, 13. Data Efficiency and Training-Scale Evaluation, 1. Network Intrusion Detection Systems, 2. Flow-Based Traffic Representation, 3. Public Datasets for Network Intrusion Detection, 4. CICIDS2017 as the Main Internal Benchmark (+6 more)
 
-### Community 39 - "Community 39"
+### Community 38 - "Community 38"
 Cohesion: 0.13
 Nodes (14): 1. Conceptual explanation, 2. Source matrix, 3. Arguments in favor, 4. Arguments against, 5. How to defend this formulation in your thesis, 6. Suggested subsection, 7. Codex handoff, Classification-as-RL Dossier (+6 more)
 
-### Community 40 - "Community 40"
+### Community 39 - "Community 39"
 Cohesion: 0.13
 Nodes (14): Cluster 10 — Data Efficiency, Cluster 11 — Repository Artifacts, Cluster 1 — Flow-Based Traffic Representation, Cluster 2 — Public NIDS Datasets, Cluster 3 — CICIDS2017 Quality Concerns, Cluster 4 — Supervised ML and DL for NIDS, Cluster 5 — Reinforcement Learning Foundations, Cluster 6 — RL and DRL for Intrusion Detection (+6 more)
 
-### Community 41 - "Community 41"
+### Community 40 - "Community 40"
 Cohesion: 0.25
 Nodes (13): _build_aggregate_results(), _compute_reward_total(), evaluate_model_direct(), main(), make_env_fn(), _metrics_from_confusion(), parse_args(), validate_leave_one_csv_out.py — Validación leave-one-exact-CSV-out para CICIDS20 (+5 more)
 
-### Community 42 - "Community 42"
+### Community 41 - "Community 41"
 Cohesion: 0.14
 Nodes (13): 1. DQN foundation, 2. From DQN to Distributional RL, 3.1 Quantiles and return distribution, 3.2 Quantile regression and quantile Huber loss, 3.3 Action selection and difference from DQN, 3. QRDQN explanation, 4. Source matrix, 5. QRDQN in cybersecurity (+5 more)
 
-### Community 43 - "Community 43"
+### Community 42 - "Community 42"
 Cohesion: 0.14
 Nodes (13): Attack-Family Error Analysis, Data-Efficiency Curve, External Lab Validation, False Positive / False Negative Analysis, Internal Benchmark Design, Leakage Controls, Methodology Handoff, Methodology Writing Checklist (+5 more)
 
-### Community 44 - "Community 44"
+### Community 43 - "Community 43"
 Cohesion: 0.34
 Nodes (13): decide_and_run(), _diff_range(), _has_structural_patch(), _is_code(), _is_ignored(), _is_semantic_source(), main(), _normalize() (+5 more)
 
-### Community 45 - "Community 45"
+### Community 44 - "Community 44"
 Cohesion: 0.15
 Nodes (12): 06 — Glosario esencial + preguntas de tribunal, 1) Glosario mínimo para explicar el proyecto a principiantes, 2) Preguntas frecuentes del tribunal (con respuesta técnica breve), 3) Estructura de explicación en 3 minutos (versión corta), 4) Estructura de explicación en 10–12 minutos (versión defensa), “¿Cómo evitas leakage?”, “¿Cuál es tu principal limitación actual?”, “¿Está lista Phase 2 para producción?” (+4 more)
 
-### Community 46 - "Community 46"
+### Community 45 - "Community 45"
 Cohesion: 0.15
 Nodes (12): Claims Requiring Verification, code:txt (Audit the citation keys in report/drafts/state_of_the_art.md), code:txt (Build the experimental design chapter from Research/Initial ), Deeper Mathematical Explanation to Add Later, Missing Citations, Overclaim Checks for Next Pass, Places Where the Draft May Be Too Generic, Repository Facts to Cross-Check Later (+4 more)
 
-### Community 47 - "Community 47"
+### Community 46 - "Community 46"
 Cohesion: 0.15
 Nodes (12): 10. Codex handoff, 1. What CICIDS2017 is, 2. Official facts, 3. Attack categories and labels, 4. Feature extraction and flow representation, 5. Known limitations, 6. Preprocessing checklist for my thesis, 7. Evaluation protocol recommendation (+4 more)
 
-### Community 48 - "Community 48"
+### Community 47 - "Community 47"
 Cohesion: 0.15
 Nodes (12): 1. Dataset comparison table, 2. Historical evolution, 3.1 Advantages, 3.2 Comparison vs. NSL-KDD and UNSW-NB15, 3.3 Why suitable for flow-level binary PERMIT/BLOCK, 3.4 Why not enough for real-world claims, 3. Why CICIDS2017 is a reasonable main dataset, 4. Dataset choice decision matrix (+4 more)
 
-### Community 49 - "Community 49"
+### Community 48 - "Community 48"
 Cohesion: 0.15
 Nodes (12): 1. The Literature Landscape, 2. What Is Partially Covered and Leaves Room for Contribution, 3. What Is Weakly Validated in the Literature, 4. Defensible Research Gap, 5. Claims That Must Not Appear in the Thesis, 6. Evidence Mapping, 7. Thesis-Ready Sentences, Research Gap and Thesis Positioning (+4 more)
+
+### Community 49 - "Community 49"
+Cohesion: 0.15
+Nodes (13): code:bibtex (@misc{Varonis2023FlowMonitoring,), code:bibtex (@misc{Faddom2023NetFlowIPFIX,), code:bibtex (@article{ContextNetFlow2026,), code:bibtex (@article{FlowTutorial2025,), code:bibtex (@article{TemporalNetFlow2025,), code:bibtex (@article{DeploymentFramework2026,), code:bibtex (@article{TONIoTLeakage2026,), Deployment-oriented and transfer-aware evaluation (+5 more)
 
 ### Community 50 - "Community 50"
 Cohesion: 0.17
@@ -456,11 +457,11 @@ Nodes (5): Drafting Guardrails, Recommended Chapter Structure, Safe Thesis Posit
 
 ### Community 77 - "Community 77"
 Cohesion: 0.33
-Nodes (6): CICFlowMeter vs NetFlow-like schemas, Diversity of feature sets, Feature Engineering and Feature Standardisation in NIDS, Feature leakage risks and identifiers, Feature selection in NIDS, Missing, infinite, and categorical values
+Nodes (6): Alerting vs active response, Anomaly-based detection, IDS and NIDS Fundamentals, IDS vs IPS and deployment modes, Signature-based detection, Specification-based and hybrid detection
 
 ### Community 78 - "Community 78"
 Cohesion: 0.33
-Nodes (6): Alerting vs active response, Anomaly-based detection, IDS and NIDS Fundamentals, IDS vs IPS and deployment modes, Signature-based detection, Specification-based and hybrid detection
+Nodes (6): CICFlowMeter vs NetFlow-like schemas, Diversity of feature sets, Feature Engineering and Feature Standardisation in NIDS, Feature leakage risks and identifiers, Feature selection in NIDS, Missing, infinite, and categorical values
 
 ### Community 79 - "Community 79"
 Cohesion: 0.33
@@ -473,6 +474,10 @@ Nodes (4): Contents, Experiment Archive, Notes, Status Labels Used Here
 ### Community 81 - "Community 81"
 Cohesion: 0.5
 Nodes (3): Overview, References, State of the Art on NIDS and Network-Flow Representations for a Flow-Level RL Defender
+
+### Community 82 - "Community 82"
+Cohesion: 0.67
+Nodes (3): code:bibtex (@article{MaliciousBehavior2021,), code:bibtex (@misc{Stamus2024IDSTypes,), NIDS fundamentals and taxonomies
 
 ## Ambiguous Edges - Review These
 - `Cost-Sensitive IDS Reward` → `Dataset-as-Environment`  [AMBIGUOUS]
@@ -488,7 +493,7 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **What is the exact relationship between `Cost-Sensitive IDS Reward` and `Dataset-as-Environment`?**
   _Edge tagged AMBIGUOUS (relation: related to) - confidence is low._
-- **Why does `load_cicids2017_split()` connect `Community 0` to `Community 37`, `Community 14`?**
+- **Why does `load_cicids2017_split()` connect `Community 0` to `Community 36`, `Community 14`?**
   _High betweenness centrality (0.011) - this node is a cross-community bridge._
 - **Why does `map_to_canonical()` connect `Community 20` to `Community 0`, `Community 4`?**
   _High betweenness centrality (0.008) - this node is a cross-community bridge._
