@@ -46,6 +46,19 @@ Secondary runs (training-size benchmark, fewer `--train-max-rows` over the same 
 | Total timesteps | `3,000,000` |
 | Reward config | `tp=1.5, fp=-2.0, fn=-5.0, omission=0.0` |
 
+> **Observation layout (152-dimensional = 76 canonical feature values + 76 missingness-mask values).**
+> The observation is `[x_1..x_76, m_1..m_76]`: the first 76 entries are the canonical
+> flow-feature values and the second 76 are a presence/absence mask
+> (`1 = present/valid`, `0 = missing/imputed`). The mask is computed *after* the upstream
+> `fillna(0)` cleaning step in `src/load_cicids2017.py` (where `±Inf → NaN → 0`); inside
+> `src/canonical_schema.py` it is set to 1 (`mask[:, i] = (~bad).astype(np.float32)`) for every canonical
+> feature that has a mapped source column. Because the CICIDS2017 → canonical mapping
+> covers all 76 features, **on native CICIDS2017 the mask is constant = 1 for every row**:
+> it encodes *source-column presence*, not per-value missingness. The mask only becomes
+> informative for cross-domain / Phase 2 lab inference, where some source columns are
+> absent and their mask stays 0 — e.g. a legacy NSL-KDD mapping covers only 3 of the 76
+> canonical features.
+
 Metrics from `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json`:
 
 | Metric | Value |
@@ -221,7 +234,7 @@ Artifact:
 | z abs max | `10.0` |
 | z abs mean | `1.1148942708969116` |
 
-This artifact documents a strong domain-shift problem on benign real traffic.
+This artifact documents a strong domain-shift problem on benign operator-generated lab-capture traffic (real captured packets, closed home lab; limited external validity).
 
 ### Later v2 Benign-Only Artifact
 
