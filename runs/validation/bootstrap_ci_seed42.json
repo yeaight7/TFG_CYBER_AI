@@ -1,0 +1,88 @@
+{
+  "generated_at": "2026-06-27T20:16:50",
+  "task": "A4 - bootstrap CI of MAIN test metrics (no retrain)",
+  "run_id": "MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+  "bootstrap": "stratified",
+  "method": "Stratified nonparametric percentile bootstrap of the fixed seed-42 test set. Per-class resampling conditioning on the fixed stratified class totals (fp~Binomial(N-,.), tp~Binomial(N+,.)). Every reported metric is a function of the confusion cells (tn,fp,fn,tp).",
+  "n_test": 566149,
+  "n_boot": 10000,
+  "boot_seed": 12345,
+  "ci_level": 0.95,
+  "confusion_counts": {
+    "tn": 451631,
+    "fp": 2989,
+    "fn": 518,
+    "tp": 111011
+  },
+  "counts_self_validated": true,
+  "metrics_ci": {
+    "accuracy": {
+      "point": 0.993806,
+      "boot_mean": 0.993806,
+      "boot_std": 0.000104,
+      "ci95_low": 0.993601,
+      "ci95_high": 0.994009
+    },
+    "balanced_accuracy": {
+      "point": 0.99439,
+      "boot_mean": 0.994391,
+      "boot_std": 0.000118,
+      "ci95_low": 0.994156,
+      "ci95_high": 0.994622
+    },
+    "mcc": {
+      "point": 0.980675,
+      "boot_mean": 0.980677,
+      "boot_std": 0.00032,
+      "ci95_low": 0.980043,
+      "ci95_high": 0.981302
+    },
+    "precision_attack": {
+      "point": 0.973781,
+      "boot_mean": 0.973783,
+      "boot_std": 0.000464,
+      "ci95_low": 0.972864,
+      "ci95_high": 0.974678
+    },
+    "recall_attack": {
+      "point": 0.995355,
+      "boot_mean": 0.995357,
+      "boot_std": 0.000205,
+      "ci95_low": 0.994952,
+      "ci95_high": 0.99575
+    },
+    "f1_attack": {
+      "point": 0.98445,
+      "boot_mean": 0.984451,
+      "boot_std": 0.000258,
+      "ci95_low": 0.983942,
+      "ci95_high": 0.984955
+    },
+    "fpr": {
+      "point": 0.006575,
+      "boot_mean": 0.006574,
+      "boot_std": 0.000119,
+      "ci95_low": 0.006344,
+      "ci95_high": 0.00681
+    },
+    "fnr": {
+      "point": 0.004645,
+      "boot_mean": 0.004643,
+      "boot_std": 0.000205,
+      "ci95_low": 0.00425,
+      "ci95_high": 0.005048
+    }
+  },
+  "model_verification": {
+    "model_file": "MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip",
+    "model_sha256": "546860e61367d1826456d7cda9e7731bcdc926b655f459455e328d4ac04c0fc5",
+    "n_test_predicted": 566149,
+    "regenerated_counts": {
+      "tn": 451631,
+      "fp": 2989,
+      "fn": 518,
+      "tp": 111011
+    },
+    "matches_recovered": true
+  }
+}
