@@ -39,6 +39,7 @@ sys.path.append(str(_REPO / "src"))
 
 from canonical_schema import FEATURES_CANON, map_to_canonical  # noqa: E402
 from scaling_utils import apply_percentile_clipping, apply_z_clipping  # noqa: E402
+from metrics_utils import confusion_to_metrics  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -287,23 +288,10 @@ def compute_truth_metrics(df: pd.DataFrame, y_pred: np.ndarray) -> Optional[Dict
     fp = int(((y_true == 0) & (y_pred_valid == 1)).sum())
     fn = int(((y_true == 1) & (y_pred_valid == 0)).sum())
 
-    def safe_div(num: float, den: float) -> float:
-        return float(num / den) if den else 0.0
-
-    precision_attack = safe_div(tp, tp + fp)
-    recall_attack = safe_div(tp, tp + fn)
-    f1_attack = safe_div(2 * precision_attack * recall_attack, precision_attack + recall_attack)
-
+    # Single source of truth for metric definitions (see src/metrics_utils.py).
     return {
         "n_labeled_flows": int(valid_mask.sum()),
-        "accuracy": safe_div(tp + tn, tp + tn + fp + fn),
-        "precision_attack": precision_attack,
-        "recall_attack": recall_attack,
-        "f1_attack": f1_attack,
-        "tp": tp,
-        "tn": tn,
-        "fp": fp,
-        "fn": fn,
+        **confusion_to_metrics(tn, fp, fn, tp),
     }
 
 

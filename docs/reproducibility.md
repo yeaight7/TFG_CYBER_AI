@@ -75,3 +75,11 @@ Repository scan status:
 - Model loading uses `QRDQN.load` / `DQN.load`, and scaler loading uses `joblib.load`; these are trusted local artifact paths only.
 
 This does not claim the upstream PyTorch advisory is fixed. The current handling is: keep the working ML stack pinned, avoid untrusted model/checkpoint/scaler loading, and treat any unresolved upstream PyTorch advisory as residual upstream risk until a compatible patched PyTorch build exists and is validated against the training stack.
+
+## Preprocessing: training vs Phase-2 inference
+
+Training and the internal CICIDS2017 test evaluation use **StandardScaler only, with no clipping**: `src/train_rl_defender.py` computes the `p0.5 / p99.5` train percentiles and persists them, but the model is fit and evaluated on un-clipped, standardized features.
+
+Phase-2 offline inference (`scripts/predict_real_traffic_v2.py`) optionally adds **percentile clipping** (to the persisted train percentiles) and **z-score clipping** (`--clip-z`, e.g. `10.0`) around that same persisted scaler. These are a **deliberate inference-time domain-shift mitigation** for out-of-distribution lab traffic (extreme `|z|` values), not part of the training preprocessing.
+
+Implication: a Phase-2 run that uses `--percentiles` / `--clip-z` applies a transform the model did not see at train time, so its metrics are **not byte-for-byte comparable** with the internal CICIDS2017 test metrics. For a strictly comparable Phase-2 run, omit `--percentiles` and `--clip-z` (matching the un-clipped training preprocessing). The MAIN Phase-2 artifact (`runs/phase2/P2v2_pred_20260610_161231_MAIN/`) used `--clip-z 10.0`, recorded in its `config.json`. In practice the operator observed training and lab-inference accuracy to be close (~0.98–0.99), so the clipping was retained as-is; this paragraph documents the asymmetry rather than hiding it.

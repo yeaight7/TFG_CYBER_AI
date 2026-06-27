@@ -1,0 +1,31 @@
+{
+  "description": "Fixed test partition reference for the internal CICIDS2017 training-size benchmark. Any benchmark run's split_metadata.test_set_sha256 must equal test_set_sha256 below.",
+  "source_run_id": "MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+  "loader_args": {
+    "split_mode": "random",
+    "preset": "full",
+    "seed": 42,
+    "scale": false,
+    "use_canonical": true,
+    "max_rows": null,
+    "train_max_rows": null
+  },
+  "n_train_full": 2264594,
+  "n_test": 566149,
+  "test_benign": 454620,
+  "test_attack": 111529,
+  "test_set_sha256": "cb175377f462672b3aeb3ad3dd8bff3ab506d8663755cb336d40f3ef9765035b",
+  "y_test_sha256": "f447be3b9d7da083ef953e38534408b6db03635e5bb8aae8f1f8173c0aa876b2",
+  "subsample_method": "stratified_nested_prefix_v1",
+  "train_subset_sha256": {
+    "500000": "e70a7bc69e9e039dd868f08d0d84ce58b3ca9de7ca0bde5109a4f3bbf7d1efec",
+    "1000000": "3791b478919764a7eec17a7854a9d022c9d8e350f4fbdd9f63e69ff3e3325581"
+  },
+  "environment": {
+    "python": "3.11.15",
+    "numpy": "2.4.6",
+    "pandas": "3.0.3",
+    "scikit_learn": "1.9.0"
+  },
+  "generated_at": "2026-06-27T03:43:07"
+}

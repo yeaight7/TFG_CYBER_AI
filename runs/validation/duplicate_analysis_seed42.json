@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-06-27T03:14:12",
+  "task": "A1 - duplicate / cross-split leakage",
+  "loader": "src/load_cicids2017.load_cicids2017_binary",
+  "config": {
+    "seed": 42,
+    "test_size": 0.2,
+    "use_canonical": true,
+    "scale": false,
+    "n_features": 152
+  },
+  "counts": {
+    "n_train": 2264594,
+    "n_test": 566149,
+    "n_total": 2830743
+  },
+  "overall_duplicates_feature_only": {
+    "n_rows": 2830743,
+    "n_unique": 2199474,
+    "n_duplicate_rows": 631269,
+    "duplicate_pct": 22.3005
+  },
+  "overall_duplicates_feature_plus_label": {
+    "n_rows": 2830743,
+    "n_unique": 2199785,
+    "n_duplicate_rows": 630958,
+    "duplicate_pct": 22.2895
+  },
+  "cross_split_leakage_feature_only": {
+    "n_test_rows_also_in_train": 140758,
+    "pct_of_test": 24.8624,
+    "attack_test_rows_in_train": 44749,
+    "attack_pct_of_test_attacks": 40.1232,
+    "benign_test_rows_in_train": 96009,
+    "benign_pct_of_test_benigns": 21.1185
+  },
+  "cross_split_leakage_feature_plus_label": {
+    "n_test_rows_also_in_train": 140703,
+    "pct_of_test": 24.8526
+  },
+  "per_class_duplicate_rate_full_set_feature_only": {
+    "attack": {
+      "n_rows": 557646,
+      "n_unique": 336490,
+      "n_duplicate_rows": 221156,
+      "duplicate_pct": 39.6589
+    },
+    "benign": {
+      "n_rows": 2273097,
+      "n_unique": 1863295,
+      "n_duplicate_rows": 409802,
+      "duplicate_pct": 18.0284
+    }
+  }
+}
