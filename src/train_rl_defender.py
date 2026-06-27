@@ -14,8 +14,10 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import platform
+import random
 import shutil
 import sys
 from importlib import metadata
@@ -197,6 +199,26 @@ def write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
+def _sha256_file(path: Path) -> str | None:
+    """SHA-256 hex digest of a file, or None if it does not exist."""
+    p = Path(path)
+    if not p.is_file():
+        return None
+    h = hashlib.sha256()
+    with p.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _repo_relative(path: Path) -> str:
+    """Repo-relative POSIX path if under the repo root, else the original string."""
+    try:
+        return Path(path).resolve().relative_to(_REPO_ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
 def make_env_fn(
     X: np.ndarray, y: np.ndarray, reward_config: Dict[str, float], max_steps: int
 ):
@@ -366,6 +388,16 @@ def main() -> None:
     use_canonical = not args.no_canonical
     seed = args.seed
     split_mode = args.split_mode
+
+    # ── Semillas globales al inicio de la ejecución (reproducibilidad,
+    #    cf. metodologia.tex). La partición usa su propio random_state, así que
+    #    esto NO altera el split fijo seed-42; fija la inicialización de la red,
+    #    el muestreo del buffer de repetición y la política de exploración. ──
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
     hyperparams = resolve_training_hyperparams(
         training_profile=training_profile,
         is_fast=is_fast,
@@ -645,7 +677,25 @@ def main() -> None:
     config["status"] = "completed"
     config["completed_at"] = datetime.now().isoformat(timespec="seconds")
     write_json(config_path, config)
+
+    # ── Integridad de artefactos (D3): SHA-256 + rutas repo-relativas ──
+    # Las rutas absolutas guardadas arriba son del entorno de ejecución
+    # (p. ej. RunPod) y se conservan como informativas; estas son portables y
+    # verificables. Todos los artefactos existen ya en este punto.
+    artifact_files = {
+        "model": model_zip_path,
+        "run_model": run_model_path,
+        "scaler": scaler_path,
+        "train_percentiles": percentiles_path,
+        "feature_names": feature_names_path,
+    }
     artifact_manifest["status"] = "completed"
+    artifact_manifest["checksums_sha256"] = {
+        name: _sha256_file(p) for name, p in artifact_files.items()
+    }
+    artifact_manifest["relative_paths"] = {
+        name: _repo_relative(p) for name, p in artifact_files.items()
+    }
     write_json(manifest_path, artifact_manifest)
 
     print(f"\nConfig guardada en: {config_path}")

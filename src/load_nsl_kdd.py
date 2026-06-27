@@ -1,3 +1,11 @@
+"""load_nsl_kdd.py — LEGACY (historical Phase 1 benchmark only).
+
+The NSL-KDD dataset (`datasets/nsl_kdd/`) and the trained `models/rf_nslkdd.joblib`
+were **dropped from the repository** (decision D-8, 2026-06-27): they are no longer
+tracked or shipped. This adapter is retained for historical reference / project
+evolution only and is **not** part of the current CICIDS2017 + Phase-2 model path.
+To use it you must supply the NSL-KDD files locally.
+"""
 from pathlib import Path
 from typing import Optional, Tuple, List
 

@@ -9,6 +9,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      # Pin the interpreter uv uses to match MAIN training (environment.json: 3.12.3).
+      UV_PYTHON: "3.12"
     steps:
       - uses: actions/checkout@v4
 
@@ -16,11 +19,14 @@ jobs:
         uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
+          # Cache the uv download/build store across runs (the cu130 torch wheel
+          # is ~2.5 GB; caching avoids re-downloading it every run).
+          enable-cache: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install dependencies
         run: uv sync --all-extras

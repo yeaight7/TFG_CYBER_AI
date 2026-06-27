@@ -58,6 +58,37 @@ Metrics from `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_202606
 | Recall benign | `0.99343` |
 | F1 benign | `0.99613` |
 
+#### Operational metrics + bootstrap confidence intervals (A4 / A5)
+
+Operational metrics (derived from the confirmed test confusion matrix
+`tn=451,631 · fp=2,989 · fn=518 · tp=111,011`, total 566,149) and **95% bootstrap
+confidence intervals** over the fixed seed-42 test set
+(`runs/validation/bootstrap_ci_seed42.json`, 10,000 stratified resamples,
+`scripts/bootstrap_ci.py`):
+
+| Metric | Point | 95% CI |
+|--------|-------|--------|
+| Recall attack (detection) | `0.99536` | `[0.99495, 0.99575]` |
+| FPR (benign blocked) | `0.00658` | `[0.00634, 0.00681]` |
+| FNR (attacks missed) | `0.00465` | `[0.00425, 0.00505]` |
+| Balanced accuracy | `0.99439` | `[0.99416, 0.99462]` |
+| MCC | `0.98068` | `[0.98004, 0.98130]` |
+| Precision attack | `0.97378` | `[0.97286, 0.97468]` |
+| F1 attack | `0.98445` | `[0.98394, 0.98496]` |
+| Accuracy | `0.99381` | `[0.99360, 0.99401]` |
+
+The point estimates reproduce `metrics.json` exactly and were **independently
+re-verified end-to-end** by re-running the saved MAIN model over the reproduced
+seed-42 test split (`--from-model`): the regenerated confusion matrix matched
+`(451631, 2989, 518, 111011)` exactly. The intervals are tight (±0.0002–0.001),
+so the single-seed point estimates are **stable under test-set resampling** —
+this says nothing about training-seed variability (a different training seed
+could land elsewhere; multiple training runs were **not** performed). *Scope:*
+the CIs quantify test-set **sampling** precision for this one fixed trained
+model. Because the seed-42 split is *stratified*, the bootstrap resamples within
+each class with the per-class totals (N⁻=454,620 benign, N⁺=111,529 attack) held
+fixed, faithful to the sampling design.
+
 ### Historical pre-design probes (C0x) — not part of the official trunk
 
 These runs were exploratory probes launched **before** the experimental design was fixed (different `max_rows`, timesteps, and — for C01/C02 — a different false-positive reward). They are retained for traceability only and are slated for archival (`runs/archive/`); they must not be presented as official results.

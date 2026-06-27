@@ -111,6 +111,7 @@ The adapter in `src/load_cicids2017.py` performs additional cleaning at load tim
 
 This dataset is kept for historical Phase 1 benchmarking.
 
+- **Removed from the repo (2026-06-27, decision D-8):** `datasets/nsl_kdd/` and `models/rf_nslkdd.joblib` are no longer tracked (gitignored). `src/load_nsl_kdd.py` is retained for reference only and needs NSL-KDD files supplied locally.
 - not part of the final Phase 2 model path
 - only partially mappable to the canonical schema
 - useful for historical comparisons, not for the final simulation-facing pipeline

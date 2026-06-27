@@ -15,7 +15,7 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 |------|--------|
 | Canonical schema | Implemented and frozen at 76 features |
 | CICIDS2017 adapter | Implemented |
-| NSL-KDD adapter | Implemented for historical Phase 1 benchmarking |
+| NSL-KDD adapter | Legacy — data/model dropped from the repo (see [experiments/nslkdd_experiments.md](experiments/nslkdd_experiments.md)); code kept for history only |
 | RL algorithm | QRDQN |
 | Validation suite | Checks A, B, C + leave-one-exact-CSV-out script |
 | Phase 2 inference | Robust offline pipeline available (`predict_real_traffic_v2.py`) |
@@ -93,6 +93,7 @@ The adapter (`src/load_cicids2017.py`) applies further cleaning at load time reg
 ### Provenance and integrity
 
 - **Upstream source**: CICIDS2017, Canadian Institute for Cybersecurity (CIC), University of New Brunswick — <https://www.unb.ca/cic/datasets/ids-2017.html> (the labelled CICFlowMeter flow CSVs, one per capture day).
+- **Redistribution terms**: CICIDS2017 is distributed by UNB/CIC for research use and requires citation/attribution; redistribution is not explicitly granted. The curated copy here is a research convenience for reproducibility — prefer obtaining the data from the official link above, and cite CIC/UNB in any derived work. The legacy NSL-KDD dataset has been **removed** from this repository (`datasets/nsl_kdd/`, `models/rf_nslkdd.joblib` are no longer tracked).
 - The hashes below are SHA-256 of the **curated** CSVs actually used by the adapter (`datasets/CICIDS2017/*.csv`), i.e. this repository's derivative after pre-ingestion column removal — **not** the upstream file hashes. They let you confirm you are working from the exact curated copy used for the committed results. The `Raw_dataset/` originals are gitignored and not hashed here.
 
 | File | Bytes | SHA-256 |

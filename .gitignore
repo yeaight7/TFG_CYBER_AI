@@ -38,15 +38,16 @@ scratch/
 # large models type shi
 models/rf_cicids2017_canonical_20260504_000432.joblib
 
-# Graphify output files
+# Legacy NSL-KDD dropped (decision D-8): kept out of the repo going-forward.
+datasets/nsl_kdd/
+models/rf_nslkdd.joblib
+
+# Graphify output files — untracked entirely (generated semantic cache, may be
+# stale; e.g. a fabricated reward-config node). Regenerate locally with `graphify .`.
 .graphify_python
-graphify-out/cache
-graphify-out/*.py
 .graphify_*.json
-graphify-out/obsidian/
-graphify-out/obsidian/.obsidian/
-graphify-out/graph.html
-# graphify-out/TFG_CYBER_AI/.obsidian/
+graphify-out/
+graphify-out-*/
 
 # Personal Research: tracked as Markdown only (single source format).
 # Derived .tex/.pdf were removed to avoid 3 copies of the same research notes.

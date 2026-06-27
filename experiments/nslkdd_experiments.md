@@ -1,5 +1,11 @@
 # NSL-KDD Historical Experiments
 
+> **Legacy / removed (2026-06-27, decision D-8):** the NSL-KDD data (`datasets/nsl_kdd/`)
+> and the trained model (`models/rf_nslkdd.joblib`) are **no longer tracked** in the
+> repository and are gitignored. The adapter `src/load_nsl_kdd.py` is retained for
+> historical reference only. NSL-KDD is **not** part of the current CICIDS2017 + Phase-2
+> model path; these notes are kept to explain the project's evolution.
+
 This document preserves the historical Phase 1 benchmark notes for NSL-KDD.
 
 ## Status

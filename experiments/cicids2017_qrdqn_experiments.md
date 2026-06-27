@@ -4,6 +4,8 @@ This document archives the committed CICIDS2017 training, validation, and Phase 
 
 > **Official run:** `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` is the project's official result (full data, fixed 566,149-row test partition, 3,000,000 timesteps). Runs C01–C03 are **pre-design probes** — exploration runs from before the experimental design was fixed — and have been archived under `runs/archive/cicids2017/`. They are not official results and their metrics are not comparable to MAIN's fixed test partition.
 
+> **Hyperparameter provenance:** the MAIN hyperparameters (`gamma=0.0`, `net_arch=[1024,1024,512]`, `n_quantiles=200`, `lr=5e-5`, `gradient_steps=20`, 3M steps) are a **hand-set fixed profile**, not an Optuna output. The repo's Optuna probe (`src/tune_hparams.py`) searches `gamma∈[0.95,0.999]`, `net_arch∈{[256,128],[512,256],[256,256]}`, `gradient_steps∈{10,50,100}` — which **excludes** the MAIN values, so MAIN could not have come from that search. The profile is frozen by `tests/` (`test_main_experiment_profile_resolves_fixed_config`).
+
 ## Status
 
 - **Maintained archive**
