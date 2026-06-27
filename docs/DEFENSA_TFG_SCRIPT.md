@@ -138,6 +138,20 @@ La versión madura del pipeline usa **QRDQN**, una variante distributional de DQ
 
 La ventaja es que no solo estima un valor esperado simple, sino una distribución del retorno, algo especialmente interesante cuando el problema tiene costes asimétricos y riesgo operacional.
 
+### Por qué gamma = 0 (formulación honesta — anticipar la pregunta del tribunal)
+
+El run oficial usa **`gamma = 0.0`** (`config.json`, y ambos perfiles en `resolve_training_hyperparams`). Es una decisión **deliberada**, no un descuido.
+
+Con `gamma = 0`, el objetivo de QRDQN `δ = r + γ·θ⁻(s',a*) − θ(s,a)` se reduce a `δ = r − θ(s,a)`: el término de bootstrap desaparece y cada flujo se trata como una **decisión de un solo paso**. Como el dataset no reacciona a la acción del agente (no hay dependencia temporal entre flujos), la formulación es, con honestidad, un **bandit contextual de coste asimétrico**, no un MDP secuencial.
+
+Pregunta esperable: *"si gamma = 0, ¿en qué se diferencia de un clasificador?"*. Respuesta preparada:
+
+- No se entrena con cross-entropy sobre etiquetas, sino por **aprendizaje de valor sobre una matriz de coste asimétrica explícita** (FN −5 ≫ FP −2); el coste vive en la recompensa, no en un `class_weight`.
+- La decisión es el `argmax` del valor aprendido entre PERMIT/BLOCK.
+- La **cabeza distributional** de QRDQN sigue aportando valor con gamma = 0: modela la *distribución* del retorno (no solo su media) en la frontera de decisión, útil bajo coste asimétrico y riesgo.
+
+En resumen: es una formulación cost-sensitive de un solo paso, y se presenta como tal abiertamente, sin afirmar autonomía secuencial.
+
 ---
 
 ## 11. Resultados principales en CICIDS2017
@@ -231,7 +245,7 @@ El script mantenido para esto es:
 
 La conclusión importante de Phase 2 no es que el problema esté completamente resuelto, sino que el pipeline ya detectó un reto real: el **domain shift**.
 
-El run Phase 2 con el modelo oficial (MAIN) sobre tráfico sintético etiquetado es `P2v2_pred_20260610_161231_MAIN` (`pcaps/synthetic_real_traffic.csv`): block_rate **0.252**, accuracy **0.991862**, F1 ataque **0.983801**. Es un benchmark sintético y no debe mezclarse con los resultados internos de CICIDS2017.
+El run Phase 2 con el modelo oficial (MAIN) sobre **tráfico real capturado y etiquetado** (generado por el operador en un laboratorio doméstico aislado, no adversarial) es `P2v2_pred_20260610_161231_MAIN` (`pcaps/lab_capture_traffic.csv`): block_rate **0.252**, accuracy **0.991862**, F1 ataque **0.983801**. Es un **benchmark de laboratorio** (tráfico real capturado, validez externa limitada) y no debe mezclarse con los resultados internos de CICIDS2017.
 
 Además, hay artefactos benign-only comprometidos con comportamientos distintos sobre tráfico benigno real:
 
