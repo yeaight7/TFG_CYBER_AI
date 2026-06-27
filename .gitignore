@@ -47,6 +47,7 @@ models/rf_nslkdd.joblib
 .graphify_python
 .graphify_*.json
 graphify-out/
+graphify-out-*/
 
 # Personal Research: tracked as Markdown only (single source format).
 # Derived .tex/.pdf were removed to avoid 3 copies of the same research notes.
