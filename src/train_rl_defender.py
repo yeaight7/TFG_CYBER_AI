@@ -42,6 +42,11 @@ from load_cicids2017 import (
 from canonical_schema import FEATURES_CANON
 _N_CANON = len(FEATURES_CANON)
 
+try:
+    from metrics_utils import confusion_to_metrics
+except ModuleNotFoundError:  # when imported as ``src.train_rl_defender``
+    from src.metrics_utils import confusion_to_metrics
+
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 MODELS_DIR = _REPO_ROOT / "models"
@@ -234,24 +239,16 @@ def evaluate_model(
         pred_chunks.append(np.asarray(actions, dtype=np.int64).reshape(-1))
     y_pred = np.concatenate(pred_chunks)
 
-    cm = confusion_matrix(y_true, y_pred)
-    report = classification_report(y_true, y_pred, digits=4, output_dict=True)
+    cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
+    tn, fp, fn, tp = (int(v) for v in cm.ravel())
 
     print("\n=== Confusion matrix (0=PERMIT, 1=BLOCK) ===")
     print(cm)
     print("\n=== Classification report ===")
     print(classification_report(y_true, y_pred, digits=4))
 
-    # Métricas clave para logging
-    metrics: Dict[str, float] = {
-        "accuracy": float(report["accuracy"]),
-        "precision_attack": float(report.get("1", {}).get("precision", 0.0)),
-        "recall_attack": float(report.get("1", {}).get("recall", 0.0)),
-        "f1_attack": float(report.get("1", {}).get("f1-score", 0.0)),
-        "precision_benign": float(report.get("0", {}).get("precision", 0.0)),
-        "recall_benign": float(report.get("0", {}).get("recall", 0.0)),
-        "f1_benign": float(report.get("0", {}).get("f1-score", 0.0)),
-    }
+    # Métricas clave para logging (fuente única de verdad: metrics_utils.confusion_to_metrics)
+    metrics: Dict[str, float] = confusion_to_metrics(tn, fp, fn, tp, reward_config=reward_config)
 
     print("\n=== Key metrics ===")
     for k, v in metrics.items():
