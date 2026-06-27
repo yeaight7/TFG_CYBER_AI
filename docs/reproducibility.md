@@ -83,3 +83,12 @@ Training and the internal CICIDS2017 test evaluation use **StandardScaler only, 
 Phase-2 offline inference (`scripts/predict_real_traffic_v2.py`) optionally adds **percentile clipping** (to the persisted train percentiles) and **z-score clipping** (`--clip-z`, e.g. `10.0`) around that same persisted scaler. These are a **deliberate inference-time domain-shift mitigation** for out-of-distribution lab traffic (extreme `|z|` values), not part of the training preprocessing.
 
 Implication: a Phase-2 run that uses `--percentiles` / `--clip-z` applies a transform the model did not see at train time, so its metrics are **not byte-for-byte comparable** with the internal CICIDS2017 test metrics. For a strictly comparable Phase-2 run, omit `--percentiles` and `--clip-z` (matching the un-clipped training preprocessing). The MAIN Phase-2 artifact (`runs/phase2/P2v2_pred_20260610_161231_MAIN/`) used `--clip-z 10.0`, recorded in its `config.json`. In practice the operator observed training and lab-inference accuracy to be close (~0.98–0.99), so the clipping was retained as-is; this paragraph documents the asymmetry rather than hiding it.
+
+## Dataset attribution, terms, and provenance
+
+- **CICIDS2017** — Canadian Institute for Cybersecurity (CIC), University of New Brunswick. Official page: <https://www.unb.ca/cic/datasets/ids-2017.html>. The dataset is provided for **research use** and requires **citation/attribution**; redistribution is not explicitly granted. The curated CSVs in `datasets/CICIDS2017/` (git LFS) are a reproducibility convenience (this repo's derivative after pre-ingestion column removal); per-file SHA-256 hashes are in `README.md` (§ Provenance and integrity). Prefer fetching from the official source where possible, and cite CIC/UNB in any derived work.
+- **NSL-KDD** (legacy) was **removed** from the repository on 2026-06-27 (decision D-8): `datasets/nsl_kdd/` and `models/rf_nslkdd.joblib` are no longer tracked and are now gitignored. The adapter `src/load_nsl_kdd.py` is kept for historical reference only (Phase-1 benchmark); it is not part of the current CICIDS2017 + Phase-2 model path.
+
+## Git history note (institutional email)
+
+Commits **before 2026-06-27** were authored with an institutional email (`…@al.uloyola.es`). Going forward, commits use the author's GitHub `noreply` address (decision D-6). Per D-6 the existing history is **accepted and not rewritten** (no `git filter-repo` / force-push): the historical address remains in past commits by design, documented here rather than scrubbed.
