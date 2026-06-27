@@ -3,3 +3,5 @@
 # Existing raw-committed blobs stay as-is in history until any future migration.
 *.zip filter=lfs diff=lfs merge=lfs -text
 *.pcap filter=lfs diff=lfs merge=lfs -text
+models/archive/** -filter -diff -merge -text
+pcaps/archive/** -filter -diff -merge -text
