@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `71190dd1`
+- Built from commit: `f2d61c44`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -457,15 +457,15 @@ Nodes (5): Drafting Guardrails, Recommended Chapter Structure, Safe Thesis Posit
 
 ### Community 77 - "Community 77"
 Cohesion: 0.33
-Nodes (6): CICIDS2017-specific discussion, Feature engineering and standardisation, IDS/NIDS fundamentals, Network traffic representation, Public NIDS datasets, What to Add to the Current State of the Art
+Nodes (6): CICFlowMeter vs NetFlow-like schemas, Diversity of feature sets, Feature Engineering and Feature Standardisation in NIDS, Feature leakage risks and identifiers, Feature selection in NIDS, Missing, infinite, and categorical values
 
 ### Community 78 - "Community 78"
 Cohesion: 0.33
-Nodes (6): CICFlowMeter vs NetFlow-like schemas, Diversity of feature sets, Feature Engineering and Feature Standardisation in NIDS, Feature leakage risks and identifiers, Feature selection in NIDS, Missing, infinite, and categorical values
+Nodes (6): Alerting vs active response, Anomaly-based detection, IDS and NIDS Fundamentals, IDS vs IPS and deployment modes, Signature-based detection, Specification-based and hybrid detection
 
 ### Community 79 - "Community 79"
 Cohesion: 0.33
-Nodes (6): Alerting vs active response, Anomaly-based detection, IDS and NIDS Fundamentals, IDS vs IPS and deployment modes, Signature-based detection, Specification-based and hybrid detection
+Nodes (6): CICIDS2017-specific discussion, Feature engineering and standardisation, IDS/NIDS fundamentals, Network traffic representation, Public NIDS datasets, What to Add to the Current State of the Art
 
 ### Community 80 - "Community 80"
 Cohesion: 0.4
@@ -473,11 +473,11 @@ Nodes (4): Contents, Experiment Archive, Notes, Status Labels Used Here
 
 ### Community 81 - "Community 81"
 Cohesion: 0.5
-Nodes (4): code:bibtex (@article{ContextNetFlow2026,), code:bibtex (@article{FlowTutorial2025,), code:bibtex (@article{TemporalNetFlow2025,), Flow-based NIDS and feature engineering
+Nodes (3): Overview, References, State of the Art on NIDS and Network-Flow Representations for a Flow-Level RL Defender
 
 ### Community 82 - "Community 82"
 Cohesion: 0.5
-Nodes (3): Overview, References, State of the Art on NIDS and Network-Flow Representations for a Flow-Level RL Defender
+Nodes (4): code:bibtex (@article{ContextNetFlow2026,), code:bibtex (@article{FlowTutorial2025,), code:bibtex (@article{TemporalNetFlow2025,), Flow-based NIDS and feature engineering
 
 ## Ambiguous Edges - Review These
 - `Cost-Sensitive IDS Reward` → `Dataset-as-Environment`  [AMBIGUOUS]
