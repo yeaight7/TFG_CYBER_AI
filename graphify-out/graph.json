@@ -11274,7 +11274,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L1",
       "id": "research_research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_md",
-      "community": 82,
+      "community": 81,
       "norm_label": "nids-traffic-representation-feature-engineering-and-datasets-perplexity-1.md"
     },
     {
@@ -11283,7 +11283,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L1",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_state_of_the_art_on_nids_and_network_flow_representations_for_a_flow_level_rl_defender",
-      "community": 82,
+      "community": 81,
       "norm_label": "state of the art on nids and network-flow representations for a flow-level rl defender"
     },
     {
@@ -11292,7 +11292,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L3",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_overview",
-      "community": 82,
+      "community": 81,
       "norm_label": "overview"
     },
     {
@@ -11301,7 +11301,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L8",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_ids_and_nids_fundamentals",
-      "community": 79,
+      "community": 78,
       "norm_label": "ids and nids fundamentals"
     },
     {
@@ -11310,7 +11310,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L10",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_ids_vs_ips_and_deployment_modes",
-      "community": 79,
+      "community": 78,
       "norm_label": "ids vs ips and deployment modes"
     },
     {
@@ -11319,7 +11319,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L18",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_signature_based_detection",
-      "community": 79,
+      "community": 78,
       "norm_label": "signature-based detection"
     },
     {
@@ -11328,7 +11328,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L26",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_anomaly_based_detection",
-      "community": 79,
+      "community": 78,
       "norm_label": "anomaly-based detection"
     },
     {
@@ -11337,7 +11337,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L34",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_specification_based_and_hybrid_detection",
-      "community": 79,
+      "community": 78,
       "norm_label": "specification-based and hybrid detection"
     },
     {
@@ -11346,7 +11346,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L42",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_alerting_vs_active_response",
-      "community": 79,
+      "community": 78,
       "norm_label": "alerting vs active response"
     },
     {
@@ -11454,7 +11454,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L135",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_feature_engineering_and_feature_standardisation_in_nids",
-      "community": 78,
+      "community": 77,
       "norm_label": "feature engineering and feature standardisation in nids"
     },
     {
@@ -11463,7 +11463,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L137",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_diversity_of_feature_sets",
-      "community": 78,
+      "community": 77,
       "norm_label": "diversity of feature sets"
     },
     {
@@ -11472,7 +11472,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L145",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_cicflowmeter_vs_netflow_like_schemas",
-      "community": 78,
+      "community": 77,
       "norm_label": "cicflowmeter vs netflow-like schemas"
     },
     {
@@ -11481,7 +11481,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L153",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_feature_selection_in_nids",
-      "community": 78,
+      "community": 77,
       "norm_label": "feature selection in nids"
     },
     {
@@ -11490,7 +11490,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L161",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_feature_leakage_risks_and_identifiers",
-      "community": 78,
+      "community": 77,
       "norm_label": "feature leakage risks and identifiers"
     },
     {
@@ -11499,7 +11499,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L169",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_missing_infinite_and_categorical_values",
-      "community": 78,
+      "community": 77,
       "norm_label": "missing, infinite, and categorical values"
     },
     {
@@ -11643,7 +11643,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L291",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_what_to_add_to_the_current_state_of_the_art",
-      "community": 77,
+      "community": 79,
       "norm_label": "what to add to the current state of the art"
     },
     {
@@ -11652,7 +11652,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L296",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_ids_nids_fundamentals",
-      "community": 77,
+      "community": 79,
       "norm_label": "ids/nids fundamentals"
     },
     {
@@ -11661,7 +11661,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L304",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_network_traffic_representation_304",
-      "community": 77,
+      "community": 79,
       "norm_label": "network traffic representation"
     },
     {
@@ -11670,7 +11670,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L313",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_feature_engineering_and_standardisation",
-      "community": 77,
+      "community": 79,
       "norm_label": "feature engineering and standardisation"
     },
     {
@@ -11679,7 +11679,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L323",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_public_nids_datasets_323",
-      "community": 77,
+      "community": 79,
       "norm_label": "public nids datasets"
     },
     {
@@ -11688,7 +11688,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L331",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_cicids2017_specific_discussion",
-      "community": 77,
+      "community": 79,
       "norm_label": "cicids2017-specific discussion"
     },
     {
@@ -11760,7 +11760,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L413",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_flow_based_nids_and_feature_engineering",
-      "community": 81,
+      "community": 82,
       "norm_label": "flow-based nids and feature engineering"
     },
     {
@@ -11769,7 +11769,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L417",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_5",
-      "community": 81,
+      "community": 82,
       "norm_label": "code:bibtex (@article{contextnetflow2026,)"
     },
     {
@@ -11778,7 +11778,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L433",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_6",
-      "community": 81,
+      "community": 82,
       "norm_label": "code:bibtex (@article{flowtutorial2025,)"
     },
     {
@@ -11787,7 +11787,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L449",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_7",
-      "community": 81,
+      "community": 82,
       "norm_label": "code:bibtex (@article{temporalnetflow2025,)"
     },
     {
@@ -11841,7 +11841,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L513",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_references",
-      "community": 82,
+      "community": 81,
       "norm_label": "references"
     },
     {
@@ -28637,5 +28637,5 @@
       "source_file": "scratch/experimental_design_board.html"
     }
   ],
-  "built_at_commit": "71190dd1034886dec138831d619a6470c16456a7"
+  "built_at_commit": "f2d61c443b730cfe9c2156925c289954a8351b72"
 }
