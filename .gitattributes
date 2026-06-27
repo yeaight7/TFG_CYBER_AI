@@ -1,1 +1,5 @@
 *.csv filter=lfs diff=lfs merge=lfs -text
+# Going-forward (decision D-6: no history rewrite): new large binaries use LFS.
+# Existing raw-committed blobs stay as-is in history until any future migration.
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.pcap filter=lfs diff=lfs merge=lfs -text
