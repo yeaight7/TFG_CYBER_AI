@@ -5937,7 +5937,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L1",
       "id": "docs_personal_research_deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_md",
-      "community": 50,
+      "community": 49,
       "norm_label": "03-entorno-rl-algoritmo-y-entrenamiento.md"
     },
     {
@@ -5946,7 +5946,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L1",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_03_entorno_rl_algoritmo_y_entrenamiento",
-      "community": 50,
+      "community": 49,
       "norm_label": "03 \u2014 entorno rl, algoritmo y entrenamiento"
     },
     {
@@ -5955,7 +5955,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L7",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_1_entorno_rl_qu_modela_exactamente",
-      "community": 50,
+      "community": 49,
       "norm_label": "1) entorno rl: que modela exactamente"
     },
     {
@@ -5964,7 +5964,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L17",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_2_recompensa_actual_por_defecto",
-      "community": 50,
+      "community": 49,
       "norm_label": "2) recompensa actual por defecto"
     },
     {
@@ -5973,7 +5973,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L21",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_codeblock_1",
-      "community": 50,
+      "community": 49,
       "norm_label": "code:python ({)"
     },
     {
@@ -5982,7 +5982,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L37",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_3_sobre_el_algoritmo_principal",
-      "community": 50,
+      "community": 49,
       "norm_label": "3) sobre el algoritmo principal"
     },
     {
@@ -5991,7 +5991,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L46",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_4_hiperpar_metros_relevantes_en_el_experimento_oficial_perfil_main_experiment_run_main",
-      "community": 50,
+      "community": 49,
       "norm_label": "4) hiperparametros relevantes en el experimento oficial (perfil `main-experiment`, run main)"
     },
     {
@@ -6000,7 +6000,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L61",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_5_presets_y_timesteps",
-      "community": 50,
+      "community": 49,
       "norm_label": "5) presets y timesteps"
     },
     {
@@ -6009,7 +6009,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L70",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_6_artefactos_que_deja_cada_entrenamiento",
-      "community": 50,
+      "community": 49,
       "norm_label": "6) artefactos que deja cada entrenamiento"
     },
     {
@@ -6018,7 +6018,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L81",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_7_baseline_y_tuning_complemento",
-      "community": 50,
+      "community": 49,
       "norm_label": "7) baseline y tuning (complemento)"
     },
     {
@@ -6027,7 +6027,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L83",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_baseline_random_forest",
-      "community": 50,
+      "community": 49,
       "norm_label": "baseline random forest"
     },
     {
@@ -6036,7 +6036,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/03-entorno-rl-algoritmo-y-entrenamiento.md",
       "source_location": "L89",
       "id": "deep_defense_research_03_entorno_rl_algoritmo_y_entrenamiento_tuning_con_optuna",
-      "community": 50,
+      "community": 49,
       "norm_label": "tuning con optuna"
     },
     {
@@ -6126,7 +6126,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L1",
       "id": "docs_personal_research_deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_md",
-      "community": 51,
+      "community": 50,
       "norm_label": "05-phase2-laboratorio-inferencia-y-riesgos.md"
     },
     {
@@ -6135,7 +6135,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L1",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_05_phase_2_laboratorio_inferencia_y_riesgos_abiertos",
-      "community": 51,
+      "community": 50,
       "norm_label": "05 \u2014 phase 2: laboratorio, inferencia y riesgos abiertos"
     },
     {
@@ -6144,7 +6144,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L3",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_1_qu_es_exactamente_phase_2_hoy",
-      "community": 51,
+      "community": 50,
       "norm_label": "1) que es exactamente phase 2 hoy"
     },
     {
@@ -6153,7 +6153,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L13",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_2_flujo_operativo_resumido",
-      "community": 51,
+      "community": 50,
       "norm_label": "2) flujo operativo resumido"
     },
     {
@@ -6162,7 +6162,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L22",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_3_endurecimiento_t_cnico_de_la_v2",
-      "community": 51,
+      "community": 50,
       "norm_label": "3) endurecimiento tecnico de la v2"
     },
     {
@@ -6171,7 +6171,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L24",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_clipping_por_percentiles_pre_scaling",
-      "community": 51,
+      "community": 50,
       "norm_label": "clipping por percentiles (pre-scaling)"
     },
     {
@@ -6180,7 +6180,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L29",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_clipping_por_z_score_post_scaling",
-      "community": 51,
+      "community": 50,
       "norm_label": "clipping por z-score (post-scaling)"
     },
     {
@@ -6189,7 +6189,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L34",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_diagn_sticos",
-      "community": 51,
+      "community": 50,
       "norm_label": "diagnosticos"
     },
     {
@@ -6198,7 +6198,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L38",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_4_artefactos_esperados_de_cada_run_phase_2",
-      "community": 51,
+      "community": 50,
       "norm_label": "4) artefactos esperados de cada run phase 2"
     },
     {
@@ -6207,7 +6207,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L47",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_5_hallazgo_central_de_phase_2_honesto",
-      "community": 51,
+      "community": 50,
       "norm_label": "5) hallazgo central de phase 2 (honesto)"
     },
     {
@@ -6216,7 +6216,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L56",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_6_laboratorio_privado_y_seguridad_operacional",
-      "community": 51,
+      "community": 50,
       "norm_label": "6) laboratorio privado y seguridad operacional"
     },
     {
@@ -6225,7 +6225,7 @@
       "source_file": "docs/Personal Research/deep-defense-research/05-phase2-laboratorio-inferencia-y-riesgos.md",
       "source_location": "L67",
       "id": "deep_defense_research_05_phase2_laboratorio_inferencia_y_riesgos_7_qu_faltar_a_para_pasar_a_bloqueo_activo",
-      "community": 51,
+      "community": 50,
       "norm_label": "7) que faltaria para pasar a bloqueo activo"
     },
     {
@@ -6729,7 +6729,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L1",
       "id": "experiments_nslkdd_experiments_md",
-      "community": 52,
+      "community": 51,
       "norm_label": "nslkdd_experiments.md"
     },
     {
@@ -6738,7 +6738,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L1",
       "id": "experiments_nslkdd_experiments_nsl_kdd_historical_experiments",
-      "community": 52,
+      "community": 51,
       "norm_label": "nsl-kdd historical experiments"
     },
     {
@@ -6747,7 +6747,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L5",
       "id": "experiments_nslkdd_experiments_status",
-      "community": 52,
+      "community": 51,
       "norm_label": "status"
     },
     {
@@ -6756,7 +6756,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L11",
       "id": "experiments_nslkdd_experiments_why_nsl_kdd_was_used",
-      "community": 52,
+      "community": 51,
       "norm_label": "why nsl-kdd was used"
     },
     {
@@ -6765,7 +6765,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L15",
       "id": "experiments_nslkdd_experiments_why_nsl_kdd_is_not_the_final_model_basis",
-      "community": 52,
+      "community": 51,
       "norm_label": "why nsl-kdd is not the final model basis"
     },
     {
@@ -6774,7 +6774,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L21",
       "id": "experiments_nslkdd_experiments_historical_summary_table",
-      "community": 52,
+      "community": 51,
       "norm_label": "historical summary table"
     },
     {
@@ -6783,7 +6783,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L32",
       "id": "experiments_nslkdd_experiments_main_takeaways",
-      "community": 52,
+      "community": 51,
       "norm_label": "main takeaways"
     },
     {
@@ -6792,7 +6792,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L38",
       "id": "experiments_nslkdd_experiments_historical_interpretation",
-      "community": 52,
+      "community": 51,
       "norm_label": "historical interpretation"
     },
     {
@@ -6801,7 +6801,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L40",
       "id": "experiments_nslkdd_experiments_dqn_vs_random_forest",
-      "community": 52,
+      "community": 51,
       "norm_label": "dqn vs random forest"
     },
     {
@@ -6810,7 +6810,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L50",
       "id": "experiments_nslkdd_experiments_reward_system_sensitivity",
-      "community": 52,
+      "community": 51,
       "norm_label": "reward-system sensitivity"
     },
     {
@@ -6819,7 +6819,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L58",
       "id": "experiments_nslkdd_experiments_legacy_architecture_notes",
-      "community": 52,
+      "community": 51,
       "norm_label": "legacy architecture notes"
     },
     {
@@ -6828,7 +6828,7 @@
       "source_file": "experiments/nslkdd_experiments.md",
       "source_location": "L68",
       "id": "experiments_nslkdd_experiments_archived_follow_up_ideas",
-      "community": 52,
+      "community": 51,
       "norm_label": "archived follow-up ideas"
     },
     {
@@ -11067,7 +11067,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L1",
       "id": "research_initial_research_for_report_chapter_state_of_the_art_nightly_state_of_art_expansion_md",
-      "community": 53,
+      "community": 52,
       "norm_label": "state_of_art_expansion.md"
     },
     {
@@ -11076,7 +11076,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L1",
       "id": "nightly_state_of_art_expansion_state_of_the_art_supplementary_draft",
-      "community": 53,
+      "community": 52,
       "norm_label": "state-of-the-art supplementary draft"
     },
     {
@@ -11085,7 +11085,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L2",
       "id": "nightly_state_of_art_expansion_second_revised_pass_2026_05_16",
-      "community": 53,
+      "community": 52,
       "norm_label": "second revised pass \u2014 2026-05-16"
     },
     {
@@ -11094,7 +11094,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L22",
       "id": "nightly_state_of_art_expansion_section_a_cicids2017_quality_concerns",
-      "community": 53,
+      "community": 52,
       "norm_label": "section a \u2014 cicids2017 quality concerns"
     },
     {
@@ -11103,7 +11103,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L47",
       "id": "nightly_state_of_art_expansion_section_b_canonical_feature_schema_and_the_case_for_a_fixed_representation",
-      "community": 53,
+      "community": 52,
       "norm_label": "section b \u2014 canonical feature schema and the case for a fixed representation"
     },
     {
@@ -11112,7 +11112,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L70",
       "id": "nightly_state_of_art_expansion_section_c_reinforcement_learning_for_intrusion_detection_named_prior_works",
-      "community": 53,
+      "community": 52,
       "norm_label": "section c \u2014 reinforcement learning for intrusion detection: named prior works"
     },
     {
@@ -11121,7 +11121,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L109",
       "id": "nightly_state_of_art_expansion_section_d_the_dataset_as_environment_design_named_precedent",
-      "community": 53,
+      "community": 52,
       "norm_label": "section d \u2014 the dataset-as-environment design: named precedent"
     },
     {
@@ -11130,7 +11130,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L132",
       "id": "nightly_state_of_art_expansion_section_e_data_efficiency_and_training_scale_evaluation",
-      "community": 53,
+      "community": 52,
       "norm_label": "section e \u2014 data efficiency and training-scale evaluation"
     },
     {
@@ -11139,7 +11139,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L155",
       "id": "nightly_state_of_art_expansion_section_f_foundational_evaluation_limits",
-      "community": 53,
+      "community": 52,
       "norm_label": "section f \u2014 foundational evaluation limits"
     },
     {
@@ -11148,7 +11148,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L181",
       "id": "nightly_state_of_art_expansion_citation_notes",
-      "community": 53,
+      "community": 52,
       "norm_label": "citation notes"
     },
     {
@@ -11157,7 +11157,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L206",
       "id": "nightly_state_of_art_expansion_administrative_citation_key_mismatches_in_existing_draft",
-      "community": 53,
+      "community": 52,
       "norm_label": "administrative: citation key mismatches in existing draft"
     },
     {
@@ -11166,7 +11166,7 @@
       "source_file": "Research/Initial Research for Report - Chapter State Of The Art/nightly/state_of_art_expansion.md",
       "source_location": "L223",
       "id": "nightly_state_of_art_expansion_cumulative_citation_status",
-      "community": 53,
+      "community": 52,
       "norm_label": "cumulative citation status"
     },
     {
@@ -11697,7 +11697,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L339",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_references_to_add_or_improve_in_references_bib",
-      "community": 49,
+      "community": 53,
       "norm_label": "references to add or improve in references.bib"
     },
     {
@@ -11706,7 +11706,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L344",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_nids_fundamentals_and_taxonomies",
-      "community": 82,
+      "community": 53,
       "norm_label": "nids fundamentals and taxonomies"
     },
     {
@@ -11715,7 +11715,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L350",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_1",
-      "community": 82,
+      "community": 53,
       "norm_label": "code:bibtex (@article{maliciousbehavior2021,)"
     },
     {
@@ -11724,7 +11724,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L368",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_2",
-      "community": 82,
+      "community": 53,
       "norm_label": "code:bibtex (@misc{stamus2024idstypes,)"
     },
     {
@@ -11733,7 +11733,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L381",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_traffic_representation_and_netflow_ipfix",
-      "community": 49,
+      "community": 53,
       "norm_label": "traffic representation and netflow/ipfix"
     },
     {
@@ -11742,7 +11742,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L385",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_3",
-      "community": 49,
+      "community": 53,
       "norm_label": "code:bibtex (@misc{varonis2023flowmonitoring,)"
     },
     {
@@ -11751,7 +11751,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L400",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_4",
-      "community": 49,
+      "community": 53,
       "norm_label": "code:bibtex (@misc{faddom2023netflowipfix,)"
     },
     {
@@ -11760,7 +11760,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L413",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_flow_based_nids_and_feature_engineering",
-      "community": 49,
+      "community": 82,
       "norm_label": "flow-based nids and feature engineering"
     },
     {
@@ -11769,7 +11769,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L417",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_5",
-      "community": 49,
+      "community": 82,
       "norm_label": "code:bibtex (@article{contextnetflow2026,)"
     },
     {
@@ -11778,7 +11778,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L433",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_6",
-      "community": 49,
+      "community": 82,
       "norm_label": "code:bibtex (@article{flowtutorial2025,)"
     },
     {
@@ -11787,7 +11787,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L449",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_7",
-      "community": 49,
+      "community": 82,
       "norm_label": "code:bibtex (@article{temporalnetflow2025,)"
     },
     {
@@ -11796,7 +11796,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L463",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_deployment_oriented_and_transfer_aware_evaluation",
-      "community": 49,
+      "community": 53,
       "norm_label": "deployment-oriented and transfer-aware evaluation"
     },
     {
@@ -11805,7 +11805,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L467",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_8",
-      "community": 49,
+      "community": 53,
       "norm_label": "code:bibtex (@article{deploymentframework2026,)"
     },
     {
@@ -11814,7 +11814,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L482",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_iot_focused_datasets_and_leakage_handling",
-      "community": 49,
+      "community": 53,
       "norm_label": "iot-focused datasets and leakage handling"
     },
     {
@@ -11823,7 +11823,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L486",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_codeblock_9",
-      "community": 49,
+      "community": 53,
       "norm_label": "code:bibtex (@article{toniotleakage2026,)"
     },
     {
@@ -11832,7 +11832,7 @@
       "source_file": "Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md",
       "source_location": "L501",
       "id": "research_state_of_the_art_nids_traffic_representation_feature_engineering_and_datasets_perplexity_1_entries_to_adjust_or_verify",
-      "community": 49,
+      "community": 53,
       "norm_label": "entries to adjust or verify"
     },
     {
@@ -28637,5 +28637,5 @@
       "source_file": "scratch/experimental_design_board.html"
     }
   ],
-  "built_at_commit": "1b1e4294510149f69c1f0f67b526e4e7e870e75b"
+  "built_at_commit": "d044ebbdb1526ac1193cdd6f70746b4329111450"
 }
