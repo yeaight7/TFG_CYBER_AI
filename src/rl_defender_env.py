@@ -57,12 +57,25 @@ class RLDatasetDefenderEnv(gym.Env):
         self.benign_label = int(benign_label)
         self.attack_label = int(attack_label)
 
+        # Las etiquetas deben ser binarias {benign_label, attack_label}. Los
+        # loaders de CICIDS2017 lo garantizan; lo exigimos de forma explícita
+        # para que una etiqueta fuera de dominio falle al construir el entorno
+        # en lugar de propagarse silenciosamente a la recompensa.
+        valid_labels = (self.benign_label, self.attack_label)
+        if not np.isin(self.y, valid_labels).all():  # O(n), sin ordenar
+            offending = sorted(set(np.unique(self.y).tolist()) - set(valid_labels))
+            raise ValueError(
+                f"y contiene etiquetas {offending} fuera de "
+                f"{{benign={self.benign_label}, attack={self.attack_label}}}; "
+                "RLDatasetDefenderEnv espera etiquetas binarias."
+            )
+
         # Config de recompensa por defecto
         default_reward_config: dict[str, float] = {
             "tp": 1.5,    # ataque bloqueado (TP)
             "fp": -2.0,   # normal bloqueado (FP)
             "fn": -5.0,   # ataque permitido (FN)
-            "omission": 0.0,  # término adicional cuando PERMIT (cubre el caso de tn y también aplica al caso de bloquear un evento desconocido)
+            "omission": 0.0,  # término adicional cuando PERMIT (cubre el caso de tn, true negative)
         }
         reward_config = reward_config or {}
         self.reward_config: dict[str, float] = {**default_reward_config, **reward_config}
@@ -130,11 +143,13 @@ class RLDatasetDefenderEnv(gym.Env):
             else:
                 reward = rc["fp"]   # normal bloqueado (FP)
         else:
-            # Por defecto, las clases desconocidas serán consideradas ATAQUES (más vale prevenir que curar).
-            if action == 1:
-                reward = rc["omission"] # bloqueamos pero no le damos la recompensa completa ya que es una prevención, no un acierto
-            else:
-                reward = rc["fp"]  # desconocido permitido, le castigamos ya que puede comprometer la seguridad
+            # Inalcanzable en operación normal: __init__ garantiza etiquetas
+            # binarias. Falla de forma explícita en lugar de tratar una
+            # etiqueta desconocida como ataque de forma silenciosa.
+            raise ValueError(
+                f"Etiqueta inesperada {label!r}; se esperaba {self.benign_label} (benigno) "
+                f"o {self.attack_label} (ataque)."
+            )
 
         return float(reward)
 
