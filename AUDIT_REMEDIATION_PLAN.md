@@ -121,7 +121,7 @@ _(Per **D-6**, all of Workstream G is **going-forward only** — no `git lfs mig
 
 **C1 — Phase-2 provenance** — created `pcaps/README.md` (evidence + owner-TODO checklist) and added a provenance pointer to `docs/phase2_plan.md`. Flagged the **Docker-bridge-IP (172.18.0.x) vs "2 machines + Raspberry Pi"** tension, the `dst_port 9101` vs generator default mismatch, and the **uncommitted generation/labelling pipeline** — all pending owner confirmation.
 
-**F1 — lock regenerated** — `uv lock` added `optuna==4.9.0` (+ alembic/colorlog/greenlet/mako/pyyaml/sqlalchemy), **no other version changes**; `uv lock --check` passes; `provides-extras = ["dev","tune"]`. `uv sync --all-extras` succeeded and **realigned a stale venv** (numpy 2.4.4→2.4.6, pandas 3.0.2→3.0.3, sklearn 1.8.0→1.9.0, torch 2.11.0→2.12.0+cpu — now matching MAIN `environment.json`); `import optuna` OK. **Validation:** `pytest tests/` → 23 passed; `ruff check scripts/analyze_duplicates.py` → clean.
+**F1 — lock regenerated** — `uv lock` added `optuna==4.9.0` (+ alembic/colorlog/greenlet/mako/pyyaml/sqlalchemy), **no other version changes**; `uv lock --check` passes; `provides-extras = ["dev","tune"]`. `uv sync --all-extras` succeeded and **realigned a stale venv** (numpy 2.4.4→2.4.6, pandas 3.0.2→3.0.3, sklearn 1.8.0→1.9.0, torch 2.11.0→2.12.1+cpu — now matching MAIN `environment.json`); `import optuna` OK. **Validation:** `pytest tests/` → 23 passed; `ruff check scripts/analyze_duplicates.py` → clean.
 
 ### Phase 1 — execution log (2026-06-27) — first + second half
 
