@@ -21,8 +21,6 @@ report/*.log
 .remember/
 report/tmp
 .python-version
-GEMINI.md
-CLAUDE.md
 
 # PCAPS and big CSV files
 datasets/CICIDS2017/Raw_dataset/

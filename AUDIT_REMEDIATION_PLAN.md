@@ -74,10 +74,10 @@ This plan turns the audit's findings into ordered, trackable work items so the t
 ### Phase 3 — Documentation alignment
 | ID | Task | Sev | Compute | Status |
 |----|------|-----|---------|--------|
-| H1 | Fix `data-structure-...report.md:49` (C03/[512,256] stale) | Med | none | [ ] |
-| H2 | Fix `results.md` "real lab traffic" vs "synthetic" contradiction | Med | none | [ ] |
-| H3 | Sync `GEMINI.md` (model path, stale-graph caveat) | Low | none | [ ] |
-| B2 | Document missingness-mask semantic (constant=1 on CICIDS2017) | Med | none | [ ] |
+| H1 | Fix `data-structure-...report.md:49` (C03/[512,256] stale) | Med | none | [x] 4 stale "C03=best" claims → MAIN callout + C03 relabeled pre-design probe (capped test, not comparable); grep-verified |
+| H2 | Fix `results.md` "real lab traffic" vs "synthetic" contradiction | Med | none | [x] audit's L107 already fixed in C2; 1 residual "benign real traffic" (L224) aligned to closed-lab phrasing |
+| H3 | Sync `GEMINI.md` (model path, stale-graph caveat) | Low | none | [x] placeholder→MAIN path + untracked/stale-graph status (needs_update caveat already present). ⚠ GEMINI.md is gitignored → local-only |
+| B2 | Document missingness-mask semantic (constant=1 on CICIDS2017) | Med | none | [x] results.md observation-layout note + metodologia.tex (ES); code-verified (mask=1 post-fillna); PDF rebuilt 101pp |
 
 ### Phase 4 — Thesis chapters & wording
 | ID | Task | Sev | Compute | Status |
@@ -163,6 +163,19 @@ _(Per **D-6**, all of Workstream G is **going-forward only** — no `git lfs mig
 **Validation:** `uv run pytest tests/` → **33 passed**; `uv run ruff check .` → clean; `ci.yml` parses (py3.12 / cache / UV_PYTHON confirmed); `memoria/memoria.pdf` **rebuilt** with `latexmk` (exit 0, no LaTeX errors) — the M16 subsection compiles. **Change set (this half):** `ci.yml`, `docs/reproducibility.md`, `memoria/capitulos/metodologia.tex`, `experiments/cicids2017_qrdqn_experiments.md`, rebuilt `memoria/memoria.pdf`. **Nothing committed.**
 
 **Remaining in Phase 2:** none — first + second half complete. A6 was already done. (Next phases: 3 docs alignment, 4 thesis chapters, 5 low-priority cleanup.)
+
+### Phase 3 — documentation alignment — execution log (2026-06-28) ✅ COMPLETE
+
+Recon-first (5 read-only agents found current state + all instances; audit line numbers predated the Phase 1–2 edits), edits applied single-writer, then adversarially reviewed (all numbers re-checked vs `metrics.json`/`config.json`, mask claim traced through code, thesis PDF rebuilt). Several audit references were already-stale (fixed earlier in C2/G2) — noted rather than re-done.
+
+- **H1** — `docs/Personal Research/data-structure-and-canonical-schema-research-report.md`: the doc named the **C03** probe (`net_arch=[512,256]`, `accuracy=0.99859`) as the "best committed" model in 4 places (≈L49/51/61/92). Added a **MAIN canonical callout** (`MAIN_…20260609_193655`: full data, 566,149-row fixed test, 3M steps, `accuracy=0.99381`) and relabeled C03 a **superseded pre-design probe** whose `0.99859` was measured on a 100k-row capped test with distorted class mix → **not comparable** to MAIN. Differentiated by **`net_arch`** ([1024,1024,512] vs [512,256]), *not* gamma (both use `gamma=0.0` — verified in `train_rl_defender.py`). Historical narrative preserved.
+- **H2** — `docs/results.md`: the audit's flagged L107 "real lab traffic" contradiction was **already corrected by C2**. Only one residual unqualified phrase remained — "benign real traffic" (the Early-v2 benign artifact) — aligned to the canonical "**benign operator-generated lab-capture traffic (real captured packets, closed home lab; limited external validity)**". Grep confirms no `synthetic`/`real-world`/`real lab traffic` left in the file.
+- **H3** — `GEMINI.md`: filled the Phase-2 `predict_real_traffic_v2.py` example placeholders (`<MODEL_NAME>`/`<RUN_ID>`) with the concrete **MAIN** model/scaler/percentiles paths (verified to exist on disk; model lives under `models/`, not `runs/.../model.zip`), and softened the graphify intro to record it is **untracked/gitignored & may be stale** (G2). The `needs_update` caveat the audit asked for was **already present** (L84) — not re-added. **⚠ `GEMINI.md` is gitignored (`.gitignore:24`), so these edits are local-only and will not appear in commits/PRs.**
+- **B2** — missingness-mask semantic, code-verified: `_clean_rows` does `±Inf→NaN→fillna(0)` (`src/load_cicids2017.py:155-166`) **before** `map_to_canonical` sets `mask[:,i]=(~bad)` (`src/canonical_schema.py:312-328`); since the CICIDS2017→canon mapping covers all 76 features, **the mask is constant=1 on native CICIDS2017** (encodes source-column presence, not per-value missingness; informative only for cross-domain/Phase-2). Documented in `docs/results.md` (observation-layout note under the MAIN table) and `memoria/capitulos/metodologia.tex` (ES paragraph in the "Máscara de presencia/ausencia" subsection). Used the repo's canonical "76 + 76 → 152-dimensional" phrasing (not "152 features").
+
+**Validation:** grep checks per task pass (new wording present, all 4 stale H1 claims gone, no stale Phase-2 terms in results.md, GEMINI.md carries MAIN path + untracked + needs_update); `memoria/memoria.pdf` **rebuilt** with `latexmk` (exit 0, **101 pages**, no LaTeX errors — only benign hbox warnings) so the B2 thesis paragraph compiles. No Python changed → `pytest`/`ruff` unaffected (last green: 33 passed, Phase 2). **Change set:** 3 tracked files (`data-structure-…report.md`, `results.md`, `metodologia.tex`) + rebuilt `memoria.pdf`; `GEMINI.md` edited but gitignored (local-only). **Nothing committed.**
+
+**Flagged for owner (out of Phase-3 scope, not done):** the same present-tense "this project *has* a graphify graph" drift G2 exposes also lives in **tracked** files — `AGENTS.md:77`, `.github/copilot-instructions.md:50`, `.agent/rules/graphify.md:3`. Since `GEMINI.md` is gitignored, the *shipping* equivalent of the H3 fix would be softening `AGENTS.md:77`. Left untouched to respect the documented Phase-3 scope; recommend a one-line follow-up.
 
 ---
 

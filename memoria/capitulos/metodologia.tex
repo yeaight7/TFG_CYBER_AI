@@ -110,6 +110,8 @@ Diferentes extractores pueden no proporcionar todas las características canóni
 
 La máscara desempeña dos funciones metodológicas. En primer lugar, evita la imputación silenciosa: el modelo puede condicionar su decisión a si un valor fue observado o rellenado. En segundo lugar, facilita los diagnósticos de la Fase 2, porque un extractor de laboratorio que carece de muchas características al estilo CICIDS2017 puede detectarse mediante un patrón de máscara diferente en lugar de quedar oculto dentro de un vector numérico denso.
 
+Conviene precisar la semántica exacta de la máscara en la implementación actual. La máscara se calcula \emph{después} de la limpieza que sustituye los valores no finitos por cero (\texttt{src/load\_cicids2017.py}: $\pm\infty \to$ NaN $\to 0$), de modo que $m_i = 1$ siempre que la característica canónica tiene una columna fuente mapeada. Como el mapeo CICIDS2017 $\to$ canónico cubre las 76 características, sobre los datos nativos de CICIDS2017 la máscara es \textbf{constante e igual a 1} en todas las filas: codifica la \emph{presencia de la columna fuente}, no la ausencia de valores fila a fila. La máscara solo se vuelve informativa en la inferencia entre dominios o en la Fase 2 de laboratorio, donde algunas columnas fuente no están disponibles y su valor de máscara permanece en 0; un mapeo histórico como NSL-KDD, por ejemplo, solo cubre 3 de las 76 características canónicas. Así, las 152 dimensiones de la observación se componen de 76 valores de características más 76 indicadores de presencia.
+
 \subsection{Vector de observación final}
 La observación final es:
 \[
