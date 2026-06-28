@@ -314,23 +314,23 @@ NSL-KDD remains historical benchmarking material only.
 
 ## Random Forest Baseline
 
-The supervised Random Forest baseline is run over the canonical schema. Only the **Random Split** sweep shares an identical test set with a QRDQN run (the MAIN fixed partition); the day-based sweeps partition the capture days **differently** from QRDQN Check C, so they are not a strict same-split comparison (see notes below). 
+The supervised Random Forest baseline is run over the canonical schema under the **same protocol** as QRDQN: canonical observation, scaling, and `class_weight="balanced"`. The **Random Split** sweep shares the identical 566,149-row seed-42 test set with MAIN, and the **Day Split** sweep now uses the same Mon/Tue/Wed → Thu/Fri partition as QRDQN Check C, so both are strict same-split comparisons. Committed run: `rf_cicids2017_canonical_20260628_024735` (balanced/scaled; `config.json` + `metrics.json` per sweep).
 
 **Execution Protocol:**
-Run `uv run python src/baseline_random_forest.py` to generate the latest metrics. This will execute three sweeps across the canonical schema:
+Run `uv run python src/baseline_random_forest.py` to regenerate. This executes three balanced/scaled sweeps across the canonical schema:
 1. **Random Split (full)** — test = **566,149 rows (benign 454,620 / attack 111,529), byte-identical to MAIN's fixed test partition** (seed 42).
-2. **Day Split** — train on Mon/Tue/Wed/Thu CSVs (2,127,498 rows), test on the 3 **Friday** CSVs (703,245 rows). *Note:* QRDQN Check C trains Mon–Wed and tests Thu+Fri — a different day partition.
-3. **Leave-One-Out (Wednesday test)** — train on 7 CSVs, test on Wednesday (692,703 rows).
+2. **Day Split** — train on Mon/Tue/Wed CSVs (1,668,530 rows), test on Thu/Fri CSVs (1,162,213 rows) — **identical to QRDQN Check C's partition**.
+3. **Leave-One-Out (Wednesday test)** — train on 7 CSVs (2,138,040 rows), test on Wednesday (692,703 rows). No QRDQN counterpart artifact committed → RF-only.
 
-Sweep results committed to `runs/cicids2017/baseline_random_forest_comparison/results_rf.txt`.
+Per-sweep artifacts under `runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__{random_split,day_split,leave_one_out_wednesday}/`. (The legacy `results_rf.txt` is a superseded unbalanced prototype.)
 
-### Baseline Metrics
+### Baseline Metrics (balanced/scaled, `rf_cicids2017_canonical_20260628_024735`)
 
-| Split | Test rows | F1 Attack | Precision | Recall | Notes |
-|-------|-----------|-----------|-----------|--------|-------|
-| Random | 566,149 | 0.9971 | 0.9964 | 0.9977 | Same fixed test partition as MAIN → directly comparable (QRDQN MAIN F1 attack 0.98445). |
-| Day Split | 703,245 (Fri only) | 0.1446 | 0.9935 | 0.0780 | **Not the same test set as QRDQN Check C** (Thu+Fri, 1,162,213 rows, train Mon–Wed). Same day-shift family → **directional** comparison only vs QRDQN Check C (RL F1 attack 0.6258). |
-| Leave-One-Out | 692,703 (Wed) | 0.0111 | 0.9712 | 0.0056 | Wednesday held-out; domain-shift stress. |
+| Split | Test rows | Accuracy | F1 Attack | Precision Attack | Recall Attack | Notes |
+|-------|-----------|----------|-----------|------------------|---------------|-------|
+| Random | 566,149 | 0.99872 | 0.99676 | 0.99501 | 0.99853 | Same fixed test partition as MAIN → directly comparable. RF marginally edges QRDQN (MAIN F1 attack 0.98445). |
+| Day Split | 1,162,213 (Thu+Fri) | 0.76913 | 0.15005 | 0.96473 | 0.08135 | **Same partition as QRDQN Check C** (train Mon–Wed). Directly comparable: QRDQN Check C recall attack 0.52954 / F1 0.62578 — RF attack recall collapses far more under day-shift. |
+| Leave-One-Out | 692,703 (Wed) | 0.63782 | 0.01427 | 0.98482 | 0.00719 | Wednesday held-out; domain-shift stress. RF-only (no committed QRDQN LOO artifact). |
 
 ## Open Documentation Gap
 
