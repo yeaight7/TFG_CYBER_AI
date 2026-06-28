@@ -226,7 +226,7 @@ Commands in docs are mostly current; the main runnability trap is `uv sync --all
 
 ## 9. Dependency / environment audit
 
-- **Pins are exact and mostly consistent** across `requirements.txt`, `requirements-runpod-cu130.txt`, `pyproject.toml`, `uv.lock`, and `environment.json` (numpy 2.4.6, pandas 3.0.3, sklearn 1.9.0, gymnasium 1.2.3, sb3 2.8.0, sb3-contrib 2.8.0, joblib 1.5.3; torch 2.12.0 with a clean cpu/cu130 platform split). `environment.json` corroborates the actual MAIN run.
+- **Pins are exact and mostly consistent** across `requirements.txt`, `requirements-runpod-cu130.txt`, `pyproject.toml`, `uv.lock`, and `environment.json` (numpy 2.4.6, pandas 3.0.3, sklearn 1.9.0, gymnasium 1.2.3, sb3 2.8.0, sb3-contrib 2.8.0, joblib 1.5.3; torch 2.12.1 with a clean cpu/cu130 platform split). `environment.json` corroborates the actual MAIN run.
 - **Discrepancies:** `uv.lock` is **stale** (no `optuna`/`tune` extra — H8); `requirements-runpod-cu130.txt` omits `optuna`/`graphifyy` (L5); CI Python 3.11 ≠ training 3.12.3 (M10); no `[tool.ruff]` (L6).
 - **Installability:** the stack is bleeding-edge (pandas 3.x, numpy 2.4.x, torch 2.12, Python 3.12). A clean clone's reproducibility hinges on `uv.lock` being coherent — which it currently isn't (H8). The cpu/cu130 split *does* give GPU-less reviewers a CPU path; document its viability.
 - **Supply chain:** `graphifyy` (double-y) is the legitimate PyPI name (import `graphify`), pinned by hash in `uv.lock` — not a typosquat, but comment it (L7). No vulnerable/conflicting/unused direct deps found; `tensorboard`/`matplotlib` correctly treated as transitive via `stable-baselines3[extra]`.
