@@ -162,14 +162,23 @@ def maybe_convert_time_units(df: pd.DataFrame) -> pd.DataFrame:
 # Helper: model loading (QRDQN with DQN fallback)
 # ---------------------------------------------------------------------------
 
-def load_model(model_path: Path):
-    """Load QRDQN model, falling back to DQN if sb3_contrib is unavailable."""
+def load_model(model_path: Path) -> Tuple[object, str]:
+    """Load the trained model, returning ``(model, algo)``.
+
+    Uses QRDQN, falling back to DQN **only** when ``sb3_contrib`` is not
+    installed (``ImportError``). Any other failure — e.g. a corrupt or
+    incompatible ``.zip`` — is allowed to propagate rather than being masked
+    by a silent fallback. ``algo`` is the loaded class name, recorded in the
+    run's ``config.json`` for provenance.
+    """
     try:
         from sb3_contrib import QRDQN
-        return QRDQN.load(str(model_path))
-    except Exception:
+    except ImportError:
         from stable_baselines3 import DQN
-        return DQN.load(str(model_path))
+        model = DQN.load(str(model_path))
+        return model, type(model).__name__
+    model = QRDQN.load(str(model_path))
+    return model, type(model).__name__
 
 
 # ---------------------------------------------------------------------------
@@ -259,7 +268,17 @@ def compute_diagnostics(
 def compute_truth_metrics(df: pd.DataFrame, y_pred: np.ndarray) -> Optional[Dict[str, float]]:
     """
     Compute evaluation metrics when ground-truth columns are present in the flows CSV.
+
+    Predictions must align row-for-row with ``df`` because the ground-truth
+    mask is derived from ``df`` and used to index ``y_pred``; a length mismatch
+    raises ``ValueError`` rather than mis-indexing.
     """
+    if len(y_pred) != len(df):
+        raise ValueError(
+            f"len(y_pred)={len(y_pred)} != len(df)={len(df)}; "
+            "predictions are not aligned with the input flows."
+        )
+
     truth_series: Optional[pd.Series] = None
 
     if "truth_y" in df.columns:
@@ -410,8 +429,17 @@ def main() -> None:
     # ── Step 9: Load model + predict ────────────────────────────────────
     # SECURITY WARNING: QRDQN.load/DQN.load uses pickle under the hood. 
     # Only load models from trusted local paths to avoid RCE vulnerabilities.
-    model = load_model(args.model)
+    model, model_class = load_model(args.model)
     y_pred = batched_predict(model, X, batch_size=4096)
+
+    # Guard: predictions must align 1:1 with the input flows before y_pred is
+    # sliced by a df-derived mask (truth metrics) or concatenated with df
+    # metadata. Fail loud rather than silently misaligning labels.
+    if len(y_pred) != len(df):
+        raise ValueError(
+            f"Prediction/row-count mismatch: {len(y_pred)} predictions vs "
+            f"{len(df)} input flows; cannot align predictions to flows."
+        )
 
     # ── Step 10: Save outputs ───────────────────────────────────────────
     out_df = pd.DataFrame({"pred_action": y_pred.astype(int)})
@@ -440,6 +468,7 @@ def main() -> None:
         "run_id": run_id,
         "flows_csv": str(args.flows),
         "model_zip": str(args.model),
+        "model_class": model_class,
         "scaler": str(args.scaler),
         "percentiles": str(args.percentiles) if args.percentiles else None,
         "clip_z": args.clip_z,
