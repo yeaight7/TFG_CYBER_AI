@@ -46,7 +46,7 @@ Reads a flows CSV, harmonizes time units, maps to the **same 152-d canonical sch
 - **Single source of truth for the feature contract** (`canonical_schema.map_to_canonical`) shared by train and inference → feature order cannot silently drift.
 - **A real anti-leakage control was run** (Check B shuffled-label: accuracy 0.4773 < 0.5227 majority baseline) and **a hard by-day generalization test was run and honestly reported** (Check C: recall 0.53), plus an RF baseline that honestly documents the realistic-split collapse.
 - **Asymmetric cost reward** correctly implemented and matches config/docs (`rl_defender_env.py:107-139`; FN −5.0 > FP −2.0).
-- **Per-run environment provenance** captured (`environment.json`: Python/torch/CUDA/lib versions, RTX 3090).
+- **Per-run environment provenance** captured (`environment.json`: Python/torch/CUDA/lib versions, RTX 3090 Ti).
 - **Dataset-content hashing exists in the loader** (`test_set_sha256`, `y_test_sha256`, … `load_cicids2017.py:702-705`) and a deterministic nested-prefix train-subsample mechanism for the size benchmark.
 - **Thesis is candid about the central RL critique** (`state_of_the_art.tex:148`, `metodologia.tex:196,326`: "closer to a cost-sensitive contextual decision problem than a full MDP").
 - **The CICIDS2017 LFS layer is correct** (8 CSVs are genuine LFS pointers), and run checkpoints / TB events / per-run `model.zip` are correctly git-ignored.
@@ -193,7 +193,7 @@ Commands in docs are mostly current; the main runnability trap is `uv sync --all
 | Leakage-free eval of the MAIN model | **Missing** | Check A on random split; Check C/LOO use a 30k-step proxy; all VAL_checks predate MAIN | Full-budget day/LOO run loading the MAIN model |
 | Multiple seeds / CI on headline | **Missing** | All `seed=42`; no variance reported | ≥3 seeds or bootstrap CI on fixed test set |
 | Documented runnable commands | **Partial** | Quickstarts present; `--all-extras` trap; LFS prerequisite under-stated | Fix lock; foreground `git lfs pull` |
-| Hardware documented | **OK** | RTX 3090 / CUDA 13.0 in `environment.json` + `reproducibility.md`; CPU fallback path exists in code | Note CPU path viability for GPU-less reviewers |
+| Hardware documented | **OK** | RTX 3090 Ti / CUDA 13.0 in `environment.json` + `reproducibility.md`; CPU fallback path exists in code | Note CPU path viability for GPU-less reviewers |
 | CI verifies the pipeline | **Partial** | Unit tests + schema check + ruff; no end-to-end / no SHA-256 verification; Python 3.11≠3.12.3 | Pin Python 3.12; add cache; document LFS limitation |
 | Phase-2 synthetic data provenance | **Missing** | Generator CSV+labels not committed; `gen_traffic.py` insufficient | Commit/document generation+labeling pipeline |
 
@@ -226,7 +226,7 @@ Commands in docs are mostly current; the main runnability trap is `uv sync --all
 
 ## 9. Dependency / environment audit
 
-- **Pins are exact and mostly consistent** across `requirements.txt`, `requirements-runpod-cu130.txt`, `pyproject.toml`, `uv.lock`, and `environment.json` (numpy 2.4.6, pandas 3.0.3, sklearn 1.9.0, gymnasium 1.2.3, sb3 2.8.0, sb3-contrib 2.8.0, joblib 1.5.3; torch 2.12.0 with a clean cpu/cu130 platform split). `environment.json` corroborates the actual MAIN run.
+- **Pins are exact and mostly consistent** across `requirements.txt`, `requirements-runpod-cu130.txt`, `pyproject.toml`, `uv.lock`, and `environment.json` (numpy 2.4.6, pandas 3.0.3, sklearn 1.9.0, gymnasium 1.2.3, sb3 2.8.0, sb3-contrib 2.8.0, joblib 1.5.3; torch 2.12.1 with a clean cpu/cu130 platform split). `environment.json` corroborates the actual MAIN run.
 - **Discrepancies:** `uv.lock` is **stale** (no `optuna`/`tune` extra — H8); `requirements-runpod-cu130.txt` omits `optuna`/`graphifyy` (L5); CI Python 3.11 ≠ training 3.12.3 (M10); no `[tool.ruff]` (L6).
 - **Installability:** the stack is bleeding-edge (pandas 3.x, numpy 2.4.x, torch 2.12, Python 3.12). A clean clone's reproducibility hinges on `uv.lock` being coherent — which it currently isn't (H8). The cpu/cu130 split *does* give GPU-less reviewers a CPU path; document its viability.
 - **Supply chain:** `graphifyy` (double-y) is the legitimate PyPI name (import `graphify`), pinned by hash in `uv.lock` — not a typosquat, but comment it (L7). No vulnerable/conflicting/unused direct deps found; `tensorboard`/`matplotlib` correctly treated as transitive via `stable-baselines3[extra]`.

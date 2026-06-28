@@ -49,7 +49,7 @@ The CICIDS2017 + QRDQN branch is the maintained Phase 1 baseline because it intr
 | C01 full | `C01_qrdqn_cicids2017_canonical_full_20260212_200218` | 250,000 | 100,000 | random | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` | `0.99618` | `0.99980` | `0.99628` | First larger random-split run showing the approach scaled cleanly. |
 | C02 fast | `C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122` | 100,000 | 10,000 | random | `tp=1.5, fp=-1.0, fn=-5.0, om=0.0` | `0.9766` | `0.99959` | `0.98123` | Faster preset retained strong attack recall while trading off some benign recall. |
 | C03 full | `C03_qrdqn_cicids2017_canonical_full_random_20260223_232439` | 500,000 | 100,000 | random | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` | `0.99859` | `0.99945` | `0.99876` | Strongest pre-design probe (not official); measured on a 100,000-row capped test set with a distorted class mix — not comparable to MAIN's fixed test partition. |
-| MAIN full | `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` | 2,830,743 | 3,000,000 | random | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` | `0.99381` | `0.99536` | `0.98445` | Completed full-data canonical main experiment (max_rows=null, seed 42, RunPod RTX 3090). Its 566,149-row test set is the reference benchmark; not comparable to the smaller capped C01-C03 test sets. |
+| MAIN full | `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` | 2,830,743 | 3,000,000 | random | `tp=1.5, fp=-2.0, fn=-5.0, om=0.0` | `0.99381` | `0.99536` | `0.98445` | Completed full-data canonical main experiment (max_rows=null, seed 42, RunPod RTX 3090 Ti). Its 566,149-row test set is the reference benchmark; not comparable to the smaller capped C01-C03 test sets. |
 
 ## Strongest Pre-Design Probe (C03, not official)
 

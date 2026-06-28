@@ -17,12 +17,12 @@ The instructions below are kept as the reproduction procedure for this run.
 
 ## Machine
 
-- Preferred: RTX 3090. It has 24 GB VRAM and commonly enough system RAM for the
+- Preferred: RTX 3090 Ti. It has 24 GB VRAM and commonly enough system RAM for the
   full CICIDS2017 run.
 - Optional: L40S.
 - A100 is not necessary for this experiment.
 
-Expected cost is pricing-dependent. A reasonable RTX 3090 budget is likely under
+Expected cost is pricing-dependent. A reasonable RTX 3090 Ti budget is likely under
 15-20 USD if setup plus training finishes in roughly 8-24 hours.
 
 ## Setup
@@ -44,7 +44,7 @@ PY
 ```
 
 `requirements-runpod-cu130.txt` is the pinned direct dependency set for
-reproducing the main QRDQN RunPod stack. It installs `torch==2.12.0+cu130` from
+reproducing the main QRDQN RunPod stack. It installs `torch==2.12.1+cu130` from
 the PyTorch CUDA 13.0 wheel index. For local CPU/dev installs, use
 `requirements.txt` or `uv sync`.
 

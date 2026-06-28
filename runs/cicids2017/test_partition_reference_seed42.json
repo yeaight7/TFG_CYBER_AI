@@ -22,7 +22,7 @@
     "1000000": "3791b478919764a7eec17a7854a9d022c9d8e350f4fbdd9f63e69ff3e3325581"
   },
   "environment": {
-    "python": "3.11.15",
+    "python": "3.12.11",
     "numpy": "2.4.6",
     "pandas": "3.0.3",
     "scikit_learn": "1.9.0"
