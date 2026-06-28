@@ -1,0 +1,24 @@
+{
+  "run_id": "rf_cicids2017_canonical_20260628_024735",
+  "sweep": "day_split",
+  "model": "RandomForest",
+  "rf_params": {
+    "n_estimators": 200,
+    "max_depth": null,
+    "n_jobs": -1,
+    "class_weight": "balanced",
+    "random_state": 42
+  },
+  "split_mode": "day",
+  "train_days": [
+    "Monday",
+    "Tuesday",
+    "Wednesday"
+  ],
+  "test_days": [
+    "Thursday",
+    "Friday"
+  ],
+  "scale": true,
+  "use_canonical": true
+}
