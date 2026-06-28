@@ -12,10 +12,10 @@ Recorded runtime:
 
 | Component | Version / value |
 |-----------|-----------------|
-| Python | 3.12.3 |
+| Python | 3.12.11 |
 | Platform | Linux x86_64 |
 | Device | CUDA, NVIDIA GeForce RTX 3090 |
-| torch | 2.12.0+cu130 |
+| torch | 2.12.1+cu130 |
 | CUDA reported by torch | 13.0 |
 | numpy | 2.4.6 |
 | pandas | 3.0.3 |
@@ -28,7 +28,7 @@ Recorded runtime:
 ## Dependency Files
 
 - `requirements-runpod-cu130.txt` is the direct RunPod/GPU reproduction file for the main QRDQN stack.
-- `requirements.txt` is the generic local/dev install file. It pins the same core ML stack but uses `torch==2.12.0` without a CUDA local-version suffix so pip can select the platform-appropriate wheel.
+- `requirements.txt` is the generic local/dev install file. It pins the same core ML stack but uses `torch==2.12.1` without a CUDA local-version suffix so pip can select the platform-appropriate wheel.
 - `pyproject.toml` pins the same core project dependencies. For uv, `tool.uv.sources` sends Linux torch resolution to the PyTorch CUDA 13.0 index and non-Linux torch resolution to the CPU index.
 
 RunPod setup:
@@ -74,8 +74,6 @@ Repository scan status:
 - No direct `torch.load` usage.
 - Model loading uses `QRDQN.load` / `DQN.load`, and scaler loading uses `joblib.load`; these are trusted local artifact paths only.
 
-This does not claim the upstream PyTorch advisory is fixed. The current handling is: keep the working ML stack pinned, avoid untrusted model/checkpoint/scaler loading, and treat any unresolved upstream PyTorch advisory as residual upstream risk until a compatible patched PyTorch build exists and is validated against the training stack.
-
 ## Preprocessing: training vs Phase-2 inference
 
 Training and the internal CICIDS2017 test evaluation use **StandardScaler only, with no clipping**: `src/train_rl_defender.py` computes the `p0.5 / p99.5` train percentiles and persists them, but the model is fit and evaluated on un-clipped, standardized features.
@@ -95,7 +93,7 @@ Commits **before 2026-06-27** were authored with an institutional email (`…@al
 
 ## Continuous integration: what CI does and does not verify
 
-CI (`.github/workflows/ci.yml`) runs on Python **3.12** (matching the MAIN training environment, `environment.json` 3.12.3), installs the locked dependencies with `uv sync --all-extras`, and runs the unit tests, the canonical-schema dimension check, and Ruff. The uv download/build store is cached (`enable-cache: true`) so the large `cu130` torch wheel (~2.5 GB) is fetched only once.
+CI (`.github/workflows/ci.yml`) runs on Python **3.12** (matching the MAIN training environment, `environment.json` 3.12.11), installs the locked dependencies with `uv sync --all-extras`, and runs the unit tests, the canonical-schema dimension check, and Ruff. The uv download/build store is cached (`enable-cache: true`) so the large `cu130` torch wheel (~2.5 GB) is fetched only once.
 
 **What CI cannot verify:** the byte-identical **SHA-256 of the fixed seed-42 test partition** (`runs/cicids2017/test_partition_reference_seed42.json`) can only be checked against the real CICIDS2017 CSVs, which live in **git LFS and are not pulled in CI** (large, and gated by dataset terms). So the reproducibility hash is a **local** check.
 
