@@ -6,7 +6,7 @@
   "torch_cuda_available": true,
   "torch_cuda_version": "13.0",
   "torch_cudnn_version": 92000,
-  "cuda_device_name": "NVIDIA GeForce RTX 3090",
+  "cuda_device_name": "NVIDIA GeForce RTX 3090 Ti",
   "numpy_version": "2.4.6",
   "pandas_version": "3.0.3",
   "scikit_learn_version": "1.9.0",
