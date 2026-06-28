@@ -14,7 +14,7 @@ Recorded runtime:
 |-----------|-----------------|
 | Python | 3.12.11 |
 | Platform | Linux x86_64 |
-| Device | CUDA, NVIDIA GeForce RTX 3090 |
+| Device | CUDA, NVIDIA GeForce RTX 3090 Ti |
 | torch | 2.12.1+cu130 |
 | CUDA reported by torch | 13.0 |
 | numpy | 2.4.6 |
