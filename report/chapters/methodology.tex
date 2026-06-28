@@ -18,7 +18,7 @@ At a high level, the methodology contains six linked stages:
 This design keeps the thesis within an offline experimental boundary. The \texttt{PERMIT} and \texttt{BLOCK} outputs are model predictions over saved flow records. They are not firewall commands and do not modify any live network path.
 
 \section{Experimental Phases}
-The experimental methodology is divided into two phases. The first phase tests learning and internal generalization on a public benchmark. The second phase tests whether the resulting preprocessing and model pipeline can process independently captured traffic under domain shift.
+The experimental methodology is divided into two phases. The first phase tests learning and internal generalization on a public benchmark. The second phase tests whether the resulting preprocessing and model pipeline can process traffic captured by the operator in a closed home lab under domain shift.
 
 \subsection{Phase 1: CICIDS2017 Internal Benchmark}
 Phase 1 uses CICIDS2017 as the main internal benchmark \parencite{Sharafaldin2018CICIDS2017,CICIDS2017Web}. CICIDS2017 is suitable for this thesis because it provides labeled benign and attack traffic, raw packet captures, and flow CSVs derived from CICFlowMeter-style extraction \parencite{Lashkari2017CICFlowMeter}. It also contains multiple attack scenarios across different capture days, which supports stricter split designs than a single random train-test partition.
@@ -109,6 +109,8 @@ Different extractors may not provide every canonical feature, and even a present
 \end{itemize}
 
 The mask has two methodological roles. First, it prevents silent imputation: the model can condition its decision on whether a value was observed or filled. Second, it supports Phase 2 diagnostics because a laboratory extractor that lacks many CICIDS2017-style features can be detected through a changed mask pattern rather than hidden inside a dense numerical vector.
+
+It is important to clarify the exact semantics of the mask in the current implementation. The mask is computed \emph{after} the cleaning step that replaces non-finite values with zero (\texttt{src/load\_cicids2017.py}: $\pm\infty \to$ NaN $\to 0$), so that $m_i = 1$ whenever the canonical feature has a mapped source column. Because the CICIDS2017 $\to$ canonical mapping covers all 76 features, on native CICIDS2017 data the mask is \textbf{constant and equal to 1} across all rows: it encodes \emph{source-column presence}, not row-by-row value missingness. The mask only becomes informative in cross-domain or Phase 2 laboratory inference, where some source columns are unavailable and their mask value remains 0; a historical mapping like NSL-KDD, for example, only covers 3 of the 76 canonical features. Thus, the 152-dimensional observation consists of 76 feature values + 76 presence flags.
 
 \subsection{Final Observation Vector}
 The final observation is:
@@ -223,6 +225,17 @@ where $L_\kappa$ is the element-wise Huber loss with threshold $\kappa$:
 \]
 Unlike C51, which represents returns over a fixed categorical support, QRDQN places no constraint on the support of the return distribution and adapts to the scale of rewards automatically \parencite{Bellemare2017DistributionalRL}. In the asymmetric reward setting of this thesis, the return distribution can develop heavy negative tails when false-negative events are frequent, making a distributional view more informative than a scalar mean estimate for understanding agent behavior near the PERMIT/BLOCK decision boundary.
 
+\subsection{Discount Factor $\gamma = 0$: One-Step Formulation}
+In all runs of this thesis, including the official run, the discount factor is fixed at $\gamma = 0$ (value recorded in the run configuration artifact). The choice is deliberate and consistent with the dataset-as-environment formulation: since the environment is a static dataset and the agent's actions do not affect future states, there is no temporal dependency between flows that a positive discount factor could exploit.
+
+With $\gamma = 0$, the temporal-difference error defined above reduces to
+\[
+    \delta_{ij} = r - \theta_i(s, a),
+\]
+meaning the bootstrapping term $\gamma\,\theta_j^-(s', a^*)$ drops out and the target network no longer contributes. Each learned quantile $\theta_i(s,a)$ therefore regresses toward the immediate reward of the decision, and QRDQN acts as a one-step distributional estimator: formally, a \emph{cost-sensitive distributional contextual bandit}, rather than a sequential Markov Decision Process.
+
+This reduction does not make the choice of QRDQN empty. The distributional head still models the full distribution of the asymmetric reward around the \texttt{PERMIT}/\texttt{BLOCK} boundary---not just its mean---which provides information about value uncertainty under asymmetric cost. The difference from a supervised classifier is not the presence of sequential dynamics, which are absent here by design, but that learning is driven by values over an explicit cost matrix (with the false-negative penalty much higher than the false-positive penalty) rather than by cross-entropy over labels. The thesis does not claim sequential autonomy or multi-step adversarial response: as noted in the formulation limitations, those capabilities remain outside the implemented scope.
+
 \subsection{Exploration Strategy}
 During training, the agent uses an $\varepsilon$-greedy policy. With probability $\varepsilon$ it selects a uniformly random action from $\{\texttt{PERMIT}, \texttt{BLOCK}\}$; with probability $1-\varepsilon$ it selects the action whose average quantile estimate is highest \parencite{Mnih2015DQN}. $\varepsilon$ decays linearly from an initial value near one toward a small final value over a fixed fraction of the total training timesteps, then remains constant. In the binary action setting the exploration budget is relatively cheap because only two alternatives exist. The exploration fraction and final $\varepsilon$ value are stored in the run configuration artifact so that runs with different schedules are not silently merged or compared without accounting for their exploration differences.
 
@@ -230,6 +243,9 @@ During training, the agent uses an $\varepsilon$-greedy policy. With probability
 The implementation uses the \texttt{sb3-contrib} QRDQN module \parencite{SB3ContribQRDQNDocs}. The model uses a multilayer perceptron policy over the 152-dimensional observations. Training uses a replay buffer, minibatch updates, a target network, and deterministic prediction during evaluation. The maintained training script supports fast and full presets, random and day split modes, explicit seeds, configurable row caps, and configurable timesteps.
 
 The current full-preset defaults use larger batches and more gradient steps than the fast preset. This separation lets the project support quick smoke runs without confusing them with final benchmark runs. Any reported result must include the exact run identifier and configuration.
+
+\subsection{Hyperparameter Provenance}
+The hyperparameters of the official run ($\gamma = 0$, architecture \texttt{[1024, 1024, 512]}, $200$ quantiles, learning rate $5\times10^{-5}$, $20$ gradient steps, and $3\,000\,000$ training timesteps) constitute a \emph{hand-set fixed profile}, not the output of an automated search. The repository includes an Optuna optimization probe (\texttt{src/tune\_hparams.py}) for exploratory purposes, but its search space---$\gamma \in [0.95, 0.999]$, architectures in $\{[256,128], [512,256], [256,256]\}$, and gradient steps in $\{10,50,100\}$---\emph{does not contain} the official configuration. Therefore, this configuration could not have originated from that search and should not be interpreted as an Optuna-tuned optimum; it reflects a manual design consistent with the one-step formulation, and is frozen and verified by the project's tests.
 
 \subsection{Model and Preprocessing Persistence}
 Training produces a run directory and a model artifact. The run directory stores configuration, metrics, the fitted scaler, and training percentile bounds. Persisting preprocessing artifacts is essential because Phase 2 inference must use the same normalization state as training. Recomputing a scaler on laboratory traffic would leak inference-distribution information into the model interface and would make the run irreproducible.
@@ -279,7 +295,7 @@ The evaluation ladder is ordered from weakest to strongest evidence:
     \item shuffled-label check, which helps detect leakage by confirming that performance collapses when training labels are randomized;
     \item CSV/day split, which withholds entire capture groups;
     \item leave-one-exact-CSV-out validation, which withholds each official CSV in turn;
-    \item Phase 2 laboratory-flow inference, which tests the trained pipeline on independently captured traffic.
+    \item Phase 2 laboratory-flow inference, which tests the trained pipeline on traffic captured by the operator in a closed laboratory environment.
 \end{enumerate}
 
 Each rung targets a different failure mode. The ladder does not make any single result definitive, but it makes the evaluation more informative than a single random train-test score.
