@@ -107,3 +107,9 @@ CI (`.github/workflows/ci.yml`) runs on Python **3.12** (matching the MAIN train
 python scripts/verify_fixed_test_split.py            # counts + SHA-256 + scaler match
 python scripts/verify_fixed_test_split.py --skip-count-check   # hash/scaler only (still needs the CSVs)
 ```
+
+## Thesis language: canonical source (ES) vs translation (EN)
+
+`memoria/` (Spanish) is the **canonical** thesis — it is the most complete and current version (the defended document) and carries all audit-remediation corrections. `report/` (English) is a **secondary translation** that is re-synced *after* the Spanish source is corrected. When the two disagree, `memoria/` is authoritative.
+
+As of the Phase-4 remediation, `memoria/` adds the Resultados, Discusión, Limitaciones and Consideraciones éticas chapters and the gamma=0 / hyperparameter-provenance / mask-constant-on-CICIDS / closed-lab-Phase-2 corrections. The English `report/` re-sync of these items is pending.

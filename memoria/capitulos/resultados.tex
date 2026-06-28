@@ -1,0 +1,85 @@
+\chapter{Resultados}
+
+Este capítulo reporta únicamente cifras respaldadas por artefactos de ejecución comprometidos en el repositorio. Cada resultado se identifica mediante su \texttt{RUN\_ID}, de modo que puede recuperarse e inspeccionarse de forma independiente. Siguiendo la escalera de validación descrita en la metodología, los resultados se presentan desde el peldaño más permisivo (partición aleatoria) hasta los más exigentes (partición por día y leave-one-CSV-out), seguidos de la comparación con la línea base supervisada y de la inferencia de la Fase~2.
+
+\section{Configuración del modelo principal}
+El experimento principal y oficial de la tesis es la ejecución \texttt{MAIN\_qrdqn\_cicids2017\_canonical\_full\_random\_20260609\_193655}. Se entrenó un agente QRDQN sobre el conjunto de datos completo de CICIDS2017 con la representación canónica de 152 dimensiones, una partición aleatoria estratificada con semilla~42 (entrenamiento de $2\,264\,594$ filas y prueba de $566\,149$ filas) y la configuración de recompensa \texttt{tp=1.5}, \texttt{fp=-2.0}, \texttt{fn=-5.0}, \texttt{omission=0.0}. Los hiperparámetros (factor de descuento $\gamma = 0$, arquitectura \texttt{[1024,1024,512]}, 200 cuantiles, tasa de aprendizaje \texttt{5e-5}, 20 pasos de gradiente, $3\,000\,000$ de pasos de entrenamiento) constituyen un perfil fijado a mano, no el resultado de una búsqueda de Optuna, como se documenta en la metodología.
+
+\section{Rendimiento en distribución (partición aleatoria fija)}
+Sobre la partición aleatoria fija, el modelo MAIN alcanza una exactitud de $0.99381$, con un recall de ataque de $0.99536$ y una puntuación F1 de ataque de $0.98445$ (Tabla~\ref{tab:main-metrics}). La matriz de confusión sobre las $566\,149$ filas de prueba es $\mathrm{TN}=451\,631$, $\mathrm{FP}=2\,989$, $\mathrm{FN}=518$, $\mathrm{TP}=111\,011$. Estas cifras deben interpretarse como evidencia de \emph{capacidad de aprendizaje} en el peldaño más permisivo de la escalera de validación: una partición aleatoria por filas es la evidencia más débil del proyecto, y la Sección~\ref{sec:duplicados} cuantifica por qué.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lc}
+\toprule
+Métrica & Valor \\
+\midrule
+Exactitud & $0.99381$ \\
+Precisión (ataque) & $0.97378$ \\
+Recall (ataque) & $0.99536$ \\
+F1 (ataque) & $0.98445$ \\
+Precisión (benigno) & $0.99885$ \\
+Recall (benigno) & $0.99343$ \\
+F1 (benigno) & $0.99613$ \\
+\bottomrule
+\end{tabular}
+\caption{Métricas del modelo MAIN sobre la partición aleatoria fija ($566\,149$ filas de prueba). Fuente: \texttt{metrics.json} de la ejecución MAIN.}
+\label{tab:main-metrics}
+\end{table}
+
+\section{Intervalos de confianza bootstrap}
+Para cuantificar la precisión de muestreo de estas métricas sobre el conjunto de prueba fijo, se aplicó un bootstrap estratificado de $10\,000$ remuestreos sobre las $566\,149$ filas de prueba, sin reentrenar el modelo (artefacto \texttt{bootstrap\_ci\_seed42.json}). Los intervalos de confianza al 95\% son estrechos (Tabla~\ref{tab:bootstrap-ci}). Es importante delimitar su alcance: estos intervalos describen la precisión de muestreo del conjunto de prueba para este \emph{único} modelo entrenado; no cuantifican la varianza asociada a la semilla de entrenamiento, que requeriría múltiples ejecuciones y queda fuera del alcance de esta tesis.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Métrica & Valor & IC 95\% \\
+\midrule
+Exactitud & $0.99381$ & $[0.99360,\ 0.99401]$ \\
+Exactitud balanceada & $0.99439$ & $[0.99416,\ 0.99462]$ \\
+MCC & $0.98068$ & $[0.98004,\ 0.98130]$ \\
+Precisión (ataque) & $0.97378$ & $[0.97286,\ 0.97468]$ \\
+Recall (ataque) & $0.99536$ & $[0.99495,\ 0.99575]$ \\
+F1 (ataque) & $0.98445$ & $[0.98394,\ 0.98496]$ \\
+FPR & $0.00658$ & $[0.00634,\ 0.00681]$ \\
+FNR & $0.00465$ & $[0.00425,\ 0.00505]$ \\
+\bottomrule
+\end{tabular}
+\caption{Intervalos de confianza bootstrap al 95\% ($10\,000$ remuestreos estratificados) de las métricas del modelo MAIN. Fuente: \texttt{bootstrap\_ci\_seed42.json}.}
+\label{tab:bootstrap-ci}
+\end{table}
+
+\section{Escalera de validación: comprobaciones A, B y C}
+Las tres comprobaciones de \texttt{validate\_checks.py} cumplen propósitos distintos. La \textbf{Comprobación~A} (\texttt{VAL\_checks\_A\_20260212\_235443}) evalúa el modelo mediante predicción directa sobre \texttt{X\_test}, sin depender de la etiqueta que informa el entorno, y obtiene una exactitud de $0.9939$ ($\mathrm{TP}=4772$, $\mathrm{FP}=60$, $\mathrm{FN}=1$, $\mathrm{TN}=5167$ sobre $10\,000$ muestras); confirma que las buenas métricas no dependen de un artefacto del bucle del entorno. La \textbf{Comprobación~B} (\texttt{VAL\_checks\_B\_20260212\_235736}) reentrena con etiquetas barajadas y obtiene una exactitud de $0.4773$, por debajo de la línea base de clase mayoritaria ($0.5227$), con \texttt{leakage\_detected = false}: cuando se destruye la relación entre características y etiquetas, el rendimiento no se mantiene artificialmente alto, como es deseable en ausencia de fuga.
+
+La \textbf{Comprobación~C} (\texttt{VAL\_checks\_C\_20260213\_004847}) es la evidencia de generalización dura del proyecto. Entrenando en lunes/martes/miércoles y evaluando en jueves/viernes (entrenamiento de $1\,668\,530$ filas, prueba de $1\,162\,213$ filas), la exactitud desciende a $0.84135$ y el recall de ataque a $0.52954$ (precisión de ataque $0.76479$, F1 de ataque $0.62578$). La caída frente al rendimiento in-distribution es exactamente el tipo de evidencia que distingue un benchmark cómodo de una evaluación honesta: el pipeline aprende muy bien dentro de la distribución, pero generalizar a días y patrones de ataque distintos es sustancialmente más difícil.
+
+\section{Análisis de duplicados y fuga en la partición aleatoria}
+\label{sec:duplicados}
+Para explicar por qué la partición aleatoria es el peldaño más débil, se cuantificó la duplicación de filas y la fuga entre particiones sobre la misma partición con semilla~42, sin entrenar ningún modelo (artefacto \texttt{duplicate\_analysis\_seed42.json}). El 22.30\% de las filas del conjunto completo son duplicados exactos a nivel de características. Más relevante para la evaluación: el 24.86\% de las filas de prueba son duplicados exactos de una fila de entrenamiento, proporción que asciende al 40.12\% entre las filas de ataque de prueba (frente al 21.12\% entre las benignas). Esto significa que una fracción considerable del conjunto de prueba aleatorio es, en efecto, memorizable a partir del entrenamiento, lo que infla las métricas in-distribution. Es la razón metodológica por la que la Comprobación~C —y no la partición aleatoria— se interpreta como la señal creíble de generalización. Estas cifras se reportan como contexto honesto del peldaño aleatorio, no como una objeción al modelo MAIN, cuyo rendimiento sobre tráfico de laboratorio se examina en la Sección~\ref{sec:fase2}.
+
+\section{Línea base de Random Forest bajo el mismo protocolo}
+\label{sec:rf}
+La línea base de Random Forest se ejecutó bajo el mismo protocolo que QRDQN (representación canónica, escalado, particiones equivalentes y ponderación de clases balanceada), persistiendo \texttt{config.json} y \texttt{metrics.json} por barrido (\texttt{RUN\_ID} \texttt{rf\_cicids2017\_canonical\_20260628\_024735}). Sobre la partición aleatoria fija —el mismo conjunto de prueba de $566\,149$ filas que MAIN— el Random Forest alcanza una exactitud de $0.99872$ y una F1 de ataque de $0.99676$, ligeramente por encima de QRDQN. Bajo la partición por día equivalente a la Comprobación~C (entrenamiento lunes/martes/miércoles, prueba jueves/viernes), su recall de ataque colapsa a $0.08135$ (F1 de ataque $0.15005$, exactitud $0.76913$), y bajo el leave-one-CSV-out con miércoles reservado el recall de ataque cae a $0.00719$. La Tabla~\ref{tab:rf-vs-qrdqn} resume la comparación con el mismo protocolo.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{llcccc}
+\toprule
+Modelo & Partición & Exactitud & Prec.\ ataque & Recall ataque & F1 ataque \\
+\midrule
+QRDQN (MAIN) & Aleatoria fija & $0.99381$ & $0.97378$ & $0.99536$ & $0.98445$ \\
+Random Forest & Aleatoria fija & $0.99872$ & $0.99501$ & $0.99853$ & $0.99676$ \\
+\midrule
+QRDQN (Check C) & Día (Lun--Mié\,$\rightarrow$\,Jue--Vie) & $0.84135$ & $0.76479$ & $0.52954$ & $0.62578$ \\
+Random Forest & Día (Lun--Mié\,$\rightarrow$\,Jue--Vie) & $0.76913$ & $0.96473$ & $0.08135$ & $0.15005$ \\
+\bottomrule
+\end{tabular}
+\caption{Comparación con el mismo protocolo entre QRDQN y la línea base de Random Forest balanceada. Las filas aleatorias comparten el conjunto de prueba de $566\,149$ filas con semilla~42; las filas por día comparten la partición lunes/martes/miércoles\,$\rightarrow$\,jueves/viernes ($1\,162\,213$ filas de prueba). Fuentes: ejecuciones MAIN, \texttt{VAL\_checks\_C\_20260213\_004847} y \texttt{rf\_cicids2017\_canonical\_20260628\_024735}.}
+\label{tab:rf-vs-qrdqn}
+\end{table}
+
+\section{Inferencia de la Fase 2 sobre tráfico de laboratorio}
+\label{sec:fase2}
+La inferencia offline de la Fase~2 aplicó el modelo MAIN, junto con su escalador y percentiles persistidos, sobre tráfico capturado por el operador en un laboratorio doméstico cerrado y no adversarial (fichero \texttt{lab\_capture\_traffic.csv}, $2\,000\,000$ de flujos etiquetados; artefacto \texttt{P2v2\_pred\_20260610\_161231\_MAIN}). El modelo alcanza una exactitud de $0.991862$, con una precisión de ataque de $0.97919$, un recall de ataque de $0.988452$ y una F1 de ataque de $0.98380$ ($\mathrm{TP}=494\,226$, $\mathrm{TN}=1\,489\,498$, $\mathrm{FP}=10\,502$, $\mathrm{FN}=5\,774$), con una tasa de bloqueo de $0.252364$. Los diagnósticos de distribución son benignos: el valor absoluto máximo de z observado es $9.547$ y el medio $0.3417$, sin ninguna característica que supere el recorte en $|z|=10$. El modelo se comporta, por tanto, de forma razonable sobre esta captura de laboratorio concreta. No obstante, dado que se trata de tráfico generado por el operador en un único entorno cerrado y no adversarial, este resultado es una comprobación controlada de validez externa limitada y no constituye evidencia de rendimiento de detección en el mundo real.
