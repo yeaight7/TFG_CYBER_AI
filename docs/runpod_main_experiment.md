@@ -44,7 +44,7 @@ PY
 ```
 
 `requirements-runpod-cu130.txt` is the pinned direct dependency set for
-reproducing the main QRDQN RunPod stack. It installs `torch==2.12.0+cu130` from
+reproducing the main QRDQN RunPod stack. It installs `torch==2.12.1+cu130` from
 the PyTorch CUDA 13.0 wheel index. For local CPU/dev installs, use
 `requirements.txt` or `uv sync`.
 
