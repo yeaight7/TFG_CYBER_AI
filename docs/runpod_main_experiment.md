@@ -17,12 +17,12 @@ The instructions below are kept as the reproduction procedure for this run.
 
 ## Machine
 
-- Preferred: RTX 3090. It has 24 GB VRAM and commonly enough system RAM for the
+- Preferred: RTX 3090 Ti. It has 24 GB VRAM and commonly enough system RAM for the
   full CICIDS2017 run.
 - Optional: L40S.
 - A100 is not necessary for this experiment.
 
-Expected cost is pricing-dependent. A reasonable RTX 3090 budget is likely under
+Expected cost is pricing-dependent. A reasonable RTX 3090 Ti budget is likely under
 15-20 USD if setup plus training finishes in roughly 8-24 hours.
 
 ## Setup
