@@ -26,6 +26,9 @@ This plan turns the audit's findings into ordered, trackable work items so the t
 - **D-9 — NO rerun; leave MAIN as-is (decided by user):** A7/A8/A9 (any 3M-step retrain / day-split / multi-seed run) are **won't-do**. Owner rationale: offline-inference accuracy ≈ training accuracy (~0.98–0.99) on independent lab traffic, and the A1 duplication (22.3% overall / 24.86% test-in-train / 40.12% of test attacks) is **reviewed and accepted** as low enough; the headline is **not** reframed around leakage and the thesis will **not** foreground a dedup caveat. *Auditor note (for the record, non-blocking):* the A1 finding is retained as an **owner-reviewed-and-accepted risk** (not erased); "train ≈ independent-lab accuracy" is the prepared rebuttal if a tribunal probes the random split. ⇒ **A3 is softened** to at most a light, factual "in-distribution" note (no prominent leakage caveat), and any A3 wording is confirmed with the owner before editing `results.md`/thesis.
 - **D-10 — Phase-2 provenance (decided by user):** the committed Phase-2 traffic is **real captured packets the operator generated themselves via console commands in a physical, isolated home lab** (closed, non-adversarial). The committed GCP/Docker generator (`lab/docker/`, `gen_traffic.py`) was a **deprecated earlier attempt whose flows were unusable** — not the source of the committed data. Labels = operator intent (trustworthy). ⇒ The "**synthetic**" terminology in the docs is **inaccurate** and is corrected to "**real captured / operator-generated / closed home-lab / limited external validity**". Do **not** over-investigate; rename the file to `lab_capture_traffic*.csv` (D-7) in C2.
 
+### Decisions locked — round 4 (owner, 2026-06-28)
+- **D-11 — G5 (tracked PDFs) → WON'T-DO / keep tracking (decided by user):** keep `memoria/memoria.pdf` (and the other built PDFs) **tracked** in git. Owner rationale: the compiled thesis PDF must be downloadable from environments where LaTeX cannot be compiled, so tracking the canonical PDF is intentional and useful. ⇒ **G5 is won't-do**; do **not** `.gitignore` or `git rm --cached` the PDFs.
+
 ### How to use this tracker
 - Status legend: `[ ]` todo · `[~]` in progress · `[x]` done & verified · `[-]` won't-do / N/A · `[?]` blocked on a decision.
 - Work **top-down within a phase**; respect `Depends`. Tick a box only after its **Verify** step passes.
@@ -91,12 +94,12 @@ This plan turns the audit's findings into ordered, trackable work items so the t
 ### Phase 5 — Low-priority code & cleanup
 | ID | Task | Sev | Compute | Status |
 |----|------|-----|---------|--------|
-| C4 | Tighten Phase-2 inference: `ImportError`-only fallback + record algo | Low | none | [ ] |
-| C5 | Assert `len(y_pred)==len(df)` before Phase-2 truth metrics | Low | none | [ ] |
-| B3 | Remove/assert the unreachable unknown-label branch in env reward | Low | none | [ ] ⚠ `tests/test_reward_config.py:22-28` tests this branch — don't delete blindly (assert at env construction or update the test) |
-| G5 | Untrack tracked PDFs (`memoria.pdf`, `report.pdf`, `informe.pdf`) | Low | none | [ ] |
-| G6 | Archive/relocate `deprecated_predict_real_traffic.py` | Low | none | [ ] |
-| F4 | Add `[tool.ruff]` config; sync `requirements-runpod`; comment `graphifyy` | Low | none | [ ] |
+| C4 | Tighten Phase-2 inference: `ImportError`-only fallback + record algo | Low | none | [x] `load_model`→`except ImportError` (corrupt `.zip` now propagates) + returns `(model,algo)`; `config["model_class"]` recorded |
+| C5 | Assert `len(y_pred)==len(df)` before Phase-2 truth metrics | Low | none | [x] dual guard: early in `main()` (also protects `pd.concat` meta align) + top of `compute_truth_metrics` (unit-testable); 2 new tests |
+| B3 | Remove/assert the unreachable unknown-label branch in env reward | Low | none | [x] construction-time binary-label guard + fail-fast `raise` in `_compute_reward`; test rewritten to assert the raise (per the "assert at construction OR update the test" option) |
+| G5 | Untrack tracked PDFs (`memoria.pdf`, `report.pdf`, `informe.pdf`) | Low | none | [-] won't-do (D-11): keep the thesis PDF tracked so it's downloadable where LaTeX can't compile |
+| G6 | Archive/relocate `deprecated_predict_real_traffic.py` | Low | none | [x] `git mv` → `scripts/archive/`; `parents[1]`→`parents[2]` (path fix at new depth) + archival banner; doc ref updated; no code imports it |
+| F4 | Add `[tool.ruff]` config; sync `requirements-runpod`; comment `graphifyy` | Low | none | [x] `[tool.ruff]` line-length=100 + `[tool.ruff.lint]` select pinned (default set, `ruff check .` clean); `graphifyy` PyPI-name comment; runpod scope documented (dev/tune intentionally excluded) |
 
 ### Phase 6 — Optional, compute-gated (only if D-2 budget allows)
 | ID | Task | Sev | Compute | Status |
@@ -191,6 +194,30 @@ Recon-first (5 read-only agents: I2 wording, I3 RF claim, I5 un-run hedges, I4 f
 
 **Remaining (Low priority):** I6 EN `report/` re-sync (3 methodology blocks + Phase-2 wording + 4-chapter translation). Optional: delete the superseded `results_rf.txt`; commit/gitignore decision for the new RF `.joblib`.
 
+### Phase 5 first-half — execution log (2026-06-28) — C4 · C5 · B3
+
+Recon-first (live source, not the audit's stale line numbers: `rl_defender_env.py` is under `src/`, truth-metrics call is L435 not L447). Branch `chore/yeaight7/audit-remediation-plan-phase-5` confirmed to fully contain merged `main` (Phase 1–4 via PR #33), no divergence → no rebase. Green baseline first (33 passed, ruff clean), edits applied single-writer, then adversarially reviewed by a 3-lens workflow (regression / plan-fidelity / silent-failure) — **approve-with-nits, zero must-fix**; the two surfaced nits (O(n) label check, trailing newlines) were applied.
+
+- **C4** — `scripts/predict_real_traffic_v2.py` `load_model`: bare `except Exception` → **`except ImportError`** only, so a corrupt/incompatible `.zip` now **propagates** instead of being silently masked by the DQN fallback (DQN fallback still fires only when `sb3_contrib` is genuinely absent; `ModuleNotFoundError ⊂ ImportError` still caught). Returns `(model, algo)`; `algo = type(model).__name__` recorded as `config["model_class"]` (provenance home; metrics.json left for measurements).
+- **C5** — `scripts/predict_real_traffic_v2.py`: `len(y_pred)==len(df)` enforced by **two** `ValueError` guards — one early in `main()` right after `batched_predict` (also protects the downstream `pd.concat([meta, out_df])` silent-misalignment) and one at the top of `compute_truth_metrics` (explicit contract, directly unit-testable). 2 new tests (`test_compute_truth_metrics_row_mismatch_raises`, `..._aligned_ok`).
+- **B3** — `src/rl_defender_env.py`: the unreachable unknown-label `else` branch in `_compute_reward` (which silently treated unknown labels as attacks) replaced by (1) a construction-time binary-label guard in `__init__` (`np.isin(self.y, valid_labels).all()`, O(n); raises `ValueError` with offending labels) and (2) a fail-fast `raise` in the `_compute_reward` `else`. Verified safe across all 6 env construction sites (CICIDS loaders yield strictly `{0,1}` via `(labels!=benign).astype(int64)`; single-class/empty/float-cast `y` all pass). `tests/test_reward_config.py::test_unknown_label_reward` → `test_unknown_label_rejected` (now asserts the raise at both construction and `_compute_reward`); no other test covered the old silent behavior, so no coverage weakened.
+
+**Validation:** `uv run pytest tests/` → **35 passed** (33 + 2 new C5); `uv run ruff check` on all 4 changed files → clean. No Python contract broken; no out-of-scope files touched; nothing committed (working-tree only). **Change set:** `scripts/predict_real_traffic_v2.py`, `src/rl_defender_env.py`, `tests/test_predict_real_traffic_v2.py`, `tests/test_reward_config.py`.
+
+**Remaining in Phase 5 (second half):** G5 (untrack tracked PDFs), G6 (archive `deprecated_predict_real_traffic.py`), F4 (`[tool.ruff]` config + `requirements-runpod` sync + `graphifyy` comment).
+
+### Phase 5 second-half — execution log (2026-06-28) — G5 (won't-do) · G6 · F4
+
+Recon-first (confirmed no code imports the deprecated script; `requirements-runpod` is a training-only runtime; whole-repo `ruff check .` clean before any config change). Owner decision **D-11** taken: keep the thesis PDF tracked → **G5 won't-do**.
+
+- **G5** — **won't-do (D-11).** Keep `memoria/memoria.pdf` (and other built PDFs) tracked so the compiled thesis is downloadable from environments without a LaTeX toolchain. No `.gitignore`/`git rm --cached`.
+- **G6** — `git mv scripts/deprecated_predict_real_traffic.py` → **`scripts/archive/`** (per the repo's per-directory `*/archive/` convention; git records it as a rename). Fixed the in-file repo-root resolution for the new depth (`Path(__file__).resolve().parents[1]` → `parents[2]`) so the archived script still resolves `REPO` correctly, and added an archival banner docstring pointing to the `predict_real_traffic_v2.py` replacement. Verified **no code imports it**; updated both *live* references to the new path — the `docs/AGENT_CONTEXT.md` doc and the tracked `.graphifyignore` exclusion entry (`scripts/deprecated_… → scripts/archive/…`). The only remaining old-path mentions are dated audit logs (`REPO_AUDIT_2026-06-27.md`, `docs/audits/…_2026-06-25.md`), correctly left as historical record; the stale generated `graphify-out/` artifacts are gitignored and untouched. Validated with `py_compile` (not import — the module reloads ~250k CICIDS rows at import scope, the very issue that motivated archiving it) and confirmed `parents[2]` resolves to the repo root.
+- **F4** — `pyproject.toml`: added `[tool.ruff]` (`line-length = 100`) + `[tool.ruff.lint]` (`select = ["E4","E7","E9","F"]`, ruff's default stable set pinned explicitly for cross-version reproducibility) — `ruff check .` stays **clean** repo-wide and ruff confirms it reads the config (`linter.line_length = 100`). Added a one-line comment that **`graphifyy` (double-y) is the PyPI distribution name; the import is `graphify`** (the `dev` extra already pinned `graphifyy==0.7.0`). For `requirements-runpod-cu130.txt`, chose the **"document its scope"** branch (not bloat the GPU training image): a header comment states it is the minimal training/eval runtime that intentionally omits the `dev` (pytest/ruff/graphifyy) and `tune` (optuna) extras, with a note to `pip install optuna==4.9.0` when running tuning on the box.
+
+**Validation:** `uv run ruff check .` → **clean** (whole repo, under the new explicit config); `uv run pytest tests/` → **35 passed**; `uv lock --check` → resolved/coherent (pyproject dep set unchanged — only tool-config + a comment added); `pyproject.toml`/`requirements-runpod` parse; archived script `py_compile` OK and `parents[2]` → repo root verified. **Change set (this half):** `AUDIT_REMEDIATION_PLAN.md`, `docs/AGENT_CONTEXT.md`, `.graphifyignore` (path-sync to archive), `pyproject.toml`, `requirements-runpod-cu130.txt`, `scripts/deprecated_predict_real_traffic.py` → `scripts/archive/…` (rename + edits). **Nothing committed.**
+
+**Phase 5 status:** first half (C4·C5·B3) ✅ + second half (G6·F4) ✅; G5 deliberately won't-do (D-11). Phase 5 complete.
+
 ---
 
 ## Detailed tasks
@@ -278,7 +305,7 @@ Recon-first (5 read-only agents: I2 wording, I3 RF claim, I5 un-run hedges, I4 f
 
 **G4 — Keep CICIDS (LFS) + drop NSL-KDD, going-forward (Med, none — per D-8)** — keep `datasets/CICIDS2017/*.csv` in LFS and add a CICIDS2017 attribution/terms note (README + `docs/reproducibility.md`, official UNB URL). Drop the legacy NSL-KDD: `git rm --cached datasets/nsl_kdd/** models/rf_nslkdd.joblib` and add both to `.gitignore` (going-forward; old history retained per D-6). Flag NSL-KDD references in docs/code as removed-legacy (note `src/load_nsl_kdd.py`, `experiments/nslkdd_experiments.md`, `models/rf_nslkdd.joblib`). *Verify:* NSL-KDD untracked at tip; CICIDS attribution note committed; no doc advertises NSL-KDD load paths as current. *Depends:* —.
 
-**G5 — Untrack PDFs, going-forward (Low, none — per D-6 no rewrite)** — `.gitignore` `memoria/*.pdf`, `report/*.pdf`, `docs/archive/*.pdf`; `git rm --cached` them (untrack at tip; old history retained); build from `.tex` (or attach to a Release). *Verify:* PDFs untracked at tip; build still works. *Depends:* —.
+**G5 — Untrack PDFs — WON'T-DO (per D-11).** *Owner decision (2026-06-28):* keep the built PDFs **tracked** so the compiled thesis is downloadable where LaTeX can't be compiled. ~~`.gitignore` `memoria/*.pdf`, `report/*.pdf`, `docs/archive/*.pdf`; `git rm --cached` them.~~ Not executed. *Depends:* —.
 
 **G6 — Deprecated predictor (Low, none)** — move `scripts/deprecated_predict_real_traffic.py` to an `archive/` dir (it reloads 250k rows at import; not referenced by code). *Verify:* grep shows no imports; quickstarts unaffected. *Depends:* —.
 
