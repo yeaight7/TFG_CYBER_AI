@@ -46,7 +46,7 @@ Reads a flows CSV, harmonizes time units, maps to the **same 152-d canonical sch
 - **Single source of truth for the feature contract** (`canonical_schema.map_to_canonical`) shared by train and inference → feature order cannot silently drift.
 - **A real anti-leakage control was run** (Check B shuffled-label: accuracy 0.4773 < 0.5227 majority baseline) and **a hard by-day generalization test was run and honestly reported** (Check C: recall 0.53), plus an RF baseline that honestly documents the realistic-split collapse.
 - **Asymmetric cost reward** correctly implemented and matches config/docs (`rl_defender_env.py:107-139`; FN −5.0 > FP −2.0).
-- **Per-run environment provenance** captured (`environment.json`: Python/torch/CUDA/lib versions, RTX 3090).
+- **Per-run environment provenance** captured (`environment.json`: Python/torch/CUDA/lib versions, RTX 3090 Ti).
 - **Dataset-content hashing exists in the loader** (`test_set_sha256`, `y_test_sha256`, … `load_cicids2017.py:702-705`) and a deterministic nested-prefix train-subsample mechanism for the size benchmark.
 - **Thesis is candid about the central RL critique** (`state_of_the_art.tex:148`, `metodologia.tex:196,326`: "closer to a cost-sensitive contextual decision problem than a full MDP").
 - **The CICIDS2017 LFS layer is correct** (8 CSVs are genuine LFS pointers), and run checkpoints / TB events / per-run `model.zip` are correctly git-ignored.
@@ -193,7 +193,7 @@ Commands in docs are mostly current; the main runnability trap is `uv sync --all
 | Leakage-free eval of the MAIN model | **Missing** | Check A on random split; Check C/LOO use a 30k-step proxy; all VAL_checks predate MAIN | Full-budget day/LOO run loading the MAIN model |
 | Multiple seeds / CI on headline | **Missing** | All `seed=42`; no variance reported | ≥3 seeds or bootstrap CI on fixed test set |
 | Documented runnable commands | **Partial** | Quickstarts present; `--all-extras` trap; LFS prerequisite under-stated | Fix lock; foreground `git lfs pull` |
-| Hardware documented | **OK** | RTX 3090 / CUDA 13.0 in `environment.json` + `reproducibility.md`; CPU fallback path exists in code | Note CPU path viability for GPU-less reviewers |
+| Hardware documented | **OK** | RTX 3090 Ti / CUDA 13.0 in `environment.json` + `reproducibility.md`; CPU fallback path exists in code | Note CPU path viability for GPU-less reviewers |
 | CI verifies the pipeline | **Partial** | Unit tests + schema check + ruff; no end-to-end / no SHA-256 verification; Python 3.11≠3.12.3 | Pin Python 3.12; add cache; document LFS limitation |
 | Phase-2 synthetic data provenance | **Missing** | Generator CSV+labels not committed; `gen_traffic.py` insufficient | Commit/document generation+labeling pipeline |
 
