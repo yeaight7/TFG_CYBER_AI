@@ -51,7 +51,7 @@ graphify-out-backup-*/
 scripts/graphify_auto_update.py
 tests/test_graphify_auto_update.py
 Research/
-scripts/deprecated_predict_real_traffic.py
+scripts/archive/deprecated_predict_real_traffic.py
 scripts/run_main_experiment.sh
 GEMINI.md
 requirements-runpod-cu130.txt
