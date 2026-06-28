@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      # Pin the interpreter uv uses to match MAIN training (environment.json: 3.12.3).
+      # Pin the interpreter uv uses to match MAIN training (environment.json: 3.12.11).
       UV_PYTHON: "3.12"
     steps:
       - uses: actions/checkout@v4
