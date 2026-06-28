@@ -1,0 +1,85 @@
+\chapter{Results}
+
+This chapter reports only figures backed by run artifacts committed to the repository. Each result is identified by its \texttt{RUN\_ID}, so it can be retrieved and inspected independently. Following the validation ladder described in the methodology, the results are presented from the most permissive rung (random split) to the most demanding ones (day split and leave-one-CSV-out), followed by the comparison with the supervised baseline and the Phase 2 inference.
+
+\section{Main Model Configuration}
+The main and official experiment of the thesis is the run \texttt{MAIN\_qrdqn\_cicids2017\_canonical\_full\_random\_20260609\_193655}. A QRDQN agent was trained on the full CICIDS2017 dataset using the 152-dimensional canonical representation, a stratified random split with seed 42 (training 2,264,594 rows, test 566,149 rows), and the reward configuration \texttt{tp=1.5}, \texttt{fp=-2.0}, \texttt{fn=-5.0}, \texttt{omission=0.0}. The hyperparameters (discount factor $\gamma = 0$, architecture \texttt{[1024,1024,512]}, 200 quantiles, learning rate \texttt{5e-5}, 20 gradient steps, 3,000,000 training timesteps) constitute a hand-set profile, not the result of an Optuna search, as documented in the methodology.
+
+\section{In-Distribution Performance (Fixed Random Split)}
+On the fixed random split, the MAIN model achieves an accuracy of 0.99381, with an attack recall of 0.99536 and an attack F1 score of 0.98445 (Table~\ref{tab:main-metrics}). The confusion matrix over the 566,149 test rows is $\mathrm{TN}=451{,}631$, $\mathrm{FP}=2{,}989$, $\mathrm{FN}=518$, $\mathrm{TP}=111{,}011$. These figures should be interpreted as evidence of \emph{learning capacity} on the most permissive rung of the validation ladder: a row-wise random split is the weakest evidence in the project, and Section~\ref{sec:duplicates} quantifies why.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lc}
+\toprule
+Metric & Value \\
+\midrule
+Accuracy & $0.99381$ \\
+Precision (attack) & $0.97378$ \\
+Recall (attack) & $0.99536$ \\
+F1 (attack) & $0.98445$ \\
+Precision (benign) & $0.99885$ \\
+Recall (benign) & $0.99343$ \\
+F1 (benign) & $0.99613$ \\
+\bottomrule
+\end{tabular}
+\caption{MAIN model metrics on the fixed random split (566,149 test rows). Source: \texttt{metrics.json} from the MAIN run.}
+\label{tab:main-metrics}
+\end{table}
+
+\section{Bootstrap Confidence Intervals}
+To quantify the sampling precision of these metrics on the fixed test set, a stratified bootstrap of 10,000 resamples was applied over the 566,149 test rows, without retraining the model (artifact \texttt{bootstrap\_ci\_seed42.json}). The 95\% confidence intervals are narrow (Table~\ref{tab:bootstrap-ci}). It is important to delimit their scope: these intervals describe the sampling precision of the test set for this \emph{single} trained model; they do not quantify the variance associated with the training seed, which would require multiple runs and is beyond the scope of this thesis.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Metric & Value & 95\% CI \\
+\midrule
+Accuracy & $0.99381$ & $[0.99360,\ 0.99401]$ \\
+Balanced Accuracy & $0.99439$ & $[0.99416,\ 0.99462]$ \\
+MCC & $0.98068$ & $[0.98004,\ 0.98130]$ \\
+Precision (attack) & $0.97378$ & $[0.97286,\ 0.97468]$ \\
+Recall (attack) & $0.99536$ & $[0.99495,\ 0.99575]$ \\
+F1 (attack) & $0.98445$ & $[0.98394,\ 0.98496]$ \\
+FPR & $0.00658$ & $[0.00634,\ 0.00681]$ \\
+FNR & $0.00465$ & $[0.00425,\ 0.00505]$ \\
+\bottomrule
+\end{tabular}
+\caption{Bootstrap 95\% confidence intervals (10,000 stratified resamples) for MAIN model metrics. Source: \texttt{bootstrap\_ci\_seed42.json}.}
+\label{tab:bootstrap-ci}
+\end{table}
+
+\section{Validation Ladder: Checks A, B, and C}
+The three checks in \texttt{validate\_checks.py} serve different purposes. \textbf{Check A} (\texttt{VAL\_checks\_A\_20260212\_235443}) evaluates the model via direct prediction on \texttt{X\_test}, without relying on the label reported by the environment, and obtains an accuracy of 0.9939 ($\mathrm{TP}=4772$, $\mathrm{FP}=60$, $\mathrm{FN}=1$, $\mathrm{TN}=5167$ over 10,000 samples); it confirms that the good metrics do not depend on an artifact of the environment loop. \textbf{Check B} (\texttt{VAL\_checks\_B\_20260212\_235736}) retrains with shuffled labels and obtains an accuracy of 0.4773, below the majority-class baseline (0.5227), with \texttt{leakage\_detected = false}: when the relationship between features and labels is destroyed, performance does not remain artificially high, as desired in the absence of leakage.
+
+\textbf{Check C} (\texttt{VAL\_checks\_C\_20260213\_004847}) is the hard generalization evidence of the project. Training on Monday/Tuesday/Wednesday and evaluating on Thursday/Friday (1,668,530 training rows, 1,162,213 test rows), accuracy drops to 0.84135 and attack recall to 0.52954 (attack precision 0.76479, attack F1 0.62578). The drop from in-distribution performance is exactly the kind of evidence that distinguishes a comfortable benchmark from an honest evaluation: the pipeline learns very well within the distribution, but generalizing to different days and attack patterns is substantially harder.
+
+\section{Duplicate Analysis and Leakage in the Random Split}
+\label{sec:duplicates}
+To explain why the random split is the weakest rung, row duplication and inter-partition leakage were quantified on the same seed 42 split, without training any model (artifact \texttt{duplicate\_analysis\_seed42.json}). 22.30\% of the rows in the full dataset are exact feature-level duplicates. More relevant for evaluation: 24.86\% of the test rows are exact duplicates of a training row, a proportion that rises to 40.12\% among test attack rows (compared to 21.12\% among benign rows). This means a considerable fraction of the random test set is, in effect, memorizable from training, which inflates in-distribution metrics. This is the methodological reason why Check C---and not the random split---is interpreted as the credible signal of generalization. These figures are reported as honest context for the random rung, not as an objection to the MAIN model, whose performance on laboratory traffic is examined in Section~\ref{sec:phase2}.
+
+\section{Same-Protocol Random Forest Baseline}
+\label{sec:rf}
+The Random Forest baseline was executed under the same protocol as QRDQN (canonical representation, scaling, equivalent splits, and balanced class weighting), persisting \texttt{config.json} and \texttt{metrics.json} per sweep (\texttt{RUN\_ID} \texttt{rf\_cicids2017\_canonical\_20260628\_024735}). On the fixed random split---the same 566,149-row test set as MAIN---the Random Forest achieves an accuracy of 0.99872 and an attack F1 of 0.99676, slightly above QRDQN. Under the day split equivalent to Check C (train Mon/Tue/Wed, test Thu/Fri), its attack recall collapses to 0.08135 (attack F1 0.15005, accuracy 0.76913), and under the leave-one-CSV-out with Wednesday reserved, attack recall falls to 0.00719. Table~\ref{tab:rf-vs-qrdqn} summarizes the same-protocol comparison.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{llcccc}
+\toprule
+Model & Split & Accuracy & Prec.\ attack & Recall attack & F1 attack \\
+\midrule
+QRDQN (MAIN) & Fixed Random & $0.99381$ & $0.97378$ & $0.99536$ & $0.98445$ \\
+Random Forest & Fixed Random & $0.99872$ & $0.99501$ & $0.99853$ & $0.99676$ \\
+\midrule
+QRDQN (Check C) & Day (Mon--Wed\,$\rightarrow$\,Thu--Fri) & $0.84135$ & $0.76479$ & $0.52954$ & $0.62578$ \\
+Random Forest & Day (Mon--Wed\,$\rightarrow$\,Thu--Fri) & $0.76913$ & $0.96473$ & $0.08135$ & $0.15005$ \\
+\bottomrule
+\end{tabular}
+\caption{Same-protocol comparison between QRDQN and the balanced Random Forest baseline. Random rows share the 566,149-row test set with seed 42; day rows share the Monday/Tuesday/Wednesday\,$\rightarrow$\,Thursday/Friday partition (1,162,213 test rows). Sources: MAIN, \texttt{VAL\_checks\_C\_20260213\_004847}, and \texttt{rf\_cicids2017\_canonical\_20260628\_024735} runs.}
+\label{tab:rf-vs-qrdqn}
+\end{table}
+
+\section{Phase 2 Inference on Laboratory Traffic}
+\label{sec:phase2}
+Phase 2 offline inference applied the MAIN model, along with its persisted scaler and percentiles, to traffic captured by the operator in a closed home lab and non-adversarial environment (file \texttt{lab\_capture\_traffic.csv}, 2,000,000 labeled flows; artifact \texttt{P2v2\_pred\_20260610\_161231\_MAIN}). The model achieves an accuracy of 0.991862, with an attack precision of 0.97919, an attack recall of 0.988452, and an attack F1 of 0.98380 ($\mathrm{TP}=494{,}226$, $\mathrm{TN}=1{,}489{,}498$, $\mathrm{FP}=10{,}502$, $\mathrm{FN}=5{,}774$), with a block rate of 0.252364. The distribution diagnostics are benign: the maximum absolute z-value observed is 9.547 and the mean is 0.3417, with no feature exceeding the clipping limit at $|z|=10$. The model thus behaves reasonably well on this specific laboratory capture. However, given that this is traffic generated by the operator in a single closed and non-adversarial environment, this result is a controlled check of limited external validity and does not constitute evidence of real-world detection performance.
