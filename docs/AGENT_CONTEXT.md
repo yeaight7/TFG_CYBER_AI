@@ -59,7 +59,7 @@ Use:
 
 - `scripts/predict_real_traffic_v2.py`
 
-and do not document `scripts/deprecated_predict_real_traffic.py` (the legacy script, formerly `predict_real_traffic.py`) as the recommended path except when discussing legacy behaviour.
+and do not document `scripts/archive/deprecated_predict_real_traffic.py` (the legacy script, formerly `predict_real_traffic.py`; archived under `scripts/archive/` in Phase 5) as the recommended path except when discussing legacy behaviour.
 
 ## Current Open Risk
 

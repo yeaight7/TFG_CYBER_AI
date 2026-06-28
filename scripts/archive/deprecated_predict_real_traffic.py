@@ -1,3 +1,10 @@
+"""ARCHIVED (Phase 5 / G6) — legacy Phase-2 offline predictor.
+
+Superseded by ``scripts/predict_real_traffic_v2.py``. Not referenced by any
+code; retained for historical reference only. NOTE: importing this module
+triggers a ~250k-row CICIDS2017 reload at module scope (see below), so it is
+meant to be run as a script, not imported.
+"""
 from __future__ import annotations
 import json
 from pathlib import Path
@@ -6,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 import sys
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[2]  # scripts/archive/<this> -> repo root
 sys.path.append(str(REPO / "src"))
 
 from canonical_schema import map_to_canonical  # noqa: E402

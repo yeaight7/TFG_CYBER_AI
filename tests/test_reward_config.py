@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from src.rl_defender_env import RLDatasetDefenderEnv
 
 def test_reward_logic_tp_fp_tn_fn():
@@ -19,10 +20,13 @@ def test_reward_logic_tp_fp_tn_fn():
     assert env._compute_reward(1, 0) == -10.0 # FN
     assert env._compute_reward(1, 1) == 10.0  # TP
 
-def test_unknown_label_reward():
-    X = np.zeros((1, 10))
-    y = np.array([0])
-    env = RLDatasetDefenderEnv(X, y, shuffle=False)
-    
-    assert env._compute_reward(99, 1) == env.reward_config["omission"]
-    assert env._compute_reward(99, 0) == env.reward_config["fp"]
+def test_unknown_label_rejected():
+    # B3: non-binary labels are rejected at construction (fail fast) ...
+    X = np.zeros((2, 10))
+    with pytest.raises(ValueError):
+        RLDatasetDefenderEnv(X, np.array([0, 99]), shuffle=False)
+
+    # ... and _compute_reward also rejects an unknown label (defense in depth).
+    env = RLDatasetDefenderEnv(np.zeros((1, 10)), np.array([0]), shuffle=False)
+    with pytest.raises(ValueError):
+        env._compute_reward(99, 1)

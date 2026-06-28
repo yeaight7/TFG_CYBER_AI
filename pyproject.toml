@@ -19,7 +19,8 @@ dependencies = [
 dev = [
     "pytest==9.0.3",
     "ruff==0.15.12",
-    "graphifyy==0.7.0"
+    # NOTE: `graphifyy` (double-y) is the PyPI distribution name; the import is `graphify`.
+    "graphifyy==0.7.0",
 ]
 # Optional: hyperparameter tuning (src/tune_hparams.py). Installed by CI via `uv sync --all-extras`.
 tune = [
@@ -45,3 +46,14 @@ explicit = true
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["src*", "scripts*"]
+
+[tool.ruff]
+# Explicit so lint/format behaviour is reproducible across ruff releases
+# (ruff's implicit defaults can change between versions). Current repo is
+# clean under this configuration (`ruff check .`).
+line-length = 100
+
+[tool.ruff.lint]
+# Pin ruff's default stable rule set explicitly: pyflakes (F) + a curated
+# subset of pycodestyle errors (E4 imports, E7 statements, E9 syntax).
+select = ["E4", "E7", "E9", "F"]
