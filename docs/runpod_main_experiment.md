@@ -188,7 +188,7 @@ Use Check A to evaluate the frozen trained model directly on the same split:
 
 ```bash
 python src/validate_checks.py \
-  --model runs/cicids2017/<RUN_ID>/model.zip \
+  --run-dir runs/cicids2017/<RUN_ID> \
   --checks A \
   --preset full \
   --split-mode random \
