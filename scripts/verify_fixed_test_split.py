@@ -176,7 +176,7 @@ def main() -> None:
             repo_root=_REPO_ROOT,
             allow_unsafe=args.allow_unsafe_artifacts,
         )
-        print(f"\nScaler audit vs {scaler_path}...")
+        print("\nScaler audit vs trusted scaler artifact...")
         reference = joblib.load(scaler_path)
         reproduced = StandardScaler().fit(X_train)
         if not np.allclose(reproduced.mean_, reference.mean_, rtol=1e-6):
