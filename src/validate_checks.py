@@ -501,10 +501,10 @@ def main() -> None:
                 repo_root=_REPO_ROOT,
                 allow_unsafe=args.allow_unsafe_artifacts,
             )
-        except ArtifactTrustError as exc:
-            print(f"\n⚠️  Check A requiere modelo confiable. Saltando: {exc}")
+        except ArtifactTrustError:
+            print("\nCheck A requiere modelo confiable. Saltando carga de modelo no verificada.")
         else:
-            print(f"\nCargando modelo confiable: {model_path}")
+            print("\nCargando modelo confiable desde artefacto verificado.")
             model = QRDQN.load(str(model_path), device=device)
             results["A"] = check_a_direct_eval(model, X_test, y_test)
 
