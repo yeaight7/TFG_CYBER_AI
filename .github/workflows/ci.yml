@@ -13,18 +13,18 @@ jobs:
       # Pin the interpreter uv uses to match MAIN training (environment.json: 3.12.11).
       UV_PYTHON: "3.12"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@8d55fbecc275b1c35dbe060458839f8d30439ccf
         with:
-          version: "latest"
+          version: "0.11.25"
           # Cache the uv download/build store across runs (the cu130 torch wheel
           # is ~2.5 GB; caching avoids re-downloading it every run).
           enable-cache: true
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.12"
 
