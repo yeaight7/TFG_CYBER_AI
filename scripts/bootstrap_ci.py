@@ -239,7 +239,7 @@ def verify_from_model(
     scaler = joblib.load(scaler_path)
     X_test_scaled = scaler.transform(X_test).astype(np.float32)
 
-    print(f"[from-model] loading model {model_path.name} and predicting "
+    print(f"[from-model] loading trusted model artifact and predicting "
           f"({len(y_test):,} rows) ...")
     model = QRDQN.load(str(model_path))
     batch = 8192
