@@ -79,6 +79,7 @@ const URL_HOST = process.env.BRAINSTORM_URL_HOST || (HOST === '127.0.0.1' ? 'loc
 const SESSION_DIR = process.env.BRAINSTORM_DIR || '/tmp/brainstorm';
 const CONTENT_DIR = path.join(SESSION_DIR, 'content');
 const STATE_DIR = path.join(SESSION_DIR, 'state');
+const SESSION_TOKEN = process.env.BRAINSTORM_TOKEN || '';
 let ownerPid = process.env.BRAINSTORM_OWNER_PID ? Number(process.env.BRAINSTORM_OWNER_PID) : null;
 
 const MIME_TYPES = {
@@ -104,6 +105,44 @@ const helperInjection = '<script>\n' + helperScript + '\n</script>';
 
 // ========== Helper Functions ==========
 
+function isLoopbackHost(host) {
+  const normalized = String(host || '').toLowerCase();
+  return normalized === '127.0.0.1' || normalized === 'localhost' || normalized === '::1' || normalized === '[::1]';
+}
+
+function authRequired() {
+  return !isLoopbackHost(HOST);
+}
+
+function requestUrl(req) {
+  return new URL(req.url || '/', 'http://' + (req.headers.host || URL_HOST + ':' + PORT));
+}
+
+function tokenFromRequest(req) {
+  return requestUrl(req).searchParams.get('token') || req.headers['x-brainstorm-token'] || '';
+}
+
+function originAllowed(req) {
+  if (!authRequired()) return true;
+  const origin = req.headers.origin;
+  if (!origin) return true;
+  try {
+    return new URL(origin).host === (req.headers.host || URL_HOST + ':' + PORT);
+  } catch (e) {
+    return false;
+  }
+}
+
+function requestAuthorized(req) {
+  if (!authRequired()) return true;
+  return Boolean(SESSION_TOKEN) && tokenFromRequest(req) === SESSION_TOKEN && originAllowed(req);
+}
+
+function authedUrl() {
+  const base = 'http://' + URL_HOST + ':' + PORT;
+  return authRequired() ? base + '?token=' + encodeURIComponent(SESSION_TOKEN) : base;
+}
+
 function isFullDocument(html) {
   const trimmed = html.trimStart().toLowerCase();
   return trimmed.startsWith('<!doctype') || trimmed.startsWith('<html');
@@ -128,7 +167,14 @@ function getNewestScreen() {
 
 function handleRequest(req, res) {
   touchActivity();
-  if (req.method === 'GET' && req.url === '/') {
+  const url = requestUrl(req);
+  if (!requestAuthorized(req)) {
+    res.writeHead(401);
+    res.end('Unauthorized');
+    return;
+  }
+
+  if (req.method === 'GET' && url.pathname === '/') {
     const screenFile = getNewestScreen();
     let html = screenFile
       ? (raw => isFullDocument(raw) ? raw : wrapInFrame(raw))(fs.readFileSync(screenFile, 'utf-8'))
@@ -142,8 +188,8 @@ function handleRequest(req, res) {
 
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(html);
-  } else if (req.method === 'GET' && req.url.startsWith('/files/')) {
-    const fileName = req.url.slice(7);
+  } else if (req.method === 'GET' && url.pathname.startsWith('/files/')) {
+    const fileName = url.pathname.slice(7);
     const filePath = path.join(CONTENT_DIR, path.basename(fileName));
     if (!fs.existsSync(filePath)) {
       res.writeHead(404);
@@ -167,6 +213,11 @@ const clients = new Set();
 function handleUpgrade(req, socket) {
   const key = req.headers['sec-websocket-key'];
   if (!key) { socket.destroy(); return; }
+  if (!requestAuthorized(req)) {
+    socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n');
+    socket.destroy();
+    return;
+  }
 
   const accept = computeAcceptKey(key);
   socket.write(
@@ -339,7 +390,9 @@ function startServer() {
   server.listen(PORT, HOST, () => {
     const info = JSON.stringify({
       type: 'server-started', port: Number(PORT), host: HOST,
-      url_host: URL_HOST, url: 'http://' + URL_HOST + ':' + PORT,
+      url_host: URL_HOST, url: authedUrl(),
+      auth_required: authRequired(),
+      warning: authRequired() ? 'non-loopback bind requires token for HTTP and WebSocket requests' : null,
       screen_dir: CONTENT_DIR, state_dir: STATE_DIR
     });
     console.log(info);
@@ -351,4 +404,11 @@ if (require.main === module) {
   startServer();
 }
 
-module.exports = { computeAcceptKey, encodeFrame, decodeFrame, OPCODES };
+module.exports = {
+  computeAcceptKey,
+  encodeFrame,
+  decodeFrame,
+  isLoopbackHost,
+  requestAuthorized,
+  OPCODES
+};
