@@ -62,6 +62,7 @@ _REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO / "src"))
 
 from metrics_utils import confusion_to_metrics  # noqa: E402
+from artifact_integrity import resolve_trusted_artifact  # noqa: E402
 
 # Metrics to report CIs for (headline + operational). Keys must exist in
 # metrics_utils.confusion_to_metrics output.
@@ -189,7 +190,12 @@ def bootstrap_metrics(
     return out
 
 
-def verify_from_model(run_dir: Path, expected: Tuple[int, int, int, int]) -> Dict[str, object]:
+def verify_from_model(
+    run_dir: Path,
+    expected: Tuple[int, int, int, int],
+    *,
+    allow_unsafe_artifacts: bool = False,
+) -> Dict[str, object]:
     """Re-run the saved MAIN model over the reproduced seed-42 test split and
     assert the regenerated confusion matrix equals `expected`.
 
@@ -216,9 +222,21 @@ def verify_from_model(run_dir: Path, expected: Tuple[int, int, int, int]) -> Dic
     )
     del X_train, y_train  # only the test split is needed
 
-    # joblib.load executes pickle: only ever used on this repo's OWN committed
-    # first-party artifact (the MAIN scaler we produced), never on untrusted input.
-    scaler = joblib.load(run_dir / "scaler.joblib")  # SAVED scaler — faithful to training
+    model_path = resolve_trusted_artifact(
+        run_dir,
+        "model",
+        model_path,
+        repo_root=_REPO,
+        allow_unsafe=allow_unsafe_artifacts,
+    )
+    scaler_path = resolve_trusted_artifact(
+        run_dir,
+        "scaler",
+        run_dir / "scaler.joblib",
+        repo_root=_REPO,
+        allow_unsafe=allow_unsafe_artifacts,
+    )
+    scaler = joblib.load(scaler_path)
     X_test_scaled = scaler.transform(X_test).astype(np.float32)
 
     print(f"[from-model] loading model {model_path.name} and predicting "
@@ -266,6 +284,8 @@ def main() -> None:
     ap.add_argument("--unstratified", action="store_true",
                     help="Use the unconditional multinomial bootstrap (default: stratified per-class)")
     ap.add_argument("--out", default="runs/validation/bootstrap_ci_seed42.json", help="Output JSON path")
+    ap.add_argument("--allow-unsafe-artifacts", action="store_true",
+                    help="Allow --from-model to load artifacts without manifest hash verification")
     args = ap.parse_args()
 
     run_dir = _find_main_run(args.run_dir)
@@ -322,7 +342,11 @@ def main() -> None:
     }
 
     if args.from_model:
-        summary["model_verification"] = verify_from_model(run_dir, (tn, fp, fn, tp))
+        summary["model_verification"] = verify_from_model(
+            run_dir,
+            (tn, fp, fn, tp),
+            allow_unsafe_artifacts=args.allow_unsafe_artifacts,
+        )
 
     out_path = (_REPO / args.out) if not Path(args.out).is_absolute() else Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
