@@ -9,9 +9,12 @@ import src.load_cicids2017 as lc
 from src.load_cicids2017 import (
     CICIDSLoadConfig,
     SUBSAMPLE_METHOD_STRATIFIED_NESTED_PREFIX,
+    _OFFICIAL_CICIDS2017_CSV_NAMES,
     _prepare_cicids_features,
+    _resolve_official_csv_selectors,
     _sha256_of_array,
     _stratified_nested_prefix_indices,
+    load_cicids2017_binary,
     load_cicids2017_split,
 )
 
@@ -56,9 +59,60 @@ def patched_loader(monkeypatch):
 
 
 def _split(**kwargs):
-    defaults = dict(split_mode="random", preset="full", seed=42, scale=False, use_canonical=True)
+    defaults = dict(
+        split_mode="random",
+        preset="full",
+        seed=42,
+        scale=False,
+        use_canonical=True,
+        allow_non_official_csvs=True,
+    )
     defaults.update(kwargs)
     return load_cicids2017_split(**defaults)
+
+
+def test_random_loader_uses_only_official_csvs_by_default(tmp_path, monkeypatch):
+    for name in _OFFICIAL_CICIDS2017_CSV_NAMES:
+        (tmp_path / name).write_text("Label\nBENIGN\n", encoding="utf-8")
+    (tmp_path / "unexpected-extra.csv").write_text("Label\nATTACK\n", encoding="utf-8")
+
+    loaded_names = []
+
+    def fake_load(csvs, cfg):
+        loaded_names.extend(path.name for path in csvs)
+        return _synthetic_df(20, 4)
+
+    monkeypatch.setattr(lc, "_load_all_csvs", fake_load)
+    cfg = CICIDSLoadConfig(local_dir=tmp_path, scale=False, use_canonical=True)
+    load_cicids2017_binary(cfg)
+
+    assert loaded_names == list(_OFFICIAL_CICIDS2017_CSV_NAMES)
+    assert "unexpected-extra.csv" not in loaded_names
+
+
+def test_day_aliases_resolve_to_exact_official_files(tmp_path):
+    all_csvs = [tmp_path / name for name in _OFFICIAL_CICIDS2017_CSV_NAMES]
+    resolved = _resolve_official_csv_selectors(["Thursday", "Friday"], all_csvs)
+
+    assert [path.name for path in resolved] == [
+        "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+        "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+        "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+        "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+    ]
+
+
+def test_day_split_rejects_partial_arbitrary_patterns(tmp_path):
+    all_csvs = [tmp_path / name for name in _OFFICIAL_CICIDS2017_CSV_NAMES]
+    with pytest.raises(ValueError, match="official day alias or exact official filename"):
+        _resolve_official_csv_selectors(["WorkingHours"], all_csvs)
+
+
+def test_day_split_rejects_duplicate_selectors(tmp_path):
+    all_csvs = [tmp_path / name for name in _OFFICIAL_CICIDS2017_CSV_NAMES]
+    with pytest.raises(ValueError, match="duplicado"):
+        _resolve_official_csv_selectors(["Monday", "Monday-WorkingHours.pcap_ISCX.csv"], all_csvs)
 
 
 def test_nested_prefix_indices_nested_and_stratified():
