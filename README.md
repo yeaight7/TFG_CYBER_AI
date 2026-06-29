@@ -136,7 +136,7 @@ python src/train_rl_defender.py --split-mode day
 Run the validation suite:
 
 ```bash
-python src/validate_checks.py --model models/<MODEL>.zip --checks A B C
+python src/validate_checks.py --run-dir runs/cicids2017/<RUN_ID> --checks A B C
 ```
 
 Run leave-one-exact-CSV-out validation:
@@ -151,8 +151,7 @@ Run robust Phase 2 offline inference:
 ```bash
 python scripts/predict_real_traffic_v2.py \
   --flows pcaps/lab_capture_traffic.csv \
-  --model models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip \
-  --scaler runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib \
+  --run-dir runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655 \
   --percentiles runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz \
   --clip-z 10.0 \
   --export-diagnostics
