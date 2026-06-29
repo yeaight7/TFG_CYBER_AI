@@ -14,8 +14,7 @@ Key improvements over v1:
 Usage:
     python scripts/predict_real_traffic_v2.py \\
         --flows pcaps/flows.csv \\
-        --model models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip \\
-        --scaler runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib \\
+        --run-dir runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655 \\
         --percentiles runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz \\
         --clip-z 10.0 \\
         --export-diagnostics
@@ -40,6 +39,7 @@ sys.path.append(str(_REPO / "src"))
 from canonical_schema import FEATURES_CANON, map_to_canonical  # noqa: E402
 from scaling_utils import apply_percentile_clipping, apply_z_clipping  # noqa: E402
 from metrics_utils import confusion_to_metrics  # noqa: E402
+from artifact_integrity import resolve_trusted_artifact  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -179,6 +179,18 @@ def load_model(model_path: Path) -> Tuple[object, str]:
         return model, type(model).__name__
     model = QRDQN.load(str(model_path))
     return model, type(model).__name__
+
+
+def build_predictions_df(
+    y_pred: np.ndarray,
+    meta: Optional[pd.DataFrame] = None,
+    *,
+    include_sensitive_metadata: bool = False,
+) -> pd.DataFrame:
+    out_df = pd.DataFrame({"pred_action": y_pred.astype(int)})
+    if include_sensitive_metadata and meta is not None:
+        out_df = pd.concat([meta.reset_index(drop=True), out_df], axis=1)
+    return out_df
 
 
 # ---------------------------------------------------------------------------
@@ -327,12 +339,19 @@ def parse_args() -> argparse.Namespace:
         help="Path to flows.csv produced by a flow extractor.",
     )
     parser.add_argument(
-        "--model", required=True, type=Path,
-        help="Path to trained model .zip (QRDQN or DQN).",
+        "--run-dir", type=Path, default=None,
+        help=(
+            "Trusted training run dir containing artifact_manifest.json. "
+            "When provided, model/scaler/percentiles paths must match manifest hashes."
+        ),
     )
     parser.add_argument(
-        "--scaler", required=True, type=Path,
-        help="Path to scaler.joblib saved during training.",
+        "--model", type=Path, default=None,
+        help="Path to trained model .zip (QRDQN or DQN); must match --run-dir unless unsafe.",
+    )
+    parser.add_argument(
+        "--scaler", type=Path, default=None,
+        help="Path to scaler.joblib saved during training; must match --run-dir unless unsafe.",
     )
     parser.add_argument(
         "--percentiles", type=Path, default=None,
@@ -350,6 +369,14 @@ def parse_args() -> argparse.Namespace:
         "--export-diagnostics", action="store_true",
         help="Save full z-score diagnostics to diagnostics.json in output folder.",
     )
+    parser.add_argument(
+        "--include-sensitive-metadata", action="store_true",
+        help="Write local-only predictions_sensitive_local.csv with IPs/ports/timestamps/labels.",
+    )
+    parser.add_argument(
+        "--allow-unsafe-artifacts", action="store_true",
+        help="Allow direct model/scaler/percentile paths without manifest hash verification.",
+    )
     return parser.parse_args()
 
 
@@ -364,15 +391,43 @@ def main() -> None:
     out_dir = _REPO / "runs" / "phase2" / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    run_dir = args.run_dir
+    model_path = resolve_trusted_artifact(
+        run_dir,
+        "model",
+        args.model,
+        repo_root=_REPO,
+        allow_unsafe=args.allow_unsafe_artifacts,
+    )
+    scaler_path = None
+    if not args.no_scale:
+        scaler_path = resolve_trusted_artifact(
+            run_dir,
+            "scaler",
+            args.scaler,
+            repo_root=_REPO,
+            allow_unsafe=args.allow_unsafe_artifacts,
+        )
+    percentiles_path = None
+    if args.percentiles is not None:
+        percentiles_path = resolve_trusted_artifact(
+            run_dir,
+            "train_percentiles",
+            args.percentiles,
+            repo_root=_REPO,
+            allow_unsafe=args.allow_unsafe_artifacts,
+        )
+
     print(f"{'='*60}")
     print(f"  Phase 2 inference (v2): {run_id}")
-    print(f"  flows   : {args.flows}")
-    print(f"  model   : {args.model}")
-    print(f"  scaler  : {args.scaler}")
-    print(f"  percs   : {args.percentiles}")
+    print("  flows   : loaded from configured input")
+    print(f"  run dir : {'trusted manifest' if run_dir else 'unsafe override'}")
+    print("  model   : trusted artifact")
+    print(f"  scaler  : {'skipped' if scaler_path is None else 'trusted artifact'}")
+    print(f"  percs   : {'not provided' if percentiles_path is None else 'trusted artifact'}")
     print(f"  clip-z  : {args.clip_z}")
     print(f"  no-scale: {args.no_scale}")
-    print(f"  output  : {out_dir}")
+    print(f"  output  : runs/phase2/{run_id}")
     print(f"{'='*60}\n")
 
     # ── Step 1: Load flows CSV ──────────────────────────────────────────
@@ -394,8 +449,8 @@ def main() -> None:
     feature_names = canon.feature_names
 
     # ── Step 5: Percentile clipping (raw features only, first 76 dims) ──
-    if args.percentiles is not None:
-        percs = np.load(args.percentiles)
+    if percentiles_path is not None:
+        percs = np.load(percentiles_path)
         p_low: np.ndarray = percs["p_low"]
         p_high: np.ndarray = percs["p_high"]
         X_feat = X[:, :_N_CANON]
@@ -406,9 +461,7 @@ def main() -> None:
 
     # ── Step 6: Scaling ─────────────────────────────────────────────────
     if not args.no_scale:
-        # SECURITY WARNING: joblib.load is unsafe for untrusted files. 
-        # Only load scaler artifacts from trusted local paths.
-        scaler = joblib.load(args.scaler)
+        scaler = joblib.load(scaler_path)
         X = scaler.transform(X).astype(np.float32)
         print("[scale] StandardScaler applied.")
     else:
@@ -427,9 +480,7 @@ def main() -> None:
         print(f"[diagnostics] Saved to {diag_path}")
 
     # ── Step 9: Load model + predict ────────────────────────────────────
-    # SECURITY WARNING: QRDQN.load/DQN.load uses pickle under the hood. 
-    # Only load models from trusted local paths to avoid RCE vulnerabilities.
-    model, model_class = load_model(args.model)
+    model, model_class = load_model(model_path)
     y_pred = batched_predict(model, X, batch_size=4096)
 
     # Guard: predictions must align 1:1 with the input flows before y_pred is
@@ -442,12 +493,17 @@ def main() -> None:
         )
 
     # ── Step 10: Save outputs ───────────────────────────────────────────
-    out_df = pd.DataFrame({"pred_action": y_pred.astype(int)})
-    if meta is not None:
-        out_df = pd.concat([meta.reset_index(drop=True), out_df], axis=1)
-
+    out_df = build_predictions_df(y_pred, meta, include_sensitive_metadata=False)
     predictions_path = out_dir / "predictions.csv"
     out_df.to_csv(predictions_path, index=False)
+    sensitive_predictions_path = None
+    if args.include_sensitive_metadata:
+        sensitive_predictions_path = out_dir / "predictions_sensitive_local.csv"
+        build_predictions_df(
+            y_pred,
+            meta,
+            include_sensitive_metadata=True,
+        ).to_csv(sensitive_predictions_path, index=False)
 
     block_rate = float((y_pred == 1).mean())
     metrics = {
@@ -467,12 +523,16 @@ def main() -> None:
     config = {
         "run_id": run_id,
         "flows_csv": str(args.flows),
-        "model_zip": str(args.model),
+        "trusted_run_dir": str(run_dir) if run_dir else None,
+        "allow_unsafe_artifacts": bool(args.allow_unsafe_artifacts),
+        "model_zip": str(model_path),
         "model_class": model_class,
-        "scaler": str(args.scaler),
-        "percentiles": str(args.percentiles) if args.percentiles else None,
+        "scaler": str(scaler_path) if scaler_path else None,
+        "percentiles": str(percentiles_path) if percentiles_path else None,
         "clip_z": args.clip_z,
         "no_scale": args.no_scale,
+        "predictions_include_sensitive_metadata": False,
+        "sensitive_predictions_path": str(sensitive_predictions_path) if sensitive_predictions_path else None,
         "mask_semantics": "1=present,0=missing",
         "note": "Robust Phase 2 offline inference (v2) on extracted flows.csv",
     }
@@ -484,6 +544,8 @@ def main() -> None:
     metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
 
     print(f"\n[output] predictions : {predictions_path}")
+    if sensitive_predictions_path is not None:
+        print(f"[output] sensitive   : {sensitive_predictions_path}")
     print(f"[output] config      : {config_path}")
     print(f"[output] metrics     : {metrics_path}")
     print(f"[result] Block rate  : {block_rate:.4f}")

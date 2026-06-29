@@ -28,6 +28,8 @@ synthetic*
 lab_capture_traffic*
 runs/archive/phase2/P2v2_pred_20260412_004102/predictions.csv
 runs/archive/phase2/P2v2_pred_20260412_004624/predictions.csv
+runs/phase2/**/predictions_sensitive_local.csv
+runs/archive/phase2/**/predictions_sensitive_local.csv
 runs/cicids2017/*/checkpoints/
 runs/**/events.out.tfevents.*
 runs/**/model.zip

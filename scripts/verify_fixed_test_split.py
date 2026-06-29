@@ -38,6 +38,7 @@ from src.load_cicids2017 import (  # noqa: E402
     _stratified_nested_prefix_indices,
     load_cicids2017_split,
 )
+from src.artifact_integrity import resolve_trusted_artifact  # noqa: E402
 
 # Committed main-run reference values (MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655)
 MAIN_RUN_ID = "MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655"
@@ -78,12 +79,22 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--run-dir",
+        type=Path,
+        default=Path("runs") / "cicids2017" / MAIN_RUN_ID,
+        help="Trusted run dir containing artifact_manifest.json for --check-scaler.",
+    )
+    parser.add_argument(
         "--write-reference", type=Path, default=None,
         help="Write the reference manifest JSON to this path (e.g. runs/cicids2017/test_partition_reference_seed42.json)",
     )
     parser.add_argument(
         "--skip-count-check", action="store_true",
         help="Skip the main-run count assertions (for non-reference seeds/datasets)",
+    )
+    parser.add_argument(
+        "--allow-unsafe-artifacts", action="store_true",
+        help="Allow --check-scaler without artifact_manifest.json hash verification.",
     )
     return parser.parse_args()
 
@@ -158,10 +169,15 @@ def main() -> None:
         import joblib
         from sklearn.preprocessing import StandardScaler
 
-        print(f"\nScaler audit vs {args.check_scaler}...")
-        # joblib.load is pickle-based; safe here: the scaler is a git-committed
-        # artifact produced by this repo's own training run, not untrusted input.
-        reference = joblib.load(args.check_scaler)
+        scaler_path = resolve_trusted_artifact(
+            args.run_dir,
+            "scaler",
+            args.check_scaler,
+            repo_root=_REPO_ROOT,
+            allow_unsafe=args.allow_unsafe_artifacts,
+        )
+        print("\nScaler audit vs trusted scaler artifact...")
+        reference = joblib.load(scaler_path)
         reproduced = StandardScaler().fit(X_train)
         if not np.allclose(reproduced.mean_, reference.mean_, rtol=1e-6):
             fail("scaler mean_ mismatch: reproduced split != main-run split")

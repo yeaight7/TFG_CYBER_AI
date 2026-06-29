@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import argparse
 import copy
-import hashlib
 import json
 import platform
 import random
@@ -40,6 +39,7 @@ from rl_defender_env import RLDatasetDefenderEnv
 from load_cicids2017 import (
     load_cicids2017_split,
 )
+from artifact_integrity import build_file_artifacts
 
 from canonical_schema import FEATURES_CANON
 _N_CANON = len(FEATURES_CANON)
@@ -197,26 +197,6 @@ def configure_torch_runtime(
 
 def write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-
-
-def _sha256_file(path: Path) -> str | None:
-    """SHA-256 hex digest of a file, or None if it does not exist."""
-    p = Path(path)
-    if not p.is_file():
-        return None
-    h = hashlib.sha256()
-    with p.open("rb") as fh:
-        for chunk in iter(lambda: fh.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
-def _repo_relative(path: Path) -> str:
-    """Repo-relative POSIX path if under the repo root, else the original string."""
-    try:
-        return Path(path).resolve().relative_to(_REPO_ROOT).as_posix()
-    except ValueError:
-        return str(path)
 
 
 def make_env_fn(
@@ -570,6 +550,7 @@ def main() -> None:
     print(f"Config inicial guardada en: {config_path}")
 
     artifact_manifest = {
+        "schema_version": "2.0",
         "run_id": RUN_ID,
         "status": "started",
         "download_all": [
@@ -587,6 +568,23 @@ def main() -> None:
             "train_percentiles": str(percentiles_path),
             "feature_names": str(feature_names_path),
             "environment": str(environment_path),
+            "tensorboard_dir": tb_log_dir,
+            "checkpoints_dir": str(checkpoints_dir) if checkpoint_freq > 0 else None,
+        },
+        "file_artifacts": build_file_artifacts(
+            {
+                "model": model_zip_path,
+                "run_model": run_model_path,
+                "config": config_path,
+                "metrics": metrics_path,
+                "scaler": scaler_path,
+                "train_percentiles": percentiles_path,
+                "feature_names": feature_names_path,
+                "environment": environment_path,
+            },
+            repo_root=_REPO_ROOT,
+        ),
+        "directory_artifacts": {
             "tensorboard_dir": tb_log_dir,
             "checkpoints_dir": str(checkpoints_dir) if checkpoint_freq > 0 else None,
         },
@@ -685,16 +683,23 @@ def main() -> None:
     artifact_files = {
         "model": model_zip_path,
         "run_model": run_model_path,
+        "config": config_path,
+        "metrics": metrics_path,
         "scaler": scaler_path,
         "train_percentiles": percentiles_path,
         "feature_names": feature_names_path,
+        "environment": environment_path,
     }
     artifact_manifest["status"] = "completed"
+    artifact_manifest["file_artifacts"] = build_file_artifacts(
+        artifact_files,
+        repo_root=_REPO_ROOT,
+    )
     artifact_manifest["checksums_sha256"] = {
-        name: _sha256_file(p) for name, p in artifact_files.items()
+        name: info["sha256"] for name, info in artifact_manifest["file_artifacts"].items()
     }
     artifact_manifest["relative_paths"] = {
-        name: _repo_relative(p) for name, p in artifact_files.items()
+        name: info["relative_path"] for name, info in artifact_manifest["file_artifacts"].items()
     }
     write_json(manifest_path, artifact_manifest)
 

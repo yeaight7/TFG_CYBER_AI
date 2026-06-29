@@ -55,25 +55,20 @@ If no path was given, use `.` (current directory). Do not ask the user for a pat
 
 Follow these steps in order. Do not skip steps.
 
-### Step 1 - Ensure graphify is installed
+### Step 1 - Ensure graphify is available
 
 ```bash
-# Detect the correct Python interpreter (handles pipx, venv, system installs)
-GRAPHIFY_BIN=$(which graphify 2>/dev/null)
-if [ -n "$GRAPHIFY_BIN" ]; then
-    PYTHON=$(head -1 "$GRAPHIFY_BIN" | tr -d '#!')
-    case "$PYTHON" in
-        *[!a-zA-Z0-9/_.-]*) PYTHON="python3" ;;
-    esac
-else
-    PYTHON="python3"
-fi
-"$PYTHON" -c "import graphify" 2>/dev/null || "$PYTHON" -m pip install graphifyy -q 2>/dev/null || "$PYTHON" -m pip install graphifyy -q --break-system-packages 2>&1 | tail -3
+# graphifyy is pinned in pyproject.toml dev dependencies.
+# If this fails, ask before installing anything:
+#   uv sync --all-extras
+PYTHON="${PYTHON:-python3}"
+"$PYTHON" -c "import graphify" >/dev/null
 # Write interpreter path for all subsequent steps
 "$PYTHON" -c "import sys; open('graphify-out/.graphify_python', 'w').write(sys.executable)"
 ```
 
-If the import succeeds, print nothing and move straight to Step 2.
+If the import succeeds, print nothing and move straight to Step 2. Do not install
+packages from this repository skill; installs must be explicit and reviewed.
 
 **In every subsequent bash block, replace `python3` with `$(cat .graphify_python)` to use the correct interpreter.**
 
@@ -558,11 +553,20 @@ print('cypher.txt written - import with: cypher-shell < graphify-out/cypher.txt'
 "
 ```
 
-**If `--neo4j-push <uri>`** - push directly to a running Neo4j instance. Ask the user for credentials if not provided:
+**If `--neo4j-push <uri>`** - push directly to a running Neo4j instance. Read
+credentials from environment variables or a non-echoing prompt; never place
+passwords in shell arguments or inline Python literals.
 
 ```bash
+export NEO4J_URI="${NEO4J_URI:-bolt://localhost:7687}"
+export NEO4J_USER="${NEO4J_USER:-neo4j}"
+if [ -z "${NEO4J_PASSWORD:-}" ]; then
+  read -r -s -p "Neo4j password: " NEO4J_PASSWORD
+  export NEO4J_PASSWORD
+  printf '\n'
+fi
 $(cat .graphify_python) -c "
-import sys, json
+import os, sys, json
 from graphify.build import build_from_json
 from graphify.cluster import cluster
 from graphify.export import push_to_neo4j
@@ -573,12 +577,19 @@ analysis   = json.loads(Path('.graphify_analysis.json').read_text())
 G = build_from_json(extraction)
 communities = {int(k): v for k, v in analysis['communities'].items()}
 
-result = push_to_neo4j(G, uri='NEO4J_URI', user='NEO4J_USER', password='NEO4J_PASSWORD', communities=communities)
+result = push_to_neo4j(
+    G,
+    uri=os.environ['NEO4J_URI'],
+    user=os.environ['NEO4J_USER'],
+    password=os.environ['NEO4J_PASSWORD'],
+    communities=communities,
+)
 print(f'Pushed to Neo4j: {result[\"nodes\"]} nodes, {result[\"edges\"]} edges')
 "
 ```
 
-Replace `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` with actual values. Default URI is `bolt://localhost:7687`, default user is `neo4j`. Uses MERGE - safe to re-run without creating duplicates.
+Default URI is `bolt://localhost:7687`, default user is `neo4j`. Uses MERGE -
+safe to re-run without creating duplicates.
 
 ### Step 7b - SVG export (only if --svg flag)
 

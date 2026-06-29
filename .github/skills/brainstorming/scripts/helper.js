@@ -1,5 +1,6 @@
 (function() {
-  const WS_URL = 'ws://' + window.location.host;
+  const token = new URLSearchParams(window.location.search).get('token') || '';
+  const WS_URL = 'ws://' + window.location.host + (token ? '?token=' + encodeURIComponent(token) : '');
   let ws = null;
   let eventQueue = [];
 

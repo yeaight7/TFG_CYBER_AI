@@ -40,6 +40,20 @@ _OFFICIAL_CICIDS2017_CSV_NAMES: Tuple[str, ...] = (
 )
 _OFFICIAL_CICIDS2017_CSV_NAMES_LOWER = {name.lower() for name in _OFFICIAL_CICIDS2017_CSV_NAMES}
 _OFFICIAL_CICIDS2017_CSV_ORDER = {name.lower(): idx for idx, name in enumerate(_OFFICIAL_CICIDS2017_CSV_NAMES)}
+_OFFICIAL_CICIDS2017_DAY_ALIASES: Dict[str, Tuple[str, ...]] = {
+    "monday": ("Monday-WorkingHours.pcap_ISCX.csv",),
+    "tuesday": ("Tuesday-WorkingHours.pcap_ISCX.csv",),
+    "wednesday": ("Wednesday-workingHours.pcap_ISCX.csv",),
+    "thursday": (
+        "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+    ),
+    "friday": (
+        "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+        "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+        "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+    ),
+}
 
 
 @dataclass(frozen=True)
@@ -64,6 +78,7 @@ class CICIDSLoadConfig:
     # Split
     test_size: float = 0.2
     random_state: int = 42
+    allow_non_official_csvs: bool = False
 
 
 def _list_csv_files(root: Path) -> List[Path]:
@@ -98,6 +113,48 @@ def list_cicids2017_csv_files(local_dir: Optional[Path] = None) -> List[Path]:
         )
 
     return sorted(official_csvs, key=lambda path: _OFFICIAL_CICIDS2017_CSV_ORDER[path.name.lower()])
+
+
+def _select_csv_files(local_dir: Path, cfg: CICIDSLoadConfig) -> List[Path]:
+    if cfg.allow_non_official_csvs:
+        return _list_csv_files(local_dir)
+    return list_cicids2017_csv_files(local_dir)
+
+
+def _resolve_official_csv_selectors(selectors: List[str], all_csvs: List[Path]) -> List[Path]:
+    csv_map = {path.name.lower(): path for path in all_csvs}
+    resolved: List[Path] = []
+    seen: set[str] = set()
+
+    for selector in selectors:
+        key = selector.strip().lower()
+        names = _OFFICIAL_CICIDS2017_DAY_ALIASES.get(key)
+        if names is None:
+            if key not in csv_map:
+                raise ValueError(
+                    "CSV selector must be an official day alias or exact official filename. "
+                    f"Got '{selector}'. Aliases: {sorted(_OFFICIAL_CICIDS2017_DAY_ALIASES)}. "
+                    f"Files: {[path.name for path in all_csvs]}"
+                )
+            names = (csv_map[key].name,)
+
+        for name in names:
+            name_key = name.lower()
+            if name_key in seen:
+                raise ValueError(f"CSV duplicado en la selección: '{name}'")
+            resolved.append(csv_map[name_key])
+            seen.add(name_key)
+
+    return resolved
+
+
+def _resolve_legacy_csv_patterns(patterns: List[str], all_csvs: List[Path]) -> List[Path]:
+    matched: List[Path] = []
+    for path in all_csvs:
+        name = path.name.lower()
+        if any(pattern.lower() in name for pattern in patterns):
+            matched.append(path)
+    return matched
 
 
 def _normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -344,7 +401,7 @@ def load_cicids2017_binary(
             "Descarga el dataset y colócalo en datasets/CICIDS2017/."
         )
 
-    csvs = _list_csv_files(local_dir)
+    csvs = _select_csv_files(local_dir, cfg)
     print(f"[CICIDS2017] Cargando {len(csvs)} archivos CSV desde {local_dir}")
 
     df = _load_all_csvs(csvs, cfg)
@@ -383,10 +440,10 @@ def load_cicids2017_csv_split(
     Parameters
     ----------
     train_csvs : list of str
-        Nombres (o substrings) de los CSVs para entrenamiento.
+        Day aliases or exact official CSV names for training.
         Ejemplo: ["Monday", "Tuesday", "Wednesday"]
     test_csvs : list of str
-        Nombres (o substrings) de los CSVs para test.
+        Day aliases or exact official CSV names for test.
         Ejemplo: ["Thursday", "Friday"]
     cfg : CICIDSLoadConfig, optional
         Configuración de carga (se ignoran test_size y random_state del split).
@@ -403,23 +460,21 @@ def load_cicids2017_csv_split(
             "Descarga el dataset y colócalo en datasets/CICIDS2017/."
         )
 
-    all_csvs = _list_csv_files(local_dir)
-
-    def _match_csvs(patterns: List[str]) -> List[Path]:
-        matched: List[Path] = []
-        for p in all_csvs:
-            name = p.name.lower()
-            if any(pat.lower() in name for pat in patterns):
-                matched.append(p)
-        return matched
-
-    train_paths = _match_csvs(train_csvs)
-    test_paths = _match_csvs(test_csvs)
+    all_csvs = _select_csv_files(local_dir, cfg)
+    if cfg.allow_non_official_csvs:
+        train_paths = _resolve_legacy_csv_patterns(train_csvs, all_csvs)
+        test_paths = _resolve_legacy_csv_patterns(test_csvs, all_csvs)
+    else:
+        train_paths = _resolve_official_csv_selectors(train_csvs, all_csvs)
+        test_paths = _resolve_official_csv_selectors(test_csvs, all_csvs)
 
     if not train_paths:
         raise ValueError(f"Ningun CSV coincide con train_csvs={train_csvs}. Disponibles: {[p.name for p in all_csvs]}")
     if not test_paths:
         raise ValueError(f"Ningun CSV coincide con test_csvs={test_csvs}. Disponibles: {[p.name for p in all_csvs]}")
+    overlap = {path.name for path in train_paths} & {path.name for path in test_paths}
+    if overlap:
+        raise ValueError(f"Train y test no pueden compartir CSVs: {sorted(overlap)}")
 
     print(f"[CSV-split] Train CSVs ({len(train_paths)}): {[p.name for p in train_paths]}")
     print(f"[CSV-split] Test  CSVs ({len(test_paths)}): {[p.name for p in test_paths]}")
@@ -473,7 +528,7 @@ def load_cicids2017_exact_csv_split(
             "Descarga el dataset y colócalo en datasets/CICIDS2017/."
         )
 
-    all_csvs = list_cicids2017_csv_files(local_dir)
+    all_csvs = _select_csv_files(local_dir, cfg)
     train_paths = _resolve_exact_csv_names(train_csv_names, all_csvs)
     test_paths = _resolve_exact_csv_names(test_csv_names, all_csvs)
 
@@ -597,6 +652,7 @@ def load_cicids2017_split(
     test_days: Optional[List[str]] = None,
     scale: bool = True,
     use_canonical: bool = True,
+    allow_non_official_csvs: bool = False,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str], Dict[str, Any]]:
     """
     Unified CICIDS2017 loader with split-mode and preset support.
@@ -630,6 +686,8 @@ def load_cicids2017_split(
         Whether to fit a ``StandardScaler`` on the train split.
     use_canonical : bool
         Whether to map features to the canonical schema (76 + 76 mask = 152).
+    allow_non_official_csvs : bool
+        Opt-in legacy mode that loads/matches any ``*.csv`` in the dataset dir.
 
     Returns
     -------
@@ -658,14 +716,23 @@ def load_cicids2017_split(
         # subsampled train partition, not on the full one.
         scale=(scale and train_max_rows is None),
         random_state=seed,
+        allow_non_official_csvs=allow_non_official_csvs,
     )
 
     if split_mode == "random":
+        csv_files = [path.name for path in _select_csv_files(Path(cfg.local_dir), cfg)]
         X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_binary(cfg)
-        day_info: Dict[str, Any] = {}
+        day_info: Dict[str, Any] = {"csv_files": csv_files}
     else:
         effective_train_days = train_days or DEFAULT_TRAIN_DAYS
         effective_test_days = test_days or DEFAULT_TEST_DAYS
+        all_csvs = _select_csv_files(Path(cfg.local_dir), cfg)
+        if cfg.allow_non_official_csvs:
+            train_paths = _resolve_legacy_csv_patterns(effective_train_days, all_csvs)
+            test_paths = _resolve_legacy_csv_patterns(effective_test_days, all_csvs)
+        else:
+            train_paths = _resolve_official_csv_selectors(effective_train_days, all_csvs)
+            test_paths = _resolve_official_csv_selectors(effective_test_days, all_csvs)
         X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_csv_split(
             train_csvs=effective_train_days,
             test_csvs=effective_test_days,
@@ -674,6 +741,8 @@ def load_cicids2017_split(
         day_info = {
             "train_days": effective_train_days,
             "test_days": effective_test_days,
+            "train_csv_files": [path.name for path in train_paths],
+            "test_csv_files": [path.name for path in test_paths],
         }
 
     # Train-only subsample (benchmark mode): test partition untouched.
@@ -699,6 +768,8 @@ def load_cicids2017_split(
         "n_train_full": n_train_full,
         "subsample_method": subsample_method,
         "scale": bool(scale),
+        "allow_non_official_csvs": bool(allow_non_official_csvs),
+        "csv_selection_policy": "legacy_all_csvs" if allow_non_official_csvs else "official_cicids2017_8_csvs",
         "test_set_sha256": _sha256_of_array(X_test),
         "y_test_sha256": _sha256_of_array(y_test),
         "train_set_sha256": _sha256_of_array(X_train),
