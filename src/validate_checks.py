@@ -12,10 +12,10 @@ Implementa tres checks para verificar que las métricas son genuinas:
 
 Uso:
     # Ejecutar todos los checks con el modelo entrenado
-    python src/validate_checks.py --model models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip
+    python src/validate_checks.py --run-dir runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655
 
     # Solo Check A (rápido, no re-entrena)
-    python src/validate_checks.py --model models/<MODEL>.zip --checks A
+    python src/validate_checks.py --run-dir runs/cicids2017/<RUN_ID> --checks A
 
     # Solo Check B (entrena brevemente con labels barajadas)
     python src/validate_checks.py --checks B
@@ -24,7 +24,7 @@ Uso:
     python src/validate_checks.py --checks C
 
     # Limitar filas para prueba rápida
-    python src/validate_checks.py --model models/<MODEL>.zip --max-rows 50000 --checks A B C
+    python src/validate_checks.py --run-dir runs/cicids2017/<RUN_ID> --max-rows 50000 --checks A B C
 """
 from __future__ import annotations
 
@@ -49,6 +49,7 @@ from load_cicids2017 import (
     DEFAULT_TEST_DAYS,
     load_cicids2017_split,
 )
+from artifact_integrity import ArtifactTrustError, resolve_trusted_artifact
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 MODELS_DIR = _REPO_ROOT / "models"
@@ -402,7 +403,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--model", type=str, default=None,
-        help="Path to trained model .zip (required for Check A)",
+        help="Path to trained model .zip (must match --run-dir unless unsafe)",
+    )
+    parser.add_argument(
+        "--run-dir", type=Path, default=None,
+        help="Trusted training run dir containing artifact_manifest.json.",
     )
     parser.add_argument(
         "--checks", nargs="+", default=["A", "B", "C"],
@@ -440,6 +445,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--seed", type=int, default=42,
         help="Random seed (default: 42)",
+    )
+    parser.add_argument(
+        "--allow-unsafe-artifacts", action="store_true",
+        help="Allow direct model paths without manifest hash verification.",
     )
     return parser.parse_args()
 
@@ -483,19 +492,21 @@ def main() -> None:
 
     # ── Check A ──
     if "A" in checks:
-        if args.model is None:
-            print("\n⚠️  Check A requiere --model <path>. Saltando.")
+        try:
+            requested_model = Path(args.model) if args.model is not None else None
+            model_path = resolve_trusted_artifact(
+                args.run_dir,
+                "model",
+                requested_model,
+                repo_root=_REPO_ROOT,
+                allow_unsafe=args.allow_unsafe_artifacts,
+            )
+        except ArtifactTrustError as exc:
+            print(f"\n⚠️  Check A requiere modelo confiable. Saltando: {exc}")
         else:
-            model_path = Path(args.model)
-            if not model_path.exists():
-                # Try relative to repo root
-                model_path = _REPO_ROOT / args.model
-            if not model_path.exists():
-                print(f"\n⚠️  Modelo no encontrado: {args.model}. Saltando Check A.")
-            else:
-                print(f"\nCargando modelo: {model_path}")
-                model = QRDQN.load(str(model_path), device=device)
-                results["A"] = check_a_direct_eval(model, X_test, y_test)
+            print(f"\nCargando modelo confiable: {model_path}")
+            model = QRDQN.load(str(model_path), device=device)
+            results["A"] = check_a_direct_eval(model, X_test, y_test)
 
     # ── Check B ──
     if "B" in checks:
@@ -530,6 +541,8 @@ def main() -> None:
         "preset": args.preset,
         "split_mode": args.split_mode,
         "model_path": args.model,
+        "trusted_run_dir": str(args.run_dir) if args.run_dir else None,
+        "allow_unsafe_artifacts": bool(args.allow_unsafe_artifacts),
         "max_rows": args.max_rows,
         "timesteps_b": args.timesteps_b,
         "timesteps_c": args.timesteps_c,
