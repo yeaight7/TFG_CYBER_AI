@@ -420,14 +420,14 @@ def main() -> None:
 
     print(f"{'='*60}")
     print(f"  Phase 2 inference (v2): {run_id}")
-    print(f"  flows   : {args.flows}")
-    print(f"  run dir : {run_dir}")
-    print(f"  model   : {model_path}")
-    print(f"  scaler  : {scaler_path}")
-    print(f"  percs   : {percentiles_path}")
+    print("  flows   : loaded from configured input")
+    print(f"  run dir : {'trusted manifest' if run_dir else 'unsafe override'}")
+    print("  model   : trusted artifact")
+    print(f"  scaler  : {'skipped' if scaler_path is None else 'trusted artifact'}")
+    print(f"  percs   : {'not provided' if percentiles_path is None else 'trusted artifact'}")
     print(f"  clip-z  : {args.clip_z}")
     print(f"  no-scale: {args.no_scale}")
-    print(f"  output  : {out_dir}")
+    print(f"  output  : runs/phase2/{run_id}")
     print(f"{'='*60}\n")
 
     # ── Step 1: Load flows CSV ──────────────────────────────────────────
