@@ -72,7 +72,7 @@ Repository scan status:
 - No direct `torch.jit.script` usage.
 - No direct TorchScript save/load path.
 - No direct `torch.load` usage.
-- Model loading uses `QRDQN.load` / `DQN.load`, and scaler loading uses `joblib.load`; these are trusted local artifact paths only.
+- Model loading uses `QRDQN.load` / `DQN.load`, and scaler loading uses `joblib.load`; default CLI paths must resolve through `artifact_manifest.json` and pass SHA-256 verification before deserialization. Ad-hoc local artifacts require the explicit `--allow-unsafe-artifacts` override.
 
 ## Preprocessing: training vs Phase-2 inference
 
