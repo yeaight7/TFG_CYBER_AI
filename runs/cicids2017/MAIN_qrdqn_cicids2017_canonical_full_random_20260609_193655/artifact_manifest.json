@@ -1,22 +1,81 @@
 {
+  "schema_version": "2.0",
   "run_id": "MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
   "status": "completed",
   "download_all": [
-    "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
-    "/workspace/TFG_CYBER_AI/models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip"
+    "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+    "models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip"
   ],
   "artifacts": {
     "model": {
-      "global_path": "/workspace/TFG_CYBER_AI/models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip",
-      "run_copy_path": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/model.zip"
+      "global_path": "models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip",
+      "run_copy_path": null
     },
-    "config": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json",
-    "metrics": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json",
-    "scaler": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib",
-    "train_percentiles": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz",
-    "feature_names": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/feature_names.json",
-    "environment": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json",
-    "tensorboard_dir": "/workspace/TFG_CYBER_AI/runs/cicids2017",
-    "checkpoints_dir": "/workspace/TFG_CYBER_AI/runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/checkpoints"
+    "config": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json",
+    "metrics": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json",
+    "scaler": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib",
+    "train_percentiles": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz",
+    "feature_names": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/feature_names.json",
+    "environment": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json",
+    "tensorboard_dir": "runs/cicids2017",
+    "checkpoints_dir": null
+  },
+  "file_artifacts": {
+    "model": {
+      "relative_path": "models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip",
+      "sha256": "546860e61367d1826456d7cda9e7731bcdc926b655f459455e328d4ac04c0fc5"
+    },
+    "run_model": {
+      "relative_path": null,
+      "sha256": null
+    },
+    "config": {
+      "relative_path": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json",
+      "sha256": "405f73539ea4b4fd9852bf418319db90f1765542875fda8117b504d25cf20fb1"
+    },
+    "metrics": {
+      "relative_path": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json",
+      "sha256": "92001766bc04d503bfa9dfa7a3c6bd7e471e81de586b26b9ec217d49c7291066"
+    },
+    "scaler": {
+      "relative_path": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib",
+      "sha256": "0b4b9a445807c517d04d9f784f290d2c556d0416521f336b335d1de912fbbb43"
+    },
+    "train_percentiles": {
+      "relative_path": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz",
+      "sha256": "cdcfce0a7e25bb905f41f052b3b5b07fecdd4818d98dd8134cb4a29304d61a77"
+    },
+    "feature_names": {
+      "relative_path": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/feature_names.json",
+      "sha256": "f65e1d0bcc087698a40060cc16f5998200f24bb8346775b6b356eb3648c5a812"
+    },
+    "environment": {
+      "relative_path": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json",
+      "sha256": "221b52a708698912fb29ae5510da63da957f96ad1d37fa7397db9a3afbfa214e"
+    }
+  },
+  "directory_artifacts": {
+    "tensorboard_dir": "runs/cicids2017",
+    "checkpoints_dir": null
+  },
+  "checksums_sha256": {
+    "model": "546860e61367d1826456d7cda9e7731bcdc926b655f459455e328d4ac04c0fc5",
+    "run_model": null,
+    "config": "405f73539ea4b4fd9852bf418319db90f1765542875fda8117b504d25cf20fb1",
+    "metrics": "92001766bc04d503bfa9dfa7a3c6bd7e471e81de586b26b9ec217d49c7291066",
+    "scaler": "0b4b9a445807c517d04d9f784f290d2c556d0416521f336b335d1de912fbbb43",
+    "train_percentiles": "cdcfce0a7e25bb905f41f052b3b5b07fecdd4818d98dd8134cb4a29304d61a77",
+    "feature_names": "f65e1d0bcc087698a40060cc16f5998200f24bb8346775b6b356eb3648c5a812",
+    "environment": "221b52a708698912fb29ae5510da63da957f96ad1d37fa7397db9a3afbfa214e"
+  },
+  "relative_paths": {
+    "model": "models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip",
+    "run_model": null,
+    "config": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json",
+    "metrics": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json",
+    "scaler": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib",
+    "train_percentiles": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz",
+    "feature_names": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/feature_names.json",
+    "environment": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json"
   }
 }
