@@ -125,8 +125,7 @@ El modelo de referencia actual es el run MAIN (entrenado con el conjunto complet
 ```bash
 python scripts/predict_real_traffic_v2.py \
   --flows pcaps/lab_capture_traffic.csv \
-  --model models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip \
-  --scaler runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib \
+  --run-dir runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655 \
   --percentiles runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz \
   --clip-z 10.0 \
   --export-diagnostics
@@ -142,12 +141,13 @@ Every Phase 2 run should write to:
 runs/phase2/<RUN_ID>/
 ├── config.json
 ├── metrics.json
-├── predictions.csv.gz          # comprimido; head en predictions_head_10000.csv
-├── predictions_head_10000.csv  # primeras 10 000 filas sin comprimir
+├── predictions.csv             # commit-safe, prediction columns only
+├── predictions_sensitive_local.csv  # optional local-only metadata export
 └── diagnostics.json   # opcional
 ```
 
-Nota: runs anteriores a P2v2_pred_20260610_161231_MAIN contienen `predictions.csv` sin comprimir.
+Nota: `predictions_sensitive_local.csv` is ignored and may contain IPs, ports,
+timestamps, or labels when `--include-sensitive-metadata` is used. Do not commit it.
 
 ### 8. Review the Results
 
