@@ -11,7 +11,20 @@
 \usepackage{geometry}
 \usepackage{titlesec}
 \usepackage{csquotes}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,shapes.geometric,fit,calc}
+\usepackage{pgfgantt}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Nombres en español para los flotantes de algoritmos
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\listalgorithmname}{Índice de algoritmos}
 \usepackage{setspace}
 \usepackage[
   backend=biber,
@@ -28,6 +41,10 @@
 \emergencystretch=2em
 \addbibresource{memoria.bib}
 \setstretch{1.5}
+\decimalpoint% los decimales del documento usan punto (convención de los artefactos)
+\graphicspath{{figuras/}{assets/}}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
 
 \titlespacing*{\chapter}{0pt}{80pt}{50pt}
 \titlespacing*{\section}{0pt}{36pt}{18pt}
