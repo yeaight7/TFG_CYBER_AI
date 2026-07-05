@@ -2,6 +2,14 @@
 
 > Companion to `REPO_AUDIT_2026-06-27.md`. This is the executable, step-by-step plan to resolve the audit findings. **It is a plan + tracker only — do not treat any box as done until verified.**
 
+> **Historical snapshot — corrections (2026-07-05):** file paths in this
+> document reflect the pre-2026-07 tree (before the `docs/research/`,
+> `docs/defensa/`, `docs/audits/` reorganisation — use `git log --follow` to
+> trace moves). The H3 claim that `GEMINI.md` was gitignored/local-only was
+> wrong: it was git-tracked at the time; it has since been removed at tip
+> (2026-07 agent-tooling trim). All graphify/skills-related items in this plan
+> are obsolete after that same trim.
+
 ---
 
 ## Context

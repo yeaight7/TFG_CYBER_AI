@@ -5,6 +5,13 @@
 
 > Severity is *unified* across sweeps; where two sweeps disagreed I note both. Evidence quotes are from the code/artifacts as they exist on disk today.
 
+> **Historical snapshot (banner added 2026-07-05):** file paths in this audit
+> reflect the 2026-06-27 tree; the 2026-07 reorganisation moved research,
+> defense-prep and audit docs (use `git log --follow`). The §10 "no live
+> secrets" claim carries an inline correction. The Phase-2
+> "synthetic/self-labeled" framing in H2/A2/A3 was overturned by owner
+> decisions D-3/D-9/D-10 (see the companion `AUDIT_REMEDIATION_PLAN.md`).
+
 ---
 
 ## 1. Executive summary
