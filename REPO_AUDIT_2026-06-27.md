@@ -237,6 +237,7 @@ Commands in docs are mostly current; the main runnability trap is `uv sync --all
 ## 10. Security / privacy audit
 
 - **No live secrets** in tracked source: the only credential-like strings are clearly-templated placeholders (`NEO4J_*` in a skill doc, `MYSQL_ROOT_PASSWORD=test` in `docs/gcp_lab.md`). CI uses no secret injection. Good.
+  - **Correction (2026-07-05):** this claim missed one item — an **expired** AWS presigned S3 URL (temporary `AWSAccessKeyId`/`Signature`/`x-amz-security-token` query string, expired 2026-05-17) embedded in the Perplexity research export `Research/Research - State of the Art/NIDS-Traffic-Representation-Feature-Engineering-and-Datasets-Perplexity-1.md`. It was a short-lived presigned download link, not a long-term credential. Scrubbed at tip on 2026-07-05; it remains in git history per decision D-6 (no history rewrite).
 - **PII:** institutional email `jriveroiglesias@al.uloyola.es` (and a `root` author identity) is permanently in public git history (M8) — GDPR-relevant, scrapeable. Switch to GitHub noreply going forward; consider a coordinated history rewrite.
 - **Machine-path leakage:** `/workspace/TFG_CYBER_AI/...` (RunPod) baked into ~22 `config.json`/`artifact_manifest.json` files (M7) — reveals infra layout, not a credential.
 - **Pickle/RCE awareness:** `predict_real_traffic_v2.py` carries explicit "joblib/pickle is unsafe for untrusted files" warnings (`:402-403,423-424`) — appropriate for a dual-use ML loader of *own* artifacts; no action beyond keeping the warning.
