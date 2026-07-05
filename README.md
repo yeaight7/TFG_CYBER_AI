@@ -96,7 +96,7 @@ The adapter (`src/load_cicids2017.py`) applies further cleaning at load time reg
 ### Provenance and integrity
 
 - **Upstream source**: CICIDS2017, Canadian Institute for Cybersecurity (CIC), University of New Brunswick — <https://www.unb.ca/cic/datasets/ids-2017.html> (the labelled CICFlowMeter flow CSVs, one per capture day).
-- **Redistribution terms**: CICIDS2017 is distributed by UNB/CIC for research use and requires citation/attribution; redistribution is not explicitly granted. The curated copy here is a research convenience for reproducibility — prefer obtaining the data from the official link above, and cite CIC/UNB in any derived work. The legacy NSL-KDD dataset has been **removed** from this repository (`datasets/nsl_kdd/`, `models/rf_nslkdd.joblib` are no longer tracked).
+- **Redistribution terms**: CICIDS2017 is distributed by UNB/CIC for research use and requires citation/attribution; redistribution is not explicitly granted. The curated copy here is a research convenience for reproducibility — prefer obtaining the data from the official link above, and cite CIC/UNB in any derived work. See [NOTICE](NOTICE) for the license-scope split between original code and dataset-derived content. The legacy NSL-KDD dataset has been **removed** from this repository (`datasets/nsl_kdd/`, `models/rf_nslkdd.joblib` are no longer tracked).
 - The hashes below are SHA-256 of the **curated** CSVs actually used by the adapter (`datasets/CICIDS2017/*.csv`), i.e. this repository's derivative after pre-ingestion column removal — **not** the upstream file hashes. They let you confirm you are working from the exact curated copy used for the committed results. The `Raw_dataset/` originals are gitignored and not hashed here.
 
 | File | Bytes | SHA-256 |
@@ -211,3 +211,7 @@ The longer experiment-by-experiment narrative now lives in [experiments/cicids20
 
 - Every training or evaluation workflow should persist a `RUN_ID` and write artifacts under `runs/<category>/<RUN_ID>/`.
 - If documentation describes a result, it should reference an artifact that exists in `runs/` or be clearly marked as planned or historical.
+
+## License
+
+Original code and documentation are licensed under AGPL-3.0 — see [LICENSE](LICENSE). Dataset-derived content (the curated CICIDS2017 CSVs and models/artifacts trained on them) is **not** relicensed by this project — see [NOTICE](NOTICE) for the scope split and CICIDS2017 attribution.

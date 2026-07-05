@@ -1,0 +1,32 @@
+TFG_CYBER_AI — Notice of license scope and third-party data attribution
+========================================================================
+
+1. Original work
+   The ORIGINAL code and documentation authored for this project (src/,
+   scripts/, tests/, lab/, docs/, experiments/, and the thesis texts under
+   memoria/ and report/) are licensed under the GNU Affero General Public
+   License v3.0 — see LICENSE. The AGPL-3.0 choice was made by the author
+   for the original code; it is recorded here because it was previously
+   undocumented in the repository.
+
+2. CICIDS2017 dataset (NOT covered by the AGPL grant)
+   The curated CSVs under datasets/CICIDS2017/ are derivatives of the
+   CICIDS2017 dataset, created and distributed by the Canadian Institute
+   for Cybersecurity (CIC), University of New Brunswick (UNB):
+   https://www.unb.ca/cic/datasets/ids-2017.html
+   This project cannot and does not relicense that data. It remains subject
+   to CIC/UNB's research-use and citation terms; redistribution is not
+   explicitly granted by UNB/CIC. Prefer obtaining the dataset from the
+   official source above, and cite:
+     Iman Sharafaldin, Arash Habibi Lashkari, Ali A. Ghorbani,
+     "Toward Generating a New Intrusion Detection Dataset and Intrusion
+     Traffic Characterization", ICISSP 2018.
+
+3. Dataset-derived artifacts
+   Trained model files under models/ and evaluation artifacts under runs/
+   are derived from the CICIDS2017 data and inherit the same caveat as
+   point 2 with respect to the underlying data.
+
+4. Thesis texts
+   The thesis documents (memoria/, report/) are the academic work of the
+   author, provided in this repository for evaluation and reference.
