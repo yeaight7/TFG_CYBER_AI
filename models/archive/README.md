@@ -10,3 +10,10 @@ The official model is `models/MAIN_qrdqn_cicids2017_canonical_full_random_202606
 - `A01__arch256x256_*`, `A02_dqn_arch512x256_*` — early architecture experiments.
 - `rl_defender_dqn.zip` — early DQN defender prototype.
 - `MAIN_*fast_random_*.zip` — `fast` smoke runs (misleading `MAIN` prefix; not the official full run).
+
+## Tracking status (2026-07)
+
+The `.zip` binaries in this directory are no longer git-tracked (`git rm
+--cached`, 2026-07): they remain on this machine's disk and in git history
+(decision D-6, no rewrite), but do not ship in fresh clones. This README
+stays tracked as the record of what the archive contains.

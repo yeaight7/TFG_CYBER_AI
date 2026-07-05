@@ -1,7 +1,7 @@
 *.csv filter=lfs diff=lfs merge=lfs -text
 # Going-forward (decision D-6: no history rewrite): new large binaries use LFS.
-# Existing raw-committed blobs stay as-is in history until any future migration.
+# Existing raw-committed blobs stay as-is in history until any future migration
+# (e.g. the raw-committed MAIN .zip and RF .joblib are never re-staged).
 *.zip filter=lfs diff=lfs merge=lfs -text
 *.pcap filter=lfs diff=lfs merge=lfs -text
-models/archive/** -filter -diff -merge -text
-pcaps/archive/** -filter -diff -merge -text
+*.joblib filter=lfs diff=lfs merge=lfs -text
