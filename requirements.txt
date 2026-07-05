@@ -9,4 +9,3 @@ joblib==1.5.3
 tensorboard==2.20.0
 matplotlib==3.10.9
 optuna==4.9.0
-graphifyy==0.7.0

@@ -1,99 +1,15 @@
-# AGENTS.md — TFG_CYBER_AI instructions for Codex
-
-## Read This Before Making Changes
+# AGENTS.md — TFG_CYBER_AI instructions for coding agents
 
 Use this order when you need project context:
 
-1. [.github/AGENT_CONTEXT.md](.github/AGENT_CONTEXT.md) — project-wide technical source of truth
-2. [docs/README.md](docs/README.md) — documentation map
+1. [.github/AGENT_CONTEXT.md](.github/AGENT_CONTEXT.md) — project-wide technical source of truth (invariants, anti-leakage rules, entry points, reproducibility rules)
+2. [docs/README.md](docs/README.md) — documentation map and language policy
 3. [docs/AGENT_CONTEXT.md](docs/AGENT_CONTEXT.md) — Phase 2 scope and guardrails
 4. [docs/results.md](docs/results.md) — artifact-backed results snapshot
-5. Code: `src/canonical_schema.py`, `src/load_cicids2017.py`, `src/train_rl_defender.py`, `src/validate_checks.py`, `src/validate_leave_one_csv_out.py`, `scripts/predict_real_traffic_v2.py`
-
-If documentation and code disagree, prefer the **current code plus run artifacts**, then update the documentation accordingly.
-
-## Project Invariants
-
-- `FEATURES_CANON` contains 76 canonical flow features.
-- Final observation size is always 152:
-  - 76 canonical values
-  - 76 missingness-mask values
-- Missingness-mask semantics:
-  - `1 = present / valid`
-  - `0 = missing / imputed`
-- Dataset adapters must return:
-  - `(X_train, y_train, X_test, y_test, scaler, feature_names)`
-- Data types:
-  - `X = float32`
-  - `y = int64`
-- Labels:
-  - `0 = BENIGN`
-  - `1 = ATTACK`
-
-## Anti-Leakage Rules
-
-Do not introduce any of the following as model features:
-
-- IP addresses
-- absolute timestamps
-- Flow IDs or unique identifiers
-- ports used directly as label proxies
-
-If a new dataset is added, leakage-prone fields must be removed before canonical mapping.
-
-## Training and Validation Rules
-
-- Prefer leaving heavy training to the user unless the task explicitly requires running it.
-- CICIDS2017 training entry point:
-  - `src/train_rl_defender.py`
-- Validation entry points:
-  - `src/validate_checks.py`
-  - `src/validate_leave_one_csv_out.py`
-- Phase 2 offline inference entry point:
-  - `scripts/predict_real_traffic_v2.py`
-
-If you cannot run heavy training locally, do not fabricate results. Limit yourself to static checks, shape/invariant validation, or reproducible commands for the user.
-
-## Documentation Rules
-
-- English is the default language for repo documentation.
-- Exception:
-  - `docs/DEFENSA_*` stays in Spanish.
-- When a documented claim is historical, label it clearly as historical.
-- When a documented claim reflects the current implementation, it must match the current codebase.
-
-## Reproducibility Expectations
-
-Every meaningful training or evaluation run should persist:
-
-- `config.json`
-- `metrics.json` or `validation_results.json`
-- the exact `RUN_ID`
-
-If preprocessing, clipping, scaling, reward values, or split logic changes, document the change and its expected impact.
-
-## graphify
-
-This project has a graphify knowledge graph at graphify-out/.
 
 Rules:
-- Start repo-orientation, architecture, and multi-file tasks with `graphify-out/GRAPH_REPORT.md`.
-- If the report is not enough, prefer Graphify traversal over broad raw-file reading:
-  - `graphify query "<question>"`
-  - `graphify path "<node A>" "<node B>"`
-  - `graphify explain "<node>"`
-- Treat `INFERRED` and `semantically_similar_to` edges as hypotheses, not facts. Verify them in code or maintained docs before relying on them for edits or documentation claims.
-- Use the current high-value bridge nodes as likely entry points:
-  - `Canonical Flow Schema`
-  - `CICIDSLoadConfig`
-  - `RLDatasetDefenderEnv`
-- `Phase 2 Offline Inference`
-- `Robust v2 Inference Pipeline`
-- Remember that the NSL-KDD branch is historical. Do not let graph links from `Historical NSL-KDD Branch` override the current CICIDS2017 + Phase 2 baseline without explicit evidence in current code or run artifacts.
-- Local git hooks auto-refresh `graphify-out/graph.json` and `graphify-out/GRAPH_REPORT.md` only for structural code changes such as added/removed/renamed files, import changes, class/function signature changes, and schema/mapping definition changes.
-- Small edits such as comments, docstrings, formatting, reward-value tweaks, and run artifacts under `runs/` do not trigger an automatic rebuild.
-- If `graphify-out/needs_update` exists, semantic sources changed and the graph may be stale. Run `graphify .` for a full refresh before relying on the graph for architecture, documentation, or review work.
-- Keep `docs/Personal Research/` and `.github/skills/` outside the maintained Graphify corpus to avoid mixing personal notes and skill metadata with project architecture signals.
-- The automatic hook does not fully regenerate higher-cost semantic outputs. Re-run `graphify .` after important documentation, PDF, image, or broader semantic changes.
-- For narrow single-file edits, using the graph is optional if the report already makes the location obvious.
-- The Obsidian export at graphify-out/obsidian/ (note-first or canvas view) is not generated by default; consult the graphify documentation for how to produce it if needed.
+
+- If documentation and code disagree, prefer the **current code plus run artifacts**, then update the documentation accordingly.
+- Do not duplicate the invariants here — they live in `.github/AGENT_CONTEXT.md`.
+- Leave heavy training to the user unless the task explicitly requires running it. If you cannot run heavy training, do not fabricate results — limit yourself to static checks, shape/invariant validation, or reproducible commands for the user.
+- Every meaningful training or evaluation run must persist `config.json`, `metrics.json` (or `validation_results.json`), and its exact `RUN_ID` under `runs/`.
