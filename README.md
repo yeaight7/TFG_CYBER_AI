@@ -47,7 +47,7 @@ TFG_CYBER_AI/
 ├── .github/                   # Agent guidance and coding/review agent instructions
 ├── datasets/                  # Local datasets (also tracked via git lfs)
 ├── docs/                      # Documentation, results, Phase 2 guides, defense material
-|   ├── Personal Research/     # Deep-research notes (Markdown only; research, not a source of truth)
+|   ├── research/              # Consolidated research notes (not a source of truth)
 |   ├── audits/                # Dated read-only repository audits
 |   └── archive/               # Obsolete docs kept for history (e.g. informe.* draft)
 ├── experiments/               # Experiment archive notes: historical and maintained timelines

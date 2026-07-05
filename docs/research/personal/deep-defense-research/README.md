@@ -13,8 +13,8 @@ Este paquete está pensado para preparar una defensa completa del proyecto **TFG
 
 Ya existen dos investigaciones profundas:
 
-1. `docs/Personal Research/data-structure-and-canonical-schema-research-report.md`
-2. `docs/Personal Research/qrdqn-research-report.md`
+1. `docs/research/personal/data-structure-and-canonical-schema-research-report.md`
+2. `docs/research/personal/qrdqn-research-report.md`
 
 Este nuevo paquete las **complementa** y las integra en una narrativa de defensa completa.
 

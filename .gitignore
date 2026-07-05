@@ -57,5 +57,5 @@ models/rf_nslkdd.joblib
 graphify-out/
 graphify-out-*/
 
-# Personal Research: tracked as Markdown only (single source format).
+# Personal research notes (docs/research/personal/): tracked as Markdown only (single source format).
 # Derived .tex/.pdf were removed to avoid 3 copies of the same research notes.

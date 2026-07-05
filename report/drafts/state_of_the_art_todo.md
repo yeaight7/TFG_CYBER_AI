@@ -100,11 +100,11 @@ Keep those details for algorithm/design chapters unless the final State of the A
 Next task:
 
 ```txt
-Audit the citation keys in report/drafts/state_of_the_art.md against Research/Initial Research for Report - Chapter State Of The Art/nightly/CITATION_PLAN.md and verified source metadata, then replace [CITATION NEEDED] / [VERIFY: ...] markers with stable keys or explicit TODOs.
+Audit the citation keys in report/drafts/state_of_the_art.md against docs/research/state-of-the-art/nightly/CITATION_PLAN.md and verified source metadata, then replace [CITATION NEEDED] / [VERIFY: ...] markers with stable keys or explicit TODOs.
 ```
 
 After that:
 
 ```txt
-Build the experimental design chapter from Research/Initial Research for Report - Chapter State Of The Art/nightly/METHODOLOGY_HANDOFF.md
+Build the experimental design chapter from docs/research/state-of-the-art/nightly/METHODOLOGY_HANDOFF.md
 ```

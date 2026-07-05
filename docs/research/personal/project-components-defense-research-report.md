@@ -3,8 +3,8 @@
 ## Alcance (para no repetir tus 2 investigaciones previas)
 
 Este informe **no repite**:
-- `docs/Personal Research/data-structure-and-canonical-schema-research-report.md`
-- `docs/Personal Research/qrdqn-research-report.md`
+- `docs/research/personal/data-structure-and-canonical-schema-research-report.md`
+- `docs/research/personal/qrdqn-research-report.md`
 
 Aquí documento lo que faltaba de cara al tribunal: componentes históricos, baseline clásico, tuning, scripts auxiliares y laboratorio.
 

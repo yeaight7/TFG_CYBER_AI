@@ -3,8 +3,8 @@
 ## 1) Alcance de este documento
 
 Este informe **no** repite:
-- `docs/Personal Research/data-structure-and-canonical-schema-research-report.md`
-- `docs/Personal Research/qrdqn-research-report.md`
+- `docs/research/personal/data-structure-and-canonical-schema-research-report.md`
+- `docs/research/personal/qrdqn-research-report.md`
 
 Se centra en los demás componentes clave del sistema para defensa ante tribunal.
 
