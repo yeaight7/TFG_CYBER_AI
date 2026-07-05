@@ -33,8 +33,8 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 - [docs/reproducibility.md](docs/reproducibility.md): recorded environment for the main QRDQN run and dependency-file strategy
 - [experiments/README.md](experiments/README.md): experiment archive index
 - [experiments/cicids2017_qrdqn_experiments.md](experiments/cicids2017_qrdqn_experiments.md): maintained CICIDS2017 + QRDQN run history
-- [docs/DEFENSA_TFG_PROGRESO.md](docs/DEFENSA_TFG_PROGRESO.md): Spanish defense notes
-- [docs/DEFENSA_TFG_SCRIPT.md](docs/DEFENSA_TFG_SCRIPT.md): Spanish defense script
+- [docs/defensa/DEFENSA_TFG_PROGRESO.md](docs/defensa/DEFENSA_TFG_PROGRESO.md): Spanish defense notes
+- [docs/defensa/DEFENSA_TFG_SCRIPT.md](docs/defensa/DEFENSA_TFG_SCRIPT.md): Spanish defense script
 - [memoria/memoria.tex](memoria/memoria.tex): **canonical thesis (Spanish)** — official source
 - [report/report.tex](report/report.tex): English thesis draft — parked (may lag new sections)
 - [docs/audits/](docs/audits/): dated read-only repository audits
@@ -200,8 +200,8 @@ The longer experiment-by-experiment narrative now lives in [experiments/cicids20
 
 - English is the default language for repository documentation.
 - The two defense-support documents remain in Spanish by design:
-  - [docs/DEFENSA_TFG_PROGRESO.md](docs/DEFENSA_TFG_PROGRESO.md)
-  - [docs/DEFENSA_TFG_SCRIPT.md](docs/DEFENSA_TFG_SCRIPT.md)
+  - [docs/defensa/DEFENSA_TFG_PROGRESO.md](docs/defensa/DEFENSA_TFG_PROGRESO.md)
+  - [docs/defensa/DEFENSA_TFG_SCRIPT.md](docs/defensa/DEFENSA_TFG_SCRIPT.md)
 - Historical results are preserved, but they must not be confused with the **current code defaults**.
 
 ## Safety and Reproducibility
