@@ -24,7 +24,7 @@ This directory contains the maintained project documentation used for developmen
 | [defensa/chatgpt_project_study_packet.md](defensa/chatgpt_project_study_packet.md) | Author | Project study packet (EN/ES) with tutor prompt | Reference |
 | [research/README.md](research/README.md) | Author | Consolidated research notes index — not a source of truth | Reference |
 | [../memoria/memoria.tex](../memoria/memoria.tex) | Author, evaluators, tribunal | Canonical thesis (Spanish) — official source | Maintained |
-| [../report/report.tex](../report/report.tex) | Author | English thesis draft — parked (may lag new sections) | Historical |
+| [../report/report.tex](../report/report.tex) | Author | English thesis mirror — fully synced with `memoria/` (8 chapters, 2026-06-29); `memoria/` remains the official source | Synced mirror |
 | [audits/](audits/) | Author | Dated read-only repository audits (historical snapshots) | Reference |
 
 ## Reading Order
