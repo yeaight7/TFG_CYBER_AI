@@ -33,29 +33,32 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 - [docs/reproducibility.md](docs/reproducibility.md): recorded environment for the main QRDQN run and dependency-file strategy
 - [experiments/README.md](experiments/README.md): experiment archive index
 - [experiments/cicids2017_qrdqn_experiments.md](experiments/cicids2017_qrdqn_experiments.md): maintained CICIDS2017 + QRDQN run history
-- [docs/DEFENSA_TFG_PROGRESO.md](docs/DEFENSA_TFG_PROGRESO.md): Spanish defense notes
-- [docs/DEFENSA_TFG_SCRIPT.md](docs/DEFENSA_TFG_SCRIPT.md): Spanish defense script
+- [docs/defensa/](docs/defensa/): Spanish defense-prep material (progress notes, defense script, tutor guide, question bank, study packet)
+- [docs/research/](docs/research/): consolidated research notes (state-of-the-art base, raw dumps, personal) — not a source of truth
 - [memoria/memoria.tex](memoria/memoria.tex): **canonical thesis (Spanish)** — official source
-- [report/report.tex](report/report.tex): English thesis draft — parked (may lag new sections)
-- [docs/audits/](docs/audits/): dated read-only repository audits
+- [report/report.tex](report/report.tex): English thesis mirror — fully synced with `memoria/` (8 chapters, last sync 2026-06-29); `memoria/` remains the official source
+- [docs/audits/](docs/audits/): dated read-only repository audits and remediation plan
 
 ## Repository Structure
 
 ```text
 TFG_CYBER_AI/
-├── .codex/                    # (empty — reserved for knowledge graph hooks; hooks.json not yet populated)
-├── .github/                   # Agent guidance and coding/review agent instructions
-├── datasets/                  # Local datasets (also tracked via git lfs)
-├── docs/                      # Documentation, results, Phase 2 guides, defense material
-|   ├── Personal Research/     # Deep-research notes (Markdown only; research, not a source of truth)
-|   ├── audits/                # Dated read-only repository audits
-|   └── archive/               # Obsolete docs kept for history (e.g. informe.* draft)
+├── .github/                   # AGENT_CONTEXT.md (technical source of truth) + CI workflows
+├── datasets/                  # Curated CICIDS2017 CSVs (git LFS); Raw_dataset/ is local-only
+├── docs/                      # Maintained documentation
+│   ├── defensa/               # Spanish defense-prep material (grouped 2026-07)
+│   ├── research/              # Consolidated research notes (not a source of truth)
+│   │   ├── state-of-the-art/            # Normalized literature base feeding report/ chapters
+│   │   ├── state-of-the-art-raw-dumps/  # Raw ChatGPT/Perplexity exports (as received)
+│   │   └── personal/                    # Personal notes (incl. deep-defense-research/)
+│   ├── audits/                # Dated read-only repository audits + remediation plan
+│   └── archive/               # Obsolete docs kept for history (informe.*, design board)
 ├── experiments/               # Experiment archive notes: historical and maintained timelines
-├── lab/                       # Lab-related assets
+├── lab/                       # Lab assets (deprecated Docker traffic generator, kept for reference)
 ├── memoria/                   # Canonical thesis (Spanish) — official source
-├── models/                    # Trained model files (tracked)
-├── pcaps/                     # Extracted flows and captures used for Phase 2 work (tracked)
-├── report/                    # English thesis draft — parked (may lag new sections)
+├── models/                    # Official trained models (tracked); archive/ binaries local-only since 2026-07
+├── pcaps/                     # Phase 2 flows/captures; archive/ binaries local-only since 2026-07
+├── report/                    # English thesis mirror — synced with memoria/ (2026-06-29)
 ├── runs/                      # Run artifacts: config.json, metrics.json, validation_results.json, etc. (tracked)
 ├── scripts/                   # Phase 2 and utility scripts
 └── src/                       # Training, validation, adapters, environment, utilities
@@ -93,7 +96,7 @@ The adapter (`src/load_cicids2017.py`) applies further cleaning at load time reg
 ### Provenance and integrity
 
 - **Upstream source**: CICIDS2017, Canadian Institute for Cybersecurity (CIC), University of New Brunswick — <https://www.unb.ca/cic/datasets/ids-2017.html> (the labelled CICFlowMeter flow CSVs, one per capture day).
-- **Redistribution terms**: CICIDS2017 is distributed by UNB/CIC for research use and requires citation/attribution; redistribution is not explicitly granted. The curated copy here is a research convenience for reproducibility — prefer obtaining the data from the official link above, and cite CIC/UNB in any derived work. The legacy NSL-KDD dataset has been **removed** from this repository (`datasets/nsl_kdd/`, `models/rf_nslkdd.joblib` are no longer tracked).
+- **Redistribution terms**: CICIDS2017 is distributed by UNB/CIC for research use and requires citation/attribution; redistribution is not explicitly granted. The curated copy here is a research convenience for reproducibility — prefer obtaining the data from the official link above, and cite CIC/UNB in any derived work. See [NOTICE](NOTICE) for the license-scope split between original code and dataset-derived content. The legacy NSL-KDD dataset has been **removed** from this repository (`datasets/nsl_kdd/`, `models/rf_nslkdd.joblib` are no longer tracked).
 - The hashes below are SHA-256 of the **curated** CSVs actually used by the adapter (`datasets/CICIDS2017/*.csv`), i.e. this repository's derivative after pre-ingestion column removal — **not** the upstream file hashes. They let you confirm you are working from the exact curated copy used for the committed results. The `Raw_dataset/` originals are gitignored and not hashed here.
 
 | File | Bytes | SHA-256 |
@@ -200,11 +203,15 @@ The longer experiment-by-experiment narrative now lives in [experiments/cicids20
 
 - English is the default language for repository documentation.
 - The two defense-support documents remain in Spanish by design:
-  - [docs/DEFENSA_TFG_PROGRESO.md](docs/DEFENSA_TFG_PROGRESO.md)
-  - [docs/DEFENSA_TFG_SCRIPT.md](docs/DEFENSA_TFG_SCRIPT.md)
+  - [docs/defensa/DEFENSA_TFG_PROGRESO.md](docs/defensa/DEFENSA_TFG_PROGRESO.md)
+  - [docs/defensa/DEFENSA_TFG_SCRIPT.md](docs/defensa/DEFENSA_TFG_SCRIPT.md)
 - Historical results are preserved, but they must not be confused with the **current code defaults**.
 
 ## Safety and Reproducibility
 
 - Every training or evaluation workflow should persist a `RUN_ID` and write artifacts under `runs/<category>/<RUN_ID>/`.
 - If documentation describes a result, it should reference an artifact that exists in `runs/` or be clearly marked as planned or historical.
+
+## License
+
+Original code and documentation are licensed under AGPL-3.0 — see [LICENSE](LICENSE). Dataset-derived content (the curated CICIDS2017 CSVs and models/artifacts trained on them) is **not** relicensed by this project — see [NOTICE](NOTICE) for the scope split and CICIDS2017 attribution.

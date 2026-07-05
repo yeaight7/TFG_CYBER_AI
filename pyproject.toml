@@ -19,8 +19,6 @@ dependencies = [
 dev = [
     "pytest==9.0.3",
     "ruff==0.15.12",
-    # NOTE: `graphifyy` (double-y) is the PyPI distribution name; the import is `graphify`.
-    "graphifyy==0.7.0",
 ]
 # Optional: hyperparameter tuning (src/tune_hparams.py). Installed by CI via `uv sync --all-extras`.
 tune = [

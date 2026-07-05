@@ -38,6 +38,14 @@ scratch/
 # large models type shi
 models/rf_cicids2017_canonical_20260504_000432.joblib
 
+# Archived heavy binaries de-tracked 2026-07 (kept on local disk and in git
+# history per D-6 no-rewrite; the archive READMEs stay tracked as the record).
+# NOTE: `dir/*` form (not `dir/`) so the README negations below work.
+models/archive/*
+!models/archive/README.md
+pcaps/archive/*
+!pcaps/archive/README.md
+
 # Legacy NSL-KDD dropped (decision D-8): kept out of the repo going-forward.
 datasets/nsl_kdd/
 models/rf_nslkdd.joblib
@@ -49,5 +57,5 @@ models/rf_nslkdd.joblib
 graphify-out/
 graphify-out-*/
 
-# Personal Research: tracked as Markdown only (single source format).
+# Personal research notes (docs/research/personal/): tracked as Markdown only (single source format).
 # Derived .tex/.pdf were removed to avoid 3 copies of the same research notes.

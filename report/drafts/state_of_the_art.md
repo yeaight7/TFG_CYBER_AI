@@ -1,3 +1,5 @@
+> **Superseded draft** — the maintained chapter is `report/chapters/state_of_the_art.tex`; this Markdown draft is kept for provenance only.
+
 # State of the Art
 
 This chapter reviews the research background for a reinforcement-learning-based defender that makes binary `PERMIT`/`BLOCK` decisions over network-flow observations. The goal is not to argue that reinforcement learning is a new idea in intrusion detection. Prior work has already explored RL and DRL for IDS, including dataset-as-environment formulations and broader autonomous cyber-defense settings [Yang2024DRLNIDSSurvey; Gueriani2024DRLIoTIDSSurvey; VERIFY: audited closest RL-IDS papers from Research2]. The goal is to position this thesis as a scoped experimental study: a QRDQN-based flow-level defender evaluated with reproducible internal benchmarking, supervised baseline comparison, data-efficiency analysis, leakage-aware validation, and planned or preferred external validation using lab-captured traffic [ProjectAgentContext; ProjectResultsSnapshot].

@@ -1,6 +1,6 @@
 # Scope: minimal RunPod GPU runtime for training/eval (CUDA cu130). Mirrors the
 # core pyproject.toml dependencies plus training-only extras (tensorboard,
-# matplotlib). It INTENTIONALLY omits the `dev` extra (pytest/ruff/graphifyy)
+# matplotlib). It INTENTIONALLY omits the `dev` extra (pytest/ruff)
 # and the `tune` extra (optuna) — they are not needed to train or evaluate.
 # To run hyperparameter tuning (src/tune_hparams.py) on the box, also install
 # optuna==4.9.0 (see the `tune` extra in pyproject.toml).
