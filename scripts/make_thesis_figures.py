@@ -204,7 +204,8 @@ def _cm_figure(
 def fig_f9_cm_main() -> dict[str, Any]:
     """F9 — confusion matrix of the MAIN model on the random test partition."""
     boot = _load("bootstrap")
-    assert boot["model_verification"]["matches_recovered"] is True
+    if boot.get("model_verification", {}).get("matches_recovered") is not True:
+        raise ValueError("bootstrap_ci_seed42.json failed verification: model_verification.matches_recovered != true")
     return _cm_figure(
         "f9_cm_main",
         boot["confusion_counts"],
