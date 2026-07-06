@@ -1,0 +1,52 @@
+% Fuentes: src/rl_defender_env.py (semántica de acción PERMIT/BLOCK, cálculo de
+% recompensa tp/fp/fn/omission en _compute_reward) y
+% runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json
+% (gamma=0.0, n_features=152).
+\begin{tikzpicture}[
+    node distance=10mm and 26mm,
+    every node/.style={align=center},
+  ]
+
+  % --- Nodos principales del bucle agente-entorno ---
+  \node[cajaDato, text width=32mm] (entorno)
+    {\textbf{Entorno}\\[2pt] flujo $x_t$ muestreado\\del conjunto};
+
+  \node[cajaModelo, text width=32mm, right=of entorno] (agente)
+    {\textbf{Agente QRDQN}\\[2pt] política $\pi_\theta$};
+
+  \node[cajaProceso, text width=34mm, right=of agente] (recompensa)
+    {\textbf{Recompensa}\\[2pt] $r$ según\\etiqueta real $y_t$};
+
+  \node[rutaFichero, below=1pt of entorno] {RLDatasetDefenderEnv};
+
+  % --- Flechas del bucle ---
+  \draw[flechaAzul] (entorno) -- node[etiqueta, above=1mm, text width=24mm]
+    {observación\\(vector de 152)} (agente);
+
+  \draw[flechaAzul] (agente) -- node[etiqueta, above=1mm, text width=24mm]
+    {acción $a_t$:\\permitir / bloquear} (recompensa);
+
+  \draw[flecha, rounded corners=3pt]
+    (recompensa.south) -- ++(0,-9mm) -| node[etiqueta, pos=0.88, above=0.5mm]
+    {$r_t$ (realimentación)} (entorno.south);
+
+  % --- Tabla de recompensas (reward_config por defecto) ---
+  \node[caja, text width=82mm, below=19mm of agente, inner sep=6pt] (tabla) {
+    \begin{tabular}{@{}lll@{}}
+      \textbf{Acción} & \textbf{Etiqueta real} & \textbf{Recompensa} \\
+      bloquear ($a=1$) & ataque ($y=1$)  & tp $= 1.5$ \\
+      bloquear ($a=1$) & benigno ($y=0$) & fp $= -2.0$ \\
+      permitir ($a=0$) & ataque ($y=1$)  & fn $= -5.0$ \\
+      permitir ($a=0$) & benigno ($y=0$) & omisión $= 0.0$ \\
+    \end{tabular}
+  };
+  \node[rutaFichero, below=1pt of tabla] {reward\_config -- src/rl\_defender\_env.py};
+
+  \draw[flechaFina, dashed] (recompensa.south) -- (tabla.north east);
+
+  % --- Nota inferior sobre el descuento ---
+  \node[etiquetaTenue, below=8mm of tabla, text width=115mm] (nota)
+    {$\gamma = 0 \Rightarrow$ objetivo $y = r$: bandido contextual;\\
+     el siguiente flujo es independiente de la acción.};
+
+\end{tikzpicture}
