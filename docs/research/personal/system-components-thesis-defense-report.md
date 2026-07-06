@@ -18,7 +18,7 @@ El sistema está dividido en dos fases:
    - Carga y limpieza de dataset (`src/load_cicids2017.py`)
    - Entorno Gymnasium sobre dataset (secuencial) para decisiones binarias `PERMIT/BLOCK` (`src/rl_defender_env.py`)
    - Entrenamiento (`src/train_rl_defender.py`)
-   - Validación A/B/C y leave-one-exact-CSV-out (`src/validate_checks.py`, `src/validate_leave_one_csv_out.py`)
+   - Validación A/B/C y leave-one-CSV-out (`src/validate_checks.py`, `src/validate_leave_one_csv_out.py`)
 
 2. **Fase 2 (offline inferencia en tráfico real de laboratorio)**
    - Entrada mantenida: `scripts/predict_real_traffic_v2.py`
