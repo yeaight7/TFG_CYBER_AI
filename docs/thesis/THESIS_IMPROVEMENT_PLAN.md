@@ -175,11 +175,11 @@ Pure content MOVE, no rewriting. `metodologia.tex` → `capitulos/diseno_sistema
 
 | ID | Task | Model | Dep | Status | Evidence |
 |---|---|---|---|---|---|
-| F4.1 | Split file, rewire `\input`s in `memoria.tex`, delete `metodologia.tex` | sonnet | F0 | [ ] | |
-| F4.2 | Bibliography: `\chapter{Bibliografía}+\printbibliography[heading=none]` → `\printbibliography[heading=bibintoc, title={Bibliografía}]` | cheap | F4.1 | [ ] | |
-| F4.3 | `\appendix` skeleton after bibliography (empty anexo files wired, content in F10) | cheap | F4.2 | [ ] | |
-| F4.4 | Fix all `\ref`/`\label` fallout; chapter numbering audit (resultados becomes Ch6 later — verify current numbering consistent) | sonnet | F4.1 | [ ] | |
-| F4.V | Gates G1–G3, G5 (before+after), G6 | cheap | F4.* | [ ] | |
+| F4.1 | Split file, rewire `\input`s in `memoria.tex`, delete `metodologia.tex` | sonnet | F0 | [x] | commit 7d510ac · scripted byte-exact split (purity asserted); D=7/P=7 sections per DT-5; chapter labels `cap:diseno-sistema`/`cap:protocolo-experimental` added for F5–F7 wiring |
+| F4.2 | Bibliography: `\chapter{Bibliografía}+\printbibliography[heading=none]` → `\printbibliography[heading=bibintoc, title={Bibliografía}]` | cheap | F4.1 | [x] | commit 6c52681 |
+| F4.3 | `\appendix` skeleton after bibliography (empty anexo files wired, content in F10) | cheap | F4.2 | [x] | commit 21f358e · `anexo_{a_reproducibilidad,b_entorno,c_esquema_canonico,d_artefactos}.tex`, comment-only → zero visible output |
+| F4.4 | Fix all `\ref`/`\label` fallout; chapter numbering audit (resultados becomes Ch6 later — verify current numbering consistent) | sonnet | F4.1 | [x] | commit 6e8a6f0 · 0 dangling refs/0 dup labels · all 3 hardcoded «Capítulo N» mentions still correct (intro:37 ×3, etica:6) · limitaciones.tex:3 retargeted to protocolo; stale comment pointers fixed (`train_rl_defender.py`, `figuras/f4_vector_observacion.tex`) |
+| F4.V | Gates G1–G3, G5 (before+after), G6 | cheap | F4.* | [~] | G5 before==after (5/5/3/5/2/6/3/1/3) · G6 clean · 3/3 adversarial verifiers PASS (fidelity 60 checks byte-exact, wiring 12, numbering/gates 5) · **G1–G3 pending: user compiles manually (user instruction 2026-07-06)** — expected ~130→131±1 pp (one extra chapter break; anexos invisible) |
 
 ## F5 — Algorithms + structural tables
 
@@ -316,6 +316,16 @@ No thesis claim or figure may depend on these until they are actually run and th
 - DT-10 (2026-07-06): TeX Live 2025 emits `ignored error: Infinite glue shrinkage found in box being split` on EVERY multi-page longtable (reproduced with a 6-line vanilla document). Benign engine diagnostic; G1 pass criterion remains exit 0 + no `^!` lines; do not chase these.
 
 ## Execution log (append one block per phase/session)
+
+### F4 — 2026-07-06 — DONE except G1–G3 (user compiles manually)
+- Branch `claude/thesis-f4-split`. Commits: 7d510ac (F4.1 split), 6c52681 (F4.2 bibliografía), 21f358e (F4.3 anexos), 6e8a6f0 (F4.4 fallout).
+- Split executed as a scripted byte-exact move (scratchpad script with purity assertions; original snapshot hash-verified vs git blob). `diseno_sistema.tex` = visión, datos, limpieza, esquema canónico, formulación RL, agente QRDQN, implementación; `protocolo_experimental.tex` = fases, particiones, línea base, escala [pendiente-GPU], evaluación/reproducibilidad, Fase 2, limitaciones metodológicas. Within-file section order preserves the original relative order (the plan's "métricas/escalera … reproducibilidad" listing maps to the single moved section "Salidas de evaluación y reproducibilidad").
+- Chapter labels added: `cap:diseno-sistema`, `cap:protocolo-experimental` (unused until F5–F7 wiring; existing chapters keep the hardcoded-«Capítulo N» convention).
+- F4.4 fallout was small: only `limitaciones.tex:3` named the dead chapter (retargeted to "el capítulo del protocolo experimental"; its four enumerated limitations verified present in protocolo §Limitaciones metodológicas). Comment pointers updated in `src/train_rl_defender.py:373` (seeds → diseno_sistema, §Controles de reproducibilidad) and `memoria/figuras/f4_vector_observacion.tex:3` (máscara → diseno_sistema). Historical audit docs intentionally untouched.
+- F4.V: 3/3 adversarial verifiers PASS (fidelity: 349 body lines = 225 D + 123 P + 1 EOF blank, per-section byte-identical mod EOL, non-ASCII inventory intact; wiring: bibintoc = `\chapter*` + TOC entry + `\markboth` so fancyhdr works, comment-only anexos contribute zero tokens, no unintended diff; numbering: 40 «capítulo» hits audited, 3 hardcoded numbers all still correct, G5/G6 independently re-run). G5 before==after: γ=0→5, 24.86→5, 40.12→3, 0.52954→5, bandido→2, validez→6, 0.991862→3, semilla→1, muestreo→3.
+- **Pending for G1–G3 (user instruction: compile manually):** run BUILD, then G3 log grep; record pages (expect ~130→131±1: one extra chapter break from the split; bibliografía heading swap and empty anexos should be page-neutral).
+- Minor advisories for later phases (NOT F4 defects): resultados.tex:3,6 and etica.tex:15 say "en la metodología" generically — reads fine, but F7/F8 rewrites could point at the concrete chapter; limitaciones.tex:3 attributes the literal term "bandido contextual" to protocolo while the literal string lives in diseno (§γ=0) — conceptually correct as written.
+- PDF not touched on branch (single-writer rule). WIP: none.
 
 ### F3 — 2026-07-06 — DONE
 - Branch `claude/thesis-f3-frontmatter`. Commits 36ae1c0 (design layer) + c1180b5 (front matter). Pages 118 → 130 (front matter now 18 physical pages incl. 6-page TOC).
