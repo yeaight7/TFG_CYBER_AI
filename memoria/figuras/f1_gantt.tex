@@ -1,0 +1,47 @@
+% Fuente de los datos: planificación real del TFG (hitos y fases del proyecto),
+% proporcionada como especificación de contenido de esta figura.
+% Sin fichero de datos adicional en el repositorio: fechas fijadas por el
+% calendario contractual y de entregas parciales del TFG.
+\ganttset{
+  time slot format=isodate,
+  x unit=0.55mm,
+  y unit chart=6mm,
+  y unit title=6mm,
+  bar height=0.6,
+  bar label font=\small\sffamily,
+  milestone label font=\small\sffamily,
+  group label font=\small\sffamily,
+  bar/.append style={fill=tesisAzulClaro, draw=tesisAzul},
+  milestone/.append style={fill=tesisAzul, draw=tesisAzul},
+  title/.append style={draw=tesisBorde, fill=white},
+  title label font=\scriptsize\sffamily,
+}
+\begin{ganttchart}[
+    vgrid={draw=tesisRejilla},
+    hgrid={draw=tesisRejilla},
+  ]{2025-11-01}{2026-07-15}
+  \gantttitle{2025}{61}
+  \gantttitle{2026}{196} \\
+  \gantttitle{nov}{30}
+  \gantttitle{dic}{31}
+  \gantttitle{ene}{31}
+  \gantttitle{feb}{28}
+  \gantttitle{mar}{31}
+  \gantttitle{abr}{30}
+  \gantttitle{may}{31}
+  \gantttitle{jun}{30}
+  \gantttitle{jul}{15} \\
+  \ganttmilestone{Firma del contrato}{2025-11-11} \\
+  \ganttmilestone{Reunión de inicio}{2025-11-18} \\
+  \ganttbar{Desarrollo e implementación}{2025-12-11}{2026-06-09} \\
+  \ganttbar{Redacción de la memoria}{2025-12-12}{2026-07-06} \\
+  \ganttbar{Experimentos preliminares A/B/C}{2026-02-12}{2026-02-23} \\
+  \ganttbar{Fase 2: captura e inferencia en laboratorio}{2026-02-23}{2026-06-10} \\
+  \ganttmilestone{Entrenamiento del modelo MAIN}{2026-06-09} \\
+  \ganttbar{Auditoría de validación y línea base RF}{2026-06-27}{2026-06-28} \\
+  \ganttmilestone{Entregas parciales 1--5}{2025-12-15}
+  \ganttmilestone{}{2026-02-02}
+  \ganttmilestone{}{2026-03-17}
+  \ganttmilestone{}{2026-05-20}
+  \ganttmilestone{}{2026-06-15} \\
+\end{ganttchart}

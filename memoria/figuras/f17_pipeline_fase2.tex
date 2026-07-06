@@ -1,0 +1,34 @@
+% Fuente: scripts/predict_real_traffic_v2.py (orden de etapas, ficheros de
+% artefactos, recortes, predicción determinista y diagnósticos);
+% src/canonical_schema.py (dimensión canónica 152 = 76 características + 76 de máscara de presencia).
+\begin{tikzpicture}[
+    node distance=5mm and 5mm,
+    every node/.style={text width=5cm},
+  ]
+
+  % --- Columna izquierda ---------------------------------------------
+  \node[cajaDato] (pcap) {Captura pcap\\{\footnotesize\sffamily\color{tesisGris}laboratorio doméstico cerrado}};
+  \node[cajaProceso, below=of pcap] (flujos) {Extracción de flujos\\{\scriptsize\ttfamily\color{tesisGrisMedio}flows.csv}};
+  \node[cajaProceso, below=of flujos] (canon) {Mapeo a esquema canónico (152 dim.)\\{\footnotesize\sffamily\color{tesisGris}76 características + 76 de máscara de presencia}\\{\scriptsize\ttfamily\color{tesisGrisMedio}map\_to\_canonical()}};
+  \node[cajaProceso, below=of canon] (perc) {Recorte por percentiles del train (p0.5/p99.5)\\{\scriptsize\ttfamily\color{tesisGrisMedio}train\_percentiles.npz}};
+
+  % --- Columna derecha -------------------------------------------------
+  \node[cajaProceso, right=20mm of pcap] (scaler) {Escalado con \texttt{StandardScaler} del MAIN\\{\footnotesize\sffamily\color{tesisGris}reutilizado, NO reajustado}\\{\scriptsize\ttfamily\color{tesisGrisMedio}scaler.joblib}};
+  \node[cajaPendiente, below=of scaler] (clipz) {Recorte z opcional\\{\footnotesize\sffamily\color{tesisGris}\texttt{-{}-clip-z}, si se indica}};
+  \node[cajaModelo, below=of clipz] (qrdqn) {QRDQN determinista\\{\footnotesize\sffamily\color{tesisGris}model.predict(deterministic=True)}};
+  \node[cajaResaltada, below=of qrdqn] (out) {Predicciones permitir / bloquear\\{\footnotesize\sffamily\color{white}+ métricas y diagnósticos z}\\{\scriptsize\ttfamily\color{white}predictions.csv, metrics.json}};
+
+  % --- Flechas de flujo --------------------------------------------------
+  \draw[flecha] (pcap) -- (flujos);
+  \draw[flecha] (flujos) -- (canon);
+  \draw[flecha] (canon) -- (perc);
+  \draw[flechaAzul] (perc.east) -- ++(6mm,0) |- (scaler.west);
+  \draw[flecha] (scaler) -- (clipz);
+  \draw[flecha] (clipz) -- (qrdqn);
+  \draw[flecha] (qrdqn) -- (out);
+
+  % --- Nota inferior -------------------------------------------------
+  \node[etiquetaTenue, below=6mm of out, text width=10.5cm] (nota)
+    {Inferencia puramente offline: el script solo escribe \texttt{predictions.csv}, \texttt{metrics.json} y \texttt{config.json}; no existe bloqueo activo del tráfico.};
+
+\end{tikzpicture}
