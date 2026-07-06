@@ -93,7 +93,7 @@ with numbers.
 - **PDF single-writer rule**: phase branches NEVER commit `memoria/memoria.pdf` (restore with
   `git checkout -- memoria/memoria.pdf` before committing). Rebuild + commit the PDF only on `main`
   right after each merge: `build: rebuild memoria.pdf (Fn, NNN pp)`. `.gitattributes` marks it `merge=binary`.
-- Commit style: `type: summary (F1.2,F1.3)` + `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`.
+- Commit style: `type: summary (F1.2,F1.3)`. **No AI co-author trailers, no "Generated with" footers** in commits or PR bodies (user rule, 2026-07-06).
 
 ## Subagent / model policy
 
@@ -145,14 +145,15 @@ Rule: **no number may appear in any figure that is not present in a committed ar
 
 | ID | Task | Model | Dep | Status | Evidence |
 |----|------|-------|-----|--------|----------|
-| F2.1 | F2 pipeline general del sistema (from `src/` structure: load → clean → canonical 152-dim → env → QRDQN → eval → Phase-2) | sonnet | F0 | [ ] | |
-| F2.2 | F3 agente–entorno interaction, one-step (γ=0) with reward table (from `src/rl_defender_env.py`) | sonnet | F0 | [ ] | |
-| F2.3 | F4 observation-vector construction 76+76 mask (from `src/canonical_schema.py`) | sonnet | F0 | [ ] | |
-| F2.4 | F5 QRDQN network architecture ([1024,1024,512], 200 quantiles × 2 actions, from MAIN `config.json`) | sonnet | F0 | [ ] | |
-| F2.5 | F16 validation-ladder schematic (A→B→C→duplicados→Fase 2) | sonnet | F0 | [ ] | |
-| F2.6 | F17 Phase-2 inference pipeline (from `scripts/predict_real_traffic_v2.py`) | sonnet | F0 | [ ] | |
-| F2.7 | F1 Gantt (pgfgantt) — ONLY real dates: contrato firma 11-nov-2025, inicio 18-nov-2025, entregas 15-dic-2025 / 2-feb / 17-mar / 20-may / 15-jun-2026; run anchors VAL 13-feb, MAIN 09-jun, P2 10-jun, RF 28-jun-2026 | sonnet | F0 | [ ] | |
-| F2.V | Verify: each diagram faithfully reflects its source file (review vs code); build green | TOP | F2.* | [ ] | |
+| F2.0 | Shared TikZ styles `figuras/tikz_estilos.tex` + preamble `\input` wiring | — | F0 | [x] | commits 2a5d5ae, 8b4279c · build green |
+| F2.1 | F2 pipeline general del sistema (from `src/` structure: load → clean → canonical 152-dim → env → QRDQN → eval → Phase-2) | sonnet | F0 | [x] | commit 8851cf1 + fixes (características, escalado, extractor externo CICFlowMeter-py per `pcaps/README.md` — NOT the predict script) |
+| F2.2 | F3 agente–entorno interaction, one-step (γ=0) with reward table (from `src/rl_defender_env.py`) | sonnet | F0 | [x] | commit 3d03819 + fixes (benigno/omisión wording, label collisions; decimal points render via babel `\decimalpoint`) |
+| F2.3 | F4 observation-vector construction 76+76 mask (from `src/canonical_schema.py`) | sonnet | F0 | [x] | commit b39279f · presence-mask semantics + constant-1 note |
+| F2.4 | F5 QRDQN network architecture ([1024,1024,512], 200 quantiles × 2 actions, from MAIN `config.json`) | sonnet | F0 | [x] | commit 1c59904 + hyphenation fix |
+| F2.5 | F16 validation-ladder schematic (A→B→C→duplicados→Fase 2) | sonnet | F0 | [x] | commit 88dee03 · two-flight staircase, artifact-derived verdicts |
+| F2.6 | F17 Phase-2 inference pipeline (from `scripts/predict_real_traffic_v2.py`) | sonnet | F0 | [x] | commit 9ed3aca + fixes (máscara de presencia, `--clip-z` literal) |
+| F2.7 | F1 Gantt (pgfgantt) — ONLY evidence-anchored dates: contrato 11/18-nov-2025; entregas 15-dic / 2-feb / 17-mar / 20-may / 15-jun; desarrollo 11-dic-2025→09-jun-2026 (primer commit→MAIN); redacción 12-dic-2025→06-jul-2026; experimentos 12–23-feb; Fase 2 23-feb→10-jun; auditoría+RF 27–28-jun | sonnet | F0 | [x] | commit 25ce461 · Spanish month labels |
+| F2.V | Verify: each diagram faithfully reflects its source file (review vs code); build green | TOP | F2.* | [x] | 7/7 verifiers PASS (70 checks, 0 failures) · G1 clean/118pp · G3 clean · G5 baseline intact · G6 clean · all 7 visually reviewed via Ghostscript renders |
 
 ## F3 — Front matter (‖ F1, F2)
 
@@ -297,7 +298,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 | Exact degree + faculty line for portada | F3.1 | [?] |
 | Tutor name confirmation (contract: Alfonso Carlos Martínez Estudillo) | F3.1 | [?] |
 | Agradecimientos text | F3.3 | [?] (placeholder until provided) |
-| Optional: phase labels for Gantt bands between contract dates | F2.7 | [?] (can proceed with deliverable dates only) |
+| ~~Optional: phase labels for Gantt bands~~ | F2.7 | resolved — Gantt built from contract dates + repo evidence (first commit, run timestamps) |
 
 ## Decisions log (append-only)
 
@@ -310,6 +311,15 @@ No thesis claim or figure may depend on these until they are actually run and th
 - DT-7 (2026-07-06): Figure palette (dataviz-validated on white surface): QRDQN `#2a78d6` / RF `#1baf7a` (aqua <3:1 contrast → direct value labels mandatory); benigno `#2a78d6` / ataque `#e34948`; CM heatmaps = single-hue blue ramp, row-normalized shading with count+row-% annotations.
 
 ## Execution log (append one block per phase/session)
+
+### F2 — 2026-07-06 — DONE
+- Branch `claude/thesis-f2-diagrams`. 7 TikZ diagrams authored by a 7-agent workflow (each grounded in its source files, compile-verified in isolated scratch dirs), plus `figuras/tikz_estilos.tex` (shared styles, wired into the preamble).
+- Session hit its limit mid-review; user committed all authored .tex + memoria.pdf (PDF-on-branch deviation accepted). Post-resume fixes (commit 6dfad5b): f2 wording + flow-extraction attribution corrected to the external CICFlowMeter-py extractor (`pcaps/README.md`); f3 benigno/omisión + label collisions; f5 hyphenation; f17 presence-mask wording + literal `--clip-z`.
+- False alarm during review: "decimal commas" in renders were a wrapper artifact — babel-spanish converts math-mode periods without `\decimalpoint`; memoria.tex has it, so the document renders points correctly.
+- F2.V: 7/7 adversarial verifiers PASS (70 checks) — rewards vs `rl_defender_env.py`, Gantt dates vs the evidence list, net dims vs MAIN config, ladder verdicts vs artifacts, presence-mask semantics vs `canonical_schema.py`, Phase-2 stage order vs `predict_real_traffic_v2.py`.
+- Gates: G1 clean (118 pp), G3 clean, G5 baseline intact, G6 clean. All 7 diagrams visually reviewed via Ghostscript renders (`rungs.exe`; raw `gswin64c` lacks its lib path).
+- NOTE for wiring phases (F5–F7): figures are `\input`-ready tikzpictures (no figure env); the Gantt file is a bare `ganttchart` environment.
+- Last-green commit: see PR. WIP: none.
 
 ### F1 — 2026-07-06 — DONE
 - Branch `claude/thesis-f1-figures`. Commits: 8667520 (generator), 89bb943 (TB scalar export), 816164a (10 figures + manifest + per-day data JSON).
