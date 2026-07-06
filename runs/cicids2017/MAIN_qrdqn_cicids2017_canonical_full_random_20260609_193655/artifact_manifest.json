@@ -19,8 +19,8 @@
     "environment": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json",
     "tensorboard_dir": "runs/cicids2017",
     "checkpoints_dir": null,
-    "tensorboard_scalar_plots": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars",
-    "tensorboard_scalar_export_manifest": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\tensorboard_scalar_export_manifest.json"
+    "tensorboard_scalar_plots": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/plots/tensorboard_scalars",
+    "tensorboard_scalar_export_manifest": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/plots/tensorboard_scalars/tensorboard_scalar_export_manifest.json"
   },
   "file_artifacts": {
     "model": {
