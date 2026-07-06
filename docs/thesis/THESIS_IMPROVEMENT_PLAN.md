@@ -288,7 +288,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 
 | ID | Experiment | Command (future operator) | Status |
 |---|---|---|---|
-| G.1 | Leave-one-exact-CSV-out (QRDQN) | `uv run python -m src.validate_leave_one_csv_out` (see module docstring for args) | [-] pendiente de GPU |
+| G.1 | leave-one-CSV-out (QRDQN) | `uv run python -m src.validate_leave_one_csv_out` (see module docstring for args) | [-] pendiente de GPU |
 | G.2 | Training-size ladder (100k/250k/500k/1M/2M, nested-prefix) | `uv run python -m src.train_rl_defender --preset full --train-max-rows <N> ...` per `experiments/cicids2017_qrdqn_experiments.md` | [-] pendiente de GPU |
 | G.3 | Multi-seed variance study (MAIN profile, ≥3 seeds) | same as MAIN with `--seed {43,44,45}` | [-] pendiente de GPU |
 
