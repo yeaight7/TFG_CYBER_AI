@@ -1,0 +1,31 @@
+% Estilos TikZ compartidos por todos los diagramas de la memoria.
+% Paleta validada (ver docs/thesis/THESIS_IMPROVEMENT_PLAN.md, DT-7).
+\definecolor{tesisAzul}{HTML}{2A78D6}
+\definecolor{tesisAzulClaro}{HTML}{CDE2FB}
+\definecolor{tesisAzulOscuro}{HTML}{104281}
+\definecolor{tesisAqua}{HTML}{1BAF7A}
+\definecolor{tesisRojo}{HTML}{E34948}
+\definecolor{tesisTinta}{HTML}{0B0B0B}
+\definecolor{tesisGris}{HTML}{52514E}
+\definecolor{tesisGrisMedio}{HTML}{898781}
+\definecolor{tesisBorde}{HTML}{C3C2B7}
+\definecolor{tesisRejilla}{HTML}{E1E0D9}
+
+\tikzset{
+  % Cajas
+  caja/.style={draw=tesisBorde, fill=white, rounded corners=2pt, align=center,
+    font=\small\sffamily, text=tesisTinta, inner sep=5pt, minimum height=8mm},
+  cajaDato/.style={caja, fill=tesisAzulClaro},
+  cajaProceso/.style={caja},
+  cajaModelo/.style={caja, draw=tesisAzul, line width=0.9pt},
+  cajaResaltada/.style={caja, fill=tesisAzul, text=white},
+  cajaPendiente/.style={caja, draw=tesisGrisMedio, dashed, text=tesisGrisMedio},
+  % Texto
+  etiqueta/.style={font=\footnotesize\sffamily, text=tesisGris, align=center},
+  etiquetaTenue/.style={font=\scriptsize\sffamily, text=tesisGrisMedio, align=center},
+  rutaFichero/.style={font=\scriptsize\ttfamily, text=tesisGrisMedio, align=center},
+  % Flechas
+  flecha/.style={-{Stealth[length=2.4mm]}, line width=0.8pt, draw=tesisGris},
+  flechaFina/.style={-{Stealth[length=2mm]}, line width=0.6pt, draw=tesisGrisMedio},
+  flechaAzul/.style={-{Stealth[length=2.4mm]}, line width=0.9pt, draw=tesisAzul},
+}
