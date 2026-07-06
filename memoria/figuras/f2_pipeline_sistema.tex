@@ -15,11 +15,11 @@
   \node[rutaFichero, below=1mm of limpieza] {src/\\load\_cicids2017.py};
 
   \node[cajaProceso, text width=1.9cm, right=0.18cm of limpieza] (esquema)
-    {\small Esquema\\canónico: 76\\features + 76\\máscara = 152};
+    {\small Esquema\\canónico: 76\\caract. + 76\\máscara = 152};
   \node[rutaFichero, below=1mm of esquema] {src/\\canonical\_schema.py};
 
   \node[cajaProceso, text width=2.0cm, right=0.18cm of esquema] (particion)
-    {\small Partición\\80/20 (semilla\\42) + Scaler\\(solo train)};
+    {\small Partición\\80/20 (semilla\\42) + escalado\\(solo train)};
   \node[rutaFichero, below=1mm of particion] {src/\\load\_cicids2017.py};
 
   \node[cajaProceso, text width=1.7cm, right=0.18cm of particion] (entorno)
@@ -51,7 +51,8 @@
 
   \node[cajaProceso, text width=1.8cm, right=0.5cm of pcap] (flujos)
     {\small Extracción\\de flujos};
-  \node[rutaFichero, below=1mm of flujos] {scripts/\\predict\_real\_\\traffic\_v2.py};
+  \node[etiquetaTenue, below=1mm of flujos, text width=3.2cm]
+    {extractor externo\\(CICFlowMeter-py)};
 
   \node[cajaProceso, text width=1.9cm, below=2.05cm of entorno] (inferencia)
     {\small Inferencia\\determinista};
@@ -68,7 +69,7 @@
   \node[etiqueta, anchor=west, below=6mm of pcap.south west] {Fase 2 (offline, inferencia)};
 
   % Reutilización del esquema canónico y del escalador entrenado en Fase 1
-  \draw[flechaFina] (esquema.south) .. controls +(0,-1.1) and +(0,1.1) .. (flujos.north)
+  \draw[flechaFina] ([xshift=-6mm]esquema.south) .. controls +(-0.2,-1.1) and +(0,1.1) .. (flujos.north)
     node[etiquetaTenue, pos=0.82, text width=1.6cm, xshift=-1.0cm] {reutiliza\\esquema};
   \draw[flechaFina] (particion.south east) .. controls +(0.4,-1.1) and +(-0.6,1.1) .. (inferencia.north)
     node[etiquetaTenue, pos=0.82, text width=1.8cm, xshift=1.1cm] {reutiliza\\escalador\\entrenado};
