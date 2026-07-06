@@ -159,14 +159,15 @@ Rule: **no number may appear in any figure that is not present in a committed ar
 
 | ID | Task | Model | Dep | Status | Evidence |
 |----|------|-------|-----|--------|----------|
-| F3.1 | Titlepage: `titlepage` env, logo `assets/Universidad_Loyola_Logo_POS_RGB.png`, university/degree/TFG/title/author/tutor/date. **ASK USER: exact degree+faculty line; tutor spelling (contract: Alfonso Carlos Martínez Estudillo)** | cheap+user | F0 | [?] | |
-| F3.2 | Roman page numbering for front matter; arabic restart at Ch1 | cheap | F3.1 | [ ] | |
-| F3.3 | `\chapter*{Agradecimientos}` placeholder (user fills) | cheap | F3.2 | [ ] | |
-| F3.4 | Resumen (250–300 w) + Palabras clave (aprendizaje por refuerzo; detección de intrusiones en red; CICIDS2017; generalización; QRDQN) | TOP | F3.2 | [ ] | |
-| F3.5 | Abstract EN + Keywords (faithful translation of F3.4) | TOP | F3.4 | [ ] | |
-| F3.6 | `\listoffigures`, `\listoftables`, `\listofalgorithms` after TOC | cheap | F3.2 | [ ] | |
-| F3.7 | Glosario de acrónimos: `\chapter*` + two-column longtable, ~24 entries (RL, DRL, ML, DL, NIDS, IDS, IPS, DQN, QRDQN, MDP, RF, MCC, FPR, FNR, TP/TN/FP/FN, F1, CIC/CICIDS2017, CSV, IC, SDN, NSL-KDD, UNSW-NB15, GPU, SOAR…) | sonnet | F3.2 | [ ] | |
-| F3.V | Gates G1–G3, G5, G6 | cheap | F3.* | [ ] | |
+| F3.1 | Titlepage: `titlepage` env, logo `assets/Universidad_Loyola_Logo_POS_RGB.png`, Universidad Loyola / Grado en Ingeniería Informática y Tecnologías Virtuales / tutor Alfonso Carlos Martínez Estudillo (user-provided 2026-07-06) | cheap+user | F0 | [x] | commit c1180b5 |
+| F3.2 | Roman page numbering for front matter; arabic restart at Ch1 (babel `es-lcroman`, DT-8) | cheap | F3.1 | [x] | commit 36ae1c0 |
+| F3.3 | Agradecimientos (real text provided by user: padres Juan y Esmeralda, hermano Carlos, tutor Alfonso Carlos) | cheap | F3.2 | [x] | commit c1180b5 |
+| F3.4 | Resumen (250–300 w) + Palabras clave; honesty disclosures carried in (bandido contextual, cota optimista, red reducida, validez externa limitada) | TOP | F3.2 | [x] | commit c1180b5 |
+| F3.5 | Abstract EN + Keywords (faithful translation of F3.4) | TOP | F3.4 | [x] | commit c1180b5 |
+| F3.6 | `\listoffigures`, `\listoftables`, `\listofalgorithms` after TOC (empty until figures wire in F5–F7); indices read as text via linkcolor group | cheap | F3.2 | [x] | commit 36ae1c0/c1180b5 |
+| F3.7 | Glosario de acrónimos: `\chapter*` + two-column longtable, 30 entries grounded in an acronym census of the chapters | sonnet | F3.2 | [x] | commit c1180b5 |
+| F3.8 | **Layout/design pass (user request)**: fancyhdr running headers, titlesec chapter/section formats (palette), colored links + PDF metadata, microtype, caption styling, `es-tabla`, short captions for the 6 existing tables | TOP | F3.1 | [x] | commit 36ae1c0 · visual review of 10 rendered pages |
+| F3.V | Gates G1–G3, G5, G6 + adversarial verify of resumen/abstract numbers vs artifacts | TOP | F3.* | [x] | G1 clean/130pp · G3 clean · G5 ≥ baseline (24.86→5, bandido→2, validez→6) · G6 clean · verifier PASS 19/19 (resumen 298 w, ES/EN faithful, disclosures in both languages) |
 
 ## F4 — Structural split of Metodología
 
@@ -295,10 +296,11 @@ No thesis claim or figure may depend on these until they are actually run and th
 
 | Item | Needed for | Status |
 |---|---|---|
-| Exact degree + faculty line for portada | F3.1 | [?] |
-| Tutor name confirmation (contract: Alfonso Carlos Martínez Estudillo) | F3.1 | [?] |
-| Agradecimientos text | F3.3 | [?] (placeholder until provided) |
+| ~~Exact degree + faculty line for portada~~ | F3.1 | resolved 2026-07-06: Grado en Ingeniería Informática y Tecnologías Virtuales, Universidad Loyola |
+| ~~Tutor name confirmation~~ | F3.1 | resolved 2026-07-06: Alfonso Carlos Martínez Estudillo |
+| ~~Agradecimientos text~~ | F3.3 | resolved 2026-07-06 (Juan y Esmeralda, Carlos, Alfonso Carlos) |
 | ~~Optional: phase labels for Gantt bands~~ | F2.7 | resolved — Gantt built from contract dates + repo evidence (first commit, run timestamps) |
+| Portada date currently "Julio de 2026" | F3.1 | [?] confirm or adjust to defense date |
 
 ## Decisions log (append-only)
 
@@ -309,8 +311,19 @@ No thesis claim or figure may depend on these until they are actually run and th
 - DT-5 (2026-07-05): Metodología split into Diseño del sistema + Protocolo experimental (F4) — pure move, fallback is meta-sections if split proves too risky.
 - DT-6 (2026-07-06): The MAIN TensorBoard event log is LOCAL-ONLY (`.gitignore` line `runs/**/events.out.tfevents.*`). The exported CSVs under `runs/cicids2017/MAIN_.../plots/tensorboard_scalars/` are the committed, durable source for figure F8.
 - DT-7 (2026-07-06): Figure palette (dataviz-validated on white surface): QRDQN `#2a78d6` / RF `#1baf7a` (aqua <3:1 contrast → direct value labels mandatory); benigno `#2a78d6` / ataque `#e34948`; CM heatmaps = single-hue blue ramp, row-normalized shading with count+row-% annotations.
+- DT-8 (2026-07-06): babel options `es-lcroman` (lowercase roman folios — the default `\es@scroman` small-caps folios force nonexistent bold-smallcaps in the TOC) and `es-tabla` (floats say "Tabla", matching the prose).
+- DT-9 (2026-07-06): fancyhdr v5 requires BOTH page styles defined via `\fancypagestyle{...}` — global `\fancyhf`/`\fancyhead` config gets clobbered by a later `\fancypagestyle{plain}` definition (empirically verified).
+- DT-10 (2026-07-06): TeX Live 2025 emits `ignored error: Infinite glue shrinkage found in box being split` on EVERY multi-page longtable (reproduced with a 6-line vanilla document). Benign engine diagnostic; G1 pass criterion remains exit 0 + no `^!` lines; do not chase these.
 
 ## Execution log (append one block per phase/session)
+
+### F3 — 2026-07-06 — DONE
+- Branch `claude/thesis-f3-frontmatter`. Commits 36ae1c0 (design layer) + c1180b5 (front matter). Pages 118 → 130 (front matter now 18 physical pages incl. 6-page TOC).
+- Front matter: portada (Loyola logo, degree, tutor — user-provided), agradecimientos (user text), resumen 298 w + palabras clave, abstract EN, TOC/LOF/LOT/LOA (roman folios, indices read as text via linkcolor group), glossary of 30 census-grounded acronyms.
+- Design pass (user request): fancyhdr running headers, titlesec chapter format (gray small-caps label + blue rule), colored links + PDF metadata, microtype, caption styling, short captions for the 6 existing tables.
+- Debugging findings recorded as decisions: DT-8 (`es-lcroman` — babel's small-caps folios force bold-smallcaps in TOC; `es-tabla` — prose says Tabla), DT-9 (fancyhdr v5 clobbers global config; define both styles via `\fancypagestyle` — empirically bisected), DT-10 (TL2025 emits a benign "Infinite glue shrinkage" diagnostic on every multi-page longtable — reproduced with a vanilla 6-line doc; do not chase).
+- F3.V: adversarial verifier PASS 19/19 (all numbers vs artifacts, ES/EN parity, disclosures, portada facts). 10 pages visually reviewed via Ghostscript.
+- Remaining open item: portada date "Julio de 2026" — confirm vs defense date.
 
 ### F2 — 2026-07-06 — DONE
 - Branch `claude/thesis-f2-diagrams`. 7 TikZ diagrams authored by a 7-agent workflow (each grounded in its source files, compile-verified in isolated scratch dirs), plus `figuras/tikz_estilos.tex` (shared styles, wired into the preamble).
