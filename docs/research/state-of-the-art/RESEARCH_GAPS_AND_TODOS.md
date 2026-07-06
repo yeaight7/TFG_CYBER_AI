@@ -37,7 +37,7 @@ This file lists remaining gaps after consolidating the raw research folder. It i
 | Current reward defaults | Compare `.github/AGENT_CONTEXT.md`, `docs/results.md`, and code; note any disagreement. |
 | RF baseline performance | Run baseline protocol and add artifact before citing metrics. |
 | QRDQN vs baseline comparison | Same-split, same-preprocessing comparison with RF and optionally DQN. |
-| Leave-one-exact-CSV-out performance | Run and commit/artifact full validation before reporting metrics. |
+| leave-one-CSV-out performance | Run and commit/artifact full validation before reporting metrics. |
 | Phase 2 external validation | Needs lab protocol, labels or clear benign-only scope, and exact run artifacts. |
 | Data-efficiency | Needs controlled runs where only data size changes. |
 | Attack-family error analysis | Needs preserved attack-family labels in evaluation artifacts. |
@@ -47,7 +47,7 @@ This file lists remaining gaps after consolidating the raw research folder. It i
 | Experiment | Priority | Notes |
 |---|---|---|
 | Random Forest full sweep | High | Already listed as pending in `docs/results.md`. |
-| Leave-one-exact-CSV-out validation | High | Code exists; full artifact missing. |
+| leave-one-CSV-out validation | High | Code exists; full artifact missing. |
 | Multi-seed QRDQN runs | Medium / high | Needed for robust comparative claims. |
 | Data-efficiency curve | Medium | Only valid if protocol is controlled. |
 | Reward sensitivity variants | Medium | Needed if reward design becomes a major thesis claim. |
