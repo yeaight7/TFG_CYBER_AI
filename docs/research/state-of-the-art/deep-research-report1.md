@@ -118,7 +118,7 @@ La conclusión útil para tu capítulo es ésta: el precedente más directo de t
 
 La primera debilidad recurrente es la **inflación de rendimiento intra-dataset**. Hay múltiples trabajos que reportan precisiones o F1 casi perfectos dentro del mismo benchmark, en especial con datasets sintéticos o semisintéticos, pero la literatura crítica destaca que esos resultados han traducido mal a entornos más realistas. Layeghy y colegas muestran diferencias estadísticas claras entre datasets sintéticos NIDS y tráfico real, y tanto sus trabajos como el de Cantone et al. muestran que el rendimiento cross-dataset puede caer drásticamente, a veces hasta niveles cercanos al azar. Arp et al., desde una perspectiva más general de ML en seguridad, argumentan que este patrón no es un accidente aislado sino un síntoma de pitfalls metodológicos más amplios.
 
-La segunda debilidad es el **uso excesivo de splits aleatorios**. En NIDS tabulares, un split aleatorio puede mezclar flujos del mismo escenario, mismo día, mismo generador de tráfico o misma campaña entre entrenamiento y prueba. Eso no siempre implica leakage formal en el sentido clásico, pero sí puede generar una prueba demasiado fácil. Tu propio repositorio ya refleja esta preocupación al diferenciar entre split aleatorio, split duro por día/CSV, shuffled-label anti-leakage test y leave-one-exact-CSV-out, lo cual es exactamente el tipo de disciplina que la memoria debería subrayar.
+La segunda debilidad es el **uso excesivo de splits aleatorios**. En NIDS tabulares, un split aleatorio puede mezclar flujos del mismo escenario, mismo día, mismo generador de tráfico o misma campaña entre entrenamiento y prueba. Eso no siempre implica leakage formal en el sentido clásico, pero sí puede generar una prueba demasiado fácil. Tu propio repositorio ya refleja esta preocupación al diferenciar entre split aleatorio, split duro por día/CSV, shuffled-label anti-leakage test y leave-one-CSV-out, lo cual es exactamente el tipo de disciplina que la memoria debería subrayar.
 
 La tercera debilidad es el **leakage o uso de proxies de etiqueta**. En datasets flow-based es muy fácil que identificadores, puertos, timestamps absolutos o artefactos de exportación actúen como atajos espurios. Lo mejor de tu implementación actual es que formaliza una política anti-leakage explícita: excluye IPs, timestamps absolutos, Flow IDs y campos de puerto cuando actúan como proxies de etiqueta. Eso conecta muy bien con la crítica metodológica general de Arp et al. y con la práctica prudente exigible en un TFG serio.
 
@@ -144,7 +144,7 @@ La justificación más limpia para tu diseño sería la siguiente:
 
 **Error analysis.** En vez de centrarte sólo en accuracy global, conviene analizar falsos positivos y falsos negativos por familias de tráfico, días o ficheros, porque el coste de estos errores es diferente en defensa.
 
-**Fallback strict split.** Si el tiempo no permite una validación externa amplia, el mínimo metodológico debería incluir al menos un split duro por día/CSV y, si es posible, leave-one-exact-CSV-out, que tu código ya contempla.
+**Fallback strict split.** Si el tiempo no permite una validación externa amplia, el mínimo metodológico debería incluir al menos un split duro por día/CSV y, si es posible, leave-one-CSV-out, que tu código ya contempla.
 
 ### Brecha que tu TFG puede reclamar sin exagerar
 
