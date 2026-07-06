@@ -18,7 +18,9 @@
     "feature_names": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/feature_names.json",
     "environment": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json",
     "tensorboard_dir": "runs/cicids2017",
-    "checkpoints_dir": null
+    "checkpoints_dir": null,
+    "tensorboard_scalar_plots": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/plots/tensorboard_scalars",
+    "tensorboard_scalar_export_manifest": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/plots/tensorboard_scalars/tensorboard_scalar_export_manifest.json"
   },
   "file_artifacts": {
     "model": {

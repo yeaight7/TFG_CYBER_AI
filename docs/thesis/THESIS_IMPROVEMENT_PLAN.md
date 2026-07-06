@@ -127,19 +127,19 @@ Rule: **no number may appear in any figure that is not present in a committed ar
 
 | ID | Task | Model | Dep | Status | Evidence |
 |----|------|-------|-----|--------|----------|
-| F1.1 | `uv sync --all-extras`; scaffold `scripts/make_thesis_figures.py` (one function per figure, `matplotlib.use("Agg")`, writes manifest) | sonnet | F0 | [ ] | |
-| F1.2 | Run `scripts/export_tensorboard_scalars.py` on MAIN TB event log (`runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/events.out.tfevents.*`) → CSVs | sonnet | F1.1 | [ ] | |
-| F1.3 | F8 learning curves (reward/loss vs steps) from F1.2 CSVs | sonnet | F1.2 | [ ] | |
-| F1.4 | F9 confusion-matrix heatmap MAIN (TN 451631 / FP 2989 / FN 518 / TP 111011) from MAIN `metrics.json` | sonnet | F1.1 | [ ] | |
-| F1.5 | F12 duplicate/leakage bars (22.30 / 24.86 / 40.12 / 21.12%) from `runs/validation/duplicate_analysis_seed42.json` | sonnet | F1.1 | [ ] | |
-| F1.6 | F13 **star figure**: QRDQN vs RF across 3 partitions (recall+F1 attack; incl. RF LOO-Wednesday 0.00719) from MAIN + `VAL_checks_C_20260213_004847` + `runs/cicids2017/baseline_random_forest_comparison/` | sonnet | F1.1 | [ ] | |
-| F1.7 | F11 CM heatmap Check C — **caption/metadata must state proxy net, not MAIN weights** | sonnet | F1.1 | [ ] | |
-| F1.8 | F15 Phase-2 results (block_rate 0.2524, CM) from `runs/phase2/P2v2_pred_20260610_161231_MAIN/` | sonnet | F1.1 | [ ] | |
-| F1.9 | F10 bootstrap-CI errorbars from `runs/validation/bootstrap_ci_seed42.json` | sonnet | F1.1 | [ ] | |
-| F1.10 | F6 per-day CICIDS2017 composition (pandas count over `datasets/CICIDS2017/*.csv`, user-approved EDA) + emit T-E table data | sonnet | F1.1 | [ ] | |
-| F1.11 | F7 MAIN-partition class balance from MAIN `config.json` `split_metadata` | sonnet | F1.1 | [ ] | |
-| F1.12 | F14 CM heatmap RF day-split | sonnet | F1.1 | [ ] | |
-| F1.V | **Verify** (top model, separate agent): every manifest value byte-matches its source artifact; G4 | TOP | F1.* | [ ] | |
+| F1.1 | `uv sync --all-extras`; scaffold `scripts/make_thesis_figures.py` (one function per figure, `matplotlib.use("Agg")`, writes manifest) | sonnet | F0 | [x] | commit 8667520 · SOURCE_DATE_EPOCH for reproducible PDFs |
+| F1.2 | Run `scripts/export_tensorboard_scalars.py` on MAIN TB event log (`runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/events.out.tfevents.*`) → CSVs | sonnet | F1.1 | [x] | commit 89bb943 · 6 scalar tags exported (see DT-6) |
+| F1.3 | F8 learning curves (reward/loss vs steps) from F1.2 CSVs | sonnet | F1.2 | [x] | commit 816164a · `figuras/f8_curvas_entrenamiento.pdf` |
+| F1.4 | F9 confusion-matrix heatmap MAIN (TN 451631 / FP 2989 / FN 518 / TP 111011) from `bootstrap_ci_seed42.json` `confusion_counts` (MAIN `metrics.json` has no cells) | sonnet | F1.1 | [x] | commit 816164a · `figuras/f9_cm_main.pdf` |
+| F1.5 | F12 duplicate/leakage bars (22.30 / 24.86 / 40.12 / 21.12%) from `runs/validation/duplicate_analysis_seed42.json` | sonnet | F1.1 | [x] | commit 816164a · `figuras/f12_duplicados.pdf` |
+| F1.6 | F13 **star figure**: QRDQN vs RF across 3 partitions (recall+F1 attack; incl. RF LOO-Wednesday 0.00719) from MAIN + `VAL_checks_C_20260213_004847` + `runs/cicids2017/baseline_random_forest_comparison/` | sonnet | F1.1 | [x] | commit 816164a · `figuras/f13_qrdqn_vs_rf.pdf` · QRDQN-LOO slot = "pendiente de GPU" text, no bar |
+| F1.7 | F11 CM heatmap Check C — **caption/metadata must state proxy net, not MAIN weights** | sonnet | F1.1 | [x] | commit 816164a · disclosure embedded as in-figure footnote |
+| F1.8 | F15 Phase-2 results (block_rate 0.2524, CM) from `runs/phase2/P2v2_pred_20260610_161231_MAIN/` | sonnet | F1.1 | [x] | commit 816164a · lab-validity footnote embedded |
+| F1.9 | F10 bootstrap-CI errorbars from `runs/validation/bootstrap_ci_seed42.json` | sonnet | F1.1 | [x] | commit 816164a · no per-point labels (table `tab:bootstrap-ci` is the table view) |
+| F1.10 | F6 per-day CICIDS2017 composition (pandas count over `datasets/CICIDS2017/*.csv`, user-approved EDA) + emit T-E table data | sonnet | F1.1 | [x] | commit 816164a · `figuras/data_composicion_dia.json` (feeds T-E) |
+| F1.11 | F7 MAIN-partition class balance from MAIN `config.json` `split_metadata` | sonnet | F1.1 | [x] | commit 816164a · `figuras/f7_balance_particion.pdf` |
+| F1.12 | F14 CM heatmap RF day-split | sonnet | F1.1 | [x] | commit 816164a · `figuras/f14_cm_rf_dia.pdf` |
+| F1.V | **Verify** (top model, separate agent): every manifest value byte-matches its source artifact; G4 | TOP | F1.* | [x] | 8/8 verifiers PASS (102 checks, 0 mismatches, 0 visual issues) · G1=clean/118pp · G4=0 missing · G5=baseline intact · G6=clean |
 
 ## F2 — TikZ diagrams (‖ F1, F3)
 
@@ -306,8 +306,18 @@ No thesis claim or figure may depend on these until they are actually run and th
 - DT-3 (2026-07-05): `report/` EN mirror frozen until F13.
 - DT-4 (2026-07-05): Glossary as manual longtable; NO `glossaries` package (avoids makeglossaries build-chain risk).
 - DT-5 (2026-07-05): Metodología split into Diseño del sistema + Protocolo experimental (F4) — pure move, fallback is meta-sections if split proves too risky.
+- DT-6 (2026-07-06): The MAIN TensorBoard event log is LOCAL-ONLY (`.gitignore` line `runs/**/events.out.tfevents.*`). The exported CSVs under `runs/cicids2017/MAIN_.../plots/tensorboard_scalars/` are the committed, durable source for figure F8.
+- DT-7 (2026-07-06): Figure palette (dataviz-validated on white surface): QRDQN `#2a78d6` / RF `#1baf7a` (aqua <3:1 contrast → direct value labels mandatory); benigno `#2a78d6` / ataque `#e34948`; CM heatmaps = single-hue blue ramp, row-normalized shading with count+row-% annotations.
 
 ## Execution log (append one block per phase/session)
+
+### F1 — 2026-07-06 — DONE
+- Branch `claude/thesis-f1-figures`. Commits: 8667520 (generator), 89bb943 (TB scalar export), 816164a (10 figures + manifest + per-day data JSON).
+- 10 data figures generated from committed artifacts only; palette validated with the dataviz validator (DT-7); proxy-net (F11/F13) and lab-validity (F15) disclosures embedded as in-figure footnotes; QRDQN-LOO shown as "pendiente de GPU", no fabricated bar.
+- Discovered: MAIN `metrics.json` has no CM cells — F9 sources them from `bootstrap_ci_seed42.json` (`confusion_counts`, self-validated vs regenerated counts). TB event log is local-only → exported CSVs committed (DT-6). Infiltration day has 36 attacks (0.0125%) — F6 labels it "<0.1 % ataque", not 0.
+- F1.V: 8-agent adversarial verification workflow — 8/8 PASS, 102 checks, 0 mismatches, 0 visual issues.
+- Gates: G1 clean (118 pp, PDF restored, not committed on branch), G3 clean, G4 0 missing, G5 baseline intact, G6 clean.
+- Last-green commit: see PR. WIP: none.
 
 ### F0 — 2026-07-05 — DONE (this PR)
 - Branch `claude/thesis-f0-scaffold`. Toolchain verified with full `latexmk -gg` rebuild: biber 2.21 green under `TEMP=C:\Temp`, 118 pp, 0 undefined refs.

@@ -1,0 +1,109 @@
+{
+  "generated_by": "scripts/make_thesis_figures.py",
+  "source": "datasets/CICIDS2017/*.csv (curated, git LFS)",
+  "label_rule": "BENIGN -> benigno; any other label -> ataque",
+  "per_file": [
+    {
+      "file": "Monday-WorkingHours.pcap_ISCX.csv",
+      "display": "Lunes",
+      "n_rows": 529918,
+      "n_benign": 529918,
+      "n_attack": 0,
+      "attack_pct": 0.0,
+      "label_counts": {
+        "BENIGN": 529918
+      }
+    },
+    {
+      "file": "Tuesday-WorkingHours.pcap_ISCX.csv",
+      "display": "Martes",
+      "n_rows": 445909,
+      "n_benign": 432074,
+      "n_attack": 13835,
+      "attack_pct": 3.1027,
+      "label_counts": {
+        "BENIGN": 432074,
+        "FTP-Patator": 7938,
+        "SSH-Patator": 5897
+      }
+    },
+    {
+      "file": "Wednesday-workingHours.pcap_ISCX.csv",
+      "display": "Miércoles",
+      "n_rows": 692703,
+      "n_benign": 440031,
+      "n_attack": 252672,
+      "attack_pct": 36.4762,
+      "label_counts": {
+        "BENIGN": 440031,
+        "DoS GoldenEye": 10293,
+        "DoS Hulk": 231073,
+        "DoS Slowhttptest": 5499,
+        "DoS slowloris": 5796,
+        "Heartbleed": 11
+      }
+    },
+    {
+      "file": "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+      "display": "Jueves (mañana, ataques web)",
+      "n_rows": 170366,
+      "n_benign": 168186,
+      "n_attack": 2180,
+      "attack_pct": 1.2796,
+      "label_counts": {
+        "BENIGN": 168186,
+        "Web Attack � Brute Force": 1507,
+        "Web Attack � Sql Injection": 21,
+        "Web Attack � XSS": 652
+      }
+    },
+    {
+      "file": "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+      "display": "Jueves (tarde, infiltración)",
+      "n_rows": 288602,
+      "n_benign": 288566,
+      "n_attack": 36,
+      "attack_pct": 0.0125,
+      "label_counts": {
+        "BENIGN": 288566,
+        "Infiltration": 36
+      }
+    },
+    {
+      "file": "Friday-WorkingHours-Morning.pcap_ISCX.csv",
+      "display": "Viernes (mañana)",
+      "n_rows": 191033,
+      "n_benign": 189067,
+      "n_attack": 1966,
+      "attack_pct": 1.0291,
+      "label_counts": {
+        "BENIGN": 189067,
+        "Bot": 1966
+      }
+    },
+    {
+      "file": "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+      "display": "Viernes (tarde, PortScan)",
+      "n_rows": 286467,
+      "n_benign": 127537,
+      "n_attack": 158930,
+      "attack_pct": 55.4793,
+      "label_counts": {
+        "BENIGN": 127537,
+        "PortScan": 158930
+      }
+    },
+    {
+      "file": "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
+      "display": "Viernes (tarde, DDoS)",
+      "n_rows": 225745,
+      "n_benign": 97718,
+      "n_attack": 128027,
+      "attack_pct": 56.7131,
+      "label_counts": {
+        "BENIGN": 97718,
+        "DDoS": 128027
+      }
+    }
+  ]
+}

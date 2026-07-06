@@ -1,0 +1,52 @@
+{
+  "run_id": "MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+  "runs_dir": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017",
+  "output_dir": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars",
+  "event_dirs": [
+    "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655"
+  ],
+  "exported_scalars": [
+    {
+      "event_dir": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+      "tag": "rollout/ep_len_mean",
+      "rows": 75,
+      "csv": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__rollout__ep_len_mean.csv",
+      "png": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__rollout__ep_len_mean.png"
+    },
+    {
+      "event_dir": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+      "tag": "rollout/ep_rew_mean",
+      "rows": 75,
+      "csv": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__rollout__ep_rew_mean.csv",
+      "png": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__rollout__ep_rew_mean.png"
+    },
+    {
+      "event_dir": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+      "tag": "rollout/exploration_rate",
+      "rows": 75,
+      "csv": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__rollout__exploration_rate.csv",
+      "png": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__rollout__exploration_rate.png"
+    },
+    {
+      "event_dir": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+      "tag": "time/fps",
+      "rows": 75,
+      "csv": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__time__fps.csv",
+      "png": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__time__fps.png"
+    },
+    {
+      "event_dir": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+      "tag": "train/learning_rate",
+      "rows": 74,
+      "csv": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__train__learning_rate.csv",
+      "png": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__train__learning_rate.png"
+    },
+    {
+      "event_dir": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+      "tag": "train/loss",
+      "rows": 74,
+      "csv": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__train__loss.csv",
+      "png": "C:\\Users\\Rivero\\Desktop\\TFG_CYBER_AI\\runs\\cicids2017\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655\\plots\\tensorboard_scalars\\MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__train__loss.png"
+    }
+  ]
+}

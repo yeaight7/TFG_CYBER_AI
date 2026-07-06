@@ -1,0 +1,281 @@
+{
+  "figures": {
+    "f6_composicion_dia": {
+      "id": "f6_composicion_dia",
+      "pdf": "memoria/figuras/f6_composicion_dia.pdf",
+      "png": "memoria/figuras/f6_composicion_dia.png",
+      "sources": [
+        "datasets/CICIDS2017/Monday-WorkingHours.pcap_ISCX.csv",
+        "datasets/CICIDS2017/Tuesday-WorkingHours.pcap_ISCX.csv",
+        "datasets/CICIDS2017/Wednesday-workingHours.pcap_ISCX.csv",
+        "datasets/CICIDS2017/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "datasets/CICIDS2017/Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+        "datasets/CICIDS2017/Friday-WorkingHours-Morning.pcap_ISCX.csv",
+        "datasets/CICIDS2017/Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+        "datasets/CICIDS2017/Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv"
+      ],
+      "values": {
+        "Lunes": {
+          "n_benign": 529918,
+          "n_attack": 0
+        },
+        "Martes": {
+          "n_benign": 432074,
+          "n_attack": 13835
+        },
+        "Miércoles": {
+          "n_benign": 440031,
+          "n_attack": 252672
+        },
+        "Jueves (mañana, ataques web)": {
+          "n_benign": 168186,
+          "n_attack": 2180
+        },
+        "Jueves (tarde, infiltración)": {
+          "n_benign": 288566,
+          "n_attack": 36
+        },
+        "Viernes (mañana)": {
+          "n_benign": 189067,
+          "n_attack": 1966
+        },
+        "Viernes (tarde, PortScan)": {
+          "n_benign": 127537,
+          "n_attack": 158930
+        },
+        "Viernes (tarde, DDoS)": {
+          "n_benign": 97718,
+          "n_attack": 128027
+        }
+      },
+      "notes": "Per-file label counts written to memoria/figuras/data_composicion_dia.json (feeds table T-E)."
+    },
+    "f7_balance_particion": {
+      "id": "f7_balance_particion",
+      "pdf": "memoria/figuras/f7_balance_particion.pdf",
+      "png": "memoria/figuras/f7_balance_particion.png",
+      "sources": [
+        "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json"
+      ],
+      "values": {
+        "train_benign": 1818477,
+        "train_attack": 446117,
+        "test_benign": 454620,
+        "test_attack": 111529,
+        "train_attack_rate": 0.19699645940950122,
+        "test_attack_rate": 0.19699584385029384
+      },
+      "notes": ""
+    },
+    "f8_curvas_entrenamiento": {
+      "id": "f8_curvas_entrenamiento",
+      "pdf": "memoria/figuras/f8_curvas_entrenamiento.pdf",
+      "png": "memoria/figuras/f8_curvas_entrenamiento.png",
+      "sources": [
+        "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/plots/tensorboard_scalars/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__rollout__ep_rew_mean.csv",
+        "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/plots/tensorboard_scalars/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655__train__loss.csv"
+      ],
+      "values": {
+        "ep_rew_mean": {
+          "n_points": 75,
+          "first": -11325.875,
+          "last": 2451.735107421875,
+          "last_step": 3000000
+        },
+        "train_loss": {
+          "n_points": 74,
+          "first": 8.031821250915527,
+          "last": 1.6016274690628052,
+          "last_step": 3000000
+        }
+      },
+      "notes": "Exported from the local-only TensorBoard event log; the committed CSVs under runs/.../plots/tensorboard_scalars/ are the durable source."
+    },
+    "f9_cm_main": {
+      "id": "f9_cm_main",
+      "pdf": "memoria/figuras/f9_cm_main.pdf",
+      "png": "memoria/figuras/f9_cm_main.png",
+      "sources": [
+        "runs/validation/bootstrap_ci_seed42.json"
+      ],
+      "values": {
+        "tn": 451631,
+        "fp": 2989,
+        "fn": 518,
+        "tp": 111011
+      },
+      "notes": "Partición aleatoria de prueba, 566 149 flujos. Ejecución MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655."
+    },
+    "f10_ic_bootstrap": {
+      "id": "f10_ic_bootstrap",
+      "pdf": "memoria/figuras/f10_ic_bootstrap.pdf",
+      "png": "memoria/figuras/f10_ic_bootstrap.png",
+      "sources": [
+        "runs/validation/bootstrap_ci_seed42.json"
+      ],
+      "values": {
+        "accuracy": {
+          "point": 0.993806,
+          "boot_mean": 0.993806,
+          "boot_std": 0.000104,
+          "ci95_low": 0.993601,
+          "ci95_high": 0.994009
+        },
+        "balanced_accuracy": {
+          "point": 0.99439,
+          "boot_mean": 0.994391,
+          "boot_std": 0.000118,
+          "ci95_low": 0.994156,
+          "ci95_high": 0.994622
+        },
+        "mcc": {
+          "point": 0.980675,
+          "boot_mean": 0.980677,
+          "boot_std": 0.00032,
+          "ci95_low": 0.980043,
+          "ci95_high": 0.981302
+        },
+        "precision_attack": {
+          "point": 0.973781,
+          "boot_mean": 0.973783,
+          "boot_std": 0.000464,
+          "ci95_low": 0.972864,
+          "ci95_high": 0.974678
+        },
+        "recall_attack": {
+          "point": 0.995355,
+          "boot_mean": 0.995357,
+          "boot_std": 0.000205,
+          "ci95_low": 0.994952,
+          "ci95_high": 0.99575
+        },
+        "f1_attack": {
+          "point": 0.98445,
+          "boot_mean": 0.984451,
+          "boot_std": 0.000258,
+          "ci95_low": 0.983942,
+          "ci95_high": 0.984955
+        },
+        "fpr": {
+          "point": 0.006575,
+          "boot_mean": 0.006574,
+          "boot_std": 0.000119,
+          "ci95_low": 0.006344,
+          "ci95_high": 0.00681
+        },
+        "fnr": {
+          "point": 0.004645,
+          "boot_mean": 0.004643,
+          "boot_std": 0.000205,
+          "ci95_low": 0.00425,
+          "ci95_high": 0.005048
+        }
+      },
+      "notes": "CIs quantify sampling precision only (single training seed)."
+    },
+    "f11_cm_check_c": {
+      "id": "f11_cm_check_c",
+      "pdf": "memoria/figuras/f11_cm_check_c.pdf",
+      "png": "memoria/figuras/f11_cm_check_c.png",
+      "sources": [
+        "runs/validation/VAL_checks_C_20260213_004847/validation_results.json"
+      ],
+      "values": {
+        "tn": 823660,
+        "fp": 47414,
+        "fn": 136970,
+        "tp": 154169
+      },
+      "notes": "Red proxy [512, 256] entrenada 30 000 pasos para esta comprobación; NO son los pesos del modelo MAIN. Prueba: 1 162 213 flujos."
+    },
+    "f12_duplicados": {
+      "id": "f12_duplicados",
+      "pdf": "memoria/figuras/f12_duplicados.pdf",
+      "png": "memoria/figuras/f12_duplicados.png",
+      "sources": [
+        "runs/validation/duplicate_analysis_seed42.json"
+      ],
+      "values": {
+        "Duplicados exactos (conjunto completo)": 22.3005,
+        "Filas de prueba presentes en entrenamiento": 24.8624,
+        "Ataques de prueba presentes en entrenamiento": 40.1232,
+        "Benignos de prueba presentes en entrenamiento": 21.1185
+      },
+      "notes": ""
+    },
+    "f13_qrdqn_vs_rf": {
+      "id": "f13_qrdqn_vs_rf",
+      "pdf": "memoria/figuras/f13_qrdqn_vs_rf.pdf",
+      "png": "memoria/figuras/f13_qrdqn_vs_rf.png",
+      "sources": [
+        "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json",
+        "runs/validation/VAL_checks_C_20260213_004847/validation_results.json",
+        "runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__random_split/metrics.json",
+        "runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__day_split/metrics.json",
+        "runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__leave_one_out_wednesday/metrics.json"
+      ],
+      "values": {
+        "recall_attack": {
+          "QRDQN": [
+            0.995355468084534,
+            0.5295374374439701,
+            null
+          ],
+          "Random Forest": [
+            0.9985295304360301,
+            0.08135289329152054,
+            0.0071871833839918945
+          ]
+        },
+        "f1_attack": {
+          "QRDQN": [
+            0.9844498933618293,
+            0.6257849253737402,
+            null
+          ],
+          "Random Forest": [
+            0.9967644202583988,
+            0.15005226646393613,
+            0.014270222697197818
+          ]
+        }
+      },
+      "notes": "QRDQN day-split = Check C proxy net; QRDQN LOO pending (deferred GPU register G.1)."
+    },
+    "f14_cm_rf_dia": {
+      "id": "f14_cm_rf_dia",
+      "pdf": "memoria/figuras/f14_cm_rf_dia.pdf",
+      "png": "memoria/figuras/f14_cm_rf_dia.png",
+      "sources": [
+        "runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__day_split/metrics.json"
+      ],
+      "values": {
+        "tn": 870208,
+        "fp": 866,
+        "fn": 267454,
+        "tp": 23685
+      },
+      "notes": ""
+    },
+    "f15_fase2": {
+      "id": "f15_fase2",
+      "pdf": "memoria/figuras/f15_fase2.pdf",
+      "png": "memoria/figuras/f15_fase2.png",
+      "sources": [
+        "runs/phase2/P2v2_pred_20260610_161231_MAIN/metrics.json"
+      ],
+      "values": {
+        "tn": 1489498,
+        "fp": 10502,
+        "fn": 5774,
+        "tp": 494226,
+        "n_flows": 2000000,
+        "block_rate": 0.252364,
+        "accuracy": 0.991862
+      },
+      "notes": "Tráfico capturado por el operador en un laboratorio doméstico cerrado; validez externa limitada."
+    }
+  },
+  "generated_at": "2026-07-06T07:39:41+00:00",
+  "generator": "scripts/make_thesis_figures.py"
+}
