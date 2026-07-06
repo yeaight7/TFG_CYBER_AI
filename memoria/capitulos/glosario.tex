@@ -1,35 +1,88 @@
-\chapter*{Glosario de acrónimos}
-\addcontentsline{toc}{chapter}{Glosario de acrónimos}
+\chapter*{Glosario de acrónimos y términos}
+\addcontentsline{toc}{chapter}{Glosario de acrónimos y términos}
+
+\section*{Acrónimos}
 
 \begin{longtable}{@{}p{2.6cm}p{10.8cm}@{}}
+\textbf{ACK} & \emph{Acknowledgement}, flag TCP que confirma recepción de datos. \\[2pt]
 \textbf{CIC} & Canadian Institute for Cybersecurity (Universidad de Nuevo Brunswick), creador del conjunto de datos CICIDS2017. \\[2pt]
 \textbf{CICIDS2017} & Conjunto de datos de referencia para la detección de intrusiones en red, publicado por el CIC en 2017. \\[2pt]
+\textbf{CPU} & Unidad central de procesamiento (\emph{Central Processing Unit}). \\[2pt]
 \textbf{CSE} & Communications Security Establishment, organismo coautor del conjunto CSE-CIC-IDS2018. \\[2pt]
-\textbf{CSV} & Valores separados por comas (\emph{comma-separated values}), formato de los ficheros del conjunto de datos. \\[2pt]
+\textbf{CSV} & Valores separados por comas (\emph{comma-separated values}), formato de los ficheros tabulares usados por el proyecto. \\[2pt]
 \textbf{DDoS} & Denegación de servicio distribuida (\emph{Distributed Denial of Service}). \\[2pt]
+\textbf{DDPG} & \emph{Deep Deterministic Policy Gradient}, algoritmo actor-crítico citado como antecedente de RL continuo. \\[2pt]
 \textbf{DL} & Aprendizaje profundo (\emph{Deep Learning}). \\[2pt]
 \textbf{DQN} & \emph{Deep Q-Network}, algoritmo de aprendizaje por refuerzo profundo basado en valores. \\[2pt]
 \textbf{DRL} & Aprendizaje por refuerzo profundo (\emph{Deep Reinforcement Learning}). \\[2pt]
+\textbf{ECE} & \emph{Explicit Congestion Notification Echo}, flag TCP incluido entre las estadísticas de flujo. \\[2pt]
 \textbf{F1} & Media armónica de la precisión y el recall. \\[2pt]
+\textbf{FIN} & Flag TCP que indica cierre ordenado de una conexión. \\[2pt]
 \textbf{FN / FNR} & Falso negativo (ataque no bloqueado) / tasa de falsos negativos. \\[2pt]
 \textbf{FP / FPR} & Falso positivo (tráfico benigno bloqueado) / tasa de falsos positivos. \\[2pt]
 \textbf{GPU} & Unidad de procesamiento gráfico (\emph{Graphics Processing Unit}). \\[2pt]
+\textbf{HIDS} & Sistema de detección de intrusiones en host (\emph{Host Intrusion Detection System}). \\[2pt]
+\textbf{HTTP} & \emph{Hypertext Transfer Protocol}, protocolo de aplicación citado como ejemplo de tráfico de red. \\[2pt]
 \textbf{IC} & Intervalo de confianza. \\[2pt]
+\textbf{ID} & Identificador; en esta tesis se evita como característica cuando puede introducir fuga de información. \\[2pt]
 \textbf{IDS} & Sistema de detección de intrusiones (\emph{Intrusion Detection System}). \\[2pt]
 \textbf{IoT} & Internet de las cosas (\emph{Internet of Things}). \\[2pt]
+\textbf{IP} & Protocolo de Internet; las direcciones IP se excluyen de las características del modelo por riesgo de fuga. \\[2pt]
 \textbf{IPFIX} & \emph{IP Flow Information Export}, estándar de exportación de registros de flujo. \\[2pt]
 \textbf{IPS} & Sistema de prevención de intrusiones (\emph{Intrusion Prevention System}). \\[2pt]
+\textbf{JSON} & \emph{JavaScript Object Notation}, formato usado para configuraciones, métricas y manifiestos de artefactos. \\[2pt]
 \textbf{KDD} & KDD Cup 1999, conjunto de datos histórico de detección de intrusiones. \\[2pt]
 \textbf{MCC} & Coeficiente de correlación de Matthews (\emph{Matthews Correlation Coefficient}). \\[2pt]
 \textbf{ML} & Aprendizaje automático (\emph{Machine Learning}). \\[2pt]
+\textbf{MLP} & Perceptrón multicapa (\emph{Multilayer Perceptron}). \\[2pt]
 \textbf{NIDS} & Sistema de detección de intrusiones en red (\emph{Network Intrusion Detection System}). \\[2pt]
+\textbf{NIST} & National Institute of Standards and Technology, organismo de referencia en guías técnicas de seguridad. \\[2pt]
 \textbf{NSL-KDD} & Revisión depurada del conjunto KDD Cup 1999. \\[2pt]
+\textbf{POMDP} & Proceso de decisión de Markov parcialmente observable (\emph{Partially Observable Markov Decision Process}). \\[2pt]
+\textbf{PSH} & \emph{Push}, flag TCP incluido entre las estadísticas de flujo. \\[2pt]
 \textbf{QRDQN} & \emph{Quantile Regression Deep Q-Network}, variante distribucional de DQN empleada en este trabajo. \\[2pt]
 \textbf{RF} & \emph{Random Forest}, línea base supervisada de comparación. \\[2pt]
 \textbf{RL} & Aprendizaje por refuerzo (\emph{Reinforcement Learning}). \\[2pt]
-\textbf{SB3} & Stable-Baselines3, biblioteca de algoritmos de RL (junto con \texttt{sb3-contrib}). \\[2pt]
+\textbf{RST} & \emph{Reset}, flag TCP que indica reinicio abrupto de una conexión. \\[2pt]
+\textbf{RUN\_ID} & Identificador único de ejecución usado para localizar configuración, métricas y artefactos reproducibles. \\[2pt]
+\textbf{SB3} & Stable-Baselines3, biblioteca de algoritmos de RL; en el proyecto se usa junto con \texttt{sb3-contrib}. \\[2pt]
 \textbf{SDN} & Redes definidas por software (\emph{Software-Defined Networking}). \\[2pt]
+\textbf{SHA-256} & Función hash criptográfica usada para verificar identidad de artefactos o particiones. \\[2pt]
+\textbf{SIEM} & Gestión de eventos e información de seguridad (\emph{Security Information and Event Management}). \\[2pt]
 \textbf{SOAR} & Orquestación, automatización y respuesta de seguridad (\emph{Security Orchestration, Automation and Response}). \\[2pt]
+\textbf{SYN} & Flag TCP usado en el establecimiento de conexión. \\[2pt]
+\textbf{TCP} & Protocolo de control de transmisión (\emph{Transmission Control Protocol}). \\[2pt]
+\textbf{TFG} & Trabajo Fin de Grado. \\[2pt]
+\textbf{TLS} & Seguridad de la capa de transporte (\emph{Transport Layer Security}). \\[2pt]
 \textbf{TN / TP} & Verdadero negativo / verdadero positivo. \\[2pt]
-\textbf{UNSW-NB15} & Conjunto de datos de detección de intrusiones de la Universidad de Nueva Gales del Sur (2015). \\
+\textbf{UNSW-NB15} & Conjunto de datos de detección de intrusiones de la Universidad de Nueva Gales del Sur (2015). \\[2pt]
+\textbf{URG} & \emph{Urgent}, flag TCP incluido entre las estadísticas de flujo. \\
+\end{longtable}
+
+\section*{Términos}
+
+\begin{longtable}{@{}p{3.8cm}p{9.6cm}@{}}
+\textbf{Bandido contextual} & Formulación de decisión de un solo paso en la que la acción no modifica los estados futuros. En esta tesis describe la consecuencia de usar $\gamma = 0$ sobre un conjunto de datos estático. \\[2pt]
+\textbf{Benchmark} & Conjunto de datos y protocolo usados como referencia de evaluación. CICIDS2017 funciona aquí como benchmark interno, no como prueba de rendimiento en producción. \\[2pt]
+\textbf{Bootstrap} & Técnica de remuestreo usada para estimar intervalos de confianza sobre el conjunto de prueba fijo. En esta memoria cuantifica precisión de muestreo, no varianza entre semillas de entrenamiento. \\[2pt]
+\textbf{Buffer de repetición} & Memoria de transiciones usada por DQN/QRDQN para muestrear minibatches durante el entrenamiento y reducir correlaciones inmediatas entre pasos. \\[2pt]
+\textbf{Cambio de dominio} & Diferencia entre la distribución usada para entrenar el modelo y la distribución sobre la que se aplica después; por ejemplo, CICIDS2017 frente a tráfico de laboratorio. \\[2pt]
+\textbf{Despliegue activo} & Integración operativa que modifica tráfico real, por ejemplo bloqueando paquetes o flujos. Este trabajo no implementa despliegue activo. \\[2pt]
+\textbf{Escalador} & Transformación de normalización ajustada sobre entrenamiento, aquí \texttt{StandardScaler}; debe reutilizarse en inferencia sin recalcularse sobre datos de prueba o laboratorio. \\[2pt]
+\textbf{F1} & Métrica que combina precisión y recall mediante su media armónica; resulta útil cuando hay desbalanceo, pero no sustituye a la lectura de falsos positivos y falsos negativos. \\[2pt]
+\textbf{Falso negativo} & Error en el que un ataque se clasifica como benigno o se permite. En la tesis es el error más penalizado por la recompensa. \\[2pt]
+\textbf{Falso positivo} & Error en el que tráfico benigno se clasifica como ataque o se bloquea. Afecta a disponibilidad y carga operativa. \\[2pt]
+\textbf{Flujo} & Resumen tabular de una comunicación de red, normalmente bidireccional, descrita por estadísticas agregadas de paquetes, bytes, tiempos y flags. \\[2pt]
+\textbf{Inferencia offline} & Aplicación del modelo sobre ficheros ya capturados y almacenados, sin actuar sobre la red en vivo. \\[2pt]
+\textbf{Leave-one-CSV-out} & Protocolo de validación que retiene un CSV completo como prueba y entrena con los restantes, tratando cada fichero como una unidad de dominio. \\[2pt]
+\textbf{Línea base} & Modelo comparativo usado para contextualizar los resultados del método principal; en esta tesis, Random Forest es la línea base supervisada principal. \\[2pt]
+\textbf{Máscara de presencia} & Vector binario que indica si cada característica canónica procede de una columna fuente disponible o ha sido imputada por ausencia de columna. \\[2pt]
+\textbf{Partición aleatoria} & División entrenamiento/prueba por filas, normalmente estratificada. Es útil como comprobación de aprendizaje, pero puede sobreestimar generalización cuando hay duplicados o dependencia entre filas. \\[2pt]
+\textbf{Partición por día} & División que separa ficheros completos de CICIDS2017 según día o escenario de captura. Evalúa generalización de forma más estricta que la partición aleatoria. \\[2pt]
+\textbf{Pipeline} & Secuencia reproducible de pasos de procesamiento, entrenamiento, evaluación o inferencia. En esta tesis incluye carga, limpieza, mapeo canónico, escalado, modelo y artefactos de salida. \\[2pt]
+\textbf{Precisión} & Proporción de predicciones positivas que son correctas. Para la clase ataque, mide cuántos bloqueos o alertas corresponden realmente a ataques. \\[2pt]
+\textbf{Recall} & Proporción de ejemplos reales de una clase que el modelo detecta. Para la clase ataque, mide qué fracción de ataques se bloquea o identifica. \\[2pt]
+\textbf{Recorte por percentiles} & Limitación de valores crudos a rangos observados en entrenamiento, por ejemplo entre los percentiles 0.5 y 99.5. Sirve para acotar valores extremos en inferencia. \\[2pt]
+\textbf{Recorte por z-score} & Limitación de valores escalados a un umbral absoluto de desviaciones estándar. En Fase 2 ayuda a controlar valores fuera de distribución después del escalado. \\[2pt]
+\textbf{Red objetivo} & Copia estabilizadora de la red de valores usada en DQN/QRDQN para calcular objetivos temporales. Con $\gamma = 0$ no contribuye al objetivo de esta tesis. \\
 \end{longtable}

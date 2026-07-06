@@ -18,6 +18,15 @@ A grandes rasgos, la metodología comprende seis etapas encadenadas:
 
 Este diseño mantiene la tesis dentro de un marco experimental offline. Las salidas \texttt{PERMIT} y \texttt{BLOCK} son predicciones del modelo sobre registros de flujo almacenados. No son órdenes de cortafuegos y no modifican ninguna ruta de red activa.
 
+La Figura~\ref{fig:pipeline-sistema} resume esta arquitectura en dos recorridos separados: entrenamiento y evaluación sobre CICIDS2017, e inferencia offline posterior sobre tráfico de laboratorio. La separación visual refuerza una idea metodológica central: la Fase 2 reutiliza el esquema canónico, el escalador y el modelo entrenado, pero no reentrena ni reajusta el pipeline sobre la captura de laboratorio.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{\input{figuras/f2_pipeline_sistema}}
+\caption[Pipeline general del sistema]{Pipeline general del sistema: entrenamiento offline sobre CICIDS2017 e inferencia offline en la Fase 2. Fuente: elaboración propia a partir de \texttt{src/load\_cicids2017.py}, \texttt{src/canonical\_schema.py}, \texttt{src/train\_rl\_defender.py} y \texttt{scripts/predict\_real\_traffic\_v2.py}.}
+\label{fig:pipeline-sistema}
+\end{figure}
+
 \section{Fuente de datos y representación de la entrada}
 La tesis utiliza una representación tabular a nivel de flujo. Esta representación es un compromiso deliberado entre relevancia operativa, manejabilidad y privacidad. Captura el comportamiento estadístico a lo largo de secuencias de paquetes evitando la inspección de la carga útil.
 
@@ -109,6 +118,15 @@ Esto produce un vector \texttt{float32} de 152 dimensiones. La primera mitad con
 
 El Algoritmo~\ref{alg:mapeo-canonico} resume de forma operativa el proceso descrito en los párrafos anteriores: para cada fila del DataFrame de entrada construye, característica a característica, el valor $x_i$ y el indicador de presencia $m_i$ a partir del mapeo columna-fuente $\to$ nombre canónico, y concatena ambos vectores en la observación final de 152 dimensiones.
 
+La Figura~\ref{fig:vector-observacion} muestra la misma construcción desde el punto de vista de la entrada al modelo: columnas del extractor, mapeo al contrato canónico, 76 valores de características, 76 indicadores de presencia y vector final de 152 dimensiones.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{0.9\textwidth}{!}{\input{figuras/f4_vector_observacion}}
+\caption[Construcción del vector de observación]{Construcción del vector de observación canónico de 152 dimensiones. Fuente: elaboración propia a partir de \texttt{src/canonical\_schema.py}.}
+\label{fig:vector-observacion}
+\end{figure}
+
 \begin{algorithm}[htbp]
 \caption[Mapeo al esquema canónico y construcción de la observación]{Mapeo al esquema canónico y construcción de la observación. Fuente: elaboración propia a partir de \texttt{src/canonical\_schema.py}.}
 \label{alg:mapeo-canonico}
@@ -176,6 +194,15 @@ Decisión del agente & Etiqueta real: Ataque & Etiqueta real: Benigno \\
 \caption[Matriz de recompensa del entorno del defensor binario]{Matriz de recompensa por defecto para el entorno del defensor binario. Los valores son supuestos experimentales registrados con cada ejecución.}
 \label{tab:reward-matrix}
 \end{table}
+
+La Figura~\ref{fig:agente-entorno} representa el bucle agente--entorno usado en esta formulación. Aunque se utiliza una interfaz de RL estándar, la recompensa depende únicamente de la acción actual y de la etiqueta real del flujo evaluado; con $\gamma = 0$, el objetivo aprendido se reduce a la recompensa inmediata.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{0.9\textwidth}{!}{\input{figuras/f3_agente_entorno}}
+\caption[Interacción agente--entorno]{Interacción agente--entorno y matriz de recompensa de la decisión \texttt{PERMIT}/\texttt{BLOCK}. Fuente: elaboración propia a partir de \texttt{src/rl\_defender\_env.py} y de la configuración MAIN.}
+\label{fig:agente-entorno}
+\end{figure}
 
 La penalización por falso negativo domina la señal de recompensa. Un agente que emite \texttt{PERMIT} en cada observación acumula un retorno muy negativo en tráfico con alta proporción de ataques, mientras que un agente que emite \texttt{BLOCK} en cada observación acumula penalizaciones por falsos positivos sin obtener crédito por detección de ataques. La estructura de recompensa está por tanto diseñada para alejar al agente de políticas constantes degeneradas y conducirlo hacia un comportamiento discriminativo. La recompensa cero para el verdadero negativo es deliberada: recompensar explícitamente cada paso benigno correcto sesgaría al agente hacia maximizar la tasa de permiso en lugar de la calidad de detección. Estos valores son supuestos experimentales, no costes empresariales medidos. Se registran con cada ejecución para que las ejecuciones históricas puedan distinguirse de los valores por defecto actuales.
 
@@ -262,6 +289,15 @@ El algoritmo de RL principal es Quantile Regression Deep Q-Network (QRDQN) \pare
 El DQN estándar aproxima los valores-acción con una red neuronal y selecciona acciones según el retorno esperado estimado \parencite{Mnih2015DQN}. QRDQN extiende esta idea aprendiendo los cuantiles de la distribución del retorno. Esto es relevante para la tesis porque la estructura de recompensa es asimétrica: los falsos negativos conllevan una penalización mucho mayor que la recompensa que generan los permisos benignos correctos. Una visión distribucional puede representar más información sobre la variabilidad del retorno que una única estimación de la media.
 
 La metodología no asume que QRDQN sea inherentemente superior a los clasificadores supervisados para datos de flujo tabulares. En cambio, evalúa QRDQN como el representante principal de RL bajo el mismo preprocesamiento, las mismas particiones y las mismas métricas utilizadas por las líneas base.
+
+La arquitectura de red concreta de la ejecución MAIN se resume en la Figura~\ref{fig:arquitectura-qrdqn}: una entrada de 152 dimensiones, tres capas densas ocultas y una salida distribucional de 200 cuantiles por cada una de las dos acciones.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{\input{figuras/f5_arquitectura_qrdqn}}
+\caption[Arquitectura QRDQN de la ejecución MAIN]{Arquitectura QRDQN de la ejecución MAIN: observación canónica, capas densas, cuantiles por acción y decisión final por media de cuantiles. Fuente: elaboración propia a partir de \texttt{config.json} de la ejecución MAIN.}
+\label{fig:arquitectura-qrdqn}
+\end{figure}
 
 \subsection{Función de pérdida de regresión cuantílica}
 QRDQN representa la distribución del retorno de acción mediante $N$ estimaciones de cuantiles aprendidas $\{\theta_i(s, a)\}_{i=1}^{N}$ en puntos medios de cuantil fijos $\hat{\tau}_i = \frac{2i-1}{2N}$ \parencite{Dabney2018QRDQN}. Durante la selección de acción, estos cuantiles se promedian para producir una estimación del retorno esperado, recuperando la regla codiciosa estándar del DQN bajo expectativa.

@@ -57,6 +57,19 @@
 
 \newcommand{\citationneeded}[1]{\textbf{[Falta cita: #1]}}
 \newcommand{\verifycite}[1]{\textbf{[Verificar: #1]}}
+\newcommand{\placeholdercaption}[1]{\textcolor{tesisRojo}{\textbf{Pendiente:} #1}}
+\newcommand{\figureplaceholder}[1]{%
+  \begingroup
+  \setlength{\fboxsep}{10pt}%
+  \color{tesisRojo}%
+  \fbox{\parbox{0.84\textwidth}{\centering\bfseries Figura pendiente\\[3pt]\normalfont #1}}%
+  \endgroup}
+\newcommand{\tableplaceholder}[1]{%
+  \begingroup
+  \setlength{\fboxsep}{10pt}%
+  \color{tesisRojo}%
+  \fbox{\parbox{0.84\textwidth}{\centering\bfseries Tabla pendiente\\[3pt]\normalfont #1}}%
+  \endgroup}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 % Diseño del documento (colores tesis* definidos en figuras/tikz_estilos.tex)
