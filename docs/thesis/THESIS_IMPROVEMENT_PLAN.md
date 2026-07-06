@@ -187,15 +187,15 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 
 | ID | Task | Model | Dep | Status | Evidence |
 |---|---|---|---|---|---|
-| F5.1 | A1 entrenamiento QRDQN (from `src/train_rl_defender.py`; target line must show `y ← r`, reinforcing γ=0) | sonnet | F4 | [ ] | |
-| F5.2 | A2 `env.step` (from `src/rl_defender_env.py`; rewards tp=1.5/fp=−2.0/fn=−5.0/om=0) | sonnet | F4 | [ ] | |
-| F5.3 | A3 mapeo canónico (from `src/canonical_schema.py`) | sonnet | F4 | [ ] | |
-| F5.4 | A4 inferencia Fase 2 (from `scripts/predict_real_traffic_v2.py`) | sonnet | F4 | [ ] | |
-| F5.5 | T-A hiperparámetros QRDQN from MAIN `config.json` + provenance column ("perfil fijado a mano, no Optuna") | sonnet | F4 | [ ] | |
-| F5.6 | T-F recompensa con lectura multiobjetivo (C3: fn=−5.0 prioriza seguridad, fp=−2.0 reduce impacto) | sonnet | F4 | [ ] | |
-| F5.7 | T-G inventario de ejecuciones oficiales (MAIN, VAL A/B/C, bootstrap, duplicates, RF sweep 20260628, P2v2 MAIN) | sonnet | F4 | [ ] | |
-| F5.8 | T-E composición por día (data from F1.10) | sonnet | F1.10, F4 | [ ] | |
-| F5.V | G7 numbers check (top model) + gates G1–G3, G5, G6 | TOP | F5.* | [ ] | |
+| F5.1 | A1 entrenamiento QRDQN (from `src/train_rl_defender.py`; target line must show `y ← r`, reinforcing γ=0) | sonnet | F4 | [x] | |
+| F5.2 | A2 `env.step` (from `src/rl_defender_env.py`; rewards tp=1.5/fp=−2.0/fn=−5.0/om=0) | sonnet | F4 | [x] | |
+| F5.3 | A3 mapeo canónico (from `src/canonical_schema.py`) | sonnet | F4 | [x] | |
+| F5.4 | A4 inferencia Fase 2 (from `scripts/predict_real_traffic_v2.py`) | sonnet | F4 | [x] | |
+| F5.5 | T-A hiperparámetros QRDQN from MAIN `config.json` + provenance column ("perfil fijado a mano, no Optuna") | sonnet | F4 | [x] | |
+| F5.6 | T-F recompensa con lectura multiobjetivo (C3: fn=−5.0 prioriza seguridad, fp=−2.0 reduce impacto) | sonnet | F4 | [x] | |
+| F5.7 | T-G inventario de ejecuciones oficiales (MAIN, VAL A/B/C, bootstrap, duplicates, RF sweep 20260628, P2v2 MAIN) | sonnet | F4 | [x] | |
+| F5.8 | T-E composición por día (data from F1.10) | sonnet | F1.10, F4 | [x] | |
+| F5.V | G7 numbers check (top model) + gates G1–G3, G5, G6 | TOP | F5.* | [-] codex checked it | |
 
 ## F6 — Ch2: Objetivos, alcance y planificación
 
