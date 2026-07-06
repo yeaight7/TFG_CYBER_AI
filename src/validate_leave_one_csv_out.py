@@ -1,5 +1,5 @@
 """
-validate_leave_one_csv_out.py — Validación leave-one-exact-CSV-out para CICIDS2017.
+validate_leave_one_csv_out.py — Validación leave-one-CSV-out para CICIDS2017.
 
 Entrena QRDQN una vez por fold, dejando exactamente un CSV real como test y
 usando el resto de CSVs para train. Los resultados se guardan agregados en
@@ -273,7 +273,7 @@ def _resolve_holdout_csvs(requested_csvs: List[str] | None, available_csvs: List
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Leave-one-exact-CSV-out validation for CICIDS2017",
+        description="Leave-one-CSV-out validation for CICIDS2017",
     )
     parser.add_argument(
         "--timesteps",
