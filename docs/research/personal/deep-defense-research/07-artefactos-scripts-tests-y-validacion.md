@@ -108,7 +108,7 @@ Metricas principales:
 - `balanced_accuracy`: media entre recall benigno y recall ataque; ayuda cuando las clases estan desbalanceadas.
 - `reward_per_sample`: recompensa media bajo la funcion de costes definida.
 
-Regla de defensa: una accuracy alta en random split no demuestra robustez real. Hay que leerla junto con Check B, Check C, leave-one-exact-CSV-out y Phase 2.
+Regla de defensa: una accuracy alta en random split no demuestra robustez real. Hay que leerla junto con Check B, Check C, leave-one-CSV-out y Phase 2.
 
 ## 4) Clipping, z-scores y domain shift
 
@@ -159,7 +159,7 @@ Los tests de `tests/` y las validaciones de `runs/validation/` no responden a la
 | Tipo | Pregunta | Ejemplos |
 |------|----------|----------|
 | Tests unitarios | El codigo respeta invariantes pequenos y funciones concretas? | `test_canonical_schema.py`, `test_load_cicids2017.py`, `test_reward_config.py`, `test_predict_real_traffic_v2.py` |
-| Validaciones experimentales | El modelo y el pipeline se comportan bien bajo un protocolo de evaluacion? | Check A, Check B, Check C, leave-one-exact-CSV-out |
+| Validaciones experimentales | El modelo y el pipeline se comportan bien bajo un protocolo de evaluacion? | Check A, Check B, Check C, leave-one-CSV-out |
 
 Ejemplos:
 
@@ -177,7 +177,7 @@ Respuesta corta para tribunal: los tests reducen riesgo de bugs de implementacio
 | Check A | Prediccion directa del modelo contra `y_test`. | Evita depender de mecanicas internas del entorno para medir. |
 | Check B | Reentrenamiento con etiquetas barajadas. | Si el rendimiento siguiera alto, habria sospecha de leakage. |
 | Check C | Entrenar y evaluar en dias/CSV distintos. | Mide generalizacion mas dura que random split. |
-| Leave-one-exact-CSV-out | Cada fold deja fuera un CSV oficial completo. | Separa por archivo real y permite analizar variabilidad por captura/dia. |
+| leave-one-CSV-out | Cada fold deja fuera un CSV oficial completo. | Separa por archivo real y permite analizar variabilidad por captura/dia. |
 | Phase 2 | Inferencia offline sobre flujos de laboratorio. | Mide comportamiento fuera del dataset, con riesgo real de domain shift. |
 
 No se debe mezclar:
