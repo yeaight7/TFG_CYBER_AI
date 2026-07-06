@@ -14,9 +14,13 @@ report/*.log
 *.out
 *.run.xml
 *.toc
+*.lof
+*.lot
+*.loa
 *.gz
 *.fdb_latexmk
 *.fls
+*-SAVE-ERROR
 .vscode/
 .remember/
 report/tmp
