@@ -1,0 +1,25 @@
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
+
+Este Trabajo Fin de Grado diseña y evalúa un agente autónomo de ciberseguridad que decide, flujo a flujo, si el tráfico de una red debe permitirse o bloquearse. El problema se formula como una tarea de decisión sensible al coste mediante aprendizaje por refuerzo: un agente QRDQN (\emph{Quantile Regression Deep Q-Network}) observa un vector canónico de 152 dimensiones (76 características de flujo y 76 indicadores de presencia) y recibe recompensas asimétricas que penalizan más dejar pasar un ataque que bloquear tráfico legítimo. Con factor de descuento nulo, la formulación equivale a un bandido contextual, decisión que se declara y justifica explícitamente.
+
+El agente se entrena sobre el conjunto CICIDS2017 con una partición aleatoria estratificada 80/20 y se somete a una escalera de validación de exigencia creciente: evaluación directa, reentrenamiento con etiquetas barajadas, partición temporal por días, cuantificación de duplicados entre particiones, comparación con una línea base de Random Forest bajo el mismo protocolo y una segunda fase de inferencia \emph{offline} sobre tráfico capturado en un laboratorio doméstico cerrado.
+
+En la partición aleatoria el agente alcanza un F1 de ataque de 0.984, con un recall de 0.995 y una tasa de falsos positivos del 0.66\%; no obstante, se cuantifica que el 24.86\% de las filas de prueba está duplicado en el entrenamiento, por lo que estas cifras se interpretan como una cota optimista. Bajo la partición por días, el recall de ataque desciende a 0.530 ---medido con una red reducida de comprobación---, frente al 0.081 del Random Forest, que domina en distribución pero se desploma ante el cambio temporal. La Fase 2 alcanza un F1 de 0.984 con una tasa de bloqueo del 25.2\%, con validez externa limitada. Se concluye que la generalización dura, y no el rendimiento sobre el benchmark cómodo, es la señal creíble de utilidad defensiva.
+
+\vspace{1.2em}
+\noindent\textbf{Palabras clave:} aprendizaje por refuerzo; detección de intrusiones en red; CICIDS2017; generalización; QRDQN.
+
+\clearpage
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+This Bachelor's Thesis designs and evaluates an autonomous cybersecurity agent that decides, flow by flow, whether network traffic should be permitted or blocked. The problem is formulated as a cost-sensitive decision task using reinforcement learning: a QRDQN (Quantile Regression Deep Q-Network) agent observes a canonical 152-dimensional vector (76 flow features and 76 presence indicators) and receives asymmetric rewards that penalise letting an attack through more heavily than blocking legitimate traffic. With a zero discount factor, the formulation is equivalent to a contextual bandit, a decision that is explicitly disclosed and justified.
+
+The agent is trained on the CICIDS2017 dataset with a stratified 80/20 random partition and subjected to a validation ladder of increasing rigour: direct evaluation, retraining with shuffled labels, a temporal day-based split, quantification of duplicates across partitions, comparison against a Random Forest baseline under the same protocol, and a second phase of offline inference on traffic captured in a closed home laboratory.
+
+On the random partition the agent reaches an attack F1 of 0.984, with a recall of 0.995 and a false-positive rate of 0.66\%; however, 24.86\% of the test rows are found to be duplicated in the training set, so these figures are interpreted as an optimistic upper bound. Under the day-based split, attack recall drops to 0.530 ---measured with a reduced verification network---, against 0.081 for the Random Forest, which dominates in-distribution but collapses under temporal shift. Phase 2 reaches an F1 of 0.984 with a block rate of 25.2\%, with limited external validity. The thesis concludes that hard generalisation, rather than performance on a comfortable benchmark, is the credible signal of defensive usefulness.
+
+\vspace{1.2em}
+\noindent\textbf{Keywords:} reinforcement learning; network intrusion detection; CICIDS2017; generalization; QRDQN.
