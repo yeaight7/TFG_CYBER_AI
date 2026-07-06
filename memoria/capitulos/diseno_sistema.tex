@@ -107,6 +107,38 @@ La observación final es:
 \]
 Esto produce un vector \texttt{float32} de 152 dimensiones. La primera mitad contiene los valores de las características, y la segunda mitad contiene la máscara. El tamaño de la observación es por tanto invariante entre CICIDS2017, las particiones de validación y la inferencia en la Fase 2. Esta invariancia es importante porque la red de política del QRDQN espera una dimensión de entrada fija.
 
+El Algoritmo~\ref{alg:mapeo-canonico} resume de forma operativa el proceso descrito en los párrafos anteriores: para cada fila del DataFrame de entrada construye, característica a característica, el valor $x_i$ y el indicador de presencia $m_i$ a partir del mapeo columna-fuente $\to$ nombre canónico, y concatena ambos vectores en la observación final de 152 dimensiones.
+
+\begin{algorithm}[htbp]
+\caption[Mapeo al esquema canónico y construcción de la observación]{Mapeo al esquema canónico y construcción de la observación. Fuente: elaboración propia a partir de \texttt{src/canonical\_schema.py}.}
+\label{alg:mapeo-canonico}
+\begin{algorithmic}[1]
+\Require DataFrame $D$ con las columnas producidas por el extractor; mapeo $\mu$: columna\_fuente $\to$ nombre\_canónico
+\Ensure Matriz de observaciones $O$, con una fila $o \in \mathbb{R}^{152}$ (\texttt{float32}) por cada fila de $D$
+\For{cada fila $d$ de $D$}
+    \State $x \gets$ vector nulo de dimensión $76$
+    \State $m \gets$ vector nulo de dimensión $76$
+    \For{$i = 1$ hasta $76$}
+        \State $c_i \gets$ nombre canónico $i$-ésimo de \texttt{FEATURES\_CANON}
+        \If{existe columna\_fuente tal que $\mu(\text{columna\_fuente}) = c_i$ y columna\_fuente $\in$ columnas($D$)}
+            \State $v \gets$ CoerciónNumérica($d[\text{columna\_fuente}]$) \Comment{no numérico $\to$ NaN}
+            \If{$v$ no es finito (NaN o $\pm\infty$)}
+                \State $v \gets 0$
+            \EndIf
+            \State $x_i \gets v$
+            \State $m_i \gets 1$ \Comment{columna fuente mapeada y presente}
+        \Else
+            \State $x_i \gets 0$ \Comment{imputación por ausencia de columna fuente}
+            \State $m_i \gets 0$
+        \EndIf
+    \EndFor
+    \State $o \gets \mathrm{concat}(x_1,\dots,x_{76},\, m_1,\dots,m_{76})$ \Comment{vector \texttt{float32} de 152 dimensiones}
+    \State añadir $o$ a $O$
+\EndFor
+\State \Return $O$
+\end{algorithmic}
+\end{algorithm}
+
 \section{Formulación del aprendizaje por refuerzo}
 El defensor se implementa como un entorno compatible con Gymnasium \parencite{GymnasiumDocs}. Esto permite que el código estándar de RL basado en valores interactúe con el conjunto de datos de flujos a través de la interfaz habitual \texttt{reset()} y \texttt{step()}.
 
@@ -147,6 +179,24 @@ Decisión del agente & Etiqueta real: Ataque & Etiqueta real: Benigno \\
 
 La penalización por falso negativo domina la señal de recompensa. Un agente que emite \texttt{PERMIT} en cada observación acumula un retorno muy negativo en tráfico con alta proporción de ataques, mientras que un agente que emite \texttt{BLOCK} en cada observación acumula penalizaciones por falsos positivos sin obtener crédito por detección de ataques. La estructura de recompensa está por tanto diseñada para alejar al agente de políticas constantes degeneradas y conducirlo hacia un comportamiento discriminativo. La recompensa cero para el verdadero negativo es deliberada: recompensar explícitamente cada paso benigno correcto sesgaría al agente hacia maximizar la tasa de permiso en lugar de la calidad de detección. Estos valores son supuestos experimentales, no costes empresariales medidos. Se registran con cada ejecución para que las ejecuciones históricas puedan distinguirse de los valores por defecto actuales.
 
+Los valores de la Tabla~\ref{tab:reward-matrix} admiten además una lectura como compromiso multiobjetivo implícito entre dos objetivos operativos, seguridad (minimizar ataques admitidos) e impacto (minimizar el bloqueo de tráfico legítimo), que se resume en la Tabla~\ref{tab:recompensa-multiobjetivo}.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{p{2.9cm}cp{2.6cm}p{3.9cm}}
+\toprule
+Resultado & Recompensa & Objetivo operativo & Lectura \\
+\midrule
+FN (ataque permitido) & $-5.0$ & Seguridad & Coste dominante: un ataque queda admitido \\
+FP (benigno bloqueado) & $-2.0$ & Impacto & Penaliza el bloqueo de tráfico legítimo \\
+TP (ataque bloqueado) & $+1.5$ & Seguridad & Crédito positivo por detección correcta de un ataque \\
+TN/omisión (benigno permitido) & $\phantom{-}0.0$ & Neutralidad deliberada & Evita sesgar al agente hacia maximizar la tasa de permiso \\
+\bottomrule
+\end{tabular}
+\caption[Lectura multiobjetivo de la función de recompensa]{Lectura multiobjetivo de la función de recompensa del entorno del defensor binario: cada resultado se asocia al objetivo operativo de seguridad o de impacto al que responde. Fuente: elaboración propia a partir de \texttt{src/rl\_defender\_env.py}.}
+\label{tab:recompensa-multiobjetivo}
+\end{table}
+
 \subsection{Estructura del episodio}
 Un episodio es una secuencia de decisiones sobre flujos. Al reiniciar, el entorno inicializa un índice sobre la partición seleccionada. Cuando el barajado está activado, el orden de entrenamiento se aleatoriza. En cada paso, el agente recibe una observación, selecciona \texttt{PERMIT} o \texttt{BLOCK}, recibe una recompensa calculada a partir de la etiqueta real y la acción, y avanza al flujo siguiente. Un episodio termina cuando se agota el conjunto de datos o se alcanza un número máximo de pasos configurado.
 
@@ -158,6 +208,47 @@ En cada llamada a \texttt{reset()}, el entorno selecciona la partición asignada
 La condición de terminación es el agotamiento del conjunto de datos o un número máximo de pasos configurable. En el modo de entrenamiento, el orden barajado garantiza que las transiciones del minibatch muestreen una distribución amplia de tipos de flujo durante un único episodio. En el modo de evaluación, el entorno es determinista: la misma partición recorrida en el mismo orden produce la misma secuencia de observaciones, recompensas y etiquetas. Este determinismo es esencial para la evaluación reproducible porque implica que las diferencias en métricas entre dos modelos guardados reflejan únicamente el comportamiento del modelo y no el ruido de muestreo en el bucle de evaluación.
 
 La separación entre los modos de entrenamiento y evaluación se aplica a nivel del entorno y no se deja al llamante. Pasar el indicador de modo correcto en el momento de la construcción establece tanto el conjunto de índices como el comportamiento de barajado, lo que evita un error frecuente en el que la evaluación hereda accidentalmente el orden barajado de un entorno de entrenamiento.
+
+El Algoritmo~\ref{alg:env-step} muestra el pseudocódigo del paso de decisión \texttt{step(a)} tal y como está implementado, que aplica la matriz de recompensas de la Tabla~\ref{tab:reward-matrix} a la etiqueta real del índice actual, hace avanzar el puntero de muestras y evalúa de forma independiente las condiciones de terminación (agotamiento del conjunto de índices) y truncación (límite de pasos por episodio).
+
+\begin{algorithm}[htbp]
+\caption[Paso de decisión del entorno]{Paso de decisión del entorno (\texttt{env.step}). Fuente: elaboración propia a partir de \texttt{src/rl\_defender\_env.py}.}
+\label{alg:env-step}
+\begin{algorithmic}[1]
+\Require Índice actual $i$, contador de pasos $t$ y vector de índices $\mathcal{I}$, inicializados en \Call{reset}{} (con $\mathcal{I}$ barajado si el indicador \textit{shuffle} está activo, según el modo fijado en la construcción del entorno)
+\Statex
+\Function{step}{$a$}
+  \If{$a \notin \{0,1\}$}
+    \State \Return error (acción inválida)
+  \EndIf
+  \State $idx \gets \mathcal{I}[i]$
+  \State $y \gets Y[idx]$ \Comment{etiqueta real de la muestra actual}
+  \If{$y$ = ataque}
+     \If{$a = 1$ (BLOCK)}
+        \State $r \gets tp = 1.5$ \Comment{verdadero positivo}
+     \Else
+        \State $r \gets fn = -5.0$ \Comment{falso negativo}
+     \EndIf
+  \Else \Comment{$y$ = benigno}
+     \If{$a = 0$ (PERMIT)}
+        \State $r \gets \text{omission} = 0.0$ \Comment{verdadero negativo}
+     \Else
+        \State $r \gets fp = -2.0$ \Comment{falso positivo}
+     \EndIf
+  \EndIf
+  \State $i \gets i+1$; \quad $t \gets t+1$ \Comment{avance del índice y del contador de pasos}
+  \State $terminated \gets (i \geq N)$ \Comment{$N$: tamaño del conjunto de muestras}
+  \State $truncated \gets (t \geq T_{\max})$ \Comment{$T_{\max}$: máximo de pasos por episodio}
+  \If{$terminated \lor truncated$}
+    \State $s' \gets X[idx]$ \Comment{se repite la observación de la muestra actual}
+  \Else
+    \State $s' \gets X[\mathcal{I}[i]]$ \Comment{observación de la siguiente muestra}
+  \EndIf
+  \State $info \gets \{sample\_index: idx,\ true\_label: y\}$
+  \State \Return $(s', r, terminated, truncated, info)$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Limitaciones de la formulación conjunto-de-datos-como-entorno}
 Dado que el entorno es un conjunto de datos estático, las acciones del agente no afectan a los estados futuros. Esto no es un problema completo de defensa cibernética autónoma en el que bloquear un flujo podría cambiar el comportamiento posterior del atacante, el estado del host, el enrutamiento o el contexto de alertas. La formulación se asemeja más a un problema de decisión contextual sensible al coste que a un proceso de decisión de Markov rico \parencite{SuttonBarto2018RL,Levine2020OfflineRL}.
@@ -209,8 +300,76 @@ La implementación utiliza el módulo QRDQN de \texttt{sb3-contrib} \parencite{S
 
 Los valores por defecto del preajuste completo actual utilizan lotes más grandes y más pasos de gradiente que el preajuste rápido. Esta separación permite al proyecto ejecutar comprobaciones rápidas de humo sin confundirlas con las ejecuciones finales del benchmark. Cualquier resultado reportado debe incluir el identificador exacto de la ejecución y la configuración.
 
+El Algoritmo~\ref{alg:entrenamiento-qrdqn} formaliza este pipeline de entrenamiento de extremo a extremo, desde la carga de los datos brutos de CICIDS2017 hasta la persistencia de los artefactos finales, con independencia del preajuste concreto o de los valores de hiperparámetros seleccionados en cada ejecución. La secuencia de pasos que ejecuta el script mantenido es única; solo los valores de las variables de configuración, documentados aparte, distinguen una ejecución de otra.
+
+\begin{algorithm}[htbp]
+\caption[Entrenamiento del defensor QRDQN]{Entrenamiento del agente defensor QRDQN sobre CICIDS2017: carga y limpieza de datos, mapeo canónico, partición train/test, ajuste del escalador exclusivamente sobre train, bucle de entrenamiento QRDQN con $\gamma=0$ y persistencia de artefactos. Fuente: elaboración propia a partir de \texttt{src/train\_rl\_defender.py}.}
+\label{alg:entrenamiento-qrdqn}
+\footnotesize
+\begin{algorithmic}[1]
+\Require CSV de CICIDS2017; semilla; preajuste (rápido/completo); modo de partición (aleatorio/día); hiperparámetros QRDQN $\eta, B, G, \tau, \varepsilon_0, \varepsilon_T, f_\varepsilon$
+\Ensure Modelo QRDQN, escalador, percentiles de entrenamiento, configuración y métricas de test persistidos
+\State Fijar la semilla en \texttt{numpy}/\texttt{random}/\texttt{torch}; cargar y limpiar los CSV según el preajuste \Comment{sin escalar}
+\State Mapear a esquema canónico (76 características + máscara de 76) $\rightarrow$ observaciones de 152 dimensiones; particionar en $(X_{\text{train}},y_{\text{train}})$, $(X_{\text{test}},y_{\text{test}})$
+\State Calcular percentiles $p_{0.5}, p_{99.5}$ de $X_{\text{train}}$ sin escalar; ajustar $\Sigma=$\texttt{StandardScaler} solo sobre $X_{\text{train}}$ \Comment{$X_{\text{test}}$ no interviene en el ajuste}
+\State $X_{\text{train}} \leftarrow \Sigma(X_{\text{train}})$; $X_{\text{test}} \leftarrow \Sigma(X_{\text{test}})$; persistir $\Sigma$, percentiles, nombres de características y metadatos del entorno
+\State Construir el entorno Gymnasium sobre $(X_{\text{train}}, y_{\text{train}})$ con la matriz de recompensa fijada
+\State Inicializar red de cuantiles $\theta$, red objetivo $\theta^- \leftarrow \theta$, buffer $\mathcal{D} \leftarrow \emptyset$, $\varepsilon \leftarrow \varepsilon_0$, $t \leftarrow 0$
+\While{$t < $ total de pasos temporales}
+    \State Observar $s$; con probabilidad $\varepsilon$, $a \leftarrow$ acción aleatoria en $\{\texttt{PERMIT}, \texttt{BLOCK}\}$; en caso contrario $a \leftarrow \arg\max_{a'} \tfrac{1}{N}\sum_{i} \theta_i(s, a')$
+    \State Ejecutar $a$; observar $r, s', \text{terminado}$; almacenar $(s, a, r, s', \text{terminado})$ en $\mathcal{D}$; $t \leftarrow t+1$
+    \State Actualizar $\varepsilon$ por decaimiento lineal de $\varepsilon_0$ a $\varepsilon_T$ sobre la fracción $f_\varepsilon$ del total de pasos
+    \If{$t \bmod \text{intervalo de red objetivo} = 0$}
+        \State $\theta^- \leftarrow \tau\,\theta + (1-\tau)\,\theta^-$ \Comment{$\tau=1$: copia dura}
+    \EndIf
+    \If{$t \bmod \text{train\_freq} = 0$ y $t \geq \text{learning\_starts}$}
+        \For{$g = 1, \dots, G$}
+            \State Muestrear de $\mathcal{D}$ un minibatch $\{(s_k, a_k, r_k, s'_k, \text{terminado}_k)\}_{k=1}^{B}$
+            \State Para cada $k$ y cada cuantil objetivo $j=1,\dots,N$: $\quad y_j \leftarrow r_k$ \Comment{$\gamma=0$: sin bootstrap ni $\theta^-$; regresión hacia $r_k$}
+            \State Pérdida $\mathcal{L} \leftarrow$ Huber cuantílica entre $\theta_i(s_k,a_k)$ y $\{y_j\}$, sumada sobre todos los pares $(i,j)$
+            \State Actualizar $\theta$ por descenso de gradiente sobre $\mathcal{L}$ (Adam, tasa $\eta$); recortar norma del gradiente si corresponde
+        \EndFor
+    \EndIf
+\EndWhile
+\State Guardar el modelo; evaluar de forma determinista sobre $(X_{\text{test}}, y_{\text{test}})$; calcular matriz de confusión y métricas
+\State Persistir configuración final, métricas de test y manifiesto de artefactos
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{Procedencia de los hiperparámetros}
 Los hiperparámetros de la ejecución oficial ($\gamma = 0$, arquitectura \texttt{[1024, 1024, 512]}, $200$ cuantiles, tasa de aprendizaje $5\times10^{-5}$, $20$ pasos de gradiente y $3\,000\,000$ de pasos de entrenamiento) constituyen un \emph{perfil fijo establecido manualmente}, no el resultado de una búsqueda automática. El repositorio incluye una sonda de optimización con Optuna (\texttt{src/tune\_hparams.py}) con fines exploratorios, pero su espacio de búsqueda —$\gamma \in [0{,}95,\,0{,}999]$, arquitecturas en $\{[256,128],\,[512,256],\,[256,256]\}$ y pasos de gradiente en $\{10,50,100\}$— \emph{no contiene} la configuración oficial. Por tanto, dicha configuración no pudo originarse en esa búsqueda y no debe interpretarse como un óptimo ajustado por Optuna; responde a un diseño manual coherente con la formulación de un solo paso, y queda congelada y verificada por las pruebas del proyecto.
+
+El listado completo de valores empleados en la ejecución oficial MAIN se recoge en la Tabla~\ref{tab:hiperparametros-main}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{4.6cm}p{2.6cm}p{4.6cm}}
+\toprule
+Hiperparámetro & Valor & Observación \\
+\midrule
+Arquitectura de la red (\texttt{net\_arch}) & $[1024, 1024, 512]$ & MLP de tres capas ocultas \\
+Número de cuantiles (\texttt{n\_quantiles}) & 200 & distribución de retorno QRDQN \\
+Tasa de aprendizaje & $5\times10^{-5}$ & \\
+Tamaño del buffer de repetición & $1\,000\,000$ & transiciones \\
+Pasos de calentamiento (\texttt{learning\_starts}) & $50\,000$ & \\
+Tamaño de lote (\texttt{batch\_size}) & 2048 & \\
+Factor de descuento ($\gamma$) & 0.0 & formulación de un solo paso \\
+Tasa de actualización objetivo ($\tau$) & 1.0 & con $\gamma=0$ la red objetivo no contribuye al error de diferencia temporal \\
+Intervalo de actualización objetivo & $10\,000$ & pasos \\
+Frecuencia de entrenamiento (\texttt{train\_freq}) & 100 & pasos \\
+Pasos de gradiente por actualización & 20 & \\
+$\varepsilon$ inicial de exploración & 1.0 & decaimiento lineal \\
+$\varepsilon$ final de exploración & 0.02 & decaimiento lineal \\
+Fracción de exploración & 0.1 & decaimiento lineal \\
+Norma máxima de gradiente & 10.0 & \\
+Pasos totales de entrenamiento & $3\,000\,000$ & \\
+Semilla & 42 & \\
+\bottomrule
+\end{tabular}
+\caption[Hiperparámetros de la ejecución oficial MAIN]{Hiperparámetros de la ejecución oficial MAIN. Perfil fijado a mano, no procedente de la sonda Optuna. Fuente: elaboración propia a partir de \texttt{runs/\allowbreak cicids2017/\allowbreak MAIN\_qrdqn\_cicids2017\_canonical\_full\_random\_20260609\_193655/\allowbreak config.json}.}
+\label{tab:hiperparametros-main}
+\end{table}
 
 \subsection{Persistencia del modelo y el preprocesamiento}
 El entrenamiento produce un directorio de ejecución y un artefacto de modelo. El directorio de ejecución almacena la configuración, las métricas, el escalador ajustado y los límites de percentiles de entrenamiento. Persistir los artefactos de preprocesamiento es esencial porque la inferencia en la Fase 2 debe utilizar el mismo estado de normalización que el entrenamiento. Recalcular un escalador sobre el tráfico de laboratorio filtraría información de la distribución de inferencia hacia la interfaz del modelo y haría la ejecución irreproducible.
