@@ -58,7 +58,7 @@ La sensibilidad al domain shift en tráfico real.
 1. motivación y objetivos
 2. datasets y esquema canónico
 3. entorno RL, recompensa y entrenamiento
-4. validaciones A/B/C + leave-one-exact-CSV-out
+4. validaciones A/B/C + leave-one-CSV-out
 5. Phase 2 robusta y riesgos abiertos
 6. conclusiones, límites y próximos pasos
 
