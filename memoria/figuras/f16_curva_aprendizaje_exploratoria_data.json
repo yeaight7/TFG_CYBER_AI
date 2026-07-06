@@ -1,0 +1,90 @@
+{
+  "id": "f16_curva_aprendizaje_exploratoria",
+  "png": "memoria/figuras/f16_curva_aprendizaje_exploratoria.png",
+  "pdf": "memoria/figuras/f16_curva_aprendizaje_exploratoria.pdf",
+  "sources": [
+    "runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/config.json",
+    "runs/archive/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/config.json",
+    "runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/config.json",
+    "runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/config.json",
+    "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json",
+    "runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/metrics.json",
+    "runs/archive/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/metrics.json",
+    "runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/metrics.json",
+    "runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/metrics.json",
+    "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json"
+  ],
+  "values": [
+    {
+      "run_id": "C01_qrdqn_cicids2017_canonical_smoke_20260212_195959",
+      "source_dir": "runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959",
+      "config": "runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/config.json",
+      "metrics": "runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_smoke_20260212_195959/metrics.json",
+      "train_rows": 40000,
+      "test_rows": 10000,
+      "max_rows": 50000,
+      "train_max_rows": null,
+      "total_timesteps": 5000,
+      "accuracy": 0.9697,
+      "recall_attack": 0.9995809763251624,
+      "f1_attack": 0.9692229558151346
+    },
+    {
+      "run_id": "C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122",
+      "source_dir": "runs/archive/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122",
+      "config": "runs/archive/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/config.json",
+      "metrics": "runs/archive/cicids2017/C02_qrdqn_cicids2017_canonical_fast_random_20260223_181122/metrics.json",
+      "train_rows": 80000,
+      "test_rows": 20000,
+      "max_rows": 100000,
+      "train_max_rows": null,
+      "total_timesteps": 10000,
+      "accuracy": 0.9766,
+      "recall_attack": 0.999591469891331,
+      "f1_attack": 0.9812319538017324
+    },
+    {
+      "run_id": "C01_qrdqn_cicids2017_canonical_full_20260212_200218",
+      "source_dir": "runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218",
+      "config": "runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/config.json",
+      "metrics": "runs/archive/cicids2017/C01_qrdqn_cicids2017_canonical_full_20260212_200218/metrics.json",
+      "train_rows": 200000,
+      "test_rows": 50000,
+      "max_rows": 250000,
+      "train_max_rows": null,
+      "total_timesteps": 100000,
+      "accuracy": 0.99618,
+      "recall_attack": 0.9998047408911626,
+      "f1_attack": 0.9962836851833836
+    },
+    {
+      "run_id": "C03_qrdqn_cicids2017_canonical_full_random_20260223_232439",
+      "source_dir": "runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439",
+      "config": "runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/config.json",
+      "metrics": "runs/archive/cicids2017/C03_qrdqn_cicids2017_canonical_full_random_20260223_232439/metrics.json",
+      "train_rows": 400000,
+      "test_rows": 100000,
+      "max_rows": 500000,
+      "train_max_rows": null,
+      "total_timesteps": 100000,
+      "accuracy": 0.99859,
+      "recall_attack": 0.999452606300325,
+      "f1_attack": 0.9987559884598078
+    },
+    {
+      "run_id": "MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+      "source_dir": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655",
+      "config": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json",
+      "metrics": "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json",
+      "train_rows": 2264594,
+      "test_rows": 566149,
+      "max_rows": null,
+      "train_max_rows": null,
+      "total_timesteps": 3000000,
+      "accuracy": 0.9938055176287515,
+      "recall_attack": 0.995355468084534,
+      "f1_attack": 0.9844498933618293
+    }
+  ],
+  "validity_warning": "Exploratory only: existing artifacts use max_rows, so test partitions change; total_timesteps/configs also vary. Do not present as official fixed-test learning-curve protocol."
+}
