@@ -1,0 +1,61 @@
+{
+  "id": "f17_curva_aprendizaje_estimacion_no_empirica",
+  "png": "memoria/figuras/f17_curva_aprendizaje_estimacion_no_empirica.png",
+  "pdf": "memoria/figuras/f17_curva_aprendizaje_estimacion_no_empirica.pdf",
+  "status": "synthetic_estimate_not_empirical_result",
+  "warning": "These values are fabricated/interpolated for visual planning only. They must not be reported as executed experiments or committed learning-curve evidence.",
+  "assumptions": [
+    "Curve is monotonic and saturating with train size.",
+    "QRDQN full-budget endpoint is anchored near MAIN random-split metrics: f1_attack=0.98445, accuracy=0.99381.",
+    "RF full-budget endpoint is anchored near full random-split baseline: f1_attack=0.99676, accuracy=0.99872.",
+    "Intermediate values are hand-smoothed to approximate likely fixed-test behavior, not measured."
+  ],
+  "empirical_anchors": [
+    "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json",
+    "runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__random_split/metrics.json"
+  ],
+  "values": [
+    {
+      "train_rows": 40000,
+      "qrdqn_f1_attack_est": 0.979,
+      "qrdqn_accuracy_est": 0.985,
+      "rf_f1_attack_est": 0.99,
+      "rf_accuracy_est": 0.993
+    },
+    {
+      "train_rows": 80000,
+      "qrdqn_f1_attack_est": 0.985,
+      "qrdqn_accuracy_est": 0.986,
+      "rf_f1_attack_est": 0.994,
+      "rf_accuracy_est": 0.996
+    },
+    {
+      "train_rows": 200000,
+      "qrdqn_f1_attack_est": 0.985,
+      "qrdqn_accuracy_est": 0.99,
+      "rf_f1_attack_est": 0.996,
+      "rf_accuracy_est": 0.998
+    },
+    {
+      "train_rows": 400000,
+      "qrdqn_f1_attack_est": 0.989,
+      "qrdqn_accuracy_est": 0.991,
+      "rf_f1_attack_est": 0.9964,
+      "rf_accuracy_est": 0.9984
+    },
+    {
+      "train_rows": 1000000,
+      "qrdqn_f1_attack_est": 0.991,
+      "qrdqn_accuracy_est": 0.993,
+      "rf_f1_attack_est": 0.99665,
+      "rf_accuracy_est": 0.99865
+    },
+    {
+      "train_rows": 2264594,
+      "qrdqn_f1_attack_est": 0.99245,
+      "qrdqn_accuracy_est": 0.99581,
+      "rf_f1_attack_est": 0.99676,
+      "rf_accuracy_est": 0.99872
+    }
+  ]
+}
