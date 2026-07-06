@@ -370,7 +370,7 @@ def main() -> None:
     split_mode = args.split_mode
 
     # ── Semillas globales al inicio de la ejecución (reproducibilidad,
-    #    cf. metodologia.tex). La partición usa su propio random_state, así que
+    #    cf. diseno_sistema.tex). La partición usa su propio random_state, así que
     #    esto NO altera el split fijo seed-42; fija la inicialización de la red,
     #    el muestreo del buffer de repetición y la política de exploración. ──
     random.seed(seed)
