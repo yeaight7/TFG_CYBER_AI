@@ -17,7 +17,7 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 | CICIDS2017 adapter | Implemented |
 | NSL-KDD adapter | Legacy — data/model dropped from the repo (see [experiments/nslkdd_experiments.md](experiments/nslkdd_experiments.md)); code kept for history only |
 | RL algorithm | QRDQN |
-| Validation suite | Checks A, B, C + leave-one-exact-CSV-out script |
+| Validation suite | Checks A, B, C + leave-one-CSV-out script |
 | Phase 2 inference | Robust offline pipeline available (`predict_real_traffic_v2.py`) |
 | Active blocking | Not implemented |
 
@@ -142,7 +142,7 @@ Run the validation suite:
 python src/validate_checks.py --run-dir runs/cicids2017/<RUN_ID> --checks A B C
 ```
 
-Run leave-one-exact-CSV-out validation:
+Run leave-one-CSV-out validation:
 
 ```bash
 python src/validate_leave_one_csv_out.py --timesteps 30000
@@ -169,9 +169,9 @@ The repository currently includes four validation workflows:
 | Check A | Direct prediction on `X_test` vs `y_test` without relying on the environment |
 | Check B | Shuffled-label anti-leakage test |
 | Check C | Hard CSV/day split generalisation test |
-| Leave-one-exact-CSV-out | One held-out CICIDS2017 CSV per fold, train on the remaining seven |
+| leave-one-CSV-out | One held-out CICIDS2017 CSV per fold, train on the remaining seven |
 
-The leave-one-exact-CSV-out workflow is implemented in code, but this repository does not currently contain a committed full run artifact for it under `runs/validation/`.
+The leave-one-CSV-out workflow is implemented in code, but this repository does not currently contain a committed full run artifact for it under `runs/validation/`.
 
 ## Results Snapshot
 

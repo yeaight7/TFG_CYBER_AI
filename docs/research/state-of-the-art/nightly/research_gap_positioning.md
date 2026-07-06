@@ -76,7 +76,7 @@ these limitations. This thesis addresses them through its curated adapter and an
 **Evaluation leakage and split design.** Random row-wise splits can inflate NIDS results by placing
 related flows in both training and test sets [Arp2020DosDontsMLSecurity; Layeghy2023CrossDomainNIDS].
 The thesis addresses this through Check A (random), Check B (shuffled-label validation), Check C
-(CSV/day split), and code for leave-one-exact-CSV-out evaluation.
+(CSV/day split), and code for leave-one-CSV-out evaluation.
 
 **Cross-domain generalisation.** Models that perform well within one public NIDS dataset degrade
 substantially when evaluated on a different dataset or traffic distribution

@@ -39,7 +39,7 @@ Use `Research/report-source-map.md` as the raw backbone. Use focused raw dossier
 - Phase 1 is offline training and validation on datasets.
 - Phase 2 is offline inference on extracted flow CSVs from private lab traffic.
 - Active inline blocking is not implemented.
-- Leave-one-exact-CSV-out validation exists in code, but no committed full artifact is currently reported in `docs/results.md`.
+- leave-one-CSV-out validation exists in code, but no committed full artifact is currently reported in `docs/results.md`.
 - Random Forest baseline protocol exists, but baseline metrics are still placeholders in `docs/results.md`.
 - Phase 2 behavior must be tied to exact run artifacts because committed benign-only runs differ.
 

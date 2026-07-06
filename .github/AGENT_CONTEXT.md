@@ -25,7 +25,7 @@ The project is organised in two major phases:
 - Custom Gymnasium environment for binary defender actions
 - QRDQN training pipeline
 - Validation checks A, B, and C
-- Leave-one-exact-CSV-out validation script for CICIDS2017
+- leave-one-CSV-out validation script for CICIDS2017
 - Robust Phase 2 offline inference pipeline (`predict_real_traffic_v2.py`)
 
 ### Not Implemented
@@ -80,7 +80,7 @@ This is the primary dataset and the basis for the canonical schema.
 - current adapter supports:
   - random stratified split
   - CSV/day pattern split
-  - exact-file split for leave-one-exact-CSV-out validation
+  - exact-file split for leave-one-CSV-out validation
   - train-only subsampling for the internal training-size benchmark (`train_max_rows`)
 
 #### Train-only subsampling (`train_max_rows`)
@@ -126,7 +126,7 @@ This dataset is kept for historical Phase 1 benchmarking.
 | RL environment | `src/rl_defender_env.py` |
 | Training | `src/train_rl_defender.py` |
 | Validation checks A/B/C | `src/validate_checks.py` |
-| Leave-one-exact-CSV-out | `src/validate_leave_one_csv_out.py` |
+| leave-one-CSV-out | `src/validate_leave_one_csv_out.py` |
 | Phase 2 robust inference | `scripts/predict_real_traffic_v2.py` |
 | Random Forest baseline | `src/baseline_random_forest.py` |
 
@@ -174,7 +174,7 @@ Documentation must distinguish between:
 | Check A | Implemented | direct prediction vs `y_test` |
 | Check B | Implemented | shuffled-label anti-leakage |
 | Check C | Implemented | hard CSV/day split |
-| Leave-one-exact-CSV-out | Implemented in code | no committed full run artifact yet |
+| leave-one-CSV-out | Implemented in code | no committed full run artifact yet |
 
 ## Phase 2 Status
 
@@ -223,7 +223,7 @@ See [../docs/results.md](../docs/results.md) for the maintained results snapshot
 
 ## Immediate Next Steps
 
-- Run and review a full leave-one-exact-CSV-out validation artifact
+- Run and review a full leave-one-CSV-out validation artifact
 - Reassess Phase 2 behaviour on benign and mixed traffic with the current robust inference settings
 - Decide whether additional calibration or fine-tuning on lab-derived data is required
 - Keep documentation aligned with run artifacts instead of stale narrative

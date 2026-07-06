@@ -42,7 +42,7 @@ Resultado histórico comprometido:
 
 Lectura correcta: el pipeline funciona muy bien in-distribution, pero la generalización dura es sustancialmente más difícil.
 
-## 5) Leave-one-exact-CSV-out
+## 5) leave-one-CSV-out
 
 Archivo: `src/validate_leave_one_csv_out.py`
 

@@ -207,7 +207,7 @@ Artifact:
 
 This remains the hardest committed generalisation artifact in the repository.
 
-### Leave-One-Exact-CSV-Out
+### leave-one-CSV-out
 
 Status:
 
@@ -334,4 +334,4 @@ Per-sweep artifacts under `runs/cicids2017/baseline_random_forest_comparison/rf_
 
 ## Open Documentation Gap
 
-The repository now includes code for leave-one-exact-CSV-out validation, but the documentation cannot yet report aggregate metrics for it until a full committed run is added under `runs/validation/`.
+The repository now includes code for leave-one-CSV-out validation, but the documentation cannot yet report aggregate metrics for it until a full committed run is added under `runs/validation/`.

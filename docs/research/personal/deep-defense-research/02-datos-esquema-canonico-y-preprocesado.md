@@ -82,7 +82,7 @@ Pipeline principal en `load_cicids2017.py`:
 
 ## `exact CSV`
 
-- usado en leave-one-exact-CSV-out
+- usado en leave-one-CSV-out
 - deja fuera un CSV real completo por fold
 
 ## 7) Puntos finos que conviene dominar

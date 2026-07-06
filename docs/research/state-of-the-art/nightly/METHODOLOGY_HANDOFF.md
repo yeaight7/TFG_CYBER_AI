@@ -9,7 +9,7 @@ This file is for later methodology/design writing and implementation tasks. It i
 | Main dataset | Use CICIDS2017 as internal public benchmark. | Implemented as primary dataset. Verify exact local curated CSV counts before writing. |
 | Schema | Describe 76 canonical flow features plus 76 missingness-mask values. | Strong repo fact. Verify against `src/canonical_schema.py` before final thesis. |
 | Labels | Binary labels: `0 = BENIGN`, `1 = ATTACK`; actions: `0 = PERMIT`, `1 = BLOCK`. | Strong repo fact. |
-| Splits | Report random split, hard CSV/day split, and leave-one-exact-CSV-out if artifact exists. | Check C artifact exists; leave-one-exact-CSV-out code exists but full committed artifact is missing in current docs. |
+| Splits | Report random split, hard CSV/day split, and leave-one-CSV-out if artifact exists. | Check C artifact exists; leave-one-CSV-out code exists but full committed artifact is missing in current docs. |
 | Artifacts | Every reported run needs `RUN_ID`, config, metrics, and path. | Required by repo docs. |
 
 ## Data-Efficiency Curve
@@ -125,17 +125,17 @@ Recommended evidence ladder:
 
 1. Random split: internal sanity benchmark.
 2. Hard CSV/day split: stronger internal generalization check.
-3. Leave-one-exact-CSV-out: strongest internal CICIDS2017 file/domain shift check.
+3. leave-one-CSV-out: strongest internal CICIDS2017 file/domain shift check.
 
 Current status:
 
 - Check C artifact exists and should be cited with exact run ID.
-- Leave-one-exact-CSV-out implementation exists.
-- No committed full leave-one-exact-CSV-out artifact is currently reported in `docs/results.md`.
+- leave-one-CSV-out implementation exists.
+- No committed full leave-one-CSV-out artifact is currently reported in `docs/results.md`.
 
 Writing rule:
 
-- Describe leave-one-exact-CSV-out as implemented/planned unless the artifact exists.
+- Describe leave-one-CSV-out as implemented/planned unless the artifact exists.
 
 ## External Lab Validation
 

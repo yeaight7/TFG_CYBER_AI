@@ -34,7 +34,7 @@ La aportación principal no es solo entrenar un clasificador, sino diseñar un p
 - entorno RL custom con `Gymnasium`
 - entrenamiento con **QRDQN**
 - validaciones A, B y C
-- validación **leave-one-exact-CSV-out** implementada en código
+- validación **leave-one-CSV-out** implementada en código
 - pipeline robusto de inferencia Phase 2: `predict_real_traffic_v2.py`
 
 ### No implementado todavía
@@ -102,7 +102,7 @@ Es clave porque:
 - usa features flow-based compatibles con extractores reales
 - permite conectar el entrenamiento offline con la Fase 2
 
-Además, el repositorio ahora reconoce explícitamente los **8 CSVs oficiales** de CICIDS2017 y soporta validación leave-one-exact-CSV-out sobre ellos.
+Además, el repositorio ahora reconoce explícitamente los **8 CSVs oficiales** de CICIDS2017 y soporta validación leave-one-CSV-out sobre ellos.
 
 ---
 
@@ -272,7 +272,7 @@ Interpretación:
 - es una validación mucho más dura
 - mide generalización a particiones temporales / por CSV más realistas
 
-### Leave-one-exact-CSV-out
+### leave-one-CSV-out
 
 Estado actual:
 
@@ -391,7 +391,7 @@ El problema real ya no es si el pipeline funciona, sino cuánto generaliza cuand
 
 - No digas que Phase 2 ya está “resuelta”.
 - No generalices la recompensa de un run a todos los runs: C03 coincide con el código actual, pero C01/C02 históricos usaron otra penalización de falso positivo.
-- No cites resultados leave-one-exact-CSV-out como si ya existiera un artefacto completo.
+- No cites resultados leave-one-CSV-out como si ya existiera un artefacto completo.
 - No mezcles NSL-KDD como si formara parte del modelo final.
 
 ---

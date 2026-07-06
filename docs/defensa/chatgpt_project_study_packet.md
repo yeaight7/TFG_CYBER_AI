@@ -108,7 +108,7 @@ Phase 2 hace inferencia offline sobre trafico capturado en laboratorio. El artef
 | RL environment | `src/rl_defender_env.py` | Defines Gymnasium environment with `PERMIT/BLOCK` actions and asymmetric rewards. |
 | Training | `src/train_rl_defender.py` | Trains QRDQN on canonical CICIDS2017 observations and writes run artifacts. |
 | Validation A/B/C | `src/validate_checks.py` | Direct evaluation, shuffled-label anti-leakage check, hard CSV/day split. |
-| Leave-one-exact-CSV-out | `src/validate_leave_one_csv_out.py` | Implements exact CSV holdout validation; no committed full artifact yet. |
+| leave-one-CSV-out | `src/validate_leave_one_csv_out.py` | Implements exact CSV holdout validation; no committed full artifact yet. |
 | Random Forest baseline | `src/baseline_random_forest.py` | Supervised baseline under same canonical/scaled protocol. |
 | Phase 2 inference | `scripts/predict_real_traffic_v2.py` | Offline inference over extracted lab-flow CSVs with robust loading and diagnostics. |
 | Results snapshot | `docs/results.md` | Maintained artifact-backed result summary. |
@@ -203,7 +203,7 @@ La utilidad real de la mascara en Phase 2 depende de cuantas columnas falten, de
 - Current loader supports:
   - random stratified split.
   - CSV/day pattern split.
-  - exact-file split for leave-one-exact-CSV-out validation.
+  - exact-file split for leave-one-CSV-out validation.
   - train-only subsampling with `train_max_rows`.
 - `train_max_rows` subsamples only train after the split.
 - `train_max_rows` is deterministic, stratified, and nested through `stratified_nested_prefix_v1`.
@@ -472,7 +472,7 @@ Check C es duro porque separa por dia/CSV. Simula mejor la idea de aprender con 
 - Only one main training seed is documented for the main model.
 - Phase 2 lab traffic has limited external validity.
 - Phase 2 behavior changed across artifacts.
-- No full committed leave-one-exact-CSV-out QRDQN artifact exists yet.
+- No full committed leave-one-CSV-out QRDQN artifact exists yet.
 
 **[NOTE] Strong limitation answer**
 La principal debilidad metodologica no es simplemente "faltan mas datos". Es que el entorno es estatico y la accion no cambia el futuro. Con `gamma=0.0`, el proyecto resuelve una decision independiente por flujo. Eso es defendible como contextual bandit cost-sensitive, pero no como defensa autonoma secuencial. Para acercarlo a una defensa real harian falta acciones con consecuencias, estado historico, adversario reactivo, latencia, throughput y enforcement real.

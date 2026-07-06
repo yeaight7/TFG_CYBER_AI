@@ -1,6 +1,6 @@
 \documentclass[12pt,a4paper]{report}
 
-\usepackage[spanish]{babel}
+\usepackage[spanish,es-lcroman,es-tabla]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -21,6 +21,8 @@
 \usepackage{hyperref}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{microtype}
 
 % Nombres en español para los flotantes de algoritmos
 \floatname{algorithm}{Algoritmo}
@@ -57,21 +59,84 @@
 \newcommand{\verifycite}[1]{\textbf{[Verificar: #1]}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
+% Diseño del documento (colores tesis* definidos en figuras/tikz_estilos.tex)
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{Aprendizaje por refuerzo para la ciberseguridad: un defensor basado en flujos para decisiones binarias de permitir/bloquear}
-\author{Javier Rivero Iglesias}
-\date{Mayo de 2026}
+% Hipervínculos y metadatos del PDF
+\hypersetup{
+  colorlinks=true,
+  linkcolor=tesisAzulOscuro,
+  citecolor=tesisAzulOscuro,
+  urlcolor=tesisAzul,
+  pdftitle={Aprendizaje por refuerzo para la ciberseguridad: un defensor basado en flujos para decisiones binarias de permitir/bloquear},
+  pdfauthor={Javier Rivero Iglesias},
+  pdflang={es-ES},
+}
+
+% Cabeceras de capítulo y sección
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries}
+  {\normalsize\mdseries\scshape\color{tesisGrisMedio}\chaptertitlename\ \thechapter}
+  {8pt}
+  {\Huge\color{tesisTinta}}
+  [\vspace{8pt}{\color{tesisAzul}\titlerule[1.4pt]}]
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{tesisTinta}}{\thesection}{0.8em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{tesisTinta}}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{tesisGris}}{\thesubsubsection}{0.8em}{}
+
+% Cabecera y pie de página (fancyhdr v5: definir ambos estilos explícitamente,
+% la configuración global se pisa entre definiciones)
+\fancypagestyle{fancy}{%
+  \fancyhf{}
+  \fancyhead[L]{\small\itshape\nouppercase{\leftmark}}
+  \fancyhead[R]{\small\thepage}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\headrule}{{\color{tesisBorde}\hrule width\headwidth height\headrulewidth}}}
+\fancypagestyle{plain}{% páginas de inicio de capítulo y preliminares
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}}
+
+% Pies de figura y tabla
+\captionsetup{font=small, labelfont={bf,color=tesisGris}, width=0.92\textwidth}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
-\pagenumbering{gobble}
-\maketitle
-\newpage
+% ---------- Preliminares ----------
+\input{capitulos/portada}
+
+\pagenumbering{roman}
+\pagestyle{plain}
+
+\input{capitulos/agradecimientos}
+\input{capitulos/resumen}
+
+\begingroup % los índices se leen como texto, sin tinte de hipervínculo
+\hypersetup{linkcolor=tesisTinta}
+\clearpage
 \tableofcontents
-\newpage
+\clearpage
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures
+\clearpage
+\addcontentsline{toc}{chapter}{\listtablename}
+\listoftables
+\clearpage
+\addcontentsline{toc}{chapter}{\listalgorithmname}
+\listofalgorithms
+\endgroup
+
+\input{capitulos/glosario}
+
+% ---------- Cuerpo ----------
+\clearpage
 \pagenumbering{arabic}
+\pagestyle{fancy}
 
 \input{capitulos/introduccion}
 \input{capitulos/objetivos_y_alcance}

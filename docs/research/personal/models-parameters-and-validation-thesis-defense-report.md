@@ -92,7 +92,7 @@ Split de datos:
 - `split_mode=random` o `split_mode=day`
 - presets de filas (`fast` vs `full`) vía `load_cicids2017_split`
 
-## 4.2 Leave-one-exact-CSV-out (`src/validate_leave_one_csv_out.py`)
+## 4.2 leave-one-CSV-out (`src/validate_leave_one_csv_out.py`)
 
 - `timesteps` por fold: default `30_000`
 - `predict_batch_size` default `8192`
@@ -133,7 +133,7 @@ Archivo: `src/validate_checks.py`, función `check_c_csv_split`.
 
 Objetivo: medir generalización fuera del split aleatorio.
 
-## 5.4 Leave-one-exact-CSV-out
+## 5.4 leave-one-CSV-out
 Archivo: `src/validate_leave_one_csv_out.py`.
 
 - cada fold deja un CSV oficial completo para test
@@ -165,7 +165,7 @@ Lectura para defensa:
 1. **"¿Cómo verificas que no hay leakage?"**
    - Check B (labels barajadas) + política explícita de drop de columnas de identificación.
 2. **"¿Cómo pruebas generalización realista?"**
-   - Check C y leave-one-exact-CSV-out.
+   - Check C y leave-one-CSV-out.
 3. **"¿Qué alternativa no-RL tienes?"**
    - baseline Random Forest.
 4. **"¿Cómo soportas inferencia robusta en datos reales?"**

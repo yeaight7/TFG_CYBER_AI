@@ -20,7 +20,7 @@ El objetivo no es solo “sacar accuracy alta”, sino construir un pipeline rep
 
 1. adaptar datos de red a un contrato común
 2. entrenar un agente RL sobre ese contrato
-3. validar con pruebas anti-autoengaño (A/B/C + leave-one-exact-CSV-out)
+3. validar con pruebas anti-autoengaño (A/B/C + leave-one-CSV-out)
 4. llevar el modelo a inferencia offline en tráfico real de laboratorio
 
 ## 3) Estructura por fases
@@ -47,7 +47,7 @@ El objetivo no es solo “sacar accuracy alta”, sino construir un pipeline rep
 - entorno RL custom con Gymnasium
 - entrenamiento QRDQN
 - validaciones A/B/C
-- validación leave-one-exact-CSV-out en código
+- validación leave-one-CSV-out en código
 - inferencia robusta offline en Phase 2
 
 ### No implementado todavía

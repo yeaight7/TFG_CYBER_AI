@@ -156,7 +156,7 @@ Include the total available training data count so the reader can interpret the 
 |---|---|---|
 | RF baseline metrics not yet generated | High | "The Random Forest baseline protocol is implemented; results are pending and will be added before final submission." Do not report QRDQN results without the baseline comparison. |
 | No multi-seed RL experiments | Medium | "Results are reported for single training runs; robustness across seeds is a limitation and a direction for future work." |
-| Leave-one-exact-CSV-out artifact not committed | Medium | "Code for leave-one-CSV-out validation exists; a full committed artifact is pending." Do not report metrics that have not been generated. |
+| leave-one-CSV-out artifact not committed | Medium | "Code for leave-one-CSV-out validation exists; a full committed artifact is pending." Do not report metrics that have not been generated. |
 | Reward sensitivity not tested | Medium | "The reward weights are a scenario assumption. Sensitivity analysis is a direction for future work." |
 | No DQN-vs-QRDQN comparison | Low-Medium | "The distributional advantage of QRDQN over plain DQN is not directly measured in this thesis; it is left for future work." |
 | Citation key mismatches | Blocking | Fix before any TeX build. See `state_of_art_expansion.md` administrative section. |

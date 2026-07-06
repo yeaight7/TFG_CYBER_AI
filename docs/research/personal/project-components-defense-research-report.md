@@ -66,7 +66,7 @@ Aquí documento lo que faltaba de cara al tribunal: componentes históricos, bas
 
 ## 3) Parámetros clave que debes poder defender (resto de scripts)
 
-## 3.1 Validación leave-one-exact-CSV-out
+## 3.1 Validación leave-one-CSV-out
 
 **Dónde está**: `src/validate_leave_one_csv_out.py`
 
@@ -203,7 +203,7 @@ Para justificar evolución metodológica y comparar decisiones de diseño; el ca
 **¿Por qué incluir Random Forest si el TFG es RL?**
 Porque un baseline clásico ancla la comparación y evita conclusiones sin referencia.
 
-**¿Qué aporta leave-one-exact-CSV-out frente a métricas agregadas?**
+**¿Qué aporta leave-one-CSV-out frente a métricas agregadas?**
 Mide robustez por archivo real específico y reduce optimismo por mezcla de patrones entre train/test.
 
 **¿Qué pasa si en Fase 2 no hay `truth_label` o `truth_y`?**

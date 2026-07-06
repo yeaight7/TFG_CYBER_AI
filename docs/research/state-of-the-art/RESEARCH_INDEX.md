@@ -145,7 +145,7 @@ Use only for discovery or implementation hints unless corroborated:
 - Final audited BibTeX for all must-cite sources.
 - Exact local CICIDS2017 row counts, class counts, and post-cleaning feature list.
 - Current package versions for Gymnasium, SB3, and SB3-Contrib from the actual environment or lockfile.
-- Full committed leave-one-exact-CSV-out validation artifact.
+- Full committed leave-one-CSV-out validation artifact.
 - Completed Random Forest baseline metrics for random, Check C, and leave-one-out splits.
 - Clear final description of lab traffic: topology, capture period, traffic generation, labels, and whether any attack traffic exists.
 - Reward sensitivity experiments, if the thesis wants to compare reward variants.
