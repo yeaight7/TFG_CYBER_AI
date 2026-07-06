@@ -106,6 +106,13 @@ Los niveles de presupuesto candidatos incluyen 100\,k, 250\,k, 500\,k, 1\,M y 2\
 
 Comparar QRDQN y Random Forest en cada nivel de presupuesto revela si la formulación de RL tiene un requisito de muestras o una trayectoria de convergencia diferente. Si el Random Forest alcanza una meseta de rendimiento estable con sustancialmente menos filas, esto constituye evidencia interna de que la tarea del benchmark no requiere la complejidad de muestras adicional del RL profundo sobre el esquema de características actual. Por el contrario, si el comportamiento de RL sensible al coste mejora desproporcionadamente a medida que crece el presupuesto, los resultados de escala de entrenamiento pueden identificar a qué escala la estructura de recompensa distribucional comienza a aportar una ventaja medible. Cuando este protocolo se ejecute, todos los resultados de escala de entrenamiento se almacenarían bajo el mismo esquema de artefactos de ejecución que los experimentos principales, etiquetados por nivel de presupuesto y semilla, de modo que permanecerían recuperables de forma independiente y comparables en experimentos futuros. En el momento de redacción de este capítulo no se ha comprometido ningún artefacto de curva de aprendizaje.
 
+\begin{figure}[htbp]
+\centering
+\figureplaceholder{Curvas de aprendizaje de QRDQN y Random Forest por presupuesto de entrenamiento}
+\caption[Curvas de aprendizaje pendientes]{\placeholdercaption{Curvas de aprendizaje de QRDQN y Random Forest por presupuesto de entrenamiento.}}
+\label{fig:placeholder-curvas-aprendizaje}
+\end{figure}
+
 \section{Salidas de evaluación y reproducibilidad}
 La reproducibilidad es una restricción de diseño fundamental, especialmente porque la investigación en seguridad con ML suele adolecer de código faltante, detalles de procesamiento de datos incompletos y registros de evaluación incompletos \parencite{Olszewski2023ReproSecurityML}.
 
