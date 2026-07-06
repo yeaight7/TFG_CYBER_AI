@@ -524,7 +524,7 @@ def fig_f6_composicion_dia() -> dict[str, Any]:
     for filename, label in DATASET_FILES:
         path = DATASET_DIR / filename
         col = pd.read_csv(path, usecols=lambda c: c.strip() == "Label", dtype=str).iloc[:, 0]
-        col = col.str.strip()
+        col = col.str.strip().str.replace("Web Attack �", "Web Attack -", regex=False)
         counts = col.value_counts().to_dict()
         n_benign = int(counts.get("BENIGN", 0))
         n_attack = int(len(col) - n_benign)
