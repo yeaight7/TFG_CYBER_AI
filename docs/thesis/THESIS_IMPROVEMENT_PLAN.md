@@ -179,7 +179,7 @@ Pure content MOVE, no rewriting. `metodologia.tex` → `capitulos/diseno_sistema
 | F4.2 | Bibliography: `\chapter{Bibliografía}+\printbibliography[heading=none]` → `\printbibliography[heading=bibintoc, title={Bibliografía}]` | cheap | F4.1 | [x] | commit 6c52681 |
 | F4.3 | `\appendix` skeleton after bibliography (empty anexo files wired, content in F10) | cheap | F4.2 | [x] | commit 21f358e · `anexo_{a_reproducibilidad,b_entorno,c_esquema_canonico,d_artefactos}.tex`, comment-only → zero visible output |
 | F4.4 | Fix all `\ref`/`\label` fallout; chapter numbering audit (resultados becomes Ch6 later — verify current numbering consistent) | sonnet | F4.1 | [x] | commit 6e8a6f0 · 0 dangling refs/0 dup labels · all 3 hardcoded «Capítulo N» mentions still correct (intro:37 ×3, etica:6) · limitaciones.tex:3 retargeted to protocolo; stale comment pointers fixed (`train_rl_defender.py`, `figuras/f4_vector_observacion.tex`) |
-| F4.V | Gates G1–G3, G5 (before+after), G6 | cheap | F4.* | [~] | G5 before==after (5/5/3/5/2/6/3/1/3) · G6 clean · 3/3 adversarial verifiers PASS (fidelity 60 checks byte-exact, wiring 12, numbering/gates 5) · **G1–G3 pending: user compiles manually (user instruction 2026-07-06)** — expected ~130→131±1 pp (one extra chapter break; anexos invisible) |
+| F4.V | Gates G1–G3, G5 (before+after), G6 | cheap | F4.* | [x] | G5 before==after (5/5/3/5/2/6/3/1/3) · G6 clean · 3/3 adversarial verifiers PASS (fidelity 60 checks byte-exact, wiring 12, numbering/gates 5) · G1–G2: user's manual build 2026-07-06 20:40 → **131 pp** (predicted 131±1), PDF committed on main (434e1e2) · G3: `memoria.log` from that build clean |
 
 ## F5 — Algorithms + structural tables
 
