@@ -1,0 +1,29 @@
+% Fuentes: src/canonical_schema.py (FEATURES_CANON, NUM_CANONICAL_FEATURES=76,
+% NUM_OBSERVATION_FEATURES=152, CICIDS2017_TO_CANON, map_to_canonical);
+% memoria/capitulos/metodologia.tex (semantica de la mascara, seccion
+% "Mascara de presencia/ausencia": en CICIDS2017 nativo m_i=1 constante).
+\begin{tikzpicture}[
+    node distance=7mm and 10mm,
+    every label/.style={etiqueta},
+]
+
+\node[cajaDato] (csv) {Columnas CICFlowMeter\\del CSV (p.\,ej.\ \emph{Flow Duration},\\\emph{Fwd Packet Length Mean}, \dots)};
+
+\node[cajaProceso, below=of csv] (mapeo) {Mapeo al esquema canónico};
+\node[rutaFichero, below=1pt of mapeo] (mapeoRuta) {src/canonical\_schema.py (CICIDS2017\_TO\_CANON)};
+
+\node[cajaDato, below left=9mm and -6mm of mapeoRuta] (valores) {76 características\\canónicas (valores $x_i$)};
+\node[cajaDato, below right=9mm and -6mm of mapeoRuta] (mascara) {76 indicadores de\\presencia (máscara $m_i$)};
+
+\node[cajaResaltada, below=13mm of mapeoRuta] (obs) {Vector de observación\\$o=[x_1,\dots,x_{76},m_1,\dots,m_{76}]$\\152 dimensiones (\texttt{float32})};
+
+\draw[flecha] (csv) -- (mapeo);
+\draw[flecha] (mapeoRuta) -- (valores);
+\draw[flecha] (mapeoRuta) -- (mascara);
+\draw[flechaAzul] (valores) -- (obs);
+\draw[flechaAzul] (mascara) -- (obs);
+
+\node[etiquetaTenue, text width=8.6cm, below=4mm of obs] (nota)
+  {En CICIDS2017 nativo la máscara es constante $m_i=1$ para las 76 características\\(el mapeo cubre el 100\,\% de las columnas); solo aporta información\\en inferencia entre dominios o con fuentes externas (Fase 2).};
+
+\end{tikzpicture}
