@@ -424,9 +424,14 @@ def fig_f8_curvas_entrenamiento() -> dict[str, Any]:
     """F8 — MAIN training dynamics from the exported TensorBoard scalars."""
     import pandas as pd
 
-    rew = pd.read_csv(SRC["tb_rew"])
-    loss = pd.read_csv(SRC["tb_loss"])
+    def _read_tb_csv(path: Path) -> pd.DataFrame:
+        with path.open("rb") as fh:
+            if fh.read(64).startswith(b"version https://git-lfs.github.com/spec/v1"):
+                raise RuntimeError(f"{_rel(path)} is a Git LFS pointer; run `git lfs pull` before generating figures.")
+        return pd.read_csv(path)
 
+    rew = _read_tb_csv(SRC["tb_rew"])
+    loss = _read_tb_csv(SRC["tb_loss"])
     fig, axes = plt.subplots(1, 2, figsize=(6.1, 2.7))
     for ax, df, title, ylabel in (
         (axes[0], rew, "Recompensa media por episodio", "Recompensa media"),
