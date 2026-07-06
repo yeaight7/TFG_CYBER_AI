@@ -116,7 +116,7 @@ The CICIDS2017 branch became much more credible once validation moved beyond ran
 
 This artifact is important because it demonstrates that excellent random-split metrics do not automatically imply robust day-to-day generalisation.
 
-### Leave-One-Exact-CSV-Out
+### leave-one-CSV-out
 
 The repository now includes the implementation:
 
