@@ -35,7 +35,7 @@ Este nuevo paquete las **complementa** y las integra en una narrativa de defensa
 - Entorno RL: `src/rl_defender_env.py`
 - Entrenamiento QRDQN: `src/train_rl_defender.py`
 - Validación A/B/C: `src/validate_checks.py`
-- Leave-one-exact-CSV-out: `src/validate_leave_one_csv_out.py`
+- leave-one-CSV-out: `src/validate_leave_one_csv_out.py`
 - Inferencia Phase 2 (mantenida): `scripts/predict_real_traffic_v2.py`
 - Utilidades de clipping: `src/scaling_utils.py`
 - Export TensorBoard: `scripts/export_tensorboard_scalars.py`
