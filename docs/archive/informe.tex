@@ -197,7 +197,7 @@ El Check C es especialmente importante porque entrena en los grupos
 a 0.52954, lo que deja claro que la generalización entre días sigue siendo
 uno de los principales retos del proyecto.
 
-La validación leave-one-exact-CSV-out ya existe en código, pero no tiene todavía
+La validación leave-one-CSV-out ya existe en código, pero no tiene todavía
 un artefacto agregado comprometido bajo \texttt{runs/validation/}. Por tanto,
 su metodología puede describirse, pero no sus métricas finales.
 
@@ -236,14 +236,14 @@ Sin embargo, permanecen tres riesgos principales:
 
 \begin{itemize}
     \item la brecha entre \emph{random split} y generalización realista entre días
-    \item la ausencia de un artefacto leave-one-exact-CSV-out comprometido
+    \item la ausencia de un artefacto leave-one-CSV-out comprometido
     \item la sensibilidad de la Fase 2 al cambio de distribución
 \end{itemize}
 
 Los siguientes pasos razonables del TFG son:
 
 \begin{itemize}
-    \item conservar un run reproducible de leave-one-exact-CSV-out
+    \item conservar un run reproducible de leave-one-CSV-out
     \item repetir inferencia de Fase 2 sobre tráfico benigno y mixto con trazabilidad completa
     \item decidir si hace falta calibración adicional con datos del laboratorio
     \item mantener la memoria sincronizada con \texttt{docs/results.md} y los artefactos reales
