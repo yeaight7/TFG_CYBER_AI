@@ -9,6 +9,28 @@ La Fase 1 utiliza CICIDS2017 como benchmark interno principal \parencite{Sharafa
 
 La fase no se trata como un sustituto limpio de un entorno de producción. CICIDS2017 tiene problemas conocidos que incluyen flujos duplicados o inconsistentes, errores de etiquetado y de extracción, y sensibilidad a la partición \parencite{Engelen2021CICIDSIssues,Lanvin2023Errors,Liu2022ErrorPrevalenceNIDS}. Por esa razón, la Fase 1 se enmarca como un benchmark interno con controles explícitos. El pipeline elimina los campos de tipo identificador, ajusta la normalización únicamente sobre los datos de entrenamiento, registra las configuraciones de ejecución y evalúa el modelo mediante una escalera de validación. Una puntuación elevada en la partición aleatoria se interpreta como evidencia de que el modelo es capaz de aprender la tarea del benchmark; no se interpreta como preparación para el despliegue.
 
+La estructura por día de captura de CICIDS2017 (Tabla~\ref{tab:composicion-dia}) muestra una proporción de ataque muy desigual entre ficheros, desde el 0\% del lunes hasta más del 55\% en las capturas del viernes por la tarde. Esta heterogeneidad motiva los protocolos de partición por día, más estrictos que una partición aleatoria, que se describen más adelante en este capítulo.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{p{5.1cm}rrrr}
+\toprule
+Día & Filas & Benigno & Ataque & Ataque (\%) \\
+\midrule
+Lunes & $529\,918$ & $529\,918$ & $0$ & 0.0\% \\
+Martes & $445\,909$ & $432\,074$ & $13\,835$ & 3.1027\% \\
+Miércoles & $692\,703$ & $440\,031$ & $252\,672$ & 36.4762\% \\
+Jueves (mañana, ataques web) & $170\,366$ & $168\,186$ & $2\,180$ & 1.2796\% \\
+Jueves (tarde, infiltración) & $288\,602$ & $288\,566$ & $36$ & 0.0125\% \\
+Viernes (mañana) & $191\,033$ & $189\,067$ & $1\,966$ & 1.0291\% \\
+Viernes (tarde, PortScan) & $286\,467$ & $127\,537$ & $158\,930$ & 55.4793\% \\
+Viernes (tarde, DDoS) & $225\,745$ & $97\,718$ & $128\,027$ & 56.7131\% \\
+\bottomrule
+\end{tabular}
+\caption[Composición por día de CICIDS2017]{Composición por día de CICIDS2017: número de filas y proporción de tráfico benigno frente a ataque por fichero oficial de captura. Fuente: elaboración propia a partir de \texttt{memoria/figuras/data\_composicion\_dia.json}.}
+\label{tab:composicion-dia}
+\end{table}
+
 \subsection{Fase 2: inferencia offline sobre tráfico de laboratorio}
 La Fase 2 evalúa la transferencia más allá de la distribución del benchmark. El tráfico se captura en un entorno de laboratorio privado, se convierte offline en CSVs de flujos, se mapea al mismo esquema canónico, se normaliza con los artefactos de entrenamiento persistidos y se procesa con el modelo entrenado. Esta fase es una prueba de inferencia sobre una distribución externa, no un despliegue en vivo.
 
@@ -96,8 +118,100 @@ Toda ejecución de entrenamiento o evaluación significativa debe persistir un \
 
 Esta disciplina de artefactos evita afirmaciones ambiguas. Un resultado solo se trata como medido cuando puede vincularse a una carpeta de ejecución y una configuración específicas. Las ejecuciones históricas no se fusionan en silencio con los valores por defecto actuales; los valores de recompensa, la lógica de partición, el preprocesamiento, los límites de filas y las semillas deben leerse del artefacto.
 
+La Tabla~\ref{tab:inventario-runs} recoge el inventario completo de las ejecuciones oficiales --organizadas por el peldaño de la escalera de validación o el análisis que respaldan-- junto con los artefactos concretos que permiten reproducir o auditar cada cifra citada en esta memoria. Las ejecuciones no listadas en la tabla (variantes históricas, sondeos previos al diseño o repeticiones posteriores con configuración distinta) se consideran no oficiales y no deben citarse como respaldo de ninguna cifra reportada.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{p{3.2cm}p{3.4cm}p{5.6cm}}
+\toprule
+Ejecución (\texttt{RUN\_ID}) & Propósito & Artefactos clave \\
+\midrule
+{\raggedright\texttt{MAIN\_\hspace{0pt}qrdqn\_\hspace{0pt}cicids2017\_\hspace{0pt}canonical\_\hspace{0pt}full\_\hspace{0pt}random\_\hspace{0pt}20260609\_\hspace{0pt}193655}\par} &
+Entrenamiento principal QRDQN y evaluación en la partición aleatoria estratificada fija (semilla 42). &
+{\raggedright\texttt{config.json}; \texttt{metrics.json}; modelo entrenado en \texttt{models/} (mismo \texttt{RUN\_ID}); \texttt{scaler.joblib}; \texttt{train\_\hspace{0pt}percentiles.npz}; \texttt{feature\_\hspace{0pt}names.json}; \texttt{artifact\_\hspace{0pt}manifest.json}\par} \\
+\addlinespace
+{\raggedright\texttt{VAL\_\hspace{0pt}checks\_\hspace{0pt}A\_\hspace{0pt}20260212\_\hspace{0pt}235443}\par} &
+Comprobación A: predicción directa sin depender de los metadatos del entorno. &
+{\raggedright\texttt{config.json}; \texttt{validation\_\hspace{0pt}results.json}\par} \\
+\addlinespace
+{\raggedright\texttt{VAL\_\hspace{0pt}checks\_\hspace{0pt}B\_\hspace{0pt}20260212\_\hspace{0pt}235736}\par} &
+Comprobación B: etiquetas barajadas (detección de fugas de información). &
+{\raggedright\texttt{config.json}; \texttt{validation\_\hspace{0pt}results.json}\par} \\
+\addlinespace
+{\raggedright\texttt{VAL\_\hspace{0pt}checks\_\hspace{0pt}C\_\hspace{0pt}20260213\_\hspace{0pt}004847}\par} &
+Comprobación C: partición por día. &
+{\raggedright\texttt{config.json}; \texttt{validation\_\hspace{0pt}results.json}\par} \\
+\addlinespace
+{\raggedright\texttt{bootstrap\_\hspace{0pt}ci\_\hspace{0pt}seed42.json}\par} &
+Intervalos de confianza bootstrap ($10\,000$ remuestreos estratificados) sobre las métricas de MAIN en la partición de prueba fija, sin reentrenamiento. &
+{\raggedright\texttt{bootstrap\_\hspace{0pt}ci\_\hspace{0pt}seed42.json} (incluye los conteos de la matriz de confusión y la verificación del hash SHA-256 del modelo)\par} \\
+\addlinespace
+{\raggedright\texttt{duplicate\_\hspace{0pt}analysis\_\hspace{0pt}seed42.json}\par} &
+Análisis de duplicados y de fuga cruzada entre entrenamiento y prueba sobre la partición aleatoria fija. &
+{\raggedright\texttt{duplicate\_\hspace{0pt}analysis\_\hspace{0pt}seed42.json}\par} \\
+\addlinespace
+{\raggedright\texttt{rf\_\hspace{0pt}cicids2017\_\hspace{0pt}canonical\_\hspace{0pt}20260628\_\hspace{0pt}024735}\par} &
+Línea base supervisada Random Forest (balanceada y escalada) sobre tres particiones: aleatoria, por día y leave-one-out (miércoles). &
+{\raggedright\texttt{config.json} + \texttt{metrics.json} por subejecución: \texttt{\_\_random\_\hspace{0pt}split}, \texttt{\_\_day\_\hspace{0pt}split}, \texttt{\_\_leave\_\hspace{0pt}one\_\hspace{0pt}out\_\hspace{0pt}wednesday}\par} \\
+\addlinespace
+{\raggedright\texttt{P2v2\_\hspace{0pt}pred\_\hspace{0pt}20260610\_\hspace{0pt}161231\_\hspace{0pt}MAIN}\par} &
+Inferencia de la Fase 2 sobre tráfico de laboratorio etiquetado, con el modelo MAIN. &
+{\raggedright\texttt{config.json}; \texttt{metrics.json}; \texttt{diagnostics.json}; \texttt{predictions.csv.gz}\par} \\
+\bottomrule
+\end{tabular}
+\caption[Inventario de ejecuciones oficiales]{Inventario de las ejecuciones oficiales cuyos artefactos respaldan las cifras presentadas en esta memoria: entrenamiento y evaluación principal (MAIN), escalera de validación (comprobaciones A, B y C), análisis estadísticos sobre la partición fija (intervalos de confianza bootstrap y análisis de duplicados), el barrido de la línea base Random Forest sobre las tres particiones consideradas, y la inferencia oficial de la Fase~2 sobre tráfico de laboratorio etiquetado. Fuente: elaboración propia a partir de \texttt{runs/}.}
+\label{tab:inventario-runs}
+\end{table}
+
 \section{Pipeline de inferencia offline en la Fase 2}
 El punto de entrada principal de la Fase 2 mantenido es el script de inferencia offline robusta. Acepta un CSV de flujos extraído, un modelo entrenado, un escalador persistido, límites de percentiles opcionales y recorte por z-score opcional. A continuación mapea las columnas de entrada al esquema canónico, aplica la misma representación de características y máscara, escala con el escalador guardado, calcula diagnósticos, predice acciones en lotes y escribe las salidas en un nuevo directorio de ejecución de la Fase 2.
+
+El Algoritmo~\ref{alg:inferencia-fase2} formaliza el orden exacto de estas etapas, indicando cuáles son opcionales y bajo qué indicador de línea de comandos se activan.
+
+\begin{algorithm}[htbp]
+\caption[Inferencia offline robusta de la Fase 2]{Inferencia offline robusta de la Fase 2. Fuente: elaboración propia a partir de \texttt{scripts/predict\_real\_traffic\_v2.py}.}
+\label{alg:inferencia-fase2}
+\begin{algorithmic}[1]
+\Require CSV de flujos $D$ (\texttt{--flows}); modelo entrenado $M$; escalador persistido $S$ (omitido si \texttt{--no-scale}); límites de percentiles opcionales $(p_{low}, p_{high})$ (\texttt{--percentiles}); umbral de recorte $z$ opcional $\tau_z$ (\texttt{--clip-z})
+\Ensure Directorio de ejecución \texttt{runs/phase2/RUN\_ID} con predicciones, configuración, métricas y diagnósticos opcionales
+\State $\text{RUN\_ID} \gets$ \texttt{"P2v2\_pred\_"} + marca de tiempo actual
+\State Resolver rutas confiables de $M$, $S$ y de los percentiles frente al manifiesto de \texttt{--run-dir}, salvo que se indique \texttt{--allow-unsafe-artifacts}
+\State $D \gets$ cargar el CSV de flujos
+\State Separar de $D$ las columnas de metadatos (IP, puertos, protocolo, marca temporal) y las columnas de verdad (\texttt{truth\_y}, \texttt{truth\_label})
+\If{la mediana de \texttt{flow\_duration} en $D$ es menor que 1}
+    \State Convertir las columnas temporales de segundos a microsegundos ($\times 10^6$)
+\EndIf
+\State $(X, \text{mask}) \gets$ mapear las columnas de $D$ al esquema canónico de 76 características, imputando con 0 las ausentes
+\State $X \gets [X \,|\, \text{mask}]$ \Comment{vector combinado de 152 dimensiones}
+\If{se proporcionaron límites de percentiles (\texttt{--percentiles})}
+    \State Recortar las 76 características crudas de $X$ a $[p_{low}, p_{high}]$ (percentiles de entrenamiento p0.5 / p99.5)
+\EndIf
+\If{no se indicó \texttt{--no-scale}}
+    \State $X \gets S.\text{transform}(X)$ \Comment{escalador persistido de entrenamiento}
+\EndIf
+\If{se proporcionó $\tau_z$ (\texttt{--clip-z})}
+    \State $X \gets \text{clip}(X, -\tau_z, \tau_z)$ \Comment{recorte tras el escalado}
+\EndIf
+\State Calcular diagnósticos de cambio de distribución sobre $X$: $z$ absoluto máximo, $z$ absoluto medio, proporción con $|z|>10$ y características más desviadas
+\If{\texttt{--export-diagnostics}}
+    \State Guardar los diagnósticos en \texttt{diagnostics.json}
+\EndIf
+\State Cargar $M$ (QRDQN, con reserva a DQN solo si \texttt{sb3\_contrib} no está instalado)
+\State $y_{pred} \gets$ predecir acciones sobre $X$ en lotes de 4096 filas
+\If{$|y_{pred}| \neq |D|$}
+    \State \textbf{abortar} \Comment{las predicciones deben alinearse fila a fila con $D$}
+\EndIf
+\State Escribir \texttt{predictions.csv} con $y_{pred}$; si \texttt{--include-sensitive-metadata}, escribir también \texttt{predictions\_sensitive\_local.csv} con metadatos
+\State Calcular estadísticas de predicción: $n_{flows}$, tasa de bloqueo, tasa de permiso y diagnósticos de $z$-score
+\If{$D$ contiene \texttt{truth\_y} o \texttt{truth\_label} con valores válidos}
+    \State Añadir métricas binarias (matriz de confusión y métricas derivadas) comparando $y_{pred}$ con la verdad
+\EndIf
+\State Escribir \texttt{config.json} y \texttt{metrics.json} en \texttt{runs/phase2/RUN\_ID}
+\Return Directorio de ejecución \texttt{runs/phase2/RUN\_ID}
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Mapeo canónico para flujos de laboratorio}
 Los extractores de flujos de laboratorio pueden utilizar nombres de columna diferentes a los de CICIDS2017. El script de la Fase 2 define por tanto un mapeo explícito de los nombres del extractor a los nombres canónicos. Las columnas de metadatos como la IP de origen, la IP de destino, los puertos, el protocolo y la marca temporal pueden preservarse en los ficheros de salida para su inspección, pero no forman parte del vector de características del modelo. Esto mantiene separadas la interpretabilidad y la entrada al modelo.
