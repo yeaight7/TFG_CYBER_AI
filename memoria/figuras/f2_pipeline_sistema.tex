@@ -1,0 +1,76 @@
+% Fuentes: src/train_rl_defender.py, src/load_cicids2017.py, src/canonical_schema.py,
+% scripts/predict_real_traffic_v2.py
+\begin{tikzpicture}[
+    node distance=0.18cm,
+    every node/.style={align=center},
+  ]
+
+  % ---------------------------------------------------------------
+  % Fila superior: Fase 1 (entrenamiento offline sobre CICIDS2017)
+  % ---------------------------------------------------------------
+  \node[cajaDato, text width=1.85cm] (csv) {\small 8 CSV\\CICIDS2017};
+
+  \node[cajaProceso, text width=2.0cm, right=0.18cm of csv] (limpieza)
+    {\small Limpieza: descarta ID (IP,\\puertos,\\timestamps);\\Inf/NaN$\to$0};
+  \node[rutaFichero, below=1mm of limpieza] {src/\\load\_cicids2017.py};
+
+  \node[cajaProceso, text width=1.9cm, right=0.18cm of limpieza] (esquema)
+    {\small Esquema\\canónico: 76\\features + 76\\máscara = 152};
+  \node[rutaFichero, below=1mm of esquema] {src/\\canonical\_schema.py};
+
+  \node[cajaProceso, text width=2.0cm, right=0.18cm of esquema] (particion)
+    {\small Partición\\80/20 (semilla\\42) + Scaler\\(solo train)};
+  \node[rutaFichero, below=1mm of particion] {src/\\load\_cicids2017.py};
+
+  \node[cajaProceso, text width=1.7cm, right=0.18cm of particion] (entorno)
+    {\small Entorno RL\\(permitir/\\bloquear)};
+  \node[rutaFichero, below=1mm of entorno] {src/\\rl\_defender\_env.py};
+
+  \node[cajaModelo, text width=1.4cm, right=0.18cm of entorno] (agente)
+    {\small Agente\\QRDQN};
+  \node[rutaFichero, below=1mm of agente] {src/\\train\_rl\_defender.py};
+
+  \node[cajaProceso, text width=1.7cm, right=0.18cm of agente] (evaluacion)
+    {\small Evaluación +\\artefactos por\\ejecución};
+  \node[rutaFichero, below=1mm of evaluacion] {src/\\train\_rl\_defender.py};
+
+  \draw[flecha] (csv) -- (limpieza);
+  \draw[flecha] (limpieza) -- (esquema);
+  \draw[flecha] (esquema) -- (particion);
+  \draw[flecha] (particion) -- (entorno);
+  \draw[flecha] (entorno) -- (agente);
+  \draw[flecha] (agente) -- (evaluacion);
+
+  \node[etiqueta, anchor=west, above=1mm of csv.north west] {Fase 1 (offline, entrenamiento)};
+
+  % ---------------------------------------------------------------
+  % Fila inferior: Fase 2 (inferencia offline sobre tráfico real)
+  % ---------------------------------------------------------------
+  \node[cajaDato, text width=1.8cm, below=2.05cm of limpieza] (pcap)
+    {\small Capturas de\\laboratorio (pcap)};
+
+  \node[cajaProceso, text width=1.8cm, right=0.5cm of pcap] (flujos)
+    {\small Extracción\\de flujos};
+  \node[rutaFichero, below=1mm of flujos] {scripts/\\predict\_real\_\\traffic\_v2.py};
+
+  \node[cajaProceso, text width=1.9cm, below=2.05cm of entorno] (inferencia)
+    {\small Inferencia\\determinista};
+  \node[rutaFichero, below=1mm of inferencia] {scripts/\\predict\_real\_\\traffic\_v2.py};
+
+  \node[cajaProceso, text width=1.9cm, right=0.5cm of inferencia] (predicciones)
+    {\small Predicciones +\\diagnósticos};
+  \node[rutaFichero, below=1mm of predicciones] {scripts/\\predict\_real\_\\traffic\_v2.py};
+
+  \draw[flecha] (pcap) -- (flujos);
+  \draw[flecha] (flujos) -- (inferencia);
+  \draw[flecha] (inferencia) -- (predicciones);
+
+  \node[etiqueta, anchor=west, below=6mm of pcap.south west] {Fase 2 (offline, inferencia)};
+
+  % Reutilización del esquema canónico y del escalador entrenado en Fase 1
+  \draw[flechaFina] (esquema.south) .. controls +(0,-1.1) and +(0,1.1) .. (flujos.north)
+    node[etiquetaTenue, pos=0.82, text width=1.6cm, xshift=-1.0cm] {reutiliza\\esquema};
+  \draw[flechaFina] (particion.south east) .. controls +(0.4,-1.1) and +(-0.6,1.1) .. (inferencia.north)
+    node[etiquetaTenue, pos=0.82, text width=1.8cm, xshift=1.1cm] {reutiliza\\escalador\\entrenado};
+
+\end{tikzpicture}
