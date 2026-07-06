@@ -34,7 +34,7 @@ This file tracks citation, verification, and writing risks for `state_of_the_art
 - Exact mapping from CICFlowMeter feature names to the 76 canonical features.
 - Current reward defaults: both `.github/AGENT_CONTEXT.md` and `docs/results.md` agree on `fp=-2.0` (tp=1.5, fn=-5.0, omission=0.0); this matches `src/train_rl_defender.py` and `src/rl_defender_env.py`. No disagreement exists. Historical runs C01/C02 used `fp=-1.0`; that is historical record, not the current default.
 - Whether the final thesis will include Random Forest baseline artifacts.
-- Whether the final thesis will include a committed full leave-one-exact-CSV-out validation artifact.
+- Whether the final thesis will include a committed full leave-one-CSV-out validation artifact.
 - Whether final Phase 2 lab traffic includes attack labels, benign-only traffic, or unlabeled traffic.
 - Whether attack-family error analysis is possible with preserved labels.
 - Whether data-efficiency experiments are controlled enough to call them a data-efficiency curve.
@@ -84,7 +84,7 @@ Keep those details for algorithm/design chapters unless the final State of the A
 - `src/validate_checks.py`: Check A/B/C definitions and current defaults.
 - `src/validate_leave_one_csv_out.py`: exact-file validation behavior.
 - `scripts/predict_real_traffic_v2.py`: Phase 2 preprocessing, clipping, scaler loading, diagnostics, and batch prediction.
-- `docs/results.md`: whether RF baseline and leave-one-exact-CSV-out metrics remain pending.
+- `docs/results.md`: whether RF baseline and leave-one-CSV-out metrics remain pending.
 
 ## Overclaim Checks for Next Pass
 
