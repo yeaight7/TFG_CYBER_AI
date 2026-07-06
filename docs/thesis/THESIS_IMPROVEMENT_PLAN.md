@@ -113,7 +113,7 @@ Parallel fan-out for independent figures / independent claim verification. Singl
 ## F0 — Scaffold, preamble, baseline ✅
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F0.1 | Branch `claude/thesis-f0-scaffold`; verify toolchain with full `-gg` rebuild | cheap | — | [x] | build=clean · biber 2.21 OK · pages=118 |
 | F0.2 | `.gitattributes`: `memoria/memoria.pdf` + `report/report.pdf` `merge=binary` | cheap | — | [x] | this PR |
 | F0.3 | Create `memoria/figuras/` (.gitkeep) | cheap | — | [x] | this PR |
@@ -126,7 +126,7 @@ Parallel fan-out for independent figures / independent claim verification. Singl
 Rule: **no number may appear in any figure that is not present in a committed artifact.** Output: `memoria/figuras/<id>_<slug>.pdf` + `.png` + entry in `figures_manifest.json` (fields: file, source_artifact, values_plotted). Figures are committed so the LaTeX build never runs Python.
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F1.1 | `uv sync --all-extras`; scaffold `scripts/make_thesis_figures.py` (one function per figure, `matplotlib.use("Agg")`, writes manifest) | sonnet | F0 | [x] | commit 8667520 · SOURCE_DATE_EPOCH for reproducible PDFs |
 | F1.2 | Run `scripts/export_tensorboard_scalars.py` on MAIN TB event log (`runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/events.out.tfevents.*`) → CSVs | sonnet | F1.1 | [x] | commit 89bb943 · 6 scalar tags exported (see DT-6) |
 | F1.3 | F8 learning curves (reward/loss vs steps) from F1.2 CSVs | sonnet | F1.2 | [x] | commit 816164a · `figuras/f8_curvas_entrenamiento.pdf` |
@@ -144,7 +144,7 @@ Rule: **no number may appear in any figure that is not present in a committed ar
 ## F2 — TikZ diagrams (‖ F1, F3)
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F2.0 | Shared TikZ styles `figuras/tikz_estilos.tex` + preamble `\input` wiring | — | F0 | [x] | commits 2a5d5ae, 8b4279c · build green |
 | F2.1 | F2 pipeline general del sistema (from `src/` structure: load → clean → canonical 152-dim → env → QRDQN → eval → Phase-2) | sonnet | F0 | [x] | commit 8851cf1 + fixes (características, escalado, extractor externo CICFlowMeter-py per `pcaps/README.md` — NOT the predict script) |
 | F2.2 | F3 agente–entorno interaction, one-step (γ=0) with reward table (from `src/rl_defender_env.py`) | sonnet | F0 | [x] | commit 3d03819 + fixes (benigno/omisión wording, label collisions; decimal points render via babel `\decimalpoint`) |
@@ -158,7 +158,7 @@ Rule: **no number may appear in any figure that is not present in a committed ar
 ## F3 — Front matter (‖ F1, F2)
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F3.1 | Titlepage: `titlepage` env, logo `assets/Universidad_Loyola_Logo_POS_RGB.png`, Universidad Loyola / Grado en Ingeniería Informática y Tecnologías Virtuales / tutor Alfonso Carlos Martínez Estudillo (user-provided 2026-07-06) | cheap+user | F0 | [x] | commit c1180b5 |
 | F3.2 | Roman page numbering for front matter; arabic restart at Ch1 (babel `es-lcroman`, DT-8) | cheap | F3.1 | [x] | commit 36ae1c0 |
 | F3.3 | Agradecimientos (real text provided by user: padres Juan y Esmeralda, hermano Carlos, tutor Alfonso Carlos) | cheap | F3.2 | [x] | commit c1180b5 |
@@ -174,7 +174,7 @@ Rule: **no number may appear in any figure that is not present in a committed ar
 Pure content MOVE, no rewriting. `metodologia.tex` → `capitulos/diseno_sistema.tex` (visión: datos, limpieza, esquema canónico, formulación RL, agente QRDQN, implementación) + `capitulos/protocolo_experimental.tex` (fases, particiones, métricas/escalera, línea base, escala de entrenamiento [pendiente-GPU], Fase 2, reproducibilidad, limitaciones metodológicas).
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F4.1 | Split file, rewire `\input`s in `memoria.tex`, delete `metodologia.tex` | sonnet | F0 | [ ] | |
 | F4.2 | Bibliography: `\chapter{Bibliografía}+\printbibliography[heading=none]` → `\printbibliography[heading=bibintoc, title={Bibliografía}]` | cheap | F4.1 | [ ] | |
 | F4.3 | `\appendix` skeleton after bibliography (empty anexo files wired, content in F10) | cheap | F4.2 | [ ] | |
@@ -186,7 +186,7 @@ Pure content MOVE, no rewriting. `metodologia.tex` → `capitulos/diseno_sistema
 Rule: each algorithm written AFTER re-reading its source file; divergence = bug in the pseudocode.
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F5.1 | A1 entrenamiento QRDQN (from `src/train_rl_defender.py`; target line must show `y ← r`, reinforcing γ=0) | sonnet | F4 | [ ] | |
 | F5.2 | A2 `env.step` (from `src/rl_defender_env.py`; rewards tp=1.5/fp=−2.0/fn=−5.0/om=0) | sonnet | F4 | [ ] | |
 | F5.3 | A3 mapeo canónico (from `src/canonical_schema.py`) | sonnet | F4 | [ ] | |
@@ -200,7 +200,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 ## F6 — Ch2: Objetivos, alcance y planificación
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F6.1 | Rename chapter; OBJ-C1..C4 contract catalog (T-C spec tables: ID/Descripción/Tipo/Verificación/Capítulos) | TOP | F4 | [ ] | |
 | F6.2 | OBJ-01..08 IDs + criterio de verificación on existing 8 subsections | TOP | F6.1 | [ ] | |
 | F6.3 | T-D matriz de trazabilidad (objetivos ↔ secciones ↔ RUN_IDs ↔ estado; OBJ-07 = Pendiente-GPU) | TOP | F6.2 | [ ] | |
@@ -212,7 +212,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 ## F7 — Ch6 Resultados expansion (heaviest content phase)
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F7.1 | 6.1 Condiciones generales + T-G + traceability statement | TOP | F1, F5 | [ ] | |
 | F7.2 | 6.2 Experimento 1 MAIN: Condiciones / Dinámica (embed F8) / Resultados (embed F9) / Discusión breve | TOP | F7.1 | [ ] | |
 | F7.3 | 6.3 bootstrap (embed F10; keep "precisión de muestreo" verbatim) | TOP | F7.1 | [ ] | |
@@ -226,7 +226,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 ## F8 — Ch7 Discusión + Ch8 Limitaciones + Ch9 Ética
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F8.1 | 7.1–7.3 expand quantitatively (exact table values) | TOP | F7 | [ ] | |
 | F8.2 | 7.4 posicionamiento vs SOTA (leakage caveat on literature numbers; cite Layeghy2022, Boukhamla2021, Cantone2024) | TOP | F7 | [ ] | |
 | F8.3 | 7.5 lectura multiobjetivo {seguridad, impacto} (contract C3) | TOP | F7 | [ ] | |
@@ -238,7 +238,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 ## F9 — Ch10 Conclusiones (new) + Ch1 expansion
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F9.1 | New `capitulos/conclusiones.tex`: 10.1 objetivos contractuales echo · 10.2 objetivos específicos echo (OBJ-07 "diseño completado, ejecución pendiente") · 10.3 reflexión del autor · 10.4 líneas futuras corto/medio/largo plazo (each with cite; Zhang2025OpenSet here) | TOP | F6, F8 | [ ] | |
 | F9.2 | Ch1: PDS-adapted spec (1.2.2), contributions C1–C4 with evidence pointers, lead-in | TOP | F6 | [ ] | |
 | F9.3 | Ch1 §1.6 roadmap rewrite naming ALL chapters + anexos | TOP | F9.1 | [ ] | |
@@ -247,7 +247,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 ## F10 — Anexos A–D
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F10.1 | Anexo A Manual de reproducibilidad (from `docs/reproducibility.md` + exact run commands) | sonnet | F4 | [ ] | |
 | F10.2 | Anexo B Entorno HW/SW (versions from `requirements*.txt`, `environment.json`) | sonnet | F4 | [ ] | |
 | F10.3 | Anexo C Esquema canónico completo (MOVE 76-feature enumeration out of Ch4 body) | sonnet | F4 | [ ] | |
@@ -257,7 +257,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 ## F11 — Estado del arte trim + bibliography weave
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F11.1 | Tighten 8–10% in the 3 longest sections (datasets, supervised DL, riesgos metodológicos) — nothing deleted or moved out | TOP | F9 | [ ] | |
 | F11.2 | T-H related-work RL-NIDS table weaving NIDSRL2023, RLTechniques2023NIDS, Sanusi2023DRLIDS, Umer2022RLRLIDS, Cevallos2023DRLIDSBP, DDPG2025AttackDetection, HCLRIDS2025IoMT, DRLIDSSDN2025 | TOP | F11.1 | [ ] | |
 | F11.3 | Weave remaining uncited: Layeghy2022, Boukhamla2021, Cantone2024, DatasetSurvey2025, Ozgur2016, Rodriguez2022, TrainingData2025, Farrukh2022, Pekar2024 (one claim-bearing citation each); prune Oyelakin2023Overview if no honest slot | TOP | F11.1 | [ ] | |
@@ -267,7 +267,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 ## F12 — Document-wide style/QA pass
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F12.1 | Conventions sweep: chapter lead-ins everywhere; bilingual glossing on first mention; captions end "Fuente: elaboración propia [a partir de `\texttt{<artifact>}`]"; RUN_ID in `\texttt{}` at first numeric use; quantitative discussion style | TOP | F11 | [ ] | |
 | F12.2 | Overfull/underfull box cleanup; float placement audit | cheap | F12.1 | [ ] | |
 | F12.3 | Full gate suite G1–G7; record final page count; tag `main` milestone `thesis-content-complete` | cheap | F12.2 | [ ] | |
@@ -275,7 +275,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 ## F13 — EN mirror re-sync (`report/` — FROZEN until F12 merged)
 
 | ID | Task | Model | Dep | Status | Evidence |
-|----|------|-------|-----|--------|----------|
+|---|---|---|---|---|---|
 | F13.1 | Port all ES changes + new chapters/figures to `report/` (figures reused from `memoria/figuras/`) | TOP | F12 | [ ] | |
 | F13.2 | Fix stale sync note in `docs/reproducibility.md` | cheap | F13.1 | [ ] | |
 | F13.V | `report/` builds green; fidelity verification (top model) | TOP | F13.* | [ ] | |
@@ -284,10 +284,10 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 
 ## Deferred GPU register (tracked, NOT executed in this effort — repo decision D-9)
 
-No thesis claim or figure may depend on these until they are actually run and their artifacts committed.
+No thesis claim or figure may depend on these until they are actually run and their artifacts committed. *Note: User will soon run more experiments and save the artifacts*
 
 | ID | Experiment | Command (future operator) | Status |
-|----|-----------|---------------------------|--------|
+|---|---|---|---|
 | G.1 | Leave-one-exact-CSV-out (QRDQN) | `uv run python -m src.validate_leave_one_csv_out` (see module docstring for args) | [-] pendiente de GPU |
 | G.2 | Training-size ladder (100k/250k/500k/1M/2M, nested-prefix) | `uv run python -m src.train_rl_defender --preset full --train-max-rows <N> ...` per `experiments/cicids2017_qrdqn_experiments.md` | [-] pendiente de GPU |
 | G.3 | Multi-seed variance study (MAIN profile, ≥3 seeds) | same as MAIN with `--seed {43,44,45}` | [-] pendiente de GPU |
@@ -300,7 +300,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 | ~~Tutor name confirmation~~ | F3.1 | resolved 2026-07-06: Alfonso Carlos Martínez Estudillo |
 | ~~Agradecimientos text~~ | F3.3 | resolved 2026-07-06 (Juan y Esmeralda, Carlos, Alfonso Carlos) |
 | ~~Optional: phase labels for Gantt bands~~ | F2.7 | resolved — Gantt built from contract dates + repo evidence (first commit, run timestamps) |
-| Portada date currently "Julio de 2026" | F3.1 | [?] confirm or adjust to defense date |
+| Portada date currently "Julio de 2026" | F3.1 | [?] confirm or adjust to defense date - User will adjust manually |
 
 ## Decisions log (append-only)
 
@@ -323,7 +323,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 - Design pass (user request): fancyhdr running headers, titlesec chapter format (gray small-caps label + blue rule), colored links + PDF metadata, microtype, caption styling, short captions for the 6 existing tables.
 - Debugging findings recorded as decisions: DT-8 (`es-lcroman` — babel's small-caps folios force bold-smallcaps in TOC; `es-tabla` — prose says Tabla), DT-9 (fancyhdr v5 clobbers global config; define both styles via `\fancypagestyle` — empirically bisected), DT-10 (TL2025 emits a benign "Infinite glue shrinkage" diagnostic on every multi-page longtable — reproduced with a vanilla 6-line doc; do not chase).
 - F3.V: adversarial verifier PASS 19/19 (all numbers vs artifacts, ES/EN parity, disclosures, portada facts). 10 pages visually reviewed via Ghostscript.
-- Remaining open item: portada date "Julio de 2026" — confirm vs defense date.
+- Remaining open item: portada date "Julio de 2026" — confirm vs defense date. *User will adjust this manually*
 
 ### F2 — 2026-07-06 — DONE
 - Branch `claude/thesis-f2-diagrams`. 7 TikZ diagrams authored by a 7-agent workflow (each grounded in its source files, compile-verified in isolated scratch dirs), plus `figuras/tikz_estilos.tex` (shared styles, wired into the preamble).
