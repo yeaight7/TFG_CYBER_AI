@@ -1,0 +1,26 @@
+% Fuentes: runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json
+%          (policy_kwargs.net_arch = [1024, 1024, 512], n_quantiles = 200, n_features = 152)
+%          src/rl_defender_env.py (action_space = Discrete(2): 0=PERMIT, 1=BLOCK)
+\begin{tikzpicture}[
+    node distance=4mm,
+    every node/.style={text width=1.3cm},
+  ]
+
+  \node[cajaDato, text width=1.9cm] (entrada) {Entrada\\observación\\152};
+  \node[caja, right=of entrada] (h1) {Densa\\1024};
+  \node[caja, right=of h1] (h2) {Densa\\1024};
+  \node[caja, right=of h2] (h3) {Densa\\512};
+  \node[cajaModelo, right=of h3] (salida) {Salida\\200 cuantiles\\$\times$ 2 acciones};
+  \node[cajaProceso, right=of salida, text width=1.4cm] (media) {Media de\\cuantiles\\$Q(x,a)$};
+  \node[cajaResaltada, right=of media, text width=1.4cm] (decision) {argmax\\permitir /\\bloquear};
+
+  \node[etiquetaTenue, below=1mm of salida, text width=2.2cm] (nq) {200 cuantiles por acción};
+
+  \draw[flechaAzul] (entrada) -- (h1);
+  \draw[flechaAzul] (h1) -- (h2);
+  \draw[flechaAzul] (h2) -- (h3);
+  \draw[flechaAzul] (h3) -- (salida);
+  \draw[flechaAzul] (salida) -- (media);
+  \draw[flechaAzul] (media) -- (decision);
+
+\end{tikzpicture}
