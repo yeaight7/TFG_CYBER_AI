@@ -135,7 +135,7 @@ This file provides thesis-ready claim material. It is not a chapter draft. Use r
 - **Risky claim:** CICIDS2017 performance is enough to establish general robustness.
 - **Why risky:** Cross-domain literature shows in-dataset metrics may not transfer.
 - **Safer alternative:** "CICIDS2017 provides a reproducible benchmark, but robustness must be evaluated with stricter splits and external traffic."
-- **Verification needed:** Check C, leave-one-exact-CSV-out artifact, and Phase 2 runs.
+- **Verification needed:** Check C, leave-one-CSV-out artifact, and Phase 2 runs.
 
 ### Risky claim 3
 
