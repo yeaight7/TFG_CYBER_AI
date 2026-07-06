@@ -31,6 +31,15 @@ Viernes (tarde, DDoS) & $225\,745$ & $97\,718$ & $128\,027$ & 56.7131\% \\
 \label{tab:composicion-dia}
 \end{table}
 
+La Figura~\ref{fig:composicion-dia} ofrece la misma información como comparación visual entre días. La lectura relevante para el protocolo no es solo el volumen total, sino la variación extrema de prevalencia de ataque entre capturas, que justifica no depender únicamente de una partición aleatoria por filas.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{f6_composicion_dia.pdf}
+\caption[Composición visual por día de CICIDS2017]{Composición visual por día de CICIDS2017. Fuente: elaboración propia a partir de \texttt{memoria/figuras/data\_composicion\_dia.json}.}
+\label{fig:composicion-dia}
+\end{figure}
+
 \subsection{Fase 2: inferencia offline sobre tráfico de laboratorio}
 La Fase 2 evalúa la transferencia más allá de la distribución del benchmark. El tráfico se captura en un entorno de laboratorio privado, se convierte offline en CSVs de flujos, se mapea al mismo esquema canónico, se normaliza con los artefactos de entrenamiento persistidos y se procesa con el modelo entrenado. Esta fase es una prueba de inferencia sobre una distribución externa, no un despliegue en vivo.
 
@@ -41,6 +50,15 @@ La metodología separa el ajuste y la evaluación en cada etapa de preprocesamie
 
 \subsection{Partición aleatoria estratificada}
 La partición aleatoria estratificada es el primer peldaño de validación. Preserva las proporciones de clases entre entrenamiento y prueba y es útil como comprobación de la capacidad de aprendizaje. Si el modelo no puede aprender bajo esta partición favorable, las evaluaciones más estrictas posteriores tienen pocas probabilidades de tener éxito.
+
+En la ejecución MAIN, la estratificación mantiene prácticamente idéntica la prevalencia de ataque entre entrenamiento y prueba, como muestra la Figura~\ref{fig:balance-particion}. Esto permite atribuir los cambios de rendimiento entre entrenamiento y evaluación al modelo y al protocolo, no a una variación accidental de la proporción de clases en la partición aleatoria.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.78\textwidth]{f7_balance_particion.pdf}
+\caption[Balance de clases en la partición aleatoria fija]{Balance de clases en la partición aleatoria fija de la ejecución MAIN. Fuente: elaboración propia a partir de \texttt{config.json} de la ejecución MAIN.}
+\label{fig:balance-particion}
+\end{figure}
 
 Sin embargo, la partición aleatoria por filas es la evidencia más débil de este proyecto. Los conjuntos de datos de flujos pueden contener registros correlacionados, patrones repetidos y artefactos del contexto de captura. Situar flujos adyacentes o muy similares a ambos lados de la partición puede sobreestimar la generalización \parencite{Lanvin2023Errors,Arp2020DosDontsMLSecurity}. Los resultados de la partición aleatoria se reportan por tanto únicamente como evidencia del benchmark interno.
 
@@ -109,6 +127,15 @@ La escalera de evaluación está ordenada de la evidencia más débil a la más 
 
 En la implementación, los peldaños segundo a cuarto se corresponden con las comprobaciones \emph{Check A} (predicción directa), \emph{Check B} (etiquetas barajadas) y \emph{Check C} (partición por CSV/día) del script \texttt{src/validate\_checks.py}; el quinto peldaño se implementa en \texttt{src/validate\_leave\_one\_csv\_out.py}.
 
+La Figura~\ref{fig:escalera-validacion} sintetiza esta escalera de validación y sitúa cada peldaño junto al artefacto o resultado que lo respalda. La figura no añade métricas nuevas: reordena visualmente las cifras ya documentadas para hacer explícito el aumento progresivo de exigencia.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{\input{figuras/f16_escalera_validacion}}
+\caption[Escalera de validación del proyecto]{Escalera de validación del proyecto, desde la evaluación directa hasta la inferencia de Fase 2. Fuente: elaboración propia a partir de los artefactos de validación y Fase 2 bajo \texttt{runs/}.}
+\label{fig:escalera-validacion}
+\end{figure}
+
 Cada peldaño apunta a un modo de fallo diferente. La escalera no hace que ningún resultado individual sea definitivo, pero hace la evaluación más informativa que una única puntuación aleatoria de entrenamiento-prueba.
 
 La partición aleatoria estratificada comprueba si el modelo y la implementación pueden resolver el benchmark en absoluto. Un modelo que falla aquí tiene un problema de entrenamiento o de arquitectura, no un problema de generalización. La comprobación de etiquetas barajadas es un detector de fugas: un modelo que alcanza una exactitud muy por encima de la de la clase mayoritaria en una ejecución con etiquetas barajadas ha aprendido a partir de artefactos correlacionados con las etiquetas en las características y no a partir de estadísticas de flujo reales \parencite{Arp2020DosDontsMLSecurity}. La partición por CSV/día comprueba la generalización temporal y por escenario reteniendo grupos de captura completos; la degradación del rendimiento respecto a la partición aleatoria revela si el modelo depende del contexto específico del día. El protocolo leave-one-CSV-out va más lejos: cada fichero oficial de CICIDS2017 se retiene por turnos, y la distribución de métricas agregada muestra si algún fichero domina el benchmark o si el rendimiento es estable entre escenarios de captura. La inferencia en la Fase 2 es el peldaño final y más estricto, que comprueba si todo el pipeline puede operar sobre tráfico producido fuera del entorno del benchmark.
@@ -168,11 +195,21 @@ Inferencia de la Fase 2 sobre tráfico de laboratorio etiquetado, con el modelo 
 \section{Pipeline de inferencia offline en la Fase 2}
 El punto de entrada principal de la Fase 2 mantenido es el script de inferencia offline robusta. Acepta un CSV de flujos extraído, un modelo entrenado, un escalador persistido, límites de percentiles opcionales y recorte por z-score opcional. A continuación mapea las columnas de entrada al esquema canónico, aplica la misma representación de características y máscara, escala con el escalador guardado, calcula diagnósticos, predice acciones en lotes y escribe las salidas en un nuevo directorio de ejecución de la Fase 2.
 
+La Figura~\ref{fig:pipeline-fase2} resume el recorrido operativo de esa inferencia. La clave metodológica es que el escalador de MAIN se reutiliza sin reajuste y que las salidas son ficheros de predicción, métricas y diagnósticos: no existe actuación activa sobre la red.
+
+\begin{figure}[htbp]
+\centering
+\resizebox{0.74\textwidth}{!}{\input{figuras/f17_pipeline_fase2}}
+\caption[Pipeline de inferencia offline de la Fase 2]{Pipeline de inferencia offline de la Fase 2. Fuente: elaboración propia a partir de \texttt{scripts/predict\_real\_traffic\_v2.py}.}
+\label{fig:pipeline-fase2}
+\end{figure}
+
 El Algoritmo~\ref{alg:inferencia-fase2} formaliza el orden exacto de estas etapas, indicando cuáles son opcionales y bajo qué indicador de línea de comandos se activan.
 
 \begin{algorithm}[htbp]
 \caption[Inferencia offline robusta de la Fase 2]{Inferencia offline robusta de la Fase 2. Fuente: elaboración propia a partir de \texttt{scripts/predict\_real\_traffic\_v2.py}.}
 \label{alg:inferencia-fase2}
+\footnotesize
 \begin{algorithmic}[1]
 \Require CSV de flujos $D$ (\texttt{--flows}); modelo entrenado $M$; escalador persistido $S$ (omitido si \texttt{--no-scale}); límites de percentiles opcionales $(p_{low}, p_{high})$ (\texttt{--percentiles}); umbral de recorte $z$ opcional $\tau_z$ (\texttt{--clip-z})
 \Ensure Directorio de ejecución \texttt{runs/phase2/RUN\_ID} con predicciones, configuración, métricas y diagnósticos opcionales
