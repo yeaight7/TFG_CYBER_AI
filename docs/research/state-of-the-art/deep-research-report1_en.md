@@ -118,7 +118,7 @@ The useful conclusion for your chapter is this: the most direct precedent of you
 
 The first recurring weakness is the **intra-dataset performance inflation**. There are multiple works reporting near-perfect precision or F1 within the same benchmark, particularly with synthetic or semi-synthetic datasets, but the critical literature points out that these results have translated poorly to more realistic environments. Layeghy and colleagues show clear statistical differences between synthetic NIDS datasets and real traffic, and both their works and Cantone et al.'s show that cross-dataset performance can drop drastically, sometimes to near-random levels. Arp et al., from a broader ML-in-security perspective, argue that this pattern is not an isolated accident but a symptom of broader methodological pitfalls.
 
-The second weakness is the **excessive use of random splits**. In tabular NIDS, a random split can mix flows from the same scenario, same day, same traffic generator, or same campaign between training and testing. That does not always imply formal leakage in the classical sense, but it can create an overly easy test. Your own repository already reflects this concern by differentiating between random split, hard split by day/CSV, shuffled-label anti-leakage test, and leave-one-exact-CSV-out, which is exactly the kind of discipline the thesis should highlight.
+The second weakness is the **excessive use of random splits**. In tabular NIDS, a random split can mix flows from the same scenario, same day, same traffic generator, or same campaign between training and testing. That does not always imply formal leakage in the classical sense, but it can create an overly easy test. Your own repository already reflects this concern by differentiating between random split, hard split by day/CSV, shuffled-label anti-leakage test, and leave-one-CSV-out, which is exactly the kind of discipline the thesis should highlight.
 
 The third weakness is **leakage or use of label proxies**. In flow-based datasets it is very easy for identifiers, ports, absolute timestamps, or export artifacts to act as spurious shortcuts. The best thing about your current implementation is that it formalizes an explicit anti-leakage policy: it excludes IPs, absolute timestamps, Flow IDs, and port fields when they act as label proxies. This connects very well with the general methodological critique of Arp et al. and with the prudent practice required in a serious TFG.
 
@@ -144,7 +144,7 @@ The cleanest justification for your design would be the following:
 
 **Error analysis.** Instead of focusing only on global accuracy, it is convenient to analyze false positives and false negatives by traffic families, days, or files, because the cost of these errors is different in defense.
 
-**Fallback strict split.** If time doesn't allow for extensive external validation, the methodological minimum should include at least a hard split by day/CSV and, if possible, leave-one-exact-CSV-out, which your code already contemplates.
+**Fallback strict split.** If time doesn't allow for extensive external validation, the methodological minimum should include at least a hard split by day/CSV and, if possible, leave-one-CSV-out, which your code already contemplates.
 
 ### The gap your TFG can claim without exaggerating
 
