@@ -206,7 +206,7 @@ Este check es importante porque mide generalización en un escenario mucho más 
 
 ---
 
-## 13. Nueva validación leave-one-exact-CSV-out
+## 13. Nueva validación leave-one-CSV-out
 
 Además, el repositorio ya incluye una validación más fina:
 
@@ -273,7 +273,7 @@ Las limitaciones principales hoy son:
 
 - la robustez frente a tráfico benigno real todavía no está cerrada
 - no hay bloqueo activo en tiempo real
-- la validación leave-one-exact-CSV-out está implementada, pero falta el artefacto completo comprometido
+- la validación leave-one-CSV-out está implementada, pero falta el artefacto completo comprometido
 
 ---
 
@@ -281,7 +281,7 @@ Las limitaciones principales hoy son:
 
 Las siguientes líneas naturales serían:
 
-- ejecutar y consolidar la validación leave-one-exact-CSV-out
+- ejecutar y consolidar la validación leave-one-CSV-out
 - calibrar o hacer fine-tuning para tráfico del laboratorio
 - explorar bloqueo activo controlado
 - incorporar más datasets modernos
