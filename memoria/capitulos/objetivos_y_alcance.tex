@@ -200,3 +200,36 @@ RES-E4 & Un único algoritmo de RL (QRDQN) y una única línea base supervisada 
 \caption[Catálogo de restricciones del proyecto]{Catálogo de restricciones del proyecto: factores de dato y factores estratégicos. Fuente: elaboración propia.}
 \label{tab:restricciones}
 \end{table}
+
+\section{Recursos}
+Para el desarrollo y la ejecución del proyecto se han empleado dos entornos de cómputo diferenciados: una estación de trabajo local, utilizada para el desarrollo del código, las pruebas y las ejecuciones de verificación (\textit{smoke tests}), y una instancia de GPU en la nube (RunPod) reservada en exclusiva para el entrenamiento principal del agente QRDQN sobre CICIDS2017. La pila de software se apoya en Python y en un conjunto de bibliotecas de aprendizaje automático y aprendizaje por refuerzo cuyas versiones exactas quedan fijadas en los ficheros de dependencias del repositorio, lo que favorece la reproducibilidad de los resultados. La Tabla~\ref{tab:recursos} resume los recursos hardware y software efectivamente utilizados.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.0cm}p{4.3cm}p{5.6cm}@{}}
+\toprule
+\textbf{Recurso} & \textbf{Especificación / versión} & \textbf{Uso en el proyecto} \\
+\midrule
+\multicolumn{3}{l}{\textit{Hardware}} \\
+\addlinespace
+GPU en la nube (RunPod) & NVIDIA RTX 3090 Ti, 24 GB de VRAM & Entrenamiento principal QRDQN ($3\,000\,000$ de pasos) sobre CICIDS2017 \\
+Estación de desarrollo local & CPU, sin GPU dedicada & Desarrollo, pruebas y ejecuciones \textit{smoke} del pipeline \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Software}} \\
+\addlinespace
+Python & 3.12.x & Lenguaje de implementación del proyecto \\
+PyTorch & 2.12.1 (variante \texttt{+cu130} en RunPod) & Motor de entrenamiento de redes neuronales \\
+Stable-Baselines3 & 2.8.0 & Implementación base de los algoritmos de aprendizaje por refuerzo \\
+sb3-contrib & 2.8.0 & Implementación del algoritmo QRDQN empleado como agente \\
+Gymnasium & 1.2.3 & Interfaz \texttt{Env} del entorno de aprendizaje por refuerzo \\
+scikit-learn & 1.9.0 & Preprocesado (escalado) y métricas de evaluación \\
+pandas & 3.0.3 & Carga y manipulación del conjunto de datos CICIDS2017 \\
+NumPy & 2.4.6 & Operaciones numéricas de bajo nivel \\
+\bottomrule
+\end{tabular}
+\caption[Recursos hardware y software del proyecto]{Recursos hardware y software efectivamente empleados en el desarrollo y en el entrenamiento del defensor. Fuente: elaboración propia a partir de \texttt{requirements.txt}, \texttt{requirements-runpod-cu130.txt}, \texttt{pyproject.toml}, \texttt{docs/runpod\_main\_experiment.md} y \texttt{config.json} de la ejecución principal (\texttt{runs/cicids2017/\allowbreak MAIN\_\allowbreak qrdqn\_\allowbreak cicids2017\_\allowbreak canonical\_\allowbreak full\_\allowbreak random\_\allowbreak 20260609\_\allowbreak 193655/\allowbreak config.json}).}
+\label{tab:recursos}
+\end{table}
+
+El entrenamiento principal (\texttt{MAIN\_\allowbreak qrdqn\_\allowbreak cicids2017\_\allowbreak canonical\_\allowbreak full\_\allowbreak random\_\allowbreak 20260609\_\allowbreak 193655}) se ejecutó íntegramente sobre el dispositivo \texttt{cuda} de la instancia RunPod, mientras que el resto del ciclo de desarrollo se realizó en CPU local, siguiendo la ruta de instalación de \texttt{requirements.txt} descrita para entornos locales.
