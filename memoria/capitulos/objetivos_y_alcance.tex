@@ -171,3 +171,32 @@ La tesis tampoco pretende resolver el problema más amplio de las operaciones ci
 El resultado esperado de esta tesis es un pipeline de inferencia offline completamente funcional, documentado y reproducible, respaldado por un análisis empírico detallado. El proyecto producirá artefactos persistentes para todas las ejecuciones de entrenamiento y validación, incluyendo ficheros de modelo entrenado, escaladores ajustados, informes de métricas, salidas de validación y registros de configuración que especifican completamente las condiciones bajo las cuales se produjo cada resultado. Esta disciplina en la gestión de artefactos forma parte de la contribución metodológica: un resultado que no puede reproducirse a partir de su rastro de artefactos proporciona una evidencia más débil que uno que sí puede.
 
 En cuanto al contenido empírico, el proyecto producirá mediciones de precisión, recall, F1, tasa de falsos positivos y tasa de falsos negativos tanto para el agente QRDQN como para la línea base de Random Forest en todos los niveles de validación. Los experimentos de escala de entrenamiento producirán curvas de aprendizaje que caracterizarán cómo evoluciona el rendimiento de cada modelo a medida que crece el presupuesto de entrenamiento. Los resultados de inferencia de la Fase 2 caracterizarán cómo varía el rendimiento cuando el modelo se enfrenta a tráfico capturado por el operador en un laboratorio doméstico cerrado y no adversarial, en lugar de flujos de CICIDS2017 reservados para la prueba. En conjunto, estos resultados cuantificarán los límites de generalización de los modelos de RL entrenados en benchmarks cuando se someten a particiones temporales estrictas, evaluación \textit{leave-one-CSV-out} y tráfico de laboratorio doméstico generado por el operador, y proporcionarán una evaluación empírica honesta de si la formulación de RL sensible al coste ofrece ventajas medibles sobre una línea base supervisada bien equiparable.
+
+\section{Restricciones}
+El desarrollo del proyecto está condicionado por un conjunto de restricciones que delimitan qué evidencia puede producirse y cómo debe interpretarse. La Tabla~\ref{tab:restricciones} las cataloga en dos categorías: \emph{factores de dato}, impuestos por las fuentes de datos disponibles, y \emph{factores estratégicos}, decisiones de alcance adoptadas para mantener el proyecto abordable, reproducible y seguro. Ninguna de estas restricciones se oculta en los capítulos posteriores: cada una reaparece, cuantificada cuando es posible, en los resultados y en las limitaciones.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{lp{5.4cm}p{5.6cm}}
+\toprule
+ID & Restricción & Implicación para el proyecto \\
+\midrule
+\multicolumn{3}{l}{\textit{Factores de dato}} \\
+\addlinespace
+RES-D1 & CICIDS2017 presenta problemas documentados: flujos duplicados, inconsistencias de etiquetado y sensibilidad a la partición. & Los resultados \emph{in-distribution} se leen como cota optimista; la escalera de validación y el análisis de duplicados son obligatorios. \\
+RES-D2 & El mapeo binario colapsa todas las familias de ataque en una única clase \texttt{BLOCK}. & El análisis de errores por familia queda fuera de la ruta principal de RL y exigiría etiquetas de familia preservadas. \\
+RES-D3 & El tráfico de la Fase 2 procede de un único laboratorio doméstico cerrado, generado por el operador y no adversarial. & Validez externa limitada: la Fase 2 se interpreta como comprobación de transferencia, no como validación de producción. \\
+RES-D4 & No se dispone de tráfico de producción etiquetado de forma independiente. & Las afirmaciones de generalización se restringen al benchmark y al laboratorio. \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Factores estratégicos}} \\
+\addlinespace
+RES-E1 & Evaluación exclusivamente offline; sin bloqueo en vivo ni integración con cortafuegos, SDN o IPS. & El sistema es un instrumento de medición experimental; un despliegue exigiría diseño y validación adicionales. \\
+RES-E2 & Presupuesto de cómputo GPU puntual (instancia en la nube reservada para el entrenamiento principal). & Los experimentos de escala de entrenamiento, el \textit{leave-one-CSV-out} de QRDQN y el estudio multi-semilla quedan diferidos, pendientes de GPU. \\
+RES-E3 & Una única semilla en la ejecución principal. & Los intervalos bootstrap cuantifican precisión de muestreo, no varianza entre entrenamientos. \\
+RES-E4 & Un único algoritmo de RL (QRDQN) y una única línea base supervisada (Random Forest). & Las conclusiones algorítmicas se limitan a esta pareja bajo el protocolo común. \\
+\bottomrule
+\end{tabular}
+\caption[Catálogo de restricciones del proyecto]{Catálogo de restricciones del proyecto: factores de dato y factores estratégicos. Fuente: elaboración propia.}
+\label{tab:restricciones}
+\end{table}
