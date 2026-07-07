@@ -134,6 +134,29 @@ El pipeline de inferencia aplica recorte opcional por percentiles y z-score para
 
 \textbf{Criterio de verificación (OBJ-08).} La ejecución oficial de la Fase 2 (\texttt{P2v2} sobre el modelo \texttt{MAIN}) procesó la captura de laboratorio con el escalador persistido y produjo predicciones, métricas y diagnósticos comprometidos (Tabla~\ref{tab:inventario-runs}; Algoritmo~\ref{alg:inferencia-fase2}), manteniendo el marco declarado de validez externa limitada.
 
+La Tabla~\ref{tab:trazabilidad} resume la trazabilidad entre los objetivos específicos, los capítulos donde se desarrollan y la evidencia que respalda el estado de cada uno; los identificadores completos de las ejecuciones citadas figuran en la Tabla~\ref{tab:inventario-runs}. El único objetivo sin evidencia de ejecución es OBJ-07, cuyo protocolo está diseñado e implementado pero pendiente de disponibilidad de GPU.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{lp{2.2cm}p{5.6cm}p{3.4cm}}
+\toprule
+Objetivo & Capítulos & Evidencia (ejecución o artefacto) & Estado \\
+\midrule
+OBJ-01 & 4 & Contrato de características en código (\texttt{canonical\_schema.py}); Algoritmo~\ref{alg:mapeo-canonico} & Completado \\
+OBJ-02 & 4 & Configuración de \texttt{MAIN} (\texttt{n\_features} $= 152$); semántica de la máscara documentada & Completado \\
+OBJ-03 & 4 & \texttt{rl\_defender\_env.py}; Algoritmo~\ref{alg:env-step}; Tablas~\ref{tab:reward-matrix} y~\ref{tab:recompensa-multiobjetivo} & Completado \\
+OBJ-04 & 4 y 6 & Ejecución \texttt{MAIN}; Tabla~\ref{tab:hiperparametros-main} & Completado \\
+OBJ-05 & 5 y 6 & Barrido Random Forest sobre las tres particiones & Completado \\
+OBJ-06 & 5 y 6 & Comprobaciones A/B/C; análisis de duplicados; partición fija con semilla 42 & Completado (\textit{leave-one-CSV-out} de QRDQN pendiente de GPU) \\
+OBJ-07 & 5 & Protocolo e instrumentación implementados; sin artefactos de ejecución & \textbf{Pendiente de GPU} \\
+OBJ-08 & 5 y 6 & Ejecución \texttt{P2v2} sobre el modelo \texttt{MAIN} (Fase 2) & Completado \\
+\bottomrule
+\end{tabular}
+\caption[Matriz de trazabilidad de objetivos]{Matriz de trazabilidad entre objetivos específicos, capítulos, evidencia y estado. Los \texttt{RUN\_ID} completos figuran en la Tabla~\ref{tab:inventario-runs}. Fuente: elaboración propia.}
+\label{tab:trazabilidad}
+\end{table}
+
 \section{Alcance del trabajo}
 El trabajo está delimitado por los requisitos de una evaluación offline de un pipeline de aprendizaje automático tabular. Comprende la ingesta de registros de flujo en formato CSV tanto de CICIDS2017 como de capturas de laboratorio, la aplicación de escalado estándar y recorte opcional de valores atípicos, la ejecución de bucles de entrenamiento mediante el framework Stable Baselines3 (\texttt{sb3-contrib}), y la generación de artefactos de ejecución estructurados y reproducibles que persisten modelos, métricas, escaladores y ficheros de configuración junto a cada ejecución de entrenamiento. La experimentación interna se realiza íntegramente sobre el conjunto de datos CICIDS2017, utilizando particiones explícitas entre entrenamiento y prueba y una escalera de validación multietapa para evaluar el comportamiento del modelo bajo condiciones progresivamente más estrictas antes de probarlo con tráfico capturado externamente.
 
