@@ -233,3 +233,35 @@ NumPy & 2.4.6 & Operaciones numéricas de bajo nivel \\
 \end{table}
 
 El entrenamiento principal (\texttt{MAIN\_\allowbreak qrdqn\_\allowbreak cicids2017\_\allowbreak canonical\_\allowbreak full\_\allowbreak random\_\allowbreak 20260609\_\allowbreak 193655}) se ejecutó íntegramente sobre el dispositivo \texttt{cuda} de la instancia RunPod, mientras que el resto del ciclo de desarrollo se realizó en CPU local, siguiendo la ruta de instalación de \texttt{requirements.txt} descrita para entornos locales.
+
+\section{Planificación temporal}
+La Tabla~\ref{tab:hitos} recoge los hitos contractuales y las fases efectivas del proyecto, y la Figura~\ref{fig:gantt} las representa como diagrama de Gantt. Las fechas están ancladas a dos fuentes verificables: el calendario contractual del TFG (firma, reunión de inicio y entregas parciales) y la evidencia del propio repositorio (marcas temporales de los artefactos de ejecución y del historial de desarrollo). No se planifica hacia el futuro: el cronograma documenta lo efectivamente ocurrido.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{7.2cm}p{5.4cm}}
+\toprule
+Hito o fase & Fecha(s) \\
+\midrule
+Firma del contrato & 11 de noviembre de 2025 \\
+Reunión de inicio & 18 de noviembre de 2025 \\
+Entregas parciales 1--5 & 15-dic-2025, 2-feb, 17-mar, 20-may y 15-jun de 2026 \\
+Desarrollo e implementación & 11 de diciembre de 2025 -- 9 de junio de 2026 \\
+Redacción de la memoria & 12 de diciembre de 2025 -- 6 de julio de 2026 \\
+Experimentos preliminares A/B/C & 12 -- 23 de febrero de 2026 \\
+Fase 2: captura e inferencia en laboratorio & 23 de febrero -- 10 de junio de 2026 \\
+Entrenamiento del modelo \texttt{MAIN} & 9 de junio de 2026 \\
+Auditoría de validación y línea base RF & 27 -- 28 de junio de 2026 \\
+\bottomrule
+\end{tabular}
+\caption[Hitos y fases del proyecto]{Hitos contractuales y fases efectivas del proyecto. Fuente: elaboración propia a partir del calendario contractual del TFG y de las marcas temporales de los artefactos del repositorio.}
+\label{tab:hitos}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{\input{figuras/f1_gantt}}
+\caption[Diagrama de Gantt del proyecto]{Planificación temporal del proyecto como diagrama de Gantt: hitos contractuales, desarrollo, redacción, experimentos y fases de validación. Fuente: elaboración propia a partir del calendario contractual del TFG y de las marcas temporales de los artefactos del repositorio.}
+\label{fig:gantt}
+\end{figure}
