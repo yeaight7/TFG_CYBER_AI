@@ -1,9 +1,80 @@
-\chapter{Objetivos y alcance}
+\chapter{Objetivos, alcance y planificación}
 
 \section{Objetivo general}
 El objetivo general de esta tesis es diseñar, implementar y evaluar rigurosamente un defensor de ciberseguridad basado en aprendizaje por refuerzo, de carácter offline, que toma decisiones binarias sensibles al coste (\texttt{PERMIT} o \texttt{BLOCK}) sobre observaciones de flujos de red estandarizados. Este objetivo se persigue mediante un \textit{pipeline} experimental controlado que opera íntegramente sobre datos de flujo etiquetados y estáticos, priorizando el rigor metodológico y la reproducibilidad sobre cualquier pretensión de preparación para el despliegue.
 
 El enfoque se fundamenta en la observación de que la detección de intrusiones implica costes inherentemente asimétricos: permitir un ataque conlleva consecuencias que son, en general, considerablemente más graves que las de generar una falsa alarma. Una formulación basada en recompensas hace explícita esta asimetría en el objetivo de aprendizaje, en lugar de dejarla implícita en un ajuste posterior de umbrales. La pregunta central que guía el trabajo es si un algoritmo de RL distribucional como QRDQN puede configurarse, entrenarse y evaluarse de forma que demuestre un comportamiento sensible al coste y medible sobre un benchmark público bien estudiado, manteniéndose a la vez comparable con sólidas líneas base supervisadas bajo las mismas condiciones controladas.
+
+\section{Objetivos contractuales}
+El objetivo general se concreta en cuatro objetivos contractuales, C1 a C4, que constituyen el compromiso verificable de esta tesis. Siguiendo el estilo de especificación de un proyecto de desarrollo de software, cada uno se formula con una descripción cerrada, un tipo, un criterio de verificación anclado en artefactos concretos y los capítulos en los que se materializa (Tablas~\ref{tab:obj-c1} a~\ref{tab:obj-c4}). La cobertura efectiva de estos compromisos se retoma en la síntesis de resultados y en las conclusiones.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lp{10.4cm}}
+\toprule
+\multicolumn{2}{p{12.6cm}}{\textbf{C1 --- Pipeline experimental reproducible con contrato de datos canónico}} \\
+\midrule
+Descripción & Construir un pipeline offline de extremo a extremo (ingesta de CICIDS2017, limpieza anti-fuga, esquema canónico de $76+76=152$ dimensiones, entrenamiento y evaluación) cuyas cifras sean reproducibles a partir de los artefactos persistidos por ejecución: \texttt{RUN\_ID}, configuración, métricas, escalador y percentiles de entrenamiento. \\
+Tipo & Producto (infraestructura experimental). \\
+Verificación & Inventario de ejecuciones oficiales (Tabla~\ref{tab:inventario-runs}); Algoritmos~\ref{alg:entrenamiento-qrdqn} y~\ref{alg:mapeo-canonico} contrastados con el código fuente; pruebas automatizadas del repositorio. \\
+Capítulos & 4, 5 y 6; anexos A y D. \\
+\bottomrule
+\end{tabular}
+\caption[Objetivo contractual C1]{Especificación del objetivo contractual C1. Fuente: elaboración propia.}
+\label{tab:obj-c1}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lp{10.4cm}}
+\toprule
+\multicolumn{2}{p{12.6cm}}{\textbf{C2 --- Defensor RL evaluado mediante una escalera de validación con control de fugas}} \\
+\midrule
+Descripción & Entrenar un agente QRDQN distribucional sobre la representación canónica ---con $\gamma=0$, es decir, una formulación de bandido contextual sensible al coste--- y evaluarlo mediante una escalera de validación progresivamente más estricta (partición aleatoria estratificada, comprobaciones A/B/C, análisis de duplicados), haciendo explícito qué modo de fallo detecta cada peldaño. \\
+Tipo & Producto y evaluación. \\
+Verificación & Ejecución \texttt{MAIN} y comprobaciones A/B/C con artefactos comprometidos; análisis de duplicados de la partición fija (Tabla~\ref{tab:inventario-runs}). El peldaño \textit{leave-one-CSV-out} de QRDQN queda pendiente de ejecución en GPU. \\
+Capítulos & 4, 5 y 6. \\
+\bottomrule
+\end{tabular}
+\caption[Objetivo contractual C2]{Especificación del objetivo contractual C2. Fuente: elaboración propia.}
+\label{tab:obj-c2}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lp{10.4cm}}
+\toprule
+\multicolumn{2}{p{12.6cm}}{\textbf{C3 --- Decisión sensible al coste con lectura multiobjetivo}} \\
+\midrule
+Descripción & Codificar en la función de recompensa la asimetría de costes del dominio con una lectura multiobjetivo explícita entre \emph{seguridad} ---minimizar ataques admitidos; el falso negativo, con recompensa $-5.0$, es el coste dominante--- e \emph{impacto operativo} ---minimizar el bloqueo de tráfico legítimo; falso positivo con recompensa $-2.0$---, y analizar los resultados por clase bajo esa lectura. \\
+Tipo & Diseño y evaluación. \\
+Verificación & Tablas~\ref{tab:reward-matrix} y~\ref{tab:recompensa-multiobjetivo} contrastadas con \texttt{src/rl\_defender\_env.py}; tasas de falsos positivos y falsos negativos reportadas por clase en el capítulo de resultados y leídas en clave multiobjetivo en la discusión. \\
+Capítulos & 4, 6 y 7. \\
+\bottomrule
+\end{tabular}
+\caption[Objetivo contractual C3]{Especificación del objetivo contractual C3. Fuente: elaboración propia.}
+\label{tab:obj-c3}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lp{10.4cm}}
+\toprule
+\multicolumn{2}{p{12.6cm}}{\textbf{C4 --- Comparación honesta con línea base y transferencia a tráfico externo}} \\
+\midrule
+Descripción & Comparar QRDQN con una línea base Random Forest bajo el mismo protocolo (misma representación canónica, mismas particiones y mismas métricas) y comprobar la transferencia del pipeline mediante la inferencia offline de la Fase 2 sobre tráfico de laboratorio generado por el operador, declarando su validez externa limitada. \\
+Tipo & Evaluación. \\
+Verificación & Barrido Random Forest con artefactos por partición y ejecución oficial de la Fase 2 (Tabla~\ref{tab:inventario-runs}); resultados comparativos y de transferencia en el capítulo de resultados. \\
+Capítulos & 5, 6, 7 y 8. \\
+\bottomrule
+\end{tabular}
+\caption[Objetivo contractual C4]{Especificación del objetivo contractual C4. Fuente: elaboración propia.}
+\label{tab:obj-c4}
+\end{table}
 
 \section{Objetivos específicos}
 
