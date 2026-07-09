@@ -239,10 +239,10 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 
 | ID | Task | Model | Dep | Status | Evidence |
 |---|---|---|---|---|---|
-| F9.1 | New `capitulos/conclusiones.tex`: 10.1 objetivos contractuales echo · 10.2 objetivos específicos echo (OBJ-07 "diseño completado, ejecución pendiente") · 10.3 reflexión del autor · 10.4 líneas futuras corto/medio/largo plazo (each with cite; Zhang2025OpenSet here) | TOP | F6, F8 | [ ] | |
-| F9.2 | Ch1: PDS-adapted spec (1.2.2), contributions C1–C4 with evidence pointers, lead-in | TOP | F6 | [ ] | |
-| F9.3 | Ch1 §1.6 roadmap rewrite naming ALL chapters + anexos | TOP | F9.1 | [ ] | |
-| F9.V | Gates; every OBJ ID from Ch2 appears in Ch6.8 or Ch10 | TOP | F9.* | [ ] | |
+| F9.1 | New `capitulos/conclusiones.tex`: 10.1 objetivos contractuales echo · 10.2 objetivos específicos echo (OBJ-07 "diseño completado, ejecución pendiente") · 10.3 reflexión del autor · 10.4 líneas futuras corto/medio/largo plazo (each with cite; Zhang2025OpenSet here) | TOP | F6, F8 | [x] | PRs #52/#53 · commits f2cd3f0, e2f2295, b1d94c8 · Ch10 sections and required citations verified |
+| F9.2 | Ch1: PDS-adapted spec (1.2.2), contributions C1–C4 with evidence pointers, lead-in | TOP | F6 | [x] | PR #52 · commit 383c9ea · PDS-adapted specification, C1–C4 evidence pointers, and lead-in present |
+| F9.3 | Ch1 §1.6 roadmap rewrite naming ALL chapters + anexos | TOP | F9.1 | [x] | PR #52 · commit 383c9ea · roadmap names Ch2–Ch10, bibliography, and Annexes A–D |
+| F9.V | Gates; every OBJ ID from Ch2 appears in Ch6.8 or Ch10 | TOP | F9.* | [x] | post-merge isolated BUILD exit 0/179 pp · G3–G6 clean · G7 independent verifier PASS · OBJ-01–OBJ-08 present in Ch6.8 and Ch10 |
 
 ## F10 — Anexos A–D
 
@@ -316,6 +316,13 @@ No thesis claim or figure may depend on these until they are actually run and th
 - DT-10 (2026-07-06): TeX Live 2025 emits `ignored error: Infinite glue shrinkage found in box being split` on EVERY multi-page longtable (reproduced with a 6-line vanilla document). Benign engine diagnostic; G1 pass criterion remains exit 0 + no `^!` lines; do not chase these.
 
 ## Execution log (append one block per phase/session)
+
+### F9 — 2026-07-09 — F9.1–F9.3 done; F9.V verified
+- Branch `chore/yeaight7/thesis-f9-conclusiones-introduccion`; merged through PRs #52 and #53 (merge commits 7cb5300 and d15cd06).
+- `memoria/capitulos/conclusiones.tex` adds the contractual and specific-objective synthesis, author reflection, and cited short-, medium-, and long-term future-work horizons; OBJ-07 remains explicitly designed but pending GPU execution.
+- `memoria/capitulos/introduccion.tex` adds the PDS-adapted specification, contributions C1–C4 with evidence pointers, and a roadmap covering Chapters 2–10, bibliography, and Annexes A–D.
+- Verification on merged `main`: isolated `latexmk` build under `C:\Temp` exit 0, pages=179; G3 references/citations and Biber warnings clean; G4 manifest complete; G5 disclosures remain above baseline; G6 typography lint clean; all OBJ-01–OBJ-08 appear in both Ch6.8 and Ch10; independent G7 audit found no numeric or comparative discrepancy against code and committed artifacts.
+- PDF single-writer rule observed: isolated output used for verification; tracked `memoria/memoria.pdf` remained untouched.
 
 ### F8 — 2026-07-09 — F8.1–F8.6 done; F8.V verified
 - Branch `chore/yeaight7/thesis-f8-discusion-limitaciones-etica`.
