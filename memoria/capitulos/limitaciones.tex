@@ -1,9 +1,11 @@
 \chapter{Limitaciones}
 
-El capítulo del protocolo experimental ya expuso las limitaciones \emph{conceptuales} del enfoque: el entorno estático y la formulación de bandido contextual sensible al coste, el mapeo de etiquetas binarias, la fragilidad del benchmark y el alcance de un único algoritmo. Este capítulo las complementa a la luz de los resultados ya medidos, de modo que cada limitación quede anclada en evidencia concreta y no en una declaración general.
+El capítulo del protocolo experimental ya expuso las limitaciones \emph{conceptuales} del enfoque: el entorno estático, la formulación de bandido contextual sensible al coste, el mapeo de etiquetas binarias, la fragilidad del benchmark y el alcance de un único algoritmo. Este capítulo las retoma a la luz de los resultados medidos. La finalidad no es suavizar las conclusiones, sino dejar claro qué parte de la evidencia está respaldada por artefactos y qué parte queda todavía como trabajo pendiente.
 
 \section{Modelo y semilla únicos}
-Los resultados corresponden a un único modelo entrenado con una sola semilla. Los intervalos de confianza bootstrap reportados ($\pm 0.0002$ a $\pm 0.001$ al 95\%) cuantifican la precisión de muestreo del conjunto de prueba fijo, no la varianza entre ejecuciones de entrenamiento: caracterizan cuán estable es la métrica sobre remuestreos del mismo conjunto de prueba para \emph{este} modelo, pero no cuánto variaría el rendimiento al reentrenar con semillas distintas. Una estimación de la varianza entre semillas requeriría múltiples ejecuciones de entrenamiento completas, que no se han realizado. Las cifras deben leerse, por tanto, como el comportamiento de un punto de configuración bien caracterizado, no como una media sobre la aleatoriedad del entrenamiento.
+Los resultados principales corresponden a un único modelo QRDQN entrenado con una sola semilla. La ejecución MAIN está bien documentada y sus artefactos permiten reproducir la lectura de métricas, pero no permite estimar la variabilidad propia del entrenamiento. En aprendizaje por refuerzo, incluso con la misma arquitectura y los mismos hiperparámetros, cambios de semilla pueden alterar la exploración, el orden efectivo de muestras, la inicialización de la red y la trayectoria de optimización. Esta tesis no mide esa variabilidad porque solo existe una ejecución oficial completa comprometida.
+
+Los intervalos de confianza bootstrap reportados ($\pm 0.0002$ a $\pm 0.001$ al 95\%) cuantifican la precisión de muestreo del conjunto de prueba fijo, no la varianza entre ejecuciones de entrenamiento. Caracterizan cuán estable es la métrica sobre remuestreos del mismo conjunto de prueba para \emph{este} modelo, pero no cuánto variaría el rendimiento al reentrenar con semillas distintas. Las cifras deben leerse, por tanto, como el comportamiento de un punto de configuración bien caracterizado, no como una media sobre la aleatoriedad del entrenamiento.
 
 \begin{table}[htbp]
 \centering
@@ -13,10 +15,14 @@ Los resultados corresponden a un único modelo entrenado con una sola semilla. L
 \end{table}
 
 \section{Fuga en la partición aleatoria}
-El análisis de duplicados muestra que el 22.30\% de las filas del conjunto completo son duplicados exactos y que el 24.86\% de las filas de prueba de la partición aleatoria duplican una fila de entrenamiento (40.12\% entre los ataques de prueba). En consecuencia, las métricas in-distribution sobreestiman la capacidad de generalización y no deben presentarse como el resultado principal en sentido operativo. Esta limitación se mitiga metodológicamente reportando la Comprobación~C (partición por día) como la señal de generalización creíble, pero no se elimina: la cifra aleatoria sigue siendo el peldaño más débil del proyecto y se conserva únicamente como evidencia de capacidad de aprendizaje.
+El análisis de duplicados muestra que el 22.30\% de las filas del conjunto completo son duplicados exactos y que el 24.86\% de las filas de prueba de la partición aleatoria duplican una fila de entrenamiento (40.12\% entre los ataques de prueba). Esto no significa que el modelo no aprenda nada: MAIN mantiene una matriz de confusión coherente y supera ampliamente una comprobación trivial. Sí significa, en cambio, que la partición aleatoria contiene información repetida que facilita la tarea y que sus métricas deben interpretarse como una cota optimista dentro del benchmark.
+
+Esta limitación se mitiga metodológicamente reportando la Comprobación~C, basada en partición por día, como señal de generalización más exigente. Aun así, no se elimina por completo. La Comprobación~C no sustituye al experimento principal porque usa una red proxy \texttt{[512,256]} entrenada durante $30\,000$ pasos, no los pesos MAIN. Por tanto, la tesis conserva ambos peldaños con significados distintos: la partición aleatoria demuestra capacidad de aprendizaje bajo el protocolo principal; la partición por día muestra la fragilidad de la generalización cuando se rompe la continuidad del benchmark.
 
 \section{Comparación con la línea base}
-La comparación con Random Forest se ejecutó bajo el mismo protocolo (representación canónica, escalado, ponderación de clases balanceada y particiones equivalentes), con artefactos de configuración y métricas comprometidos. Persisten, no obstante, dos limitaciones. En primer lugar, la comparación abarca un único modelo supervisado; otros clasificadores tabulares competitivos, como los ensamblados con gradient boosting, se discuten en la revisión de la literatura pero no forman parte del protocolo evaluado. En segundo lugar, el barrido leave-one-CSV-out de la línea base (miércoles reservado, recall de ataque $0.00719$) no tiene todavía un artefacto QRDQN comprometido equivalente, por lo que en ese peldaño la comparación es solo de la línea base consigo misma y no entre modelos. La comparación entre QRDQN y Random Forest es directa y del mismo protocolo en la partición aleatoria fija y en la partición por día, pero no en el leave-one-CSV-out.
+La comparación con Random Forest se ejecutó bajo el mismo protocolo: representación canónica, escalado, ponderación de clases balanceada y particiones equivalentes. Esto hace que la comparación sea mucho más fuerte que una comparación contra cifras externas de la literatura. En la partición aleatoria fija, Random Forest supera a QRDQN en F1 de ataque ($0.99676$ frente a $0.98445$), y esta ventaja debe declararse sin matices artificiales. La contribución de QRDQN no es dominar el benchmark cómodo, sino ofrecer una lectura sensible al coste bajo el cambio de partición por día.
+
+Persisten dos limitaciones. La primera es que la comparación abarca un único modelo supervisado; otros clasificadores tabulares competitivos, como los ensamblados con gradient boosting, se discuten en la revisión de la literatura pero no forman parte del protocolo ejecutado. La segunda es que el barrido leave-one-CSV-out de Random Forest (miércoles reservado, recall de ataque $0.00719$) no tiene todavía un artefacto QRDQN comprometido equivalente. En ese peldaño, la comparación es solo de la línea base consigo misma y no entre modelos. La comparación entre QRDQN y Random Forest es directa en la partición aleatoria fija y en la partición por día, pero no en el leave-one-CSV-out.
 
 \begin{table}[htbp]
 \centering
@@ -28,11 +34,12 @@ La comparación con Random Forest se ejecutó bajo el mismo protocolo (represent
 \section{Validez externa de la Fase 2}
 El alto rendimiento de la Fase~2 ($0.991862$ de exactitud) se obtiene sobre tráfico generado por el operador en un laboratorio doméstico cerrado y no adversarial, de un único entorno y con etiquetas de intención del generador. No es tráfico de producción, no contiene un adversario real y no procede de una fuente independiente. Su validez externa es, por tanto, limitada: un buen resultado en la Fase~2 es una comprobación controlada de que el contrato de características y el preprocesamiento robusto transfieren a una captura cercana a la distribución, no una prueba de detección en el mundo real \parencite{SommerPaxson2010ClosedWorld,Layeghy2023CrossDomainNIDS}.
 
-\section{Experimentos planificados pero no ejecutados}
-Por honestidad metodológica, se enumeran explícitamente los análisis previstos en el diseño cuyos artefactos no se han comprometido. El protocolo de curva de aprendizaje (escala de entrenamiento a distintos presupuestos) está planificado pero no ejecutado: no existe ningún artefacto de curva de aprendizaje. La validación leave-one-CSV-out está implementada en el código para QRDQN, pero no se ha comprometido un artefacto agregado de sus métricas. La evaluación con múltiples semillas para estimar la varianza entre ejecuciones no se ha llevado a cabo. Ninguna de estas tres capacidades se reporta con cifras en esta tesis, y su ausencia se declara aquí en lugar de insinuarse como completada.
+La principal aportación de la Fase~2 es de ingeniería experimental: demuestra que el pipeline puede procesar una captura externa al CSV de entrenamiento, aplicar el escalador persistido, conservar el esquema canónico y producir diagnósticos reproducibles. Ese resultado es necesario para defender que el sistema no vive únicamente dentro del cargador de CICIDS2017. Pero no basta para afirmar robustez operativa. Para ello harían falta capturas etiquetadas de varios entornos, condiciones benignas más diversas, tráfico adversarial independiente y un análisis de deriva más amplio.
 
-\section{Trabajo futuro}
-Las limitaciones anteriores definen una agenda de trabajo futuro coherente: ejecutar y comprometer la curva de aprendizaje y el leave-one-CSV-out de QRDQN; reentrenar con múltiples semillas para cuantificar la varianza; ampliar la comparación a otros modelos supervisados; y, sobre todo, validar sobre tráfico etiquetado independiente de múltiples entornos antes de considerar cualquier paso hacia un despliegue activo, que a su vez exigiría un análisis de seguridad específico. Estas extensiones refuerzan la evidencia sin alterar la arquitectura experimental ya establecida.
+\section{Experimentos planificados pero no ejecutados}
+Por honestidad metodológica, se enumeran explícitamente los análisis previstos en el diseño cuyos artefactos no se han comprometido. El protocolo de curva de aprendizaje (escala de entrenamiento a distintos presupuestos) está diseñado e implementado, pero pendiente de GPU: no existe todavía ningún artefacto de curva de aprendizaje con métricas oficiales. La validación leave-one-CSV-out está implementada en el código para QRDQN, pero no se ha comprometido un artefacto agregado de sus métricas. La evaluación con múltiples semillas para estimar la varianza entre ejecuciones tampoco se ha llevado a cabo.
+
+Ninguna de estas tres capacidades se reporta con cifras en esta tesis. Esta ausencia no es un detalle administrativo: afecta a la fuerza de las conclusiones. Sin curva de aprendizaje, no se puede cuantificar cómo cambia QRDQN al variar el presupuesto de entrenamiento; sin leave-one-CSV-out agregado, no se puede medir la estabilidad por escenario retenido; y sin múltiples semillas, no se puede separar el comportamiento del perfil MAIN de la varianza del entrenamiento. Declararlas como pendientes evita que el texto convierta un diseño experimental en evidencia ejecutada.
 
 \begin{figure}[htbp]
 \centering
@@ -40,3 +47,13 @@ Las limitaciones anteriores definen una agenda de trabajo futuro coherente: ejec
 \caption[Validación externa futura pendiente]{\placeholdercaption{Escalera futura de validación externa: varios entornos etiquetados, tráfico independiente y análisis previo a despliegue activo.}}
 \label{fig:placeholder-validacion-externa}
 \end{figure}
+
+% F9.1 / Ch10.4 future-work stash:
+% Las limitaciones anteriores definen una agenda de trabajo futuro coherente:
+% ejecutar y comprometer la curva de aprendizaje y el leave-one-CSV-out de
+% QRDQN; reentrenar con múltiples semillas para cuantificar la varianza;
+% ampliar la comparación a otros modelos supervisados; y validar sobre tráfico
+% etiquetado independiente de múltiples entornos antes de considerar cualquier
+% paso hacia un despliegue activo, que a su vez exigiría un análisis de seguridad
+% específico. Estas extensiones refuerzan la evidencia sin alterar la
+% arquitectura experimental ya establecida.
