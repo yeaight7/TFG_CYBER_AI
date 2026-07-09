@@ -203,11 +203,11 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 |---|---|---|---|---|---|
 | F6.1 | Rename chapter; OBJ-C1..C4 contract catalog (T-C spec tables: ID/Descripción/Tipo/Verificación/Capítulos) | TOP | F4 | [x] | commit 118fa31 · «Objetivos, alcance y planificación» · `tab:obj-c1..c4` spec cards — C3 anchored on tracker definition (F5.6/F8.3); **C1/C2/C4 authored from thesis content (no contract text in repo) — user should validate vs anteproyecto** |
 | F6.2 | OBJ-01..08 IDs + criterio de verificación on existing 8 subsections | TOP | F6.1 | [x] | commit 6239a82 · titles tagged + per-objective `Criterio de verificación` ¶; OBJ-07 criterion = artefactos pendientes de GPU, sin cifras |
-| F6.3 | T-D matriz de trazabilidad (objetivos ↔ secciones ↔ RUN_IDs ↔ estado; OBJ-07 = Pendiente-GPU) | TOP | F6.2 | [x] | commit 16167a3 · `tab:trazabilidad` · OBJ-07 **Pendiente de GPU** · OBJ-06 completado con nota LOO-QRDQN pendiente · full RUN_IDs deferred to `tab:inventario-runs` |
+| F6.3 | T-D matriz de trazabilidad (objetivos ↔ secciones ↔ RUN_IDs ↔ estado; OBJ-07 = Pendiente-GPU) | TOP | F6.2 | [-] | commit 16167a3 · `tab:trazabilidad` · OBJ-07 **Pendiente de GPU** · OBJ-06 completado con nota LOO-QRDQN pendiente · full RUN_IDs deferred to `tab:inventario-runs` |
 | F6.4 | 2.7 Restricciones (T-J RES-xx: factores dato / estratégicos) | TOP | F6.1 | [x] | commit 2aa2c09 · `tab:restricciones` RES-D1..D4 / RES-E1..E4 (E2 = GPU diferido) |
 | F6.5 | 2.8 Recursos (T-B HW/SW from `requirements*.txt`, `docs/runpod_main_experiment.md`) | sonnet | F6.1 | [x] | commit 52117c8 · `tab:recursos` (sonnet agent, isolated compile clean) · versions verbatim from requirements/pyproject; GPU = RTX 3090 Ti per runpod doc ("Preferred" wording — confirm actual pod) |
 | F6.6 | 2.9 Planificación temporal: T-I hitos + embed Gantt F1 | TOP | F2.7 | [x] | commit fd48682 · `tab:hitos` dates verbatim from `f1_gantt.tex` · `fig:gantt` via `\resizebox{\textwidth}` (compile pending F6.V) |
-| F6.V | Gates + G7 | TOP | F6.* | [ ] | deferred by user instruction 2026-07-07 — run only when user says go |
+| F6.V | Gates + G7 | TOP | F6.* | [x] | Codex verification 2026-07-09 · G1 latexmk exit 0 · G2 pages=162 · G3 clean · G4 manifest files present · G5 counts 8/5/3/5/3/9/3/1/5 ≥ baseline · G6 clean · G7 numeric/resource/date claims checked against `config.json`, `environment.json`, `requirements*.txt`, `pyproject.toml`, `f1_gantt.tex`, `figures_manifest.json`, and reward source; no repo-backed numeric mismatches found · PR #48 checks passing |
 
 ## F7 — Ch6 Resultados expansion (heaviest content phase)
 
@@ -317,13 +317,13 @@ No thesis claim or figure may depend on these until they are actually run and th
 
 ## Execution log (append one block per phase/session)
 
-### F6 — 2026-07-07 — F6.1–F6.6 done; F6.V DEFERRED (user instruction)
-- Branch `claude/thesis-f6-objetivos` (not yet PR'd — phase PR after F6.V). Commits: 118fa31, 6239a82, 16167a3, 2aa2c09, 52117c8, fd48682.
+### F6 — 2026-07-07/09 — F6.1–F6.6 done; F6.V VERIFIED
+- Branch `claude/thesis-f6-objetivos`; PR #48 open. Commits: 118fa31, 6239a82, 16167a3, 2aa2c09, 52117c8, fd48682.
 - Chapter renamed; final section layout: 2.1 objetivo general · 2.2 objetivos contractuales (T-C cards) · 2.3 objetivos específicos (OBJ IDs + criterios + T-D) · 2.4 alcance · 2.5 no objetivos · 2.6 resultados esperados · 2.7 restricciones (T-J) · 2.8 recursos (T-B) · 2.9 planificación (T-I + Gantt).
 - **C1..C4 catalog**: no contract-objectives text exists anywhere in the repo (searched docs/, PR #41 body+comments); C3 anchored on the tracker's own definition (multiobjetivo {seguridad, impacto}); C1/C2/C4 derived from thesis contributions. USER should validate wording against the real anteproyecto/contrato if it lists objectives.
 - GPU-pending marked per user instruction (2026-07-07): OBJ-07 estado+criterio, OBJ-06 nota LOO-QRDQN, RES-E2, C2 verification cell.
 - F6.5 authored by sonnet agent (per model policy) with strict no-repo-writes rule (lesson from F5 incident); isolated compile clean; caveats: local-machine specs undocumented (listed as "CPU, sin GPU dedicada"); GPU model taken from runpod doc's "Preferred: RTX 3090 Ti" — confirm the actually-rented pod.
-- Informal sanity only (NOT F6.V): G5 ≥ floors (γ=0→8, bandido→4, validez→10, muestreo→6; growth partly from user PR #47), G6 clean, 0 dangling/duplicate refs. NOT compile-verified: `fig:gantt` resizebox embed is the main G1 risk item for F6.V.
+- F6.V run by Codex 2026-07-09: `latexmk -pdf -cd memoria/memoria.tex` exit 0 with TeX Live 2025 and mandatory TEMP redirect; `pdfinfo` pages=162; G3 log grep clean; G4 all manifest pdf/png files exist; G5 counts 8/5/3/5/3/9/3/1/5; G6 typography lint clean. G7 checked Ch2 numeric claims against `config.json`, `environment.json`, `requirements*.txt`, `pyproject.toml`, `f1_gantt.tex`, `figures_manifest.json`, and reward source; no repo-backed numeric mismatches found. Repo gates also green: `uv run ruff check .`, `uv run pytest` (45 passed), and PR #48 GitHub checks passing.
 - Noted in passing: user PR #47 added `fig:placeholder-*`/`tab:placeholder-*` labels (currently unreferenced) — presumably intentional placeholders for deferred GPU experiments.
 
 
