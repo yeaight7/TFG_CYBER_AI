@@ -1,51 +1,161 @@
-\chapter{Objetivos y alcance}
+\chapter{Objetivos, alcance y planificación}
 
 \section{Objetivo general}
 El objetivo general de esta tesis es diseñar, implementar y evaluar rigurosamente un defensor de ciberseguridad basado en aprendizaje por refuerzo, de carácter offline, que toma decisiones binarias sensibles al coste (\texttt{PERMIT} o \texttt{BLOCK}) sobre observaciones de flujos de red estandarizados. Este objetivo se persigue mediante un \textit{pipeline} experimental controlado que opera íntegramente sobre datos de flujo etiquetados y estáticos, priorizando el rigor metodológico y la reproducibilidad sobre cualquier pretensión de preparación para el despliegue.
 
 El enfoque se fundamenta en la observación de que la detección de intrusiones implica costes inherentemente asimétricos: permitir un ataque conlleva consecuencias que son, en general, considerablemente más graves que las de generar una falsa alarma. Una formulación basada en recompensas hace explícita esta asimetría en el objetivo de aprendizaje, en lugar de dejarla implícita en un ajuste posterior de umbrales. La pregunta central que guía el trabajo es si un algoritmo de RL distribucional como QRDQN puede configurarse, entrenarse y evaluarse de forma que demuestre un comportamiento sensible al coste y medible sobre un benchmark público bien estudiado, manteniéndose a la vez comparable con sólidas líneas base supervisadas bajo las mismas condiciones controladas.
 
+\section{Objetivos contractuales}
+El objetivo general se concreta en cuatro objetivos contractuales, C1 a C4, que constituyen el compromiso verificable de esta tesis. Siguiendo el estilo de especificación de un proyecto de desarrollo de software, cada uno se formula con una descripción cerrada, un tipo, un criterio de verificación anclado en artefactos concretos y los capítulos en los que se materializa (Tablas~\ref{tab:obj-c1} a~\ref{tab:obj-c4}). La cobertura efectiva de estos compromisos se retoma en la síntesis de resultados y en las conclusiones.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lp{10.4cm}}
+\toprule
+\multicolumn{2}{p{12.6cm}}{\textbf{C1 --- Pipeline experimental reproducible con contrato de datos canónico}} \\
+\midrule
+Descripción & Construir un pipeline offline de extremo a extremo (ingesta de CICIDS2017, limpieza anti-fuga, esquema canónico de $76+76=152$ dimensiones, entrenamiento y evaluación) cuyas cifras sean reproducibles a partir de los artefactos persistidos por ejecución: \texttt{RUN\_ID}, configuración, métricas, escalador y percentiles de entrenamiento. \\
+Tipo & Producto (infraestructura experimental). \\
+Verificación & Inventario de ejecuciones oficiales (Tabla~\ref{tab:inventario-runs}); Algoritmos~\ref{alg:entrenamiento-qrdqn} y~\ref{alg:mapeo-canonico} contrastados con el código fuente; pruebas automatizadas del repositorio. \\
+Capítulos & 4, 5 y 6; anexos A y D. \\
+\bottomrule
+\end{tabular}
+\caption[Objetivo contractual C1]{Especificación del objetivo contractual C1. Fuente: elaboración propia.}
+\label{tab:obj-c1}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lp{10.4cm}}
+\toprule
+\multicolumn{2}{p{12.6cm}}{\textbf{C2 --- Defensor RL evaluado mediante una escalera de validación con control de fugas}} \\
+\midrule
+Descripción & Entrenar un agente QRDQN distribucional sobre la representación canónica ---con $\gamma=0$, es decir, una formulación de bandido contextual sensible al coste--- y evaluarlo mediante una escalera de validación progresivamente más estricta (partición aleatoria estratificada, comprobaciones A/B/C, análisis de duplicados), haciendo explícito qué modo de fallo detecta cada peldaño. \\
+Tipo & Producto y evaluación. \\
+Verificación & Ejecución \texttt{MAIN} y comprobaciones A/B/C con artefactos comprometidos; análisis de duplicados de la partición fija (Tabla~\ref{tab:inventario-runs}). El peldaño \textit{leave-one-CSV-out} de QRDQN queda pendiente de ejecución en GPU. \\
+Capítulos & 4, 5 y 6. \\
+\bottomrule
+\end{tabular}
+\caption[Objetivo contractual C2]{Especificación del objetivo contractual C2. Fuente: elaboración propia.}
+\label{tab:obj-c2}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lp{10.4cm}}
+\toprule
+\multicolumn{2}{p{12.6cm}}{\textbf{C3 --- Decisión sensible al coste con lectura multiobjetivo}} \\
+\midrule
+Descripción & Codificar en la función de recompensa la asimetría de costes del dominio con una lectura multiobjetivo explícita entre \emph{seguridad} ---minimizar ataques admitidos; el falso negativo, con recompensa $-5.0$, es el coste dominante--- e \emph{impacto operativo} ---minimizar el bloqueo de tráfico legítimo; falso positivo con recompensa $-2.0$---, y analizar los resultados por clase bajo esa lectura. \\
+Tipo & Diseño y evaluación. \\
+Verificación & Tablas~\ref{tab:reward-matrix} y~\ref{tab:recompensa-multiobjetivo} contrastadas con \texttt{src/rl\_defender\_env.py}; tasas de falsos positivos y falsos negativos reportadas por clase en el capítulo de resultados y leídas en clave multiobjetivo en la discusión. \\
+Capítulos & 4, 6 y 7. \\
+\bottomrule
+\end{tabular}
+\caption[Objetivo contractual C3]{Especificación del objetivo contractual C3. Fuente: elaboración propia.}
+\label{tab:obj-c3}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lp{10.4cm}}
+\toprule
+\multicolumn{2}{p{12.6cm}}{\textbf{C4 --- Comparación honesta con línea base y transferencia a tráfico externo}} \\
+\midrule
+Descripción & Comparar QRDQN con una línea base Random Forest bajo el mismo protocolo (misma representación canónica, mismas particiones y mismas métricas) y comprobar la transferencia del pipeline mediante la inferencia offline de la Fase 2 sobre tráfico de laboratorio generado por el operador, declarando su validez externa limitada. \\
+Tipo & Evaluación. \\
+Verificación & Barrido Random Forest con artefactos por partición y ejecución oficial de la Fase 2 (Tabla~\ref{tab:inventario-runs}); resultados comparativos y de transferencia en el capítulo de resultados. \\
+Capítulos & 5, 6, 7 y 8. \\
+\bottomrule
+\end{tabular}
+\caption[Objetivo contractual C4]{Especificación del objetivo contractual C4. Fuente: elaboración propia.}
+\label{tab:obj-c4}
+\end{table}
+
 \section{Objetivos específicos}
 
-\subsection{Representación del tráfico basada en flujos}
+\subsection{Representación del tráfico basada en flujos (OBJ-01)}
 El primer objetivo específico es extraer y normalizar datos de tráfico de red en registros tabulares de flujos, garantizando que el formato de entrada sea compatible tanto con benchmarks públicos como CICIDS2017 como con capturas de laboratorio offline. Los flujos de red son resúmenes bidireccionales de intercambios de paquetes que comparten una quíntupla común, y su estructura tabular compacta y de anchura fija los hace muy adecuados como entradas para modelos de aprendizaje automático \parencite{Sperotto2010FlowIDS,Umer2017FlowIDS}. Alcanzar este objetivo requiere auditar las características disponibles en los ficheros CSV generados por CICFlowMeter, identificar qué campos contienen señal estadística legítima y cuáles representan artefactos de extracción o posibles vectores de fuga de información.
 
 Este objetivo implica también definir un contrato de características estable que tienda un puente entre las publicaciones académicas en formato CSV y las exportaciones brutas de CICFlowMeter. Un contrato estable significa que el conjunto de características utilizado como entrada al modelo no varía entre experimentos, que los campos excluidos por razones de fuga se excluyen de forma consistente, y que cualquier persona que lea el código fuente puede verificar exactamente qué medidas llegan al modelo. Esta estabilidad es un requisito previo para todos los objetivos posteriores, ya que todos los demás componentes del pipeline dependen de un espacio de observación bien definido y auditable.
 
-\subsection{Preprocesamiento canónico y esquema de características}
+\textbf{Criterio de verificación (OBJ-01).} El contrato de características es auditable en el código (\texttt{src/canonical\_schema.py}) y se aplica de forma idéntica a los CSV de CICIDS2017 y a los flujos de laboratorio de la Fase 2; el capítulo de diseño documenta el mapeo, los campos excluidos y su justificación (Algoritmo~\ref{alg:mapeo-canonico}).
+
+\subsection{Preprocesamiento canónico y esquema de características (OBJ-02)}
 El segundo objetivo específico es definir y hacer cumplir un esquema canónico estricto de 76 características junto con una máscara de presencia/ausencia de 76 valores, lo que da lugar a un vector de observación estable de 152 dimensiones. Las 76 características canónicas se extraen de estadísticas de estilo CICFlowMeter que cubren la duración del flujo, conteos de paquetes y bytes, distribuciones de tiempos de llegada, conteos de flags TCP, estadísticas de longitud de paquetes, resúmenes de periodos activos e inactivos, y métricas de tasa de flujo. Los campos que podrían exponer información de identidad específica del conjunto de datos, como las direcciones IP de origen y destino, las marcas temporales absolutas, los \textit{Flow ID} y los números de puerto que funcionan como proxies directos del tipo de ataque, se excluyen explícitamente a nivel de esquema, en lugar de filtrarse en pasos de preprocesamiento ad hoc.
 
 La máscara de presencia/ausencia de 76 valores registra si cada valor canónico fue medido directamente y está presente (codificado como 1) o ausente y sustituido por un marcador de posición por defecto (codificado como 0). Este diseño hace visibles las lagunas de datos tanto para el modelo como para el evaluador, evitando una situación en la que la red se entrena silenciosamente sobre ceros imputados sin ninguna indicación de que la medición subyacente no estaba disponible. Al pasar de CICIDS2017 a tráfico capturado en laboratorio, distintos pipelines de extracción pueden producir conjuntos de columnas diferentes; la máscara de presencia/ausencia garantiza que cualquier discrepancia de este tipo quede codificada en la observación en lugar de quedar oculta, de modo que el lector pueda distinguir un cero medido de uno imputado. Juntos, el esquema canónico y la máscara constituyen el contrato de observación del que depende cada componente posterior.
 
-\subsection{Entorno de aprendizaje por refuerzo}
+\textbf{Criterio de verificación (OBJ-02).} Todas las ejecuciones oficiales operan sobre el vector de 152 dimensiones (la configuración de la ejecución \texttt{MAIN} registra \texttt{n\_features} igual a 152), y la semántica exacta de la máscara ---presencia de la columna fuente, constante e igual a 1 sobre CICIDS2017 nativo--- queda documentada en el capítulo de diseño del sistema.
+
+\subsection{Entorno de aprendizaje por refuerzo (OBJ-03)}
 El tercer objetivo específico es construir una interfaz conjunto-de-datos-como-entorno compatible con Gymnasium \parencite{GymnasiumDocs} que presente los registros de flujo al agente como una secuencia de observaciones. El entorno envuelve un conjunto de datos etiquetado estático de modo que cada llamada a \texttt{step()} devuelve un registro de flujo como observación, junto con la recompensa calculada a partir de la acción anterior del agente y la etiqueta verdadera del último registro. Esta formulación permite que los bucles de entrenamiento de RL estándar, desarrollados para entornos interactivos, se apliquen directamente a conjuntos de datos de flujo offline sin modificar el algoritmo.
 
 El entorno debe implementar una función de recompensa asimétrica y sensible al coste que penalice los falsos negativos más que los falsos positivos, reflejando los perfiles de riesgo en ciberseguridad en los que los ataques no detectados son operacionalmente más perjudiciales que las falsas alarmas \parencite{Lee2002CostSensitiveIDS,Cardenas2006IDSFramework}. Los pesos de recompensa específicos se tratan como parámetros experimentales configurables en lugar de constantes universales fijas, ya que la relación de costes adecuada depende del modelo de amenaza y del contexto operativo del escenario de despliegue. El entorno debe también admitir reinicios reproducibles, gestión de límites de episodios y particiones del conjunto de datos configurables, de modo que la misma interfaz pueda utilizarse tanto para el entrenamiento como para la evaluación bajo distintos modos de partición.
 
-\subsection{Agente de decisión binaria basado en QRDQN}
+\textbf{Criterio de verificación (OBJ-03).} El entorno implementado (\texttt{src/rl\_defender\_env.py}; Algoritmo~\ref{alg:env-step}) expone la interfaz Gymnasium con la matriz de recompensa asimétrica registrada en el artefacto de configuración de cada ejecución (Tabla~\ref{tab:reward-matrix}) y con evaluación determinista sin barajado.
+
+\subsection{Agente de decisión binaria basado en QRDQN (OBJ-04)}
 El cuarto objetivo específico es configurar y entrenar un agente Quantile Regression Deep Q-Network \parencite{Dabney2018QRDQN}, aprovechando su enfoque distribucional para la estimación del valor, para navegar el espacio de acciones binario \texttt{PERMIT}/\texttt{BLOCK} a partir de las observaciones canónicas de 152 dimensiones. QRDQN extiende el DQN estándar estimando la distribución completa de los retornos esperados en lugar de solo la media, utilizando un conjunto de cuantiles aprendidos y una pérdida de regresión cuantílica. Esta representación distribucional resulta de interés en un contexto sensible al coste porque proporciona información más rica sobre la dispersión y la forma de los posibles resultados, no solo el retorno promedio, y en principio permite que la política sea más conservadora ante los peores casos.
 
 La implementación práctica utiliza el módulo QRDQN de la biblioteca \texttt{sb3-contrib} \parencite{SB3ContribQRDQNDocs}, que proporciona una implementación estable y probada del algoritmo con arquitectura de red configurable, buffer de repetición, esquema de exploración e hiperparámetros de entrenamiento. El objetivo incluye seleccionar una configuración razonable por defecto, validar que el bucle de entrenamiento converge en el benchmark interno, y persistir todos los artefactos del modelo entrenado junto con la configuración y el estado de preprocesamiento utilizados para producirlos. La reproducibilidad exige que un modelo almacenado pueda cargarse y evaluarse de forma idéntica en una fecha posterior sin necesidad de reconstruir el pipeline de entrenamiento completo desde cero.
 
-\subsection{Comparación con línea base supervisada}
+\textbf{Criterio de verificación (OBJ-04).} La ejecución oficial \texttt{MAIN} completó el entrenamiento con los hiperparámetros de la Tabla~\ref{tab:hiperparametros-main} y persiste modelo, escalador, configuración y métricas recuperables de forma independiente (Tabla~\ref{tab:inventario-runs}).
+
+\subsection{Comparación con línea base supervisada (OBJ-05)}
 El quinto objetivo específico es implementar una línea base supervisada robusta, utilizando principalmente Random Forest \parencite{LiuLang2019IDSSurvey}, para ofrecer una evaluación comparativa justa, con el mismo protocolo, del valor empírico del agente QRDQN. Random Forest se elige como línea base principal porque está bien establecido para la clasificación tabular, gestiona interacciones no lineales entre características sin un preprocesamiento extenso, es robusto ante características irrelevantes y tiende a obtener buenos resultados en benchmarks de NIDS basados en flujos \parencite{Apruzzese2022CrossEvaluationNIDS}. Utilizar el mismo esquema de características, el mismo protocolo de partición y las mismas métricas de evaluación tanto para el agente de RL como para la línea base es esencial; cualquier discrepancia en el preprocesamiento, la disponibilidad de características o las condiciones de evaluación comprometería la validez de la comparación.
 
 Esta comparación cumple varios propósitos. En primer lugar, determina si la formulación QRDQN ofrece alguna ventaja empírica sobre un clasificador supervisado bien ajustado en condiciones controladas. En segundo lugar, proporciona una comprobación de cordura sobre la dificultad de la tarea en el benchmark, ya que un Random Forest que alcanza puntuaciones muy altas contextualiza lo que QRDQN logra. En tercer lugar, fundamenta cualquier discusión sobre el diseño de la función de recompensa sensible al coste en evidencia concreta. Si ambos modelos se evalúan utilizando las mismas métricas ponderadas por coste, la comparación revela si la función de recompensa de RL conduce realmente al agente hacia un punto de operación diferente al de un modelo supervisado entrenado con los mismos datos, o si ambos enfoques convergen a un comportamiento similar.
 
-\subsection{Evaluación con control de fugas}
+\textbf{Criterio de verificación (OBJ-05).} La línea base Random Forest se entrenó y evaluó con la misma representación canónica, las mismas particiones y las mismas métricas que QRDQN, con ponderación de clases balanceada, y sus artefactos están comprometidos para las tres particiones consideradas (Tabla~\ref{tab:inventario-runs}).
+
+\subsection{Evaluación con control de fugas (OBJ-06)}
 El sexto objetivo específico es diseñar pipelines de preprocesamiento y protocolos de validación que impidan estrictamente la fuga de información en todos los niveles de evaluación. Esto requiere la exclusión programática de campos identificativos, como las direcciones IP de origen y destino, las marcas temporales absolutas, los Flow ID y los proxies directos de puertos, en la fase de carga de datos antes de que comience cualquier entrenamiento de modelos \parencite{Arp2020DosDontsMLSecurity,Kaufman2011LeakageDataMining}. Estos campos se excluyen a nivel de esquema mediante el contrato canónico de características, en lugar de depender de un filtrado ad hoc que podría aplicarse de forma inconsistente en distintas ejecuciones o versiones del conjunto de datos.
 
 Las transformaciones de escalado deben ajustarse exclusivamente sobre la partición de entrenamiento y luego aplicarse a las particiones de validación y prueba utilizando únicamente los parámetros aprendidos de los datos de entrenamiento. Ajustar un escalador sobre el conjunto de datos completo antes de la partición permite que la información distribucional del conjunto de prueba influya en la normalización de las características de entrenamiento, una forma sutil de fuga de información que puede inflar el rendimiento reportado en conjuntos de datos con una estructura temporal o de escenario marcada. El escalador ajustado se persiste como parte del artefacto de la ejecución para que pueda recargarse y aplicarse de forma idéntica durante la inferencia de la Fase 2 sobre tráfico de laboratorio, garantizando que se utilice la misma normalización para flujos fuera de distribución sin que ninguna información sobre su distribución llegue al estado del escalador.
 
-\subsection{Análisis de escala de entrenamiento y eficiencia de datos}
+\textbf{Criterio de verificación (OBJ-06).} La exclusión de identificadores se aplica a nivel de esquema, el escalado se ajusta exclusivamente sobre entrenamiento, y las comprobaciones A (predicción directa), B (etiquetas barajadas) y C (partición por día), junto con el análisis de duplicados de la partición fija, están ejecutadas y comprometidas como artefactos (Tabla~\ref{tab:inventario-runs}).
+
+\subsection{Análisis de escala de entrenamiento y eficiencia de datos (OBJ-07)}
 El séptimo objetivo específico es evaluar el rendimiento tanto del agente de RL como de las líneas base supervisadas bajo distintas cantidades de datos de entrenamiento, identificando las características de eficiencia de datos de la formulación propuesta y evaluando con qué rapidez converge QRDQN en comparación con las alternativas supervisadas. Los métodos de RL profundo pueden ser muy demandantes en cuanto a muestras, y su dinámica de aprendizaje difiere sustancialmente de la de los métodos de árboles de decisión en conjunto. Comprender cuánto tráfico etiquetado requiere cada enfoque para alcanzar un rendimiento útil es prácticamente relevante: el tráfico de ataque etiquetado es costoso de recopilar, y los escenarios de despliegue reales pueden no tener acceso a los grandes conjuntos de datos equilibrados disponibles en los benchmarks académicos \parencite{Ring2019DatasetSurvey}.
 
 Los experimentos de escala de entrenamiento utilizan subconjuntos de entrenamiento progresivamente más grandes extraídos de la misma partición, midiendo cómo cambian la precisión, el recall, el F1, la tasa de falsos positivos y la tasa de falsos negativos a medida que crece el presupuesto. La comparación entre QRDQN y Random Forest en cada nivel de presupuesto revela si la formulación de RL tiene un requisito mayor de muestras, si converge más lentamente, o si alcanza una meseta de rendimiento final diferente. Estos resultados se interpretan como evidencia interna sobre esta combinación específica de formulación y benchmark, no como afirmaciones generales sobre la eficiencia de datos de RL en todos los contextos de NIDS.
 
-\subsection{Validación complementaria con tráfico de laboratorio}
+\textbf{Criterio de verificación (OBJ-07).} El protocolo y su instrumentación están diseñados e implementados (presupuestos anidados mediante límites de filas de entrenamiento); el objetivo se considerará alcanzado cuando los artefactos de la curva de aprendizaje estén comprometidos en el repositorio. Su ejecución está pendiente de disponibilidad de GPU y esta memoria no reporta ninguna cifra de escala de entrenamiento.
+
+\subsection{Validación complementaria con tráfico de laboratorio (OBJ-08)}
 El octavo objetivo específico es construir un pipeline de inferencia offline robusto capaz de ingerir tráfico capturado por el operador en un entorno de laboratorio doméstico cerrado y no adversarial, y producir predicciones a partir de un modelo entrenado en CICIDS2017. Este nivel de validación ofrece una indicación parcial, de validez externa limitada, de si el esquema canónico de características y el modelo entrenado se comportan de forma razonable sobre flujos extraídos de un entorno de red distinto del benchmark, potencialmente utilizando una versión distinta de CICFlowMeter o una configuración de captura diferente. El cambio de dominio entre la distribución de entrenamiento y la distribución de inferencia es un reto fundamental para los modelos de NIDS y rara vez se evalúa en estudios que solo evalúan sobre un único conjunto de datos público \parencite{Apruzzese2022CrossEvaluationNIDS,Layeghy2023CrossDomainNIDS}.
 
 El pipeline de inferencia aplica recorte opcional por percentiles y z-score para gestionar los valores de características brutas fuera de distribución que caen fuera del rango observado durante el entrenamiento en CICIDS2017. El escalador ajustado de la Fase 1 se carga y aplica sin reajuste, preservando la integridad de la separación entre entrenamiento y prueba. La máscara de presencia/ausencia en el vector de observación codifica explícitamente cualquier característica que no haya podido calcularse a partir de la captura de laboratorio, haciendo visible el caso de datos incompletos en la entrada de predicción en lugar de imputarlo silenciosamente. El resultado esperado de este objetivo es un conjunto de artefactos de predicción y métricas que permitan comparar directamente los resultados del tráfico de laboratorio con los de la validación de la Fase 1, proporcionando evidencia concreta sobre cómo varía el rendimiento bajo un cambio de dominio.
+
+\textbf{Criterio de verificación (OBJ-08).} La ejecución oficial de la Fase 2 (\texttt{P2v2} sobre el modelo \texttt{MAIN}) procesó la captura de laboratorio con el escalador persistido y produjo predicciones, métricas y diagnósticos comprometidos (Tabla~\ref{tab:inventario-runs}; Algoritmo~\ref{alg:inferencia-fase2}), manteniendo el marco declarado de validez externa limitada.
+
+La Tabla~\ref{tab:trazabilidad} resume la trazabilidad entre los objetivos específicos, los capítulos donde se desarrollan y la evidencia que respalda el estado de cada uno; los identificadores completos de las ejecuciones citadas figuran en la Tabla~\ref{tab:inventario-runs}. El único objetivo sin evidencia de ejecución es OBJ-07, cuyo protocolo está diseñado e implementado pero pendiente de disponibilidad de GPU.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{lp{2.2cm}p{5.6cm}p{3.4cm}}
+\toprule
+Objetivo & Capítulos & Evidencia (ejecución o artefacto) & Estado \\
+\midrule
+OBJ-01 & 4 & Contrato de características en código (\texttt{canonical\_schema.py}); Algoritmo~\ref{alg:mapeo-canonico} & Completado \\
+OBJ-02 & 4 & Configuración de \texttt{MAIN} (\texttt{n\_features} $= 152$); semántica de la máscara documentada & Completado \\
+OBJ-03 & 4 & \texttt{rl\_defender\_env.py}; Algoritmo~\ref{alg:env-step}; Tablas~\ref{tab:reward-matrix} y~\ref{tab:recompensa-multiobjetivo} & Completado \\
+OBJ-04 & 4 y 6 & Ejecución \texttt{MAIN}; Tabla~\ref{tab:hiperparametros-main} & Completado \\
+OBJ-05 & 5 y 6 & Barrido Random Forest sobre las tres particiones & Completado \\
+OBJ-06 & 5 y 6 & Comprobaciones A/B/C; análisis de duplicados; partición fija con semilla 42 & Completado (\textit{leave-one-CSV-out} de QRDQN pendiente de GPU) \\
+OBJ-07 & 5 & Protocolo e instrumentación implementados; sin artefactos de ejecución & \textbf{Pendiente de GPU} \\
+OBJ-08 & 5 y 6 & Ejecución \texttt{P2v2} sobre el modelo \texttt{MAIN} (Fase 2) & Completado \\
+\bottomrule
+\end{tabular}
+\caption[Matriz de trazabilidad de objetivos]{Matriz de trazabilidad entre objetivos específicos, capítulos, evidencia y estado. Los \texttt{RUN\_ID} completos figuran en la Tabla~\ref{tab:inventario-runs}. Fuente: elaboración propia.}
+\label{tab:trazabilidad}
+\end{table}
 
 \section{Alcance del trabajo}
 El trabajo está delimitado por los requisitos de una evaluación offline de un pipeline de aprendizaje automático tabular. Comprende la ingesta de registros de flujo en formato CSV tanto de CICIDS2017 como de capturas de laboratorio, la aplicación de escalado estándar y recorte opcional de valores atípicos, la ejecución de bucles de entrenamiento mediante el framework Stable Baselines3 (\texttt{sb3-contrib}), y la generación de artefactos de ejecución estructurados y reproducibles que persisten modelos, métricas, escaladores y ficheros de configuración junto a cada ejecución de entrenamiento. La experimentación interna se realiza íntegramente sobre el conjunto de datos CICIDS2017, utilizando particiones explícitas entre entrenamiento y prueba y una escalera de validación multietapa para evaluar el comportamiento del modelo bajo condiciones progresivamente más estrictas antes de probarlo con tráfico capturado externamente.
@@ -61,3 +171,97 @@ La tesis tampoco pretende resolver el problema más amplio de las operaciones ci
 El resultado esperado de esta tesis es un pipeline de inferencia offline completamente funcional, documentado y reproducible, respaldado por un análisis empírico detallado. El proyecto producirá artefactos persistentes para todas las ejecuciones de entrenamiento y validación, incluyendo ficheros de modelo entrenado, escaladores ajustados, informes de métricas, salidas de validación y registros de configuración que especifican completamente las condiciones bajo las cuales se produjo cada resultado. Esta disciplina en la gestión de artefactos forma parte de la contribución metodológica: un resultado que no puede reproducirse a partir de su rastro de artefactos proporciona una evidencia más débil que uno que sí puede.
 
 En cuanto al contenido empírico, el proyecto producirá mediciones de precisión, recall, F1, tasa de falsos positivos y tasa de falsos negativos tanto para el agente QRDQN como para la línea base de Random Forest en todos los niveles de validación. Los experimentos de escala de entrenamiento producirán curvas de aprendizaje que caracterizarán cómo evoluciona el rendimiento de cada modelo a medida que crece el presupuesto de entrenamiento. Los resultados de inferencia de la Fase 2 caracterizarán cómo varía el rendimiento cuando el modelo se enfrenta a tráfico capturado por el operador en un laboratorio doméstico cerrado y no adversarial, en lugar de flujos de CICIDS2017 reservados para la prueba. En conjunto, estos resultados cuantificarán los límites de generalización de los modelos de RL entrenados en benchmarks cuando se someten a particiones temporales estrictas, evaluación \textit{leave-one-CSV-out} y tráfico de laboratorio doméstico generado por el operador, y proporcionarán una evaluación empírica honesta de si la formulación de RL sensible al coste ofrece ventajas medibles sobre una línea base supervisada bien equiparable.
+
+\section{Restricciones}
+El desarrollo del proyecto está condicionado por un conjunto de restricciones que delimitan qué evidencia puede producirse y cómo debe interpretarse. La Tabla~\ref{tab:restricciones} las cataloga en dos categorías: \emph{factores de dato}, impuestos por las fuentes de datos disponibles, y \emph{factores estratégicos}, decisiones de alcance adoptadas para mantener el proyecto abordable, reproducible y seguro. Ninguna de estas restricciones se oculta en los capítulos posteriores: cada una reaparece, cuantificada cuando es posible, en los resultados y en las limitaciones.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{lp{5.4cm}p{5.6cm}}
+\toprule
+ID & Restricción & Implicación para el proyecto \\
+\midrule
+\multicolumn{3}{l}{\textit{Factores de dato}} \\
+\addlinespace
+RES-D1 & CICIDS2017 presenta problemas documentados: flujos duplicados, inconsistencias de etiquetado y sensibilidad a la partición. & Los resultados \emph{in-distribution} se leen como cota optimista; la escalera de validación y el análisis de duplicados son obligatorios. \\
+RES-D2 & El mapeo binario colapsa todas las familias de ataque en una única clase \texttt{BLOCK}. & El análisis de errores por familia queda fuera de la ruta principal de RL y exigiría etiquetas de familia preservadas. \\
+RES-D3 & El tráfico de la Fase 2 procede de un único laboratorio doméstico cerrado, generado por el operador y no adversarial. & Validez externa limitada: la Fase 2 se interpreta como comprobación de transferencia, no como validación de producción. \\
+RES-D4 & No se dispone de tráfico de producción etiquetado de forma independiente. & Las afirmaciones de generalización se restringen al benchmark y al laboratorio. \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Factores estratégicos}} \\
+\addlinespace
+RES-E1 & Evaluación exclusivamente offline; sin bloqueo en vivo ni integración con cortafuegos, SDN o IPS. & El sistema es un instrumento de medición experimental; un despliegue exigiría diseño y validación adicionales. \\
+RES-E2 & Presupuesto de cómputo GPU puntual (instancia en la nube reservada para el entrenamiento principal). & Los experimentos de escala de entrenamiento, el \textit{leave-one-CSV-out} de QRDQN y el estudio multi-semilla quedan diferidos, pendientes de GPU. \\
+RES-E3 & Una única semilla en la ejecución principal. & Los intervalos bootstrap cuantifican precisión de muestreo, no varianza entre entrenamientos. \\
+RES-E4 & Un único algoritmo de RL (QRDQN) y una única línea base supervisada (Random Forest). & Las conclusiones algorítmicas se limitan a esta pareja bajo el protocolo común. \\
+\bottomrule
+\end{tabular}
+\caption[Catálogo de restricciones del proyecto]{Catálogo de restricciones del proyecto: factores de dato y factores estratégicos. Fuente: elaboración propia.}
+\label{tab:restricciones}
+\end{table}
+
+\section{Recursos}
+Para el desarrollo y la ejecución del proyecto se han empleado dos entornos de cómputo diferenciados: una estación de trabajo local, utilizada para el desarrollo del código, las pruebas y las ejecuciones de verificación (\textit{smoke tests}), y una instancia de GPU en la nube (RunPod) reservada en exclusiva para el entrenamiento principal del agente QRDQN sobre CICIDS2017. La pila de software se apoya en Python y en un conjunto de bibliotecas de aprendizaje automático y aprendizaje por refuerzo cuyas versiones exactas quedan fijadas en los ficheros de dependencias del repositorio, lo que favorece la reproducibilidad de los resultados. La Tabla~\ref{tab:recursos} resume los recursos hardware y software efectivamente utilizados.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{3.0cm}p{4.3cm}p{5.6cm}@{}}
+\toprule
+\textbf{Recurso} & \textbf{Especificación / versión} & \textbf{Uso en el proyecto} \\
+\midrule
+\multicolumn{3}{l}{\textit{Hardware}} \\
+\addlinespace
+GPU en la nube (RunPod) & NVIDIA RTX 3090 Ti, 24 GB de VRAM & Entrenamiento principal QRDQN ($3\,000\,000$ de pasos) sobre CICIDS2017 \\
+Estación de desarrollo local & CPU, sin GPU dedicada & Desarrollo, pruebas y ejecuciones \textit{smoke} del pipeline \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Software}} \\
+\addlinespace
+Python & 3.12.x & Lenguaje de implementación del proyecto \\
+PyTorch & 2.12.1 (variante \texttt{+cu130} en RunPod) & Motor de entrenamiento de redes neuronales \\
+Stable-Baselines3 & 2.8.0 & Implementación base de los algoritmos de aprendizaje por refuerzo \\
+sb3-contrib & 2.8.0 & Implementación del algoritmo QRDQN empleado como agente \\
+Gymnasium & 1.2.3 & Interfaz \texttt{Env} del entorno de aprendizaje por refuerzo \\
+scikit-learn & 1.9.0 & Preprocesado (escalado) y métricas de evaluación \\
+pandas & 3.0.3 & Carga y manipulación del conjunto de datos CICIDS2017 \\
+NumPy & 2.4.6 & Operaciones numéricas de bajo nivel \\
+\bottomrule
+\end{tabular}
+\caption[Recursos hardware y software del proyecto]{Recursos hardware y software efectivamente empleados en el desarrollo y en el entrenamiento del defensor. Fuente: elaboración propia a partir de \texttt{requirements.txt}, \texttt{requirements-runpod-cu130.txt}, \texttt{pyproject.toml}, \texttt{docs/runpod\_main\_experiment.md} y \texttt{config.json} de la ejecución principal (\texttt{runs/cicids2017/\allowbreak MAIN\_\allowbreak qrdqn\_\allowbreak cicids2017\_\allowbreak canonical\_\allowbreak full\_\allowbreak random\_\allowbreak 20260609\_\allowbreak 193655/\allowbreak config.json}).}
+\label{tab:recursos}
+\end{table}
+
+El entrenamiento principal (\texttt{MAIN\_\allowbreak qrdqn\_\allowbreak cicids2017\_\allowbreak canonical\_\allowbreak full\_\allowbreak random\_\allowbreak 20260609\_\allowbreak 193655}) se ejecutó íntegramente sobre el dispositivo \texttt{cuda} de la instancia RunPod, mientras que el resto del ciclo de desarrollo se realizó en CPU local, siguiendo la ruta de instalación de \texttt{requirements.txt} descrita para entornos locales.
+
+\section{Planificación temporal}
+La Tabla~\ref{tab:hitos} recoge los hitos contractuales y las fases efectivas del proyecto, y la Figura~\ref{fig:gantt} las representa como diagrama de Gantt. Las fechas están ancladas a dos fuentes verificables: el calendario contractual del TFG (firma, reunión de inicio y entregas parciales) y la evidencia del propio repositorio (marcas temporales de los artefactos de ejecución y del historial de desarrollo). No se planifica hacia el futuro: el cronograma documenta lo efectivamente ocurrido.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{7.2cm}p{5.4cm}}
+\toprule
+Hito o fase & Fecha(s) \\
+\midrule
+Firma del contrato & 11 de noviembre de 2025 \\
+Reunión de inicio & 18 de noviembre de 2025 \\
+Entregas parciales 1--5 & 15-dic-2025, 2-feb, 17-mar, 20-may y 15-jun de 2026 \\
+Desarrollo e implementación & 11 de diciembre de 2025 -- 9 de junio de 2026 \\
+Redacción de la memoria & 12 de diciembre de 2025 -- 6 de julio de 2026 \\
+Experimentos preliminares A/B/C & 12 -- 23 de febrero de 2026 \\
+Fase 2: captura e inferencia en laboratorio & 23 de febrero -- 10 de junio de 2026 \\
+Entrenamiento del modelo \texttt{MAIN} & 9 de junio de 2026 \\
+Auditoría de validación y línea base RF & 27 -- 28 de junio de 2026 \\
+\bottomrule
+\end{tabular}
+\caption[Hitos y fases del proyecto]{Hitos contractuales y fases efectivas del proyecto. Fuente: elaboración propia a partir del calendario contractual del TFG y de las marcas temporales de los artefactos del repositorio.}
+\label{tab:hitos}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\resizebox{\textwidth}{!}{\input{figuras/f1_gantt}}
+\caption[Diagrama de Gantt del proyecto]{Planificación temporal del proyecto como diagrama de Gantt: hitos contractuales, desarrollo, redacción, experimentos y fases de validación. Fuente: elaboración propia a partir del calendario contractual del TFG y de las marcas temporales de los artefactos del repositorio.}
+\label{fig:gantt}
+\end{figure}
