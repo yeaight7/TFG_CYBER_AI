@@ -202,37 +202,34 @@ RES-E4 & Un único algoritmo de RL (QRDQN) y una única línea base supervisada 
 \end{table}
 
 \section{Recursos}
-Para el desarrollo y la ejecución del proyecto se han empleado dos entornos de cómputo diferenciados: una estación de trabajo local, utilizada para el desarrollo del código, las pruebas y las ejecuciones de verificación (\textit{smoke tests}), y una instancia de GPU en la nube (RunPod) reservada en exclusiva para el entrenamiento principal del agente QRDQN sobre CICIDS2017. La pila de software se apoya en Python y en un conjunto de bibliotecas de aprendizaje automático y aprendizaje por refuerzo cuyas versiones exactas quedan fijadas en los ficheros de dependencias del repositorio, lo que favorece la reproducibilidad de los resultados. La Tabla~\ref{tab:recursos} resume los recursos hardware y software efectivamente utilizados.
+Para el desarrollo y la ejecución del proyecto se han empleado dos entornos de cómputo diferenciados. El entorno remoto de RunPod produjo la ejecución principal \texttt{MAIN} sobre CICIDS2017; el ordenador portátil local se utilizó únicamente para desarrollar el código, ejecutar pruebas y construir la memoria, no para entrenar modelos. La Tabla~\ref{tab:recursos} resume los recursos y mantiene separadas la confirmación del autor, la evidencia registrada por la ejecución y los contratos de instalación. El inventario completo se presenta en el Anexo~\ref{cap:anexo-entorno}.
 
 \begin{table}[htbp]
 \centering
-\small
-\begin{tabular}{@{}p{3.0cm}p{4.3cm}p{5.6cm}@{}}
+\footnotesize
+\begin{tabular}{@{}p{2.1cm}p{3.3cm}p{4.4cm}p{2.7cm}@{}}
 \toprule
-\textbf{Recurso} & \textbf{Especificación / versión} & \textbf{Uso en el proyecto} \\
+\textbf{Recurso} & \textbf{Especificación / versión} & \textbf{Uso en el proyecto} & \textbf{Procedencia} \\
 \midrule
-\multicolumn{3}{l}{\textit{Hardware}} \\
+\multicolumn{4}{l}{\textit{Hardware}} \\
 \addlinespace
-GPU en la nube (RunPod) & NVIDIA RTX 3090 Ti, 24 GB de VRAM & Entrenamiento principal QRDQN ($3\,000\,000$ de pasos) sobre CICIDS2017 \\
-Estación de desarrollo local & CPU, sin GPU dedicada & Desarrollo, pruebas y ejecuciones \textit{smoke} del pipeline \\
+CPU y memoria remotas & AMD EPYC 9005; 128 GB de RAM & Entorno RunPod que produjo el entrenamiento \texttt{MAIN} & Confirmación del autor \\
+GPU remota & NVIDIA GeForce RTX 3090 Ti; 24 GB de VRAM & Entrenamiento principal QRDQN ($3\,000\,000$ de pasos) sobre CICIDS2017 & Confirmación del autor; \texttt{environment.\allowbreak json} corrobora el modelo \\
+Ordenador portátil local & No caracterizado como entorno de entrenamiento & Desarrollo, pruebas y construcción de la memoria; ningún entrenamiento de modelos & Uso confirmado por el autor \\
 \addlinespace
-\multicolumn{3}{l}{\textit{Software}} \\
+\multicolumn{4}{l}{\textit{Software}} \\
 \addlinespace
-Python & 3.12.x & Lenguaje de implementación del proyecto \\
-PyTorch & 2.12.1 (variante \texttt{+cu130} en RunPod) & Motor de entrenamiento de redes neuronales \\
-Stable-Baselines3 & 2.8.0 & Implementación base de los algoritmos de aprendizaje por refuerzo \\
-sb3-contrib & 2.8.0 & Implementación del algoritmo QRDQN empleado como agente \\
-Gymnasium & 1.2.3 & Interfaz \texttt{Env} del entorno de aprendizaje por refuerzo \\
-scikit-learn & 1.9.0 & Preprocesado (escalado) y métricas de evaluación \\
-pandas & 3.0.3 & Carga y manipulación del conjunto de datos CICIDS2017 \\
-NumPy & 2.4.6 & Operaciones numéricas de bajo nivel \\
+Runtime de \texttt{MAIN} & Linux 6.8.0-110-generic, glibc 2.39; Python 3.12.11; CUDA 13.0; cuDNN 9.20.0 & Entorno observado durante entrenamiento y evaluación de la ejecución principal & \texttt{environment.\allowbreak json} de \texttt{MAIN} \\
+Bibliotecas de \texttt{MAIN} & \texttt{torch 2.12.1+cu130}; NumPy 2.4.6; pandas 3.0.3; scikit-learn 1.9.0; Gymnasium 1.2.3; SB3 y sb3-contrib 2.8.0; joblib 1.5.3 & Pipeline de datos, entorno RL, entrenamiento y persistencia & \texttt{environment.\allowbreak json} de \texttt{MAIN} \\
+Contratos de instalación & \texttt{requirements.txt}, \texttt{requirements-\allowbreak runpod-\allowbreak cu130.txt} y \texttt{pyproject.toml} & Reproducción local, GPU, desarrollo y ajuste de hiperparámetros & Manifiestos del repositorio \\
+Construcción de la memoria & Windows; TeX Live 2025; \texttt{latexmk} 4.87; \texttt{biber} 2.21 & Producción del documento; fuera del runtime del modelo & Tracker de mejora de la memoria \\
 \bottomrule
 \end{tabular}
-\caption[Recursos hardware y software del proyecto]{Recursos hardware y software efectivamente empleados en el desarrollo y en el entrenamiento del defensor. Fuente: elaboración propia a partir de \texttt{requirements.txt}, \texttt{requirements-runpod-cu130.txt}, \texttt{pyproject.toml}, \texttt{docs/runpod\_main\_experiment.md} y \texttt{config.json} de la ejecución principal (\texttt{runs/cicids2017/\allowbreak MAIN\_\allowbreak qrdqn\_\allowbreak cicids2017\_\allowbreak canonical\_\allowbreak full\_\allowbreak random\_\allowbreak 20260609\_\allowbreak 193655/\allowbreak config.json}).}
+\caption[Recursos hardware y software del proyecto]{Recursos efectivamente utilizados y procedencia de cada dato. Las versiones observadas proceden de \texttt{environment.json}; los manifiestos expresan contratos de instalación, no observaciones de ejecución.}
 \label{tab:recursos}
 \end{table}
 
-El entrenamiento principal (\texttt{MAIN\_\allowbreak qrdqn\_\allowbreak cicids2017\_\allowbreak canonical\_\allowbreak full\_\allowbreak random\_\allowbreak 20260609\_\allowbreak 193655}) se ejecutó íntegramente sobre el dispositivo \texttt{cuda} de la instancia RunPod, mientras que el resto del ciclo de desarrollo se realizó en CPU local, siguiendo la ruta de instalación de \texttt{requirements.txt} descrita para entornos locales.
+El entrenamiento principal (\texttt{MAIN\_\allowbreak qrdqn\_\allowbreak cicids2017\_\allowbreak canonical\_\allowbreak full\_\allowbreak random\_\allowbreak 20260609\_\allowbreak 193655}) se ejecutó íntegramente sobre el dispositivo \texttt{cuda} del entorno remoto. El portátil local quedó fuera del entrenamiento de modelos; su función se limitó al desarrollo, las pruebas y la construcción documental.
 
 \section{Planificación temporal}
 La Tabla~\ref{tab:hitos} recoge los hitos contractuales y las fases efectivas del proyecto, y la Figura~\ref{fig:gantt} las representa como diagrama de Gantt. Las fechas están ancladas a dos fuentes verificables: el calendario contractual del TFG (firma, reunión de inicio y entregas parciales) y la evidencia del propio repositorio (marcas temporales de los artefactos de ejecución y del historial de desarrollo). No se planifica hacia el futuro: el cronograma documenta lo efectivamente ocurrido.

@@ -239,20 +239,20 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 
 | ID | Task | Model | Dep | Status | Evidence |
 |---|---|---|---|---|---|
-| F9.1 | New `capitulos/conclusiones.tex`: 10.1 objetivos contractuales echo · 10.2 objetivos específicos echo (OBJ-07 "diseño completado, ejecución pendiente") · 10.3 reflexión del autor · 10.4 líneas futuras corto/medio/largo plazo (each with cite; Zhang2025OpenSet here) | TOP | F6, F8 | [ ] | |
-| F9.2 | Ch1: PDS-adapted spec (1.2.2), contributions C1–C4 with evidence pointers, lead-in | TOP | F6 | [ ] | |
-| F9.3 | Ch1 §1.6 roadmap rewrite naming ALL chapters + anexos | TOP | F9.1 | [ ] | |
-| F9.V | Gates; every OBJ ID from Ch2 appears in Ch6.8 or Ch10 | TOP | F9.* | [ ] | |
+| F9.1 | New `capitulos/conclusiones.tex`: 10.1 objetivos contractuales echo · 10.2 objetivos específicos echo (OBJ-07 "diseño completado, ejecución pendiente") · 10.3 reflexión del autor · 10.4 líneas futuras corto/medio/largo plazo (each with cite; Zhang2025OpenSet here) | TOP | F6, F8 | [x] | PRs #52/#53 · commits f2cd3f0, e2f2295, b1d94c8 · Ch10 sections and required citations verified |
+| F9.2 | Ch1: PDS-adapted spec (1.2.2), contributions C1–C4 with evidence pointers, lead-in | TOP | F6 | [x] | PR #52 · commit 383c9ea · PDS-adapted specification, C1–C4 evidence pointers, and lead-in present |
+| F9.3 | Ch1 §1.6 roadmap rewrite naming ALL chapters + anexos | TOP | F9.1 | [x] | PR #52 · commit 383c9ea · roadmap names Ch2–Ch10, bibliography, and Annexes A–D |
+| F9.V | Gates; every OBJ ID from Ch2 appears in Ch6.8 or Ch10 | TOP | F9.* | [x] | post-merge isolated BUILD exit 0/179 pp · G3–G6 clean · G7 independent verifier PASS · OBJ-01–OBJ-08 present in Ch6.8 and Ch10 |
 
 ## F10 — Anexos A–D
 
 | ID | Task | Model | Dep | Status | Evidence |
 |---|---|---|---|---|---|
-| F10.1 | Anexo A Manual de reproducibilidad (from `docs/reproducibility.md` + exact run commands) | sonnet | F4 | [ ] | |
-| F10.2 | Anexo B Entorno HW/SW (versions from `requirements*.txt`, `environment.json`) | sonnet | F4 | [ ] | |
-| F10.3 | Anexo C Esquema canónico completo (MOVE 76-feature enumeration out of Ch4 body) | sonnet | F4 | [ ] | |
-| F10.4 | Anexo D Catálogo de artefactos por ejecución | sonnet | F4 | [ ] | |
-| F10.V | Gates | cheap | F10.* | [ ] | |
+| F10.1 | Anexo A Manual de reproducibilidad (from `docs/reproducibility.md` + exact run commands) | sonnet | F4 | [x] | commit f05e0b4 · current parser commands verified; no-argument duplicate/RF entrypoints inspected statically · isolated build 195 pp |
+| F10.2 | Anexo B Entorno HW/SW (versions from `requirements*.txt`, `environment.json`) | sonnet | F4 | [x] | commit 5ee234f · author-confirmed hardware separated from MAIN runtime and install contracts; Ch2 resource table corrected · isolated build 200 pp |
+| F10.3 | Anexo C Esquema canónico completo (add the missing 76-row audit enumeration; keep Ch4's grouped summary + forward reference) | sonnet | F4 | [x] | commit d346504 · 76 unique complete mappings; exact agreement with MAIN's ordered 152 names · isolated build 209 pp |
+| F10.4 | Anexo D Catálogo de artefactos por ejecución | sonnet | F4 | [x] | commit ad73184 · paths/tracking audited; immutable Phase 2 provenance and T-G summary corrected · isolated build 217 pp |
+| F10.V | Gates | cheap | F10.* | [x] | forced isolated BUILD exit 0/215 pp (+36 investigated) · G1–G7 PASS · Ruff + 45 pytest PASS · all annex pages visually inspected · tracked PDF untouched |
 
 ## F11 — Estado del arte trim + bibliography weave
 
@@ -316,6 +316,23 @@ No thesis claim or figure may depend on these until they are actually run and th
 - DT-10 (2026-07-06): TeX Live 2025 emits `ignored error: Infinite glue shrinkage found in box being split` on EVERY multi-page longtable (reproduced with a 6-line vanilla document). Benign engine diagnostic; G1 pass criterion remains exit 0 + no `^!` lines; do not chase these.
 
 ## Execution log (append one block per phase/session)
+
+### F10 — 2026-07-09 — F10.1–F10.4 done; F10.V verified
+- Branch `chore/yeaight7/thesis-f10-anexos`; implementation commits f05e0b4 (F10.1), 5ee234f (F10.2), d346504 (F10.3), and ad73184 (F10.4).
+- Annex A is a self-contained reproducibility manual covering LFS/data preparation, local and RunPod setup, smoke and MAIN workflows, fixed-split verification, bootstrap, duplicates, Random Forest, historical VAL A/B/C, Phase 2 inference, and GPU-deferred protocols. Commands with arguments were checked against current parsers; the no-argument duplicate/RF entrypoints were inspected statically. It discloses the historical `fp=-1.0` versus current `fp=-2.0` drift and the removed Check A model, so byte-for-byte regeneration is not promised.
+- Annex B separates author-confirmed AMD EPYC 9005 / 128 GB / RTX 3090 Ti hardware from the artifact-recorded MAIN runtime and current installation contracts. Chapter 2 now identifies the laptop as development-only. The recorded cuDNN integer `92000` is decoded as 9.20.0; no unrecorded RTX 6000 upgrade is claimed.
+- Annex C adds the complete 76-row canonical enumeration and both source mappings while preserving Chapter 4's conceptual grouped table. There was no pre-existing 76-row body enumeration to move. Assertions confirm 76 unique canonical identifiers, complete CICIDS2017/Flowmeter-py mappings, and exact agreement with MAIN's ordered 152 feature-plus-mask names.
+- Annex D catalogs MAIN, VAL A/B/C, the fixed-partition reference, bootstrap, duplicate analysis, all three Random Forest subruns, and the three maintained Phase 2 runs. Every principal path and tracked/local-only claim was audited. The historical pre-rename Phase 2 input remains immutable, `predictions.csv.gz` is local-only, and `predictions_head_10000.csv` is the committed audit sample; archive/prototype exclusions are documented without exhaustive cataloging.
+- Each task passed an isolated build after implementation (195, 200, 209, and 217 pages respectively). The final forced `latexmk -gg` build, with `TMP`, `TEMP`, and `TMPDIR` redirected to `C:\Temp`, exits 0 at 215 pages. The +36-page delta from the merged F9 baseline (179 pages) was investigated: Annexes A–D occupy 34 physical PDF pages (15 + 5 + 8 + 6), while body edits and repagination account for the remaining two.
+- Final gates: G1 build clean; G2 pages logged; G3 references/citations and Biber warnings clean; G4 manifest 20/20; all ten G5 disclosures at or above baseline; G6 typography lint clean; independent G7 audit PASS (174 schema, environment, dependency, protocol, VAL, RF, artifact, Phase 2, deferred-workflow, and CLI checks). A final extraction audit additionally passed 20/20 schema, 59/59 artifact/provenance, and 6/6 command-rendering checks. `uv lock --check`, `uv run ruff check .`, `uv run pytest` (45 passed), and `git diff --check` pass. All Annex A–D pages were rendered and visually inspected, including landscape longtables, commands, paths, headers, and TOC entries. The final overfull-box count and width multiset are identical to F9; the one new 5.75 pt float-height advisory for body Table T-G was rendered separately and confirmed unclipped with clear footer separation.
+- PDF single-writer rule observed: all builds wrote to isolated `C:\Temp` directories; tracked `memoria/memoria.pdf` remained untouched and must be rebuilt on `main` only after merge.
+
+### F9 — 2026-07-09 — F9.1–F9.3 done; F9.V verified
+- Branch `chore/yeaight7/thesis-f9-conclusiones-introduccion`; merged through PRs #52 and #53 (merge commits 7cb5300 and d15cd06).
+- `memoria/capitulos/conclusiones.tex` adds the contractual and specific-objective synthesis, author reflection, and cited short-, medium-, and long-term future-work horizons; OBJ-07 remains explicitly designed but pending GPU execution.
+- `memoria/capitulos/introduccion.tex` adds the PDS-adapted specification, contributions C1–C4 with evidence pointers, and a roadmap covering Chapters 2–10, bibliography, and Annexes A–D.
+- Verification on merged `main`: isolated `latexmk` build under `C:\Temp` exit 0, pages=179; G3 references/citations and Biber warnings clean; G4 manifest complete; G5 disclosures remain above baseline; G6 typography lint clean; all OBJ-01–OBJ-08 appear in both Ch6.8 and Ch10; independent G7 audit found no numeric or comparative discrepancy against code and committed artifacts.
+- PDF single-writer rule observed: isolated output used for verification; tracked `memoria/memoria.pdf` remained untouched.
 
 ### F8 — 2026-07-09 — F8.1–F8.6 done; F8.V verified
 - Branch `chore/yeaight7/thesis-f8-discusion-limitaciones-etica`.
