@@ -227,13 +227,13 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 
 | ID | Task | Model | Dep | Status | Evidence |
 |---|---|---|---|---|---|
-| F8.1 | 7.1–7.3 expand quantitatively (exact table values) | TOP | F7 | [ ] | |
-| F8.2 | 7.4 posicionamiento vs SOTA (leakage caveat on literature numbers; cite Layeghy2022, Boukhamla2021, Cantone2024) | TOP | F7 | [ ] | |
-| F8.3 | 7.5 lectura multiobjetivo {seguridad, impacto} (contract C3) | TOP | F7 | [ ] | |
-| F8.4 | 7.6 amenazas a la validez (short, cross-ref Ch8) | TOP | F7 | [ ] | |
-| F8.5 | Ch8: expand each limitation 1–2 paragraphs; MOVE "Trabajo futuro" content out (staged for 10.4) | TOP | F7 | [ ] | |
-| F8.6 | Ch9 Ética light expansion (privacidad + lab-traffic handling) | TOP | — | [ ] | |
-| F8.V | Gates + G5 strict (this phase touches the disclosure-dense chapters) | TOP | F8.* | [ ] | |
+| F8.1 | 7.1–7.3 expand quantitatively (exact table values) | TOP | F7 | [x] | commit 4f06b22 · §7.1–7.3 expanded with MAIN, bootstrap, duplicate, Check C, RF, and Fase 2 values |
+| F8.2 | 7.4 posicionamiento vs SOTA (leakage caveat on literature numbers; cite Layeghy2022, Boukhamla2021, Cantone2024) | TOP | F7 | [x] | commit 4f06b22 · cites `Layeghy2022`, `Boukhamla2021CICIDS2017Validation`, `Cantone2024` |
+| F8.3 | 7.5 lectura multiobjetivo {seguridad, impacto} (contract C3) | TOP | F7 | [x] | commit 4f06b22 · §7.5 anchors C3 on `tp=1.5`, `fp=-2.0`, `fn=-5.0`, `omission=0.0` |
+| F8.4 | 7.6 amenazas a la validez (short, cross-ref Ch8) | TOP | F7 | [x] | commit 4f06b22 · §7.6 summarizes seed, bootstrap, duplicate, proxy-net, and lab-validity threats |
+| F8.5 | Ch8: expand each limitation 1–2 paragraphs; MOVE "Trabajo futuro" content out (staged for 10.4) | TOP | F7 | [x] | commit 45c68f6 · limitations expanded; rendered `Trabajo futuro` removed; future-work stash kept as LaTeX comments for F9 |
+| F8.6 | Ch9 Ética light expansion (privacidad + lab-traffic handling) | TOP | — | [x] | commit 4ab4dd1 · privacy, lab-traffic handling, offline scope, and operational-risk wording expanded |
+| F8.V | Gates + G5 strict (this phase touches the disclosure-dense chapters) | TOP | F8.* | [x] | G1 clean/171pp · G3 clean · G4 missing=0 · G5 counts 9/5/3/6/4/12/4/2/7 plus `red proxy`=4 · G6 clean · G7 verifier PASS |
 
 ## F9 — Ch10 Conclusiones (new) + Ch1 expansion
 
@@ -316,6 +316,15 @@ No thesis claim or figure may depend on these until they are actually run and th
 - DT-10 (2026-07-06): TeX Live 2025 emits `ignored error: Infinite glue shrinkage found in box being split` on EVERY multi-page longtable (reproduced with a 6-line vanilla document). Benign engine diagnostic; G1 pass criterion remains exit 0 + no `^!` lines; do not chase these.
 
 ## Execution log (append one block per phase/session)
+
+### F8 — 2026-07-09 — F8.1–F8.6 done; F8.V verified
+- Branch `chore/yeaight7/thesis-f8-discusion-limitaciones-etica`.
+- Commits: 4f06b22 (`discusion.tex`, F8.1–F8.4), 45c68f6 (`limitaciones.tex`, F8.5), 4ab4dd1 (`etica.tex`, F8.6).
+- `memoria/capitulos/discusion.tex` now follows the requested 7.1–7.6 structure: quantitative reading, random-vs-day generalization, QRDQN-vs-RF, SOTA positioning, C3 multiobjective reading, and threats to validity.
+- `memoria/capitulos/limitaciones.tex` expands the evidence-backed limitations, preserves pending placeholders, removes rendered `Trabajo futuro`, and keeps the future-work content as a LaTeX comment stash for F9.1 / 10.4.
+- `memoria/capitulos/etica.tex` lightly expands dual-use scope, privacy/data handling, lab-traffic treatment, offline-only inference, false-positive impact, and reproducibility-as-responsibility.
+- Verification: forced BUILD (`latexmk -g -pdf -cd ...`) exit 0 with biber 2.21, pages=171; G3 clean; G4 all manifest pdf/png files present; G5 counts 9/5/3/6/4/12/4/2/7 plus `red proxy`=4; G6 typography lint clean; `pdftotext` confirms rendered `Pendiente:` placeholders and no rendered `Trabajo futuro`; read-only verifier PASS for numeric claims vs artifacts and citation fit.
+- PDF single-writer rule observed: `memoria/memoria.pdf` restored before commits.
 
 ### F7 — 2026-07-09 — F7.1–F7.8 done; F7.V solved by Codex local check
 - Branch `chore/yeaight7/thesis-f7-resultados`.
