@@ -1,0 +1,53 @@
+\chapter{Conclusiones}
+
+Este capítulo cierra la memoria a partir de los artefactos y resultados ya presentados. La síntesis no transforma un diseño pendiente en evidencia ejecutada ni extiende la validez de una captura de laboratorio más allá de las condiciones en las que fue obtenida.
+
+\section{Objetivos contractuales}
+
+Los objetivos contractuales C1--C4 permiten leer el resultado del trabajo como un conjunto de compromisos verificables, no como una única cifra de rendimiento. La Tabla~\ref{tab:trazabilidad} y la Tabla~\ref{tab:cobertura-objetivos-resultados} concentran la evidencia por objetivo; esta sección resume su alcance.
+
+\textbf{C1 --- Pipeline experimental reproducible con contrato de datos canónico.} El pipeline offline queda materializado en el contrato de observación, los algoritmos documentados y los artefactos de ejecución que inventaría la Tabla~\ref{tab:inventario-runs}. Por tanto, la contribución no se reduce a un modelo entrenado: incluye la trazabilidad de configuración, métricas y preprocesamiento necesaria para auditar las cifras reportadas.
+
+\textbf{C2 --- Defensor RL evaluado mediante una escalera de validación con control de fugas.} QRDQN se entrenó en la ejecución MAIN y se sometió a las comprobaciones A/B/C y al análisis de duplicados. Los resultados muestran que la lectura de la partición aleatoria debe complementarse con controles más exigentes. El protocolo \textit{leave-one-CSV-out} de QRDQN está implementado, pero no dispone todavía de artefactos de ejecución en GPU; permanece como una extensión pendiente y no sostiene ninguna conclusión numérica de esta memoria.
+
+\textbf{C3 --- Decisión sensible al coste con lectura multiobjetivo.} La función de recompensa hace explícita la prioridad de reducir ataques permitidos, sin ocultar el impacto de bloquear tráfico legítimo. La evidencia por clase y la discusión de falsos positivos y falsos negativos permiten interpretar el sistema en términos de seguridad e impacto operativo, en vez de presentar la exactitud agregada como criterio suficiente.
+
+\textbf{C4 --- Comparación honesta con línea base y transferencia a tráfico externo.} La comparación común con Random Forest evita atribuir una superioridad general a QRDQN: la línea base obtiene mejor F1 de ataque en la partición aleatoria, mientras que la evaluación por día y la Fase~2 muestran por qué el protocolo y el dominio importan. La inferencia sobre tráfico de laboratorio confirma que el pipeline puede ejecutarse sobre esa captura concreta, pero sigue siendo offline, generada por el operador y con validez externa limitada.
+
+\section{Síntesis de los objetivos específicos}
+
+\textbf{OBJ-01.} Se completó la representación basada en flujos y se hizo auditable mediante el contrato canónico y el algoritmo de mapeo. Esta condición común permite que los experimentos de CICIDS2017 y la inferencia de laboratorio utilicen la misma interfaz de observación.
+
+\textbf{OBJ-02.} Se completó el preprocesamiento canónico: las 76 características y su máscara de presencia/ausencia producen una observación de 152 dimensiones cuya semántica queda documentada y persistida en la configuración de MAIN.
+
+\textbf{OBJ-03.} Se completó el entorno de RL compatible con Gymnasium y la recompensa asimétrica. La formulación se interpreta con precisión como un bandido contextual sensible al coste, pues $\gamma = 0$; no se presenta como una defensa secuencial que modifica el estado de una red.
+
+\textbf{OBJ-04.} Se completó el entrenamiento y la evaluación in-distribution del agente QRDQN mediante la ejecución MAIN, cuyos artefactos conservan el modelo, el escalador, la configuración y las métricas necesarias para reproducir la lectura de resultados.
+
+\textbf{OBJ-05.} Se completó la comparación con Random Forest bajo la misma representación, particiones y métricas. El resultado impide una afirmación de superioridad global de QRDQN y convierte la línea base en una referencia necesaria para interpretar la propuesta.
+
+\textbf{OBJ-06.} Se completaron los controles de fuga implementados en el esquema, el escalado ajustado solo con entrenamiento, las comprobaciones A/B/C y el análisis de duplicados. El \textit{leave-one-CSV-out} de QRDQN sigue pendiente de GPU como complemento de validación, no como evidencia ya disponible.
+
+\textbf{OBJ-07.} El objetivo de escala de entrenamiento mantiene el estado de \emph{diseño completado, ejecución pendiente} de GPU. Existen protocolo e instrumentación, pero no artefactos de curva de aprendizaje; por ello no se reportan cifras ni conclusiones sobre eficiencia de datos.
+
+\textbf{OBJ-08.} Se completó la inferencia offline sobre la captura de laboratorio mediante la ejecución P2v2 con el modelo MAIN y su escalador persistido. Esta evidencia comprueba el funcionamiento del pipeline en ese contexto concreto, sin sustituir una validación externa independiente ni un despliegue activo.
+
+\section{Reflexión del autor}
+
+El aprendizaje principal de este trabajo no es que una métrica elevada baste para declarar resuelto un problema de ciberseguridad. El resultado de QRDQN en la partición aleatoria confirma que el pipeline aprende la tarea definida, pero los duplicados, la partición por día, la comparación con Random Forest y la captura de laboratorio obligan a interpretar esa señal con cautela. La contribución más sólida de la memoria es, por tanto, la disciplina con la que el sistema hace visibles sus supuestos: qué entra en la observación, cómo se evita la fuga, qué artefacto respalda cada cifra y qué pruebas continúan pendientes.
+
+También se ha confirmado que la función de recompensa no elimina los compromisos del dominio, sino que obliga a hacerlos explícitos. Penalizar más el falso negativo prioriza la seguridad, pero no convierte en aceptable el coste operativo de los falsos positivos. Mantener la salida \texttt{BLOCK} dentro de un flujo offline ha permitido estudiar ese compromiso sin delegar decisiones reales en el modelo. Esta delimitación es una fortaleza metodológica y una condición para que futuras extensiones se evalúen de forma responsable.
+
+\section{Líneas futuras}
+
+\subsection{Corto plazo: completar la evidencia diseñada}
+
+La prioridad inmediata es ejecutar y comprometer los experimentos ya diseñados: la escalera de tamaños de entrenamiento de OBJ-07, el \textit{leave-one-CSV-out} de QRDQN y el estudio con múltiples semillas. Estas tareas convertirían protocolos existentes en evidencia sobre eficiencia de datos, sensibilidad por escenario y variabilidad del entrenamiento, sin modificar las conclusiones que actualmente dependen de MAIN. Completar esta evidencia responde a las buenas prácticas de evaluación que reclaman controles explícitos de reproducibilidad y generalización en DRL aplicado a IDS \parencite{Cevallos2023DRLIDSBP}.
+
+\subsection{Medio plazo: ampliar la comparación y la validación externa}
+
+El siguiente paso es ampliar la comparación a más familias supervisadas y de RL bajo el mismo contrato de características, junto con capturas etiquetadas e independientes de varios entornos. La meta no sería acumular benchmarks, sino comprobar qué conclusiones sobreviven al cambio de conjunto de datos, topología, extractor y escenario de tráfico. La evaluación cruzada de NIDS basados en ML muestra que estas variaciones son necesarias para distinguir rendimiento intradominio de capacidad de generalización \parencite{Apruzzese2022CrossEvaluationNIDS}.
+
+\subsection{Largo plazo: tratar incertidumbre y transición operacional}
+
+Una línea de investigación a más largo plazo consiste en incorporar mecanismos para reconocer tráfico desconocido, complementar la clasificación binaria con estimación de incertidumbre y evaluar el sistema en entornos controlados antes de considerar cualquier acción activa. Los enfoques de detección de intrusiones con reconocimiento de conjunto abierto ofrecen un antecedente para tratar tráfico que no encaja en las clases conocidas durante el entrenamiento \parencite{Zhang2025OpenSet}. Cualquier transición desde la inferencia offline hacia controles reales debería añadir revisión humana, registro auditable, análisis específico del impacto de los falsos positivos y una evaluación de seguridad independiente; no puede deducirse automáticamente de los resultados presentados aquí.
