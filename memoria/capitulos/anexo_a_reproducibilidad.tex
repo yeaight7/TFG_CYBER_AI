@@ -1,2 +1,519 @@
-% Anexo A — Manual de reproducibilidad (contenido pendiente: tarea F10.1).
-% Fuente prevista: docs/reproducibility.md + comandos exactos de ejecución.
+\chapter{Manual de reproducibilidad}
+\label{cap:anexo-reproducibilidad}
+
+\ExplSyntaxOn
+\cs_new_protected:Npn \repro_cmd:n #1
+  {
+    \group_begin:
+    \ttfamily
+    \tl_set:Nx \l_tmpa_tl { \tl_to_str:n {#1} }
+    \tl_replace_all:Nnn \l_tmpa_tl { -- } { -{}- }
+    \tl_use:N \l_tmpa_tl
+    \group_end:
+  }
+\NewDocumentCommand{\reprocmd}{m}{\repro_cmd:n{#1}}
+\ExplSyntaxOff
+
+Este anexo describe el recorrido operativo desde una copia limpia del
+repositorio hasta la generación de los artefactos de entrenamiento,
+validación e inferencia. Los comandos se ejecutan desde la raíz del
+repositorio. El objetivo es hacer explícitas tanto las operaciones baratas
+como las que requieren los CSV completos o capacidad de cómputo dedicada; no
+se presupone que una orden pendiente haya sido ejecutada ni se le asignan
+resultados.
+
+Se emplean tres marcas de coste:
+
+\begin{description}[leftmargin=2.4cm,style=nextline]
+    \item[\textbf{[Ligero]}] No entrena un modelo ni necesita materializar o
+    cargar el conjunto completo. Es adecuado para una máquina local, aunque la
+    instalación inicial de dependencias pueda requerir una descarga grande.
+    \item[\textbf{[Datos]}] Necesita una entrada local o LFS de gran tamaño,
+    como los ocho CSV de CICIDS2017 o el CSV de laboratorio, y puede consumir
+    bastante memoria, CPU y tiempo de E/S aunque no entrene una red neuronal.
+    \item[\textbf{[GPU]}] Prepara o utiliza el runtime CUDA, o entrena QRDQN.
+    Debe ejecutarse en una máquina con GPU y con espacio suficiente para los
+    datos y los artefactos.
+\end{description}
+
+Una tarea puede llevar más de una marca. La disponibilidad de CUDA acelera
+algunas inferencias, pero no convierte por sí sola una comprobación en un
+entrenamiento.
+
+\section{Obtención del repositorio y de los datos}
+
+\subsection{Clonado y Git LFS}
+
+\textbf{[Datos]}. Son requisitos previos Git, Git LFS, Python
+3.12 y, para la instalación local recomendada, \texttt{uv}. Tras instalar
+Git LFS en el sistema, una copia limpia se prepara así:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{git lfs install}\\
+\reprocmd{git clone https://github.com/yeaight7/TFG_CYBER_AI.git}\\
+\reprocmd{cd TFG_CYBER_AI}\\
+\reprocmd{git lfs pull}\\
+\reprocmd{git lfs ls-files}
+\end{quote}
+
+En esta revisión, \reprocmd{git lfs fsck} no se utiliza como puerta global:
+los patrones LFS actuales también alcanzan varios modelos y escaladores
+históricos que se comprometieron como objetos Git ordinarios antes de esa
+clasificación, por lo que la orden informa de \texttt{unexpectedGitObject}
+aunque los CSV estén disponibles. La aceptación de los datos se basa en los
+ocho CSV materializados y en sus hashes documentados.
+
+La descarga debe dejar ocho exportaciones CSV curadas bajo
+\path{datasets/CICIDS2017/}. Un fichero que todavía contiene el pequeño
+puntero textual de Git LFS no es un CSV utilizable. Los nombres esperados y
+los SHA-256 de la copia curada están inventariados en \path{README.md}. La
+integridad puede contrastarse con una de estas órdenes, según el sistema:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{sha256sum datasets/CICIDS2017/*.csv}\\
+\reprocmd{Get-FileHash -Algorithm SHA256 datasets/CICIDS2017/*.csv}
+\end{quote}
+
+\subsection{Condiciones y procedencia de CICIDS2017}
+
+CICIDS2017 procede del Canadian Institute for Cybersecurity de la University
+of New Brunswick \parencite{Sharafaldin2018CICIDS2017}. Su página oficial es
+\url{https://www.unb.ca/cic/datasets/ids-2017.html}. El conjunto se ofrece
+para uso investigador y exige cita y atribución; la autorización para su
+redistribución no está expresamente concedida. Por ello, el repositorio no
+relicencia los CSV con AGPL-3.0 y se debe consultar la fuente oficial antes de
+copiarlos o publicarlos. La reproducción byte a byte de esta tesis utiliza la
+copia \emph{curada} materializada por Git LFS y sus hashes documentados. Los
+CSV oficiales descargados de CIC/UNB son la fuente de procedencia, pero
+conservan columnas previas a la curación: sus bytes no coinciden con esos
+hashes y sustituir directamente la copia curada cambia la entrada experimental.
+La misma cautela se aplica a los modelos y artefactos derivados del conjunto.
+
+NSL-KDD no es un requisito de este flujo. Sus datos y su antiguo modelo se
+retiraron del estado actual del repositorio; el adaptador conservado tiene
+valor histórico, pero no forma parte del entrenamiento MAIN ni de la Fase~2.
+
+\section{Instalación del entorno}
+
+\subsection{Entorno local con uv}
+
+\textbf{[Ligero]}. El fichero \path{uv.lock} y la configuración de
+\path{pyproject.toml} fijan el entorno local. La instalación reproducible se
+realiza sin regenerar el lockfile:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{uv lock --check}\\
+\reprocmd{uv sync --all-extras --frozen}\\
+\reprocmd{uv run python --version}
+\end{quote}
+
+En Windows, la fuente condicional de \texttt{torch} selecciona la rueda de
+CPU; en Linux selecciona el índice CUDA~13.0 definido en el proyecto. Este
+camino es el adecuado para desarrollo y comprobaciones locales. No debe
+confundirse con la reproducción directa del entorno de RunPod descrita a
+continuación.
+
+\subsection{Entorno RunPod mediante venv}
+
+\textbf{[GPU]}. La ejecución MAIN registró Python~3.12.11, Linux x86\_64,
+una RTX~3090~Ti, \texttt{torch 2.12.1+cu130} y CUDA~13.0. El fichero
+\texttt{requirements-\allowbreak runpod-\allowbreak cu130.txt} fija la pila de entrenamiento directo
+para esa familia de entorno. En una instancia RunPod con Python~3.12:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python --version}\\
+\reprocmd{python -m venv venv}\\
+\reprocmd{source venv/bin/activate}\\
+\reprocmd{python -m pip install --upgrade pip}\\
+\reprocmd{python -m pip install -r requirements-runpod-cu130.txt}
+\end{quote}
+
+El registro exacto que se debe usar para comparar versiones es
+\path{runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json}.
+Además de PyTorch, contiene las versiones efectivas de NumPy, pandas,
+scikit-learn, Gymnasium, Stable-Baselines3, \texttt{sb3-contrib} y joblib.
+
+En los bloques posteriores, \reprocmd{python} designa el intérprete del
+\texttt{venv} activado en RunPod. En la ruta local con \texttt{uv}, donde no se
+activa manualmente ese entorno, se antepone \reprocmd{uv run} a cada orden que
+comience por \reprocmd{python}; el script y el resto de argumentos no cambian.
+Los bloques multilínea usan la barra invertida de continuación de POSIX. En
+PowerShell se unen en una sola línea o se sustituye cada barra de continuación
+por el acento grave \texttt{\char96}.
+
+\subsection{Comprobación mínima del entorno}
+
+\textbf{[Ligero]}. En local, las siguientes órdenes comprueban los imports,
+la dimensión canónica y la disponibilidad efectiva de CUDA sin cargar los
+CSV:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{uv run python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())"}\\
+\reprocmd{uv run python -c "import stable_baselines3 as sb3, sb3_contrib; print(sb3.__version__, sb3_contrib.__version__)"}\\
+\reprocmd{uv run python -c "from src.canonical_schema import FEATURES_CANON; assert len(FEATURES_CANON) == 76; print(76, 152)"}
+\end{quote}
+
+Dentro del \texttt{venv} de RunPod se repiten las mismas órdenes retirando el
+prefijo \reprocmd{uv run}. En una instancia destinada a entrenar, la tercera
+salida de la primera orden debe ser \texttt{True}; si es \texttt{False}, no se
+debe iniciar MAIN hasta corregir el runtime o la selección de la GPU. La
+salida local puede ser \texttt{False} sin que ello indique un fallo del
+pipeline de CPU.
+
+\section{Entrenamiento canónico}
+
+\subsection{Smoke test del perfil MAIN}
+
+\textbf{[Datos]}. Esta comprobación usa solo una muestra
+pequeña, pero atraviesa el cargador, el esquema canónico, la construcción del
+entorno, el perfil de hiperparámetros MAIN y el guardado de artefactos:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python src/train_rl_defender.py} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--preset fast} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--split-mode random} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--max-rows 10000} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--timesteps 1000} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--seed 42} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--training-profile main-experiment} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--checkpoint-freq 0}
+\end{quote}
+
+Este smoke test queda por debajo de los \texttt{50\,000} pasos de
+\textit{learning starts} del perfil MAIN. Solo valida el recorrido y la
+escritura de artefactos; sus métricas no son evidencia de calidad de
+aprendizaje ni son comparables con MAIN.
+
+\subsection{Entrenamiento MAIN exacto}
+
+\textbf{[GPU] + [Datos]}. La orden canónica del experimento principal es:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python src/train_rl_defender.py} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--preset full} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--split-mode random} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--timesteps 3000000} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--seed 42} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--training-profile main-experiment}
+\end{quote}
+
+La omisión deliberada de \reprocmd{--max-rows} hace que se usen todos los
+datos. El perfil fija, entre otros valores, la arquitectura
+\texttt{[1024,1024,512]}, 200 cuantiles, \(\gamma=0\), tasa de aprendizaje
+\texttt{5e-5}, un millón de posiciones de buffer y tres millones de pasos. El
+código actual utiliza la recompensa \texttt{tp=1.5}, \texttt{fp=-2.0},
+\texttt{fn=-5.0} y \texttt{omission=0.0}.
+
+Cada ejecución genera un \texttt{RUN\_ID} y debe terminar con
+\path{config.json}, \path{metrics.json}, \path{environment.json},
+\path{feature_names.json}, \path{scaler.joblib},
+\path{train_percentiles.npz}, \path{artifact_manifest.json} y el modelo. No se
+debe trasladar una métrica a la memoria si no puede vincularse con ese
+directorio y su configuración.
+
+\section{Verificación del split fijo y del escalador}
+
+\textbf{[Datos]}. Esta comprobación no entrena. Reconstruye la partición
+aleatoria completa con semilla~42, comprueba los conteos, la anidación de los
+subconjuntos de entrenamiento, el hash del test y el ajuste del
+\texttt{StandardScaler} frente al artefacto MAIN:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python scripts/verify_fixed_test_split.py} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--sizes 500000 1000000} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--seed 42} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--run-dir} \texttt{\textbackslash}\\
+\hspace*{2em}\path{runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--check-scaler} \texttt{\textbackslash}\\
+\hspace*{2em}\path{runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/scaler.joblib}
+\end{quote}
+
+El hash que imprime debe coincidir con el manifiesto y el valor siguientes (las
+dos líneas del hash se concatenan sin espacios):
+
+\begin{quote}
+\small\raggedright
+\path{runs/cicids2017/test_partition_reference_seed42.json}\\
+\texttt{test\_set\_sha256:}\\
+\texttt{cb175377f462672b3aeb3ad3dd8bff3a}\\
+\texttt{b506d8663755cb336d40f3ef9765035b}
+\end{quote}
+
+El éxito de esta orden acredita la
+reconstrucción del split y del escalador, no una repetición del entrenamiento
+ni de sus pesos.
+
+Los artefactos serializados se resuelven por defecto mediante
+\path{artifact_manifest.json} y se verifican con SHA-256 antes de cargarlos.
+El hash acredita integridad respecto del manifiesto, pero no convierte en
+seguro un serializado procedente de una fuente hostil: también deben ser
+confiables la procedencia del manifiesto y la del repositorio.
+La opción \reprocmd{--allow-unsafe-artifacts} desactiva esa garantía y exige
+rutas directas. No debe añadirse para modelos o escaladores recibidos por
+Internet, correo o una fuente no controlada. Solo es admisible, de forma
+consciente, para un artefacto local confiable que todavía no tenga manifiesto;
+ningún comando canónico de este anexo la necesita.
+
+\section{Análisis y validaciones reproducibles}
+
+\subsection{Intervalos bootstrap}
+
+\textbf{[Ligero]}. El modo normal recupera y autoverifica los conteos de la
+matriz de confusión desde \path{config.json} y \path{metrics.json}, y después
+realiza \(10\,000\) remuestreos estratificados. No carga el modelo, los CSV ni
+reentrena:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python scripts/bootstrap_ci.py} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--run-dir} \texttt{\textbackslash}\\
+\hspace*{2em}\path{runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--n-boot 10000} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--boot-seed 12345} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--out runs/validation/bootstrap_ci_seed42_recomputed.json}
+\end{quote}
+
+La salida recomputada se compara con el artefacto oficial y no lo sustituye.
+Usar directamente la ruta \path{runs/validation/bootstrap_ci_seed42.json}
+sobrescribiría evidencia rastreada y eliminaría la verificación pesada del
+modelo si no se añade también \reprocmd{--from-model}.
+
+\textbf{[Datos], GPU opcional}. El modo \reprocmd{--from-model} es distinto:
+reconstruye los 566\,149 ejemplos de prueba, aplica el escalador persistido,
+vuelve a predecir con el modelo MAIN y exige que la matriz de confusión
+coincida. Sigue sin reentrenar, pero ya no es una operación ligera:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python scripts/bootstrap_ci.py} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--run-dir} \texttt{\textbackslash}\\
+\hspace*{2em}\path{runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--n-boot 10000} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--boot-seed 12345} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--from-model} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--out runs/validation/bootstrap_ci_seed42_from_model.json}
+\end{quote}
+
+\subsection{Análisis de duplicados}
+
+\textbf{[Datos]}. El script carece de argumentos y no entrena ningún modelo:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python scripts/analyze_duplicates.py}
+\end{quote}
+
+Carga la representación canónica sin escalar, mide duplicados exactos y la
+presencia de filas de test también presentes en train, y escribe
+\path{runs/validation/duplicate_analysis_seed42.json}. Es un análisis de la
+partición aleatoria, no una corrección automática de los datos. Como el script
+no admite una ruta de salida alternativa, debe ejecutarse en una copia de
+trabajo limpia y se debe revisar explícitamente
+\reprocmd{git diff -- runs/validation/duplicate_analysis_seed42.json}. La orden
+sobrescribe ese fichero rastreado; si la ejecución es solo una auditoría, se
+conserva la salida fuera del árbol y se restaura el original en vez de
+reemplazar evidencia histórica sin explicar cualquier diferencia introducida
+por el cargador o los datos actuales.
+
+\subsection{Línea base Random Forest}
+
+\textbf{[Datos]}. La línea base tampoco acepta argumentos:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python src/baseline_random_forest.py}
+\end{quote}
+
+La orden entrena tres barridos de CPU: partición aleatoria completa,
+partición por día y un \textit{leave-one-out} con el miércoles como test.
+Escribe configuración y métricas por barrido bajo
+\path{runs/cicids2017/baseline_random_forest_comparison/}, además del modelo
+de la partición aleatoria bajo \path{models/}. Que no requiera GPU no implica
+que sea una comprobación ligera: carga varias veces el conjunto completo y
+entrena 200 árboles por barrido.
+
+\subsection{Checks A, B y C con el código actual}
+
+\textbf{[GPU] + [Datos]}. La ejecución conjunta actual, con todos los valores
+relevantes explicitados, es:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python src/validate_checks.py} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--run-dir} \texttt{\textbackslash}\\
+\hspace*{2em}\path{runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--checks A B C} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--preset full} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--split-mode random} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--train-csvs Monday Tuesday Wednesday} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--test-csvs Thursday Friday} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--timesteps-b 10000} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--timesteps-c 30000} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--seed 42}
+\end{quote}
+
+Check~A carga el modelo MAIN verificado y predice directamente sobre
+\(X_{test}\). Check~B destruye la asociación con las etiquetas barajando
+\(y_{train}\) y entrena un modelo breve. Check~C entrena otro modelo con
+lunes, martes y miércoles como train y jueves y viernes como test. Por tanto,
+la orden conjunta contiene reentrenamiento; no es una mera evaluación del
+modelo MAIN. La salida se guarda en un nuevo directorio
+\path{runs/validation/VAL_checks_ABC_<timestamp>/} con
+\path{config.json} y \path{validation_results.json}.
+
+Los tres artefactos históricos citados en la memoria ---
+\path{VAL_checks_A_20260212_235443},
+\path{VAL_checks_B_20260212_235736} y
+\path{VAL_checks_C_20260213_004847}--- siguen siendo auditables mediante sus
+ficheros de configuración y resultados, pero no son reproducibles byte a
+byte con el estado actual. Sus configuraciones registran
+\texttt{fp=-1.0}, mientras que el código actual usa \texttt{fp=-2.0}. Además,
+Check~A apunta a
+\path{models/C01_qrdqn_cicids2017_canonical_full_20260212_200218.zip}, modelo
+ya retirado, y Check~B y Check~C no persistieron los modelos que entrenaron.
+Una nueva ejecución debe recibir un nuevo \texttt{RUN\_ID} y no sustituye en
+silencio a esos artefactos históricos.
+
+\section{Inferencia MAIN de la Fase 2}
+
+\textbf{[Datos], GPU opcional}. La Fase~2 mantenida es inferencia offline; no
+instala reglas de cortafuegos ni bloquea tráfico en vivo. La orden con el
+modelo MAIN y el CSV local del laboratorio es:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python scripts/predict_real_traffic_v2.py} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--flows pcaps/lab_capture_traffic.csv} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--run-dir} \texttt{\textbackslash}\\
+\hspace*{2em}\path{runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--percentiles} \texttt{\textbackslash}\\
+\hspace*{2em}\path{runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--clip-z 10.0} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--export-diagnostics}
+\end{quote}
+
+\path{pcaps/lab_capture_traffic.csv} está ignorado por Git y no aparece en un
+clon limpio. Debe aportarlo el operador a partir de la captura y extracción
+descritas en \path{pcaps/README.md}; sin esa entrada local no puede repetirse
+la inferencia oficial de Fase~2.
+
+\reprocmd{--run-dir} resuelve y verifica por manifiesto el modelo y el
+escalador; el fichero de percentiles indicado también debe coincidir con su
+hash registrado. La orden escribe un nuevo
+\path{runs/phase2/P2v2_pred_<timestamp>/} con predicciones, configuración,
+métricas y diagnósticos. El recorte por percentiles y por z-score es una
+mitigación deliberada del cambio de dominio en inferencia: el entrenamiento y
+el test interno de MAIN solo aplicaron \texttt{StandardScaler}. Por ello, una
+ejecución con estos recortes no es comparable byte a byte con las métricas del
+test interno. Para una ablación estrictamente alineada con el preprocesamiento
+de entrenamiento se omiten \reprocmd{--percentiles} y
+\reprocmd{--clip-z}, manteniendo el escalador.
+
+No se activa \reprocmd{--include-sensitive-metadata} en la orden canónica. Si
+se usa para una inspección local, el fichero
+\path{predictions_sensitive_local.csv} puede contener IP, puertos, marcas de
+tiempo o etiquetas y no debe añadirse al control de versiones.
+
+\section{Experimentos diferidos con GPU}
+
+Los flujos siguientes están implementados o definidos, pero permanecen
+pendientes. Estos comandos documentan el procedimiento futuro; no implican
+que existan métricas ni autorizan a completar tablas con valores estimados.
+Cada ejecución válida deberá conservar su \texttt{RUN\_ID}, configuración y
+resultados bajo \path{runs/}.
+
+\subsection{Leave-one-CSV-out de QRDQN}
+
+\textbf{[GPU] + [Datos]}. Sin \reprocmd{--holdout-csvs}, el script recorre
+los ocho CSV y entrena un modelo por fold:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python src/validate_leave_one_csv_out.py} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--timesteps 30000} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--seed 42} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--predict-batch-size 8192}
+\end{quote}
+
+El uso de \reprocmd{--max-rows-per-csv} queda reservado a smoke tests y no
+debe presentarse como la validación completa. En el estado actual no existe
+un artefacto agregado completo de QRDQN que permita reportar resultados de
+este protocolo.
+
+\subsection{Escalera de tamaños con test fijo}
+
+\textbf{[GPU] + [Datos]}. El presupuesto se reduce solo en train mediante
+\reprocmd{--train-max-rows}; usar \reprocmd{--max-rows} alteraría el test y
+haría inválida la comparación. Los pares planificados de filas y pasos,
+proporcionales a los tres millones de pasos de MAIN mediante
+\(T=\operatorname{round}(3\,000\,000\,N/2\,264\,594)\), son:
+
+\begin{center}
+\begin{tabular}{rr}
+\toprule
+Filas de train & Pasos QRDQN \\
+\midrule
+100\,000 & 132\,474 \\
+250\,000 & 331\,185 \\
+500\,000 & 662\,370 \\
+1\,000\,000 & 1\,324\,741 \\
+2\,000\,000 & 2\,649\,482 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Para cada fila de la tabla se ejecuta la orden siguiente, sustituyendo
+\texttt{N} y \texttt{T} por el par exacto de la misma fila:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python src/train_rl_defender.py} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--preset full} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--split-mode random} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--train-max-rows N} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--timesteps T} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--seed 42} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--training-profile main-experiment}
+\end{quote}
+
+Después de cada ejecución se compara
+\texttt{split\_metadata.test\_set\_sha256} con el manifiesto de referencia y
+se conserva el escalador propio del subconjunto de train. No hay resultados
+comprometidos para esta escalera en el momento de redactar el anexo.
+
+\subsection{Estudio multisemilla del pipeline}
+
+\textbf{[GPU] + [Datos]}. Para caracterizar la sensibilidad conjunta del
+pipeline se repite la orden MAIN completa, sin cambiar ningún otro indicador,
+con las semillas 43, 44 y 45. En el código actual, \reprocmd{--seed} controla
+tanto la partición aleatoria como la inicialización y el muestreo del
+entrenamiento; por ello, este protocolo mide variabilidad combinada de split y
+entrenamiento, no varianza de entrenamiento sobre un test fijo. Aislar este
+último efecto exigiría separar la semilla de partición de la semilla del
+modelo, interfaz que el CLI actual no ofrece. La primera repetición es:
+
+\begin{quote}
+\small\raggedright
+\reprocmd{python src/train_rl_defender.py} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--preset full} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--split-mode random} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--timesteps 3000000} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--seed 43} \texttt{\textbackslash}\\
+\hspace*{1em}\reprocmd{--training-profile main-experiment}
+\end{quote}
+
+Se repite exactamente con \reprocmd{--seed 44} y
+\reprocmd{--seed 45}. Cada semilla genera un modelo y un \texttt{RUN\_ID}
+independientes. Hasta que las tres ejecuciones terminen y sus artefactos sean
+revisados, la tesis solo puede declarar que MAIN es una ejecución de semilla
+única; no puede atribuirle una desviación entre semillas. Incluso después de
+ejecutar este protocolo, la dispersión deberá describirse como variabilidad
+combinada y no como una estimación pura de la varianza de entrenamiento.
