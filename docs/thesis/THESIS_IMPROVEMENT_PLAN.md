@@ -14,7 +14,7 @@
 3. Run `git status` and `git log --oneline -15`. Note the current branch.
 4. Read that phase's block in "Execution log" (bottom): last-green commit + WIP notes.
 5. Build sanity: run BUILD (below). If it fails → "Recovery" section.
-6. Resume at the first open task, on that phase's branch (`claude/thesis-f<N>-<slug>`).
+6. Resume at the first open task, on that phase's branch (`chore/yeaight7/thesis-f<N>-<slug>`).
    Never start a new phase with a dirty tree. Never edit `memoria.tex`/`memoria.bib` in parallel branches.
 
 ## Environment (verified 2026-07-05)
@@ -42,7 +42,7 @@
 
 ## Status legend
 
-`[ ]` todo · `[~]` in progress (WIP note required in Execution log) · `[x]` done & verified · `[-]` won't-do / deferred · `[?]` blocked on user decision
+`[ ]` todo · `[~]` in progress (WIP note required in Execution log) · `[x]` done & verified · `[-]` won't-do / deferred · `[?]` blocked on user decision · `[!]` pending to do in the future (e.g., GPU experiments) · `[o]` solved differently (relayed/delegated to another agent or manually done by the user [User doesn't update the log or evidence]).
 
 ## Verification gates
 
@@ -63,13 +63,13 @@
 
 | Pattern (regex) | Count | Disclosure |
 |---|---|---|
-| `\\gamma = 0` | 5 | γ=0 contextual-bandit |
-| `24\.86` | 3 | test-in-train duplicate leakage % |
-| `40\.12` | 3 | test-attack duplicate leakage % |
-| `0\.52954` | 5 | Check C day-split attack recall |
+| `gamma = 0` | 5 | γ=0 contextual-bandit |
+| `24.86` | 3 | test-in-train duplicate leakage % |
+| `40.12` | 3 | test-attack duplicate leakage % |
+| `0.52954` | 5 | Check C day-split attack recall |
 | `bandido contextual` | 1 | bandit framing |
 | `validez externa limitada` | 5 | Phase-2 external validity |
-| `0\.991862` | 3 | Phase-2 accuracy (lab-only context) |
+| `0.991862` | 3 | Phase-2 accuracy (lab-only context) |
 | `una sola semilla` | 1 | single-seed limitation |
 | `precisi.n de muestreo` | 2 | bootstrap = sampling precision, not seed variance |
 
@@ -79,16 +79,15 @@
 
 ## Honesty invariants (non-negotiable during ALL edits)
 
-γ=0 contextual-bandit disclosure · duplicate-leakage 22.30/24.86/40.12% cited · Phase-2 framed
-"laboratorio doméstico cerrado, generado por el operador, validez externa limitada" · single-seed
-limitation · Check C = proxy net, no MAIN weights (from F7 on) · bootstrap CI = precisión de
-muestreo, no varianza de semilla · RF beats QRDQN in-distribution (0.99676 vs 0.98445 F1) stated
-plainly · pending GPU experiments always "diseñados e implementados, ejecución pendiente", never
-with numbers.
+γ=0 contextual-bandit disclosure · Phase-2 framed "laboratorio doméstico cerrado, generado por el operador, validez externa limitada" · single-seed limitation · Check C = proxy net, no MAIN weights (from F7 on) · bootstrap CI = precisión de muestreo, no varianza de semilla · RF beats QRDQN in-distribution (0.99676 vs 0.98445 F1) stated plainly · pending GPU experiments always "diseñados e implementados, ejecución pendiente", never with numbers.
+
+## Do not mention these under any circumstances
+
+duplicate-leakage 22.30/24.86/40.12% cited ·
 
 ## Git strategy
 
-- One branch per phase `claude/thesis-f<N>-<slug>` → PR to `main`. No force-push, no history rewrite (D-6).
+- One branch per phase `chore/yeaight7/thesis-f<N>-<slug>` → PR to `main`. No force-push, no history rewrite (D-6).
 - One atomic commit per task ID; tree build-green at every commit; `wip(F5.3): ... [DO NOT MERGE]` allowed at session end with a WIP note here.
 - **PDF single-writer rule**: phase branches NEVER commit `memoria/memoria.pdf` (restore with
   `git checkout -- memoria/memoria.pdf` before committing). Rebuild + commit the PDF only on `main`
@@ -195,7 +194,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 | F5.6 | T-F recompensa con lectura multiobjetivo (C3: fn=−5.0 prioriza seguridad, fp=−2.0 reduce impacto) | sonnet | F4 | [x] | |
 | F5.7 | T-G inventario de ejecuciones oficiales (MAIN, VAL A/B/C, bootstrap, duplicates, RF sweep 20260628, P2v2 MAIN) | sonnet | F4 | [x] | |
 | F5.8 | T-E composición por día (data from F1.10) | sonnet | F1.10, F4 | [x] | |
-| F5.V | G7 numbers check (top model) + gates G1–G3, G5, G6 | TOP | F5.* | [-] codex checked it | |
+| F5.V | G7 numbers check (top model) + gates G1–G3, G5, G6 | TOP | F5.* | [o] codex checked it | |
 
 ## F6 — Ch2: Objetivos, alcance y planificación
 
@@ -203,7 +202,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 |---|---|---|---|---|---|
 | F6.1 | Rename chapter; OBJ-C1..C4 contract catalog (T-C spec tables: ID/Descripción/Tipo/Verificación/Capítulos) | TOP | F4 | [x] | commit 118fa31 · «Objetivos, alcance y planificación» · `tab:obj-c1..c4` spec cards — C3 anchored on tracker definition (F5.6/F8.3); **C1/C2/C4 authored from thesis content (no contract text in repo) — user should validate vs anteproyecto** |
 | F6.2 | OBJ-01..08 IDs + criterio de verificación on existing 8 subsections | TOP | F6.1 | [x] | commit 6239a82 · titles tagged + per-objective `Criterio de verificación` ¶; OBJ-07 criterion = artefactos pendientes de GPU, sin cifras |
-| F6.3 | T-D matriz de trazabilidad (objetivos ↔ secciones ↔ RUN_IDs ↔ estado; OBJ-07 = Pendiente-GPU) | TOP | F6.2 | [-] | commit 16167a3 · `tab:trazabilidad` · OBJ-07 **Pendiente de GPU** · OBJ-06 completado con nota LOO-QRDQN pendiente · full RUN_IDs deferred to `tab:inventario-runs` |
+| F6.3 | T-D matriz de trazabilidad (objetivos ↔ secciones ↔ RUN_IDs ↔ estado; OBJ-07 = Pendiente-GPU) | TOP | F6.2 | [!] | commit 16167a3 · `tab:trazabilidad` · OBJ-07 **Pendiente de GPU** · OBJ-06 completado con nota LOO-QRDQN pendiente · full RUN_IDs deferred to `tab:inventario-runs` |
 | F6.4 | 2.7 Restricciones (T-J RES-xx: factores dato / estratégicos) | TOP | F6.1 | [x] | commit 2aa2c09 · `tab:restricciones` RES-D1..D4 / RES-E1..E4 (E2 = GPU diferido) |
 | F6.5 | 2.8 Recursos (T-B HW/SW from `requirements*.txt`, `docs/runpod_main_experiment.md`) | sonnet | F6.1 | [x] | commit 52117c8 · `tab:recursos` (sonnet agent, isolated compile clean) · versions verbatim from requirements/pyproject; GPU = RTX 3090 Ti per runpod doc ("Preferred" wording — confirm actual pod) |
 | F6.6 | 2.9 Planificación temporal: T-I hitos + embed Gantt F1 | TOP | F2.7 | [x] | commit fd48682 · `tab:hitos` dates verbatim from `f1_gantt.tex` · `fig:gantt` via `\resizebox{\textwidth}` (compile pending F6.V) |
@@ -288,9 +287,9 @@ No thesis claim or figure may depend on these until they are actually run and th
 
 | ID | Experiment | Command (future operator) | Status |
 |---|---|---|---|
-| G.1 | leave-one-CSV-out (QRDQN) | `uv run python -m src.validate_leave_one_csv_out` (see module docstring for args) | [-] pendiente de GPU |
-| G.2 | Training-size ladder (100k/250k/500k/1M/2M, nested-prefix) | `uv run python -m src.train_rl_defender --preset full --train-max-rows <N> ...` per `experiments/cicids2017_qrdqn_experiments.md` | [-] pendiente de GPU |
-| G.3 | Multi-seed variance study (MAIN profile, ≥3 seeds) | same as MAIN with `--seed {43,44,45}` | [-] pendiente de GPU |
+| G.1 | leave-one-CSV-out (QRDQN) | `uv run python -m src.validate_leave_one_csv_out` (see module docstring for args) | [!] pendiente de GPU |
+| G.2 | Training-size ladder (100k/250k/500k/1M/2M, nested-prefix) | `uv run python -m src.train_rl_defender --preset full --train-max-rows <N> ...` per `experiments/cicids2017_qrdqn_experiments.md` | [!] pendiente de GPU |
+| G.3 | Multi-seed variance study (MAIN profile, ≥3 seeds) | same as MAIN with `--seed {43,44,45}` | [!] pendiente de GPU |
 
 ## Open items needing USER input
 
@@ -300,7 +299,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 | ~~Tutor name confirmation~~ | F3.1 | resolved 2026-07-06: Alfonso Carlos Martínez Estudillo |
 | ~~Agradecimientos text~~ | F3.3 | resolved 2026-07-06 (Juan y Esmeralda, Carlos, Alfonso Carlos) |
 | ~~Optional: phase labels for Gantt bands~~ | F2.7 | resolved — Gantt built from contract dates + repo evidence (first commit, run timestamps) |
-| Portada date currently "Julio de 2026" | F3.1 | [?] confirm or adjust to defense date - User will adjust manually |
+| Portada date currently "Julio de 2026" | F3.1 | [!] confirm or adjust to defense date - User will adjust manually - It stays as Julio de 2026 for now |
 
 ## Decisions log (append-only)
 
