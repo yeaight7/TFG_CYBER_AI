@@ -152,7 +152,7 @@ Toda ejecución de entrenamiento o evaluación significativa debe persistir un \
 
 Esta disciplina de artefactos evita afirmaciones ambiguas. Un resultado solo se trata como medido cuando puede vincularse a una carpeta de ejecución y una configuración específicas. Las ejecuciones históricas no se fusionan en silencio con los valores por defecto actuales; los valores de recompensa, la lógica de partición, el preprocesamiento, los límites de filas y las semillas deben leerse del artefacto.
 
-La Tabla~\ref{tab:inventario-runs} recoge el inventario completo de las ejecuciones oficiales --organizadas por el peldaño de la escalera de validación o el análisis que respaldan-- junto con los artefactos concretos que permiten reproducir o auditar cada cifra citada en esta memoria. Las ejecuciones no listadas en la tabla (variantes históricas, sondeos previos al diseño o repeticiones posteriores con configuración distinta) se consideran no oficiales y no deben citarse como respaldo de ninguna cifra reportada.
+La Tabla~\ref{tab:inventario-runs} recoge el inventario completo de las ejecuciones oficiales --organizadas por el peldaño de la escalera de validación o el análisis que respaldan-- junto con los artefactos concretos que permiten reproducir o auditar cada cifra citada en esta memoria. El Anexo~\ref{cap:anexo-artefactos} amplía este resumen con las rutas exactas, la función de cada fichero y su condición de rastreado o local. Las ejecuciones no listadas en la tabla (variantes históricas, sondeos previos al diseño o repeticiones posteriores con configuración distinta) se consideran no oficiales y no deben citarse como respaldo de ninguna cifra reportada.
 
 \begin{table}[htbp]
 \centering
@@ -192,7 +192,7 @@ Línea base supervisada Random Forest (balanceada y escalada) sobre tres partici
 \addlinespace
 {\raggedright\texttt{P2v2\_\hspace{0pt}pred\_\hspace{0pt}20260610\_\hspace{0pt}161231\_\hspace{0pt}MAIN}\par} &
 Inferencia de la Fase 2 sobre tráfico de laboratorio etiquetado, con el modelo MAIN. &
-{\raggedright\texttt{config.json}; \texttt{metrics.json}; \texttt{diagnostics.json}; \texttt{predictions.csv.gz}\par} \\
+{\raggedright\texttt{config.json}; \texttt{metrics.json}; \texttt{diagnostics.json}; muestra rastreada \texttt{predictions\_\hspace{0pt}head\_\hspace{0pt}10000.csv}; \texttt{predictions.csv.gz} completo, local y no rastreado\par} \\
 \bottomrule
 \end{tabular}
 \caption[Inventario de ejecuciones oficiales]{Inventario de las ejecuciones oficiales cuyos artefactos respaldan las cifras presentadas en esta memoria: entrenamiento y evaluación principal (MAIN), escalera de validación (comprobaciones A, B y C), análisis estadísticos sobre la partición fija (intervalos de confianza bootstrap y análisis de duplicados), el barrido de la línea base Random Forest sobre las tres particiones consideradas, y la inferencia oficial de la Fase~2 sobre tráfico de laboratorio etiquetado. Fuente: elaboración propia a partir de \texttt{runs/}.}
