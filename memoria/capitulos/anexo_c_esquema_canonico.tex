@@ -1,2 +1,114 @@
-% Anexo C — Esquema canónico completo (contenido pendiente: tarea F10.3).
-% Fuente prevista: enumeración de las 76 características (movida desde el cuerpo).
+\chapter{Esquema canónico completo}
+\label{cap:anexo-esquema-canonico}
+
+Este anexo fija la enumeración completa del contrato de entrada descrito de forma agrupada en el Capítulo~\ref{cap:diseno-sistema}. El orden procede de \texttt{FEATURES\_CANON}, definido en \texttt{src/canonical\_schema.py}. Para una característica canónica de índice $i$, con $1 \leq i \leq 76$, su valor $x_i$ ocupa la posición $i$ del vector de observación y su indicador $m_i$ ocupa la posición $76+i$. Por tanto, las posiciones 1--76 contienen los valores canónicos y las posiciones 77--152 contienen, en el mismo orden, los indicadores cuyos nombres persistidos siguen el patrón \texttt{m\_<identificador\_canónico>}.
+
+En CICIDS2017, la máscara registra la presencia de la columna fuente tras la limpieza previa al mapeo: los valores no finitos ya se han sustituido. Por tanto, 1 indica que la columna mapeada existe en ese punto del pipeline, no que preserve ausencias fila a fila. Como las 76 columnas tienen correspondencia, en los datos nativos de entrenamiento las posiciones 77--152 valen siempre 1. Ante otra entrada sin columna mapeada, el valor se imputa con cero y su indicador permanece en 0.
+
+La Tabla~\ref{tab:esquema-canonico-completo} conserva el orden y muestra las dos correspondencias mantenidas por el proyecto, ambas completas para los 76 identificadores. En Flowmeter-py, la presencia efectiva depende de las columnas de cada CSV. La tabla no añade unidades ni descripciones ajenas a las fuentes.
+
+\begin{landscape}
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{longtable}{@{}r p{4.2cm} p{4.4cm} p{4.1cm} p{4.8cm}@{}}
+\caption[Esquema canónico completo]{Esquema canónico completo y correspondencias de columnas fuente. Fuente: elaboración propia a partir de \texttt{src/canonical\_schema.py} y \texttt{scripts/predict\_real\_traffic\_v2.py}.}
+\label{tab:esquema-canonico-completo}\\
+\toprule
+Índice & Identificador canónico & Columna fuente CICIDS2017 & Columna fuente Flowmeter-py & Grupo lógico \\
+\midrule
+\endfirsthead
+
+\multicolumn{5}{c}{\tablename\ \thetable\ (continuación)}\\
+\toprule
+Índice & Identificador canónico & Columna fuente CICIDS2017 & Columna fuente Flowmeter-py & Grupo lógico \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{5}{r}{Continúa en la página siguiente}\\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+1 & \texttt{flow\_\allowbreak{}duration} & \texttt{Flow Duration} & \texttt{flow\_\allowbreak{}duration} & Estadísticas generales del flujo \\
+2 & \texttt{total\_\allowbreak{}fwd\_\allowbreak{}packets} & \texttt{Total Fwd Packets} & \texttt{tot\_\allowbreak{}fwd\_\allowbreak{}pkts} & Estadísticas generales del flujo \\
+3 & \texttt{total\_\allowbreak{}bwd\_\allowbreak{}packets} & \texttt{Total Backward Packets} & \texttt{tot\_\allowbreak{}bwd\_\allowbreak{}pkts} & Estadísticas generales del flujo \\
+4 & \texttt{total\_\allowbreak{}length\_\allowbreak{}of\_\allowbreak{}fwd\_\allowbreak{}packets} & \texttt{Total Length of Fwd Packets} & \texttt{totlen\_\allowbreak{}fwd\_\allowbreak{}pkts} & Estadísticas generales del flujo \\
+5 & \texttt{total\_\allowbreak{}length\_\allowbreak{}of\_\allowbreak{}bwd\_\allowbreak{}packets} & \texttt{Total Length of Bwd Packets} & \texttt{totlen\_\allowbreak{}bwd\_\allowbreak{}pkts} & Estadísticas generales del flujo \\
+6 & \texttt{fwd\_\allowbreak{}packet\_\allowbreak{}length\_\allowbreak{}max} & \texttt{Fwd Packet Length Max} & \texttt{fwd\_\allowbreak{}pkt\_\allowbreak{}len\_\allowbreak{}max} & Tamaño de paquetes (hacia adelante) \\
+7 & \texttt{fwd\_\allowbreak{}packet\_\allowbreak{}length\_\allowbreak{}min} & \texttt{Fwd Packet Length Min} & \texttt{fwd\_\allowbreak{}pkt\_\allowbreak{}len\_\allowbreak{}min} & Tamaño de paquetes (hacia adelante) \\
+8 & \texttt{fwd\_\allowbreak{}packet\_\allowbreak{}length\_\allowbreak{}mean} & \texttt{Fwd Packet Length Mean} & \texttt{fwd\_\allowbreak{}pkt\_\allowbreak{}len\_\allowbreak{}mean} & Tamaño de paquetes (hacia adelante) \\
+9 & \texttt{fwd\_\allowbreak{}packet\_\allowbreak{}length\_\allowbreak{}std} & \texttt{Fwd Packet Length Std} & \texttt{fwd\_\allowbreak{}pkt\_\allowbreak{}len\_\allowbreak{}std} & Tamaño de paquetes (hacia adelante) \\
+10 & \texttt{bwd\_\allowbreak{}packet\_\allowbreak{}length\_\allowbreak{}max} & \texttt{Bwd Packet Length Max} & \texttt{bwd\_\allowbreak{}pkt\_\allowbreak{}len\_\allowbreak{}max} & Tamaño de paquetes (hacia atrás) \\
+11 & \texttt{bwd\_\allowbreak{}packet\_\allowbreak{}length\_\allowbreak{}min} & \texttt{Bwd Packet Length Min} & \texttt{bwd\_\allowbreak{}pkt\_\allowbreak{}len\_\allowbreak{}min} & Tamaño de paquetes (hacia atrás) \\
+12 & \texttt{bwd\_\allowbreak{}packet\_\allowbreak{}length\_\allowbreak{}mean} & \texttt{Bwd Packet Length Mean} & \texttt{bwd\_\allowbreak{}pkt\_\allowbreak{}len\_\allowbreak{}mean} & Tamaño de paquetes (hacia atrás) \\
+13 & \texttt{bwd\_\allowbreak{}packet\_\allowbreak{}length\_\allowbreak{}std} & \texttt{Bwd Packet Length Std} & \texttt{bwd\_\allowbreak{}pkt\_\allowbreak{}len\_\allowbreak{}std} & Tamaño de paquetes (hacia atrás) \\
+14 & \texttt{flow\_\allowbreak{}bytes\_\allowbreak{}per\_\allowbreak{}s} & \texttt{Flow Bytes/s} & \texttt{flow\_\allowbreak{}byts\_\allowbreak{}s} & Tasas de flujo \\
+15 & \texttt{flow\_\allowbreak{}packets\_\allowbreak{}per\_\allowbreak{}s} & \texttt{Flow Packets/s} & \texttt{flow\_\allowbreak{}pkts\_\allowbreak{}s} & Tasas de flujo \\
+16 & \texttt{flow\_\allowbreak{}iat\_\allowbreak{}mean} & \texttt{Flow IAT Mean} & \texttt{flow\_\allowbreak{}iat\_\allowbreak{}mean} & Tiempo entre llegadas (flujo) \\
+17 & \texttt{flow\_\allowbreak{}iat\_\allowbreak{}std} & \texttt{Flow IAT Std} & \texttt{flow\_\allowbreak{}iat\_\allowbreak{}std} & Tiempo entre llegadas (flujo) \\
+18 & \texttt{flow\_\allowbreak{}iat\_\allowbreak{}max} & \texttt{Flow IAT Max} & \texttt{flow\_\allowbreak{}iat\_\allowbreak{}max} & Tiempo entre llegadas (flujo) \\
+19 & \texttt{flow\_\allowbreak{}iat\_\allowbreak{}min} & \texttt{Flow IAT Min} & \texttt{flow\_\allowbreak{}iat\_\allowbreak{}min} & Tiempo entre llegadas (flujo) \\
+20 & \texttt{fwd\_\allowbreak{}iat\_\allowbreak{}total} & \texttt{Fwd IAT Total} & \texttt{fwd\_\allowbreak{}iat\_\allowbreak{}tot} & Tiempo entre llegadas (hacia adelante) \\
+21 & \texttt{fwd\_\allowbreak{}iat\_\allowbreak{}mean} & \texttt{Fwd IAT Mean} & \texttt{fwd\_\allowbreak{}iat\_\allowbreak{}mean} & Tiempo entre llegadas (hacia adelante) \\
+22 & \texttt{fwd\_\allowbreak{}iat\_\allowbreak{}std} & \texttt{Fwd IAT Std} & \texttt{fwd\_\allowbreak{}iat\_\allowbreak{}std} & Tiempo entre llegadas (hacia adelante) \\
+23 & \texttt{fwd\_\allowbreak{}iat\_\allowbreak{}max} & \texttt{Fwd IAT Max} & \texttt{fwd\_\allowbreak{}iat\_\allowbreak{}max} & Tiempo entre llegadas (hacia adelante) \\
+24 & \texttt{fwd\_\allowbreak{}iat\_\allowbreak{}min} & \texttt{Fwd IAT Min} & \texttt{fwd\_\allowbreak{}iat\_\allowbreak{}min} & Tiempo entre llegadas (hacia adelante) \\
+25 & \texttt{bwd\_\allowbreak{}iat\_\allowbreak{}total} & \texttt{Bwd IAT Total} & \texttt{bwd\_\allowbreak{}iat\_\allowbreak{}tot} & Tiempo entre llegadas (hacia atrás) \\
+26 & \texttt{bwd\_\allowbreak{}iat\_\allowbreak{}mean} & \texttt{Bwd IAT Mean} & \texttt{bwd\_\allowbreak{}iat\_\allowbreak{}mean} & Tiempo entre llegadas (hacia atrás) \\
+27 & \texttt{bwd\_\allowbreak{}iat\_\allowbreak{}std} & \texttt{Bwd IAT Std} & \texttt{bwd\_\allowbreak{}iat\_\allowbreak{}std} & Tiempo entre llegadas (hacia atrás) \\
+28 & \texttt{bwd\_\allowbreak{}iat\_\allowbreak{}max} & \texttt{Bwd IAT Max} & \texttt{bwd\_\allowbreak{}iat\_\allowbreak{}max} & Tiempo entre llegadas (hacia atrás) \\
+29 & \texttt{bwd\_\allowbreak{}iat\_\allowbreak{}min} & \texttt{Bwd IAT Min} & \texttt{bwd\_\allowbreak{}iat\_\allowbreak{}min} & Tiempo entre llegadas (hacia atrás) \\
+30 & \texttt{fwd\_\allowbreak{}psh\_\allowbreak{}flags} & \texttt{Fwd PSH Flags} & \texttt{fwd\_\allowbreak{}psh\_\allowbreak{}flags} & Indicadores TCP \\
+31 & \texttt{bwd\_\allowbreak{}psh\_\allowbreak{}flags} & \texttt{Bwd PSH Flags} & \texttt{bwd\_\allowbreak{}psh\_\allowbreak{}flags} & Indicadores TCP \\
+32 & \texttt{fwd\_\allowbreak{}urg\_\allowbreak{}flags} & \texttt{Fwd URG Flags} & \texttt{fwd\_\allowbreak{}urg\_\allowbreak{}flags} & Indicadores TCP \\
+33 & \texttt{bwd\_\allowbreak{}urg\_\allowbreak{}flags} & \texttt{Bwd URG Flags} & \texttt{bwd\_\allowbreak{}urg\_\allowbreak{}flags} & Indicadores TCP \\
+34 & \texttt{fin\_\allowbreak{}flag\_\allowbreak{}count} & \texttt{FIN Flag Count} & \texttt{fin\_\allowbreak{}flag\_\allowbreak{}cnt} & Indicadores TCP \\
+35 & \texttt{syn\_\allowbreak{}flag\_\allowbreak{}count} & \texttt{SYN Flag Count} & \texttt{syn\_\allowbreak{}flag\_\allowbreak{}cnt} & Indicadores TCP \\
+36 & \texttt{rst\_\allowbreak{}flag\_\allowbreak{}count} & \texttt{RST Flag Count} & \texttt{rst\_\allowbreak{}flag\_\allowbreak{}cnt} & Indicadores TCP \\
+37 & \texttt{psh\_\allowbreak{}flag\_\allowbreak{}count} & \texttt{PSH Flag Count} & \texttt{psh\_\allowbreak{}flag\_\allowbreak{}cnt} & Indicadores TCP \\
+38 & \texttt{ack\_\allowbreak{}flag\_\allowbreak{}count} & \texttt{ACK Flag Count} & \texttt{ack\_\allowbreak{}flag\_\allowbreak{}cnt} & Indicadores TCP \\
+39 & \texttt{urg\_\allowbreak{}flag\_\allowbreak{}count} & \texttt{URG Flag Count} & \texttt{urg\_\allowbreak{}flag\_\allowbreak{}cnt} & Indicadores TCP \\
+40 & \texttt{cwe\_\allowbreak{}flag\_\allowbreak{}count} & \texttt{CWE Flag Count} & \texttt{cwr\_\allowbreak{}flag\_\allowbreak{}count} & Indicadores TCP \\
+41 & \texttt{ece\_\allowbreak{}flag\_\allowbreak{}count} & \texttt{ECE Flag Count} & \texttt{ece\_\allowbreak{}flag\_\allowbreak{}cnt} & Indicadores TCP \\
+42 & \texttt{fwd\_\allowbreak{}header\_\allowbreak{}length} & \texttt{Fwd Header Length} & \texttt{fwd\_\allowbreak{}header\_\allowbreak{}len} & Longitud de cabecera \\
+43 & \texttt{bwd\_\allowbreak{}header\_\allowbreak{}length} & \texttt{Bwd Header Length} & \texttt{bwd\_\allowbreak{}header\_\allowbreak{}len} & Longitud de cabecera \\
+44 & \texttt{fwd\_\allowbreak{}packets\_\allowbreak{}per\_\allowbreak{}s} & \texttt{Fwd Packets/s} & \texttt{fwd\_\allowbreak{}pkts\_\allowbreak{}s} & Paquetes por segundo (por dirección) \\
+45 & \texttt{bwd\_\allowbreak{}packets\_\allowbreak{}per\_\allowbreak{}s} & \texttt{Bwd Packets/s} & \texttt{bwd\_\allowbreak{}pkts\_\allowbreak{}s} & Paquetes por segundo (por dirección) \\
+46 & \texttt{min\_\allowbreak{}packet\_\allowbreak{}length} & \texttt{Min Packet Length} & \texttt{pkt\_\allowbreak{}len\_\allowbreak{}min} & Longitud de paquete (global) \\
+47 & \texttt{max\_\allowbreak{}packet\_\allowbreak{}length} & \texttt{Max Packet Length} & \texttt{pkt\_\allowbreak{}len\_\allowbreak{}max} & Longitud de paquete (global) \\
+48 & \texttt{packet\_\allowbreak{}length\_\allowbreak{}mean} & \texttt{Packet Length Mean} & \texttt{pkt\_\allowbreak{}len\_\allowbreak{}mean} & Longitud de paquete (global) \\
+49 & \texttt{packet\_\allowbreak{}length\_\allowbreak{}std} & \texttt{Packet Length Std} & \texttt{pkt\_\allowbreak{}len\_\allowbreak{}std} & Longitud de paquete (global) \\
+50 & \texttt{packet\_\allowbreak{}length\_\allowbreak{}variance} & \texttt{Packet Length Variance} & \texttt{pkt\_\allowbreak{}len\_\allowbreak{}var} & Longitud de paquete (global) \\
+51 & \texttt{down\_\allowbreak{}up\_\allowbreak{}ratio} & \texttt{Down/Up Ratio} & \texttt{down\_\allowbreak{}up\_\allowbreak{}ratio} & Ratios y estadísticas derivadas \\
+52 & \texttt{average\_\allowbreak{}packet\_\allowbreak{}size} & \texttt{Average Packet Size} & \texttt{pkt\_\allowbreak{}size\_\allowbreak{}avg} & Ratios y estadísticas derivadas \\
+53 & \texttt{avg\_\allowbreak{}fwd\_\allowbreak{}segment\_\allowbreak{}size} & \texttt{Avg Fwd Segment Size} & \texttt{fwd\_\allowbreak{}seg\_\allowbreak{}size\_\allowbreak{}avg} & Ratios y estadísticas derivadas \\
+54 & \texttt{avg\_\allowbreak{}bwd\_\allowbreak{}segment\_\allowbreak{}size} & \texttt{Avg Bwd Segment Size} & \texttt{bwd\_\allowbreak{}seg\_\allowbreak{}size\_\allowbreak{}avg} & Ratios y estadísticas derivadas \\
+55 & \texttt{fwd\_\allowbreak{}avg\_\allowbreak{}bytes\_\allowbreak{}per\_\allowbreak{}bulk} & \texttt{Fwd Avg Bytes/Bulk} & \texttt{fwd\_\allowbreak{}byts\_\allowbreak{}b\_\allowbreak{}avg} & Ráfagas (hacia adelante) \\
+56 & \texttt{fwd\_\allowbreak{}avg\_\allowbreak{}packets\_\allowbreak{}per\_\allowbreak{}bulk} & \texttt{Fwd Avg Packets/Bulk} & \texttt{fwd\_\allowbreak{}pkts\_\allowbreak{}b\_\allowbreak{}avg} & Ráfagas (hacia adelante) \\
+57 & \texttt{fwd\_\allowbreak{}avg\_\allowbreak{}bulk\_\allowbreak{}rate} & \texttt{Fwd Avg Bulk Rate} & \texttt{fwd\_\allowbreak{}blk\_\allowbreak{}rate\_\allowbreak{}avg} & Ráfagas (hacia adelante) \\
+58 & \texttt{bwd\_\allowbreak{}avg\_\allowbreak{}bytes\_\allowbreak{}per\_\allowbreak{}bulk} & \texttt{Bwd Avg Bytes/Bulk} & \texttt{bwd\_\allowbreak{}byts\_\allowbreak{}b\_\allowbreak{}avg} & Ráfagas (hacia atrás) \\
+59 & \texttt{bwd\_\allowbreak{}avg\_\allowbreak{}packets\_\allowbreak{}per\_\allowbreak{}bulk} & \texttt{Bwd Avg Packets/Bulk} & \texttt{bwd\_\allowbreak{}pkts\_\allowbreak{}b\_\allowbreak{}avg} & Ráfagas (hacia atrás) \\
+60 & \texttt{bwd\_\allowbreak{}avg\_\allowbreak{}bulk\_\allowbreak{}rate} & \texttt{Bwd Avg Bulk Rate} & \texttt{bwd\_\allowbreak{}blk\_\allowbreak{}rate\_\allowbreak{}avg} & Ráfagas (hacia atrás) \\
+61 & \texttt{subflow\_\allowbreak{}fwd\_\allowbreak{}packets} & \texttt{Subflow Fwd Packets} & \texttt{subflow\_\allowbreak{}fwd\_\allowbreak{}pkts} & Subflujos \\
+62 & \texttt{subflow\_\allowbreak{}fwd\_\allowbreak{}bytes} & \texttt{Subflow Fwd Bytes} & \texttt{subflow\_\allowbreak{}fwd\_\allowbreak{}byts} & Subflujos \\
+63 & \texttt{subflow\_\allowbreak{}bwd\_\allowbreak{}packets} & \texttt{Subflow Bwd Packets} & \texttt{subflow\_\allowbreak{}bwd\_\allowbreak{}pkts} & Subflujos \\
+64 & \texttt{subflow\_\allowbreak{}bwd\_\allowbreak{}bytes} & \texttt{Subflow Bwd Bytes} & \texttt{subflow\_\allowbreak{}bwd\_\allowbreak{}byts} & Subflujos \\
+65 & \texttt{init\_\allowbreak{}win\_\allowbreak{}bytes\_\allowbreak{}forward} & \texttt{Init\_\allowbreak{}Win\_\allowbreak{}bytes\_\allowbreak{}forward} & \texttt{init\_\allowbreak{}fwd\_\allowbreak{}win\_\allowbreak{}byts} & Ventana TCP \\
+66 & \texttt{init\_\allowbreak{}win\_\allowbreak{}bytes\_\allowbreak{}backward} & \texttt{Init\_\allowbreak{}Win\_\allowbreak{}bytes\_\allowbreak{}backward} & \texttt{init\_\allowbreak{}bwd\_\allowbreak{}win\_\allowbreak{}byts} & Ventana TCP \\
+67 & \texttt{act\_\allowbreak{}data\_\allowbreak{}pkt\_\allowbreak{}fwd} & \texttt{act\_\allowbreak{}data\_\allowbreak{}pkt\_\allowbreak{}fwd} & \texttt{fwd\_\allowbreak{}act\_\allowbreak{}data\_\allowbreak{}pkts} & Datos activos \\
+68 & \texttt{min\_\allowbreak{}seg\_\allowbreak{}size\_\allowbreak{}forward} & \texttt{min\_\allowbreak{}seg\_\allowbreak{}size\_\allowbreak{}forward} & \texttt{fwd\_\allowbreak{}seg\_\allowbreak{}size\_\allowbreak{}min} & Datos activos \\
+69 & \texttt{active\_\allowbreak{}mean} & \texttt{Active Mean} & \texttt{active\_\allowbreak{}mean} & Tiempos activos/inactivos \\
+70 & \texttt{active\_\allowbreak{}std} & \texttt{Active Std} & \texttt{active\_\allowbreak{}std} & Tiempos activos/inactivos \\
+71 & \texttt{active\_\allowbreak{}max} & \texttt{Active Max} & \texttt{active\_\allowbreak{}max} & Tiempos activos/inactivos \\
+72 & \texttt{active\_\allowbreak{}min} & \texttt{Active Min} & \texttt{active\_\allowbreak{}min} & Tiempos activos/inactivos \\
+73 & \texttt{idle\_\allowbreak{}mean} & \texttt{Idle Mean} & \texttt{idle\_\allowbreak{}mean} & Tiempos activos/inactivos \\
+74 & \texttt{idle\_\allowbreak{}std} & \texttt{Idle Std} & \texttt{idle\_\allowbreak{}std} & Tiempos activos/inactivos \\
+75 & \texttt{idle\_\allowbreak{}max} & \texttt{Idle Max} & \texttt{idle\_\allowbreak{}max} & Tiempos activos/inactivos \\
+76 & \texttt{idle\_\allowbreak{}min} & \texttt{Idle Min} & \texttt{idle\_\allowbreak{}min} & Tiempos activos/inactivos \\
+\end{longtable}
+\endgroup
+\end{landscape}
