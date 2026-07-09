@@ -232,7 +232,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 | F8.3 | 7.5 lectura multiobjetivo {seguridad, impacto} (contract C3) | TOP | F7 | [ ] | |
 | F8.4 | 7.6 amenazas a la validez (short, cross-ref Ch8) | TOP | F7 | [ ] | |
 | F8.5 | Ch8: expand each limitation 1–2 paragraphs; MOVE "Trabajo futuro" content out (staged for 10.4) | TOP | F7 | [ ] | |
-| F8.6 | Ch9 Ética light expansion (privacidad + lab-traffic handling; no new claims) | TOP | — | [ ] | |
+| F8.6 | Ch9 Ética light expansion (privacidad + lab-traffic handling) | TOP | — | [ ] | |
 | F8.V | Gates + G5 strict (this phase touches the disclosure-dense chapters) | TOP | F8.* | [ ] | |
 
 ## F9 — Ch10 Conclusiones (new) + Ch1 expansion
