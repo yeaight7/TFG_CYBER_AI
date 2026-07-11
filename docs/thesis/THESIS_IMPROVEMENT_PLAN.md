@@ -255,11 +255,11 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 
 | ID | Task | Model | Dep | Status | Evidence |
 |---|---|---|---|---|---|
-| F11.1 | Tighten 5–10% in the 3 longest sections (datasets, supervised DL, riesgos metodológicos) — nothing deleted or moved out | TOP | F9 | [ ] | |
-| F11.2 | T-H related-work RL-NIDS table weaving NIDSRL2023, RLTechniques2023NIDS, Sanusi2023DRLIDS, Umer2022RLRLIDS, Cevallos2023DRLIDSBP, DDPG2025AttackDetection, HCLRIDS2025IoMT, DRLIDSSDN2025 | TOP | F11.1 | [ ] | |
-| F11.3 | Weave remaining uncited: Layeghy2022, Boukhamla2021, Cantone2024, DatasetSurvey2025, Ozgur2016, Rodriguez2022, TrainingData2025, Farrukh2022, Pekar2024 (one claim-bearing citation each); prune Oyelakin2023Overview if no honest slot | TOP | F11.1 | [ ] | |
-| F11.4 | Sweep: zero uncited bib entries remain (`git grep` cite keys vs `memoria.bib`); biber log zero warnings | cheap | F11.3 | [ ] | |
-| F11.V | Gates + citation-context verification (top model) | TOP | F11.* | [ ] | |
+| F11.1 | Tighten 5–10% in the 3 longest sections (datasets, supervised DL, riesgos metodológicos) — nothing deleted or moved out | TOP | F9 | [x] | texcount text: datasets+CICIDS 1,024 (from 1,134), supervised/DL 657 (from 723), risks 587 (from 652) · forced isolated build exit 0, 214 pp (-1 from 215 baseline) |
+| F11.2 | T-H related-work RL-NIDS table weaving NIDSRL2023, RLTechniques2023NIDS, Sanusi2023DRLIDS, Umer2022RLRLIDS, Cevallos2023DRLIDSBP, DDPG2025AttackDetection, HCLRIDS2025IoMT, DRLIDSSDN2025 | TOP | F11.1 | [x] | 8-source compact five-column portrait longtable before thesis positioning · primary metadata corrected for its cited records · forced isolated build exit 0, 216 pp (+1 from 215 baseline) · caption, label, continuation and columns rendered/inspected |
+| F11.3 | Weave remaining uncited: Layeghy2022, Boukhamla2021, Cantone2024, DatasetSurvey2025, Ozgur2016, Rodriguez2022, TrainingData2025, Farrukh2022, Pekar2024 (one claim-bearing citation each); prune Oyelakin2023Overview if no honest slot | TOP | F11.1 | [x] | 10 named sources plus retained Oyelakin woven into claim-bearing Chapter 3 prose · 10 primary-audited records corrected, keys preserved · reviewer PASS after PCA bridge correction · texcount final 1,057 / 685 / 590 · forced isolated build exit 0, 219 pp (+4 from 215 baseline) |
+| F11.4 | Sweep: zero uncited bib entries remain (`git grep` cite keys vs `memoria.bib`); biber log zero warnings | cheap | F11.3 | [x] | static source/`.bbl` audit: 92 BibTeX = 92 cited = 92 generated entries; missing, uncited, `.bbl`-missing and `\nocite{*}` counts all 0 · forced isolated build exit 0, 219 pp · undefined/multiply-defined and Biber-warning counts 0 |
+| F11.V | Gates + citation-context verification (top model) | TOP | F11.* | [x] | forced isolated `latexmk -gg` exit 0, 219 pp (+4 from 215 baseline) · G3/G4/G6 PASS · G5=10/5/3/6/5/13/4/2/8/9 (all ≥ baseline) · 92/92 citations and `.bbl` entries, no missing keys or `\nocite{*}` · independent citation-context and G7 numeric audits PASS · final word-diff and T-H render review PASS |
 
 ## F12 — Document-wide style/QA pass
 
@@ -313,6 +313,15 @@ No thesis claim or figure may depend on these until they are actually run and th
 - DT-10 (2026-07-06): TeX Live 2025 emits `ignored error: Infinite glue shrinkage found in box being split` on EVERY multi-page longtable (reproduced with a 6-line vanilla document). Benign engine diagnostic; G1 pass criterion remains exit 0 + no `^!` lines; do not chase these.
 
 ## Execution log (append one block per phase/session)
+
+### F11 — 2026-07-11 — F11.1–F11.4 done; F11.V verified
+
+- Branch `chore/yeaight7/thesis-f11-estado-arte`; implementation commits 8c37b0c (F11.1), 4273c26 (F11.2), a0b5d68 (F11.3), and 96fcbef (F11.4).
+- F11.1 tightens the adjacent public-datasets/CICIDS block, supervised/DL section, and methodological-risks section in place. Final `texcount` text is 1,057 words (from 1,134), 685 (from 723), and 590 (from 652), respectively; the corrected Random Forest sentence now points only to committed same-protocol artifacts and does not claim general superiority.
+- Table T-H is a compact five-column portrait `longtable` immediately before the final RL-NIDS positioning paragraph. It covers all eight required sources, retains opaque IEEE records at title-level only, and makes the evaluation/comparability limits explicit. The final two-page render was inspected for caption, label, continuation, columns, and clipping.
+- Chapter 3 now cites all required datasets/CICIDS, PCAP/flow, supervised-baseline, and generalization-risk sources. `Oyelakin2023Overview` is retained in the CICIDS exploratory-analysis slot. Only F11-touched bibliography records were corrected; every key was preserved and verified against the primary record before removal of verification notes.
+- Final isolated forced `latexmk -gg` build with `TMP`, `TEMP`, and `TMPDIR` redirected under `C:\Temp` exits 0 at 219 pages, a +4-page delta from the 215-page merged-main baseline. The delta was investigated: T-H spans two physical pages, while added in-text citations, corrected author lists, and bibliography repagination account for the remaining reflow. The tracked PDF remained untouched.
+- Gates: G3 has no undefined or multiply-defined references and zero Biber warnings; the final source/`.bbl` audit is 92 BibTeX entries = 92 cited keys = 92 generated entries, with no missing key, uncited entry, or `\nocite{*}` shortcut. G4 is 20/20 manifest files. G5 counts are 10/5/3/6/5/13/4/2/8/9 and remain at or above the immutable baseline. G6 found no Spanish percentage-spacing violation. Independent citation-context verification and the G7 numeric/artifact audit both PASS; the final `git diff --word-diff` review found no substantive claim deleted or moved.
 
 ### F10 — 2026-07-09 — F10.1–F10.4 done; F10.V verified
 
