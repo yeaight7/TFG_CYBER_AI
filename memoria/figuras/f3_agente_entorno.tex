@@ -32,13 +32,14 @@
 
   % --- Tabla de recompensas (reward_config por defecto) ---
   \node[caja, text width=82mm, below=19mm of agente, inner sep=6pt] (tabla) {
+    {\setlength{\tabcolsep}{4pt}%
     \begin{tabular}{@{}lll@{}}
       \textbf{Acción} & \textbf{Etiqueta real} & \textbf{Recompensa} \\
       bloquear ($a=1$) & ataque ($y=1$)  & tp $= 1.5$ \\
       bloquear ($a=1$) & benigno ($y=0$) & fp $= -2.0$ \\
       permitir ($a=0$) & ataque ($y=1$)  & fn $= -5.0$ \\
       permitir ($a=0$) & benigno ($y=0$) & omisión $= 0.0$ \\
-    \end{tabular}
+    \end{tabular}}
   };
   \node[rutaFichero, below=1pt of tabla] {reward\_config -- src/rl\_defender\_env.py};
 

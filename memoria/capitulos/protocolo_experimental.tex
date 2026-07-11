@@ -154,12 +154,13 @@ Toda ejecución de entrenamiento o evaluación significativa debe persistir un \
 
 Esta disciplina de artefactos evita afirmaciones ambiguas. Un resultado solo se trata como medido cuando puede vincularse a una carpeta de ejecución y una configuración específicas. Las ejecuciones históricas no se fusionan en silencio con los valores por defecto actuales; los valores de recompensa, la lógica de partición, el preprocesamiento, los límites de filas y las semillas deben leerse del artefacto.
 
-La Tabla~\ref{tab:inventario-runs} recoge el inventario completo de las ejecuciones oficiales --organizadas por el peldaño de la escalera de validación o el análisis que respaldan-- junto con los artefactos concretos que permiten reproducir o auditar cada cifra citada en esta memoria. El Anexo~\ref{cap:anexo-artefactos} amplía este resumen con las rutas exactas, la función de cada fichero y su condición de rastreado o local. Las ejecuciones no listadas en la tabla (variantes históricas, sondeos previos al diseño o repeticiones posteriores con configuración distinta) se consideran no oficiales y no deben citarse como respaldo de ninguna cifra reportada.
+La Tabla~\ref{tab:inventario-runs} recoge el inventario completo de las ejecuciones oficiales -- organizadas por el peldaño de la escalera de validación o el análisis que respaldan -- junto con los artefactos concretos que permiten reproducir o auditar cada cifra citada en esta memoria. El Anexo~\ref{cap:anexo-artefactos} amplía este resumen con las rutas exactas, la función de cada fichero y su condición de rastreado o local. Las ejecuciones no listadas en la tabla (variantes históricas, sondeos previos al diseño o repeticiones posteriores con configuración distinta) se consideran no oficiales y no deben citarse como respaldo de ninguna cifra reportada.
 
 \begin{table}[htbp]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{0.94}
 \begin{tabular}{p{3.2cm}p{3.4cm}p{5.6cm}}
 \toprule
 Ejecución (\texttt{RUN\_ID}) & Propósito & Artefactos clave \\

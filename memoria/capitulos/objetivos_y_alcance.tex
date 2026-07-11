@@ -51,7 +51,7 @@ Capítulos & 4, 5 y 6. \\
 \toprule
 \multicolumn{2}{p{12.6cm}}{\textbf{C3 --- Decisión sensible al coste con lectura multiobjetivo}} \\
 \midrule
-Descripción & Codificar en la función de recompensa la asimetría de costes del dominio con una lectura multiobjetivo explícita entre \emph{seguridad} ---minimizar ataques admitidos; el falso negativo, con recompensa $-5.0$, es el coste dominante--- e \emph{impacto operativo} ---minimizar el bloqueo de tráfico legítimo; falso positivo con recompensa $-2.0$---, y analizar los resultados por clase bajo esa lectura. \\
+Descripción & Codificar en la función de recompensa la asimetría de costes del dominio con una lectura multiobjetivo explícita entre \emph{seguridad} (minimizar ataques admitidos; el falso negativo, con recompensa $-5.0$, es el coste dominante) e \emph{impacto operativo} (minimizar el bloqueo de tráfico legítimo; falso positivo con recompensa $-2.0$), y analizar los resultados por clase bajo esa lectura. \\
 Tipo & Diseño y evaluación. \\
 Verificación & Tablas~\ref{tab:reward-matrix} y~\ref{tab:recompensa-multiobjetivo} contrastadas con \texttt{src/rl\_defender\_env.py}; tasas de falsos positivos y falsos negativos reportadas por clase en el capítulo de resultados y leídas en clave multiobjetivo en la discusión. \\
 Capítulos & 4, 6 y 7. \\
@@ -141,7 +141,8 @@ La Tabla~\ref{tab:trazabilidad} resume la trazabilidad entre los objetivos espec
 \begin{table}[htbp]
 \centering
 \footnotesize
-\begin{tabular}{lp{2.2cm}p{5.6cm}p{3.4cm}}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{p{1.35cm}p{2.05cm}p{5.7cm}p{3.15cm}}
 \toprule
 Objetivo & Capítulos & Evidencia (ejecución o artefacto) & Estado \\
 \midrule
