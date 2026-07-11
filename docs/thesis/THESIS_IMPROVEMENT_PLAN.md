@@ -64,14 +64,14 @@
 | Pattern (regex) | Count | Disclosure |
 |---|---|---|
 | `gamma = 0` | 5 | γ=0 contextual-bandit |
-| `24.86` | 3 | test-in-train duplicate leakage % |
-| `40.12` | 3 | test-attack duplicate leakage % |
+| `24.86` | 1 | test-in-train duplicate leakage % |
+| `40.12` | 1 | test-attack duplicate leakage % |
 | `0.52954` | 5 | Check C day-split attack recall |
 | `bandido contextual` | 1 | bandit framing |
 | `validez externa limitada` | 5 | Phase-2 external validity |
 | `0.991862` | 3 | Phase-2 accuracy (lab-only context) |
 | `una sola semilla` | 1 | single-seed limitation |
-| `precisi.n de muestreo` | 2 | bootstrap = sampling precision, not seed variance |
+| `precisión de muestreo` | 2 | bootstrap = sampling precision, not seed variance |
 | `red proxy` | 1 | Check C used proxy network, not MAIN weights |
 
 - **Disclosure added in F7:** Check C used a proxy network (`[512,256]`, 30k steps),
@@ -80,7 +80,7 @@
 
 ## Honesty invariants (non-negotiable during ALL edits)
 
-γ=0 contextual-bandit disclosure · Phase-2 framed "laboratorio doméstico cerrado, generado por el operador, validez externa limitada" · single-seed limitation · Check C = proxy net, no MAIN weights (from F7 on) · bootstrap CI = precisión de muestreo, no varianza de semilla · RF beats QRDQN in-distribution (0.99676 vs 0.98445 F1) stated plainly · pending GPU experiments always "diseñados e implementados, ejecución pendiente", never with numbers.
+γ=0 contextual-bandit disclosure · Phase-2 framed "laboratorio doméstico cerrado, generado por el operador, validez externa limitada" · single-seed limitation · Check C = proxy net, no MAIN weights (from F7 on) · bootstrap CI = precisión de muestreo, no varianza de semilla · pending GPU experiments always "diseñados e implementados, ejecución pendiente", never with numbers (they will be ran and recorded at some point, but are still pending).
 
 ## Do not mention these under any circumstances
 
@@ -90,6 +90,7 @@ duplicate-leakage 22.30/24.86/40.12% cited ·
 
 - One branch per phase `chore/yeaight7/thesis-f<N>-<slug>` → PR to `main`. No force-push, no history rewrite (D-6).
 - One atomic commit per task ID; tree build-green at every commit; `wip(F5.3): ... [DO NOT MERGE]` allowed at session end with a WIP note here.
+- No need to reset/undo commits. If the something is committed twice is okay. Just commit again the new changes.
 - **PDF single-writer rule**: phase branches NEVER commit `memoria/memoria.pdf` (restore with
   `git checkout -- memoria/memoria.pdf` before committing). Rebuild + commit the PDF only on `main`
   right after each merge: `build: rebuild memoria.pdf (Fn, NNN pp)`. `.gitattributes` marks it `merge=binary`.
@@ -99,10 +100,10 @@ duplicate-leakage 22.30/24.86/40.12% cited ·
 
 | Work | Model |
 |---|---|
-| Mechanical LaTeX edits, wiring, tracker upkeep | haiku/sonnet |
-| Figure scripts, TikZ, TB export | sonnet |
-| Spanish academic prose (resumen, results, discusión, conclusiones, style pass) | top model |
-| Adversarial verification (G5/G7, citation context, EN fidelity) — separate agent from the writer | top model |
+| Mechanical LaTeX edits, wiring, tracker upkeep | sonnet/5.5/5.6-Luna (cheap) |
+| Figure scripts, TikZ, TB export | sonnet/5.5/5.6-Luna |
+| Spanish academic prose (resumen, results, discusión, conclusiones, style pass) | high tier model (top model) |
+| Adversarial verification (G5/G7, citation context, EN fidelity) — separate agent from the writer | high tier model (top model) |
 
 Parallel fan-out for independent figures / independent claim verification. Single author, sequential, for any one chapter's prose and for shared files (`memoria.tex`, `memoria.bib`).
 
@@ -258,7 +259,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 
 | ID | Task | Model | Dep | Status | Evidence |
 |---|---|---|---|---|---|
-| F11.1 | Tighten 8–10% in the 3 longest sections (datasets, supervised DL, riesgos metodológicos) — nothing deleted or moved out | TOP | F9 | [ ] | |
+| F11.1 | Tighten 5–10% in the 3 longest sections (datasets, supervised DL, riesgos metodológicos) — nothing deleted or moved out | TOP | F9 | [ ] | |
 | F11.2 | T-H related-work RL-NIDS table weaving NIDSRL2023, RLTechniques2023NIDS, Sanusi2023DRLIDS, Umer2022RLRLIDS, Cevallos2023DRLIDSBP, DDPG2025AttackDetection, HCLRIDS2025IoMT, DRLIDSSDN2025 | TOP | F11.1 | [ ] | |
 | F11.3 | Weave remaining uncited: Layeghy2022, Boukhamla2021, Cantone2024, DatasetSurvey2025, Ozgur2016, Rodriguez2022, TrainingData2025, Farrukh2022, Pekar2024 (one claim-bearing citation each); prune Oyelakin2023Overview if no honest slot | TOP | F11.1 | [ ] | |
 | F11.4 | Sweep: zero uncited bib entries remain (`git grep` cite keys vs `memoria.bib`); biber log zero warnings | cheap | F11.3 | [ ] | |
@@ -318,6 +319,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 ## Execution log (append one block per phase/session)
 
 ### F10 — 2026-07-09 — F10.1–F10.4 done; F10.V verified
+
 - Branch `chore/yeaight7/thesis-f10-anexos`; implementation commits f05e0b4 (F10.1), 5ee234f (F10.2), d346504 (F10.3), and ad73184 (F10.4).
 - Annex A is a self-contained reproducibility manual covering LFS/data preparation, local and RunPod setup, smoke and MAIN workflows, fixed-split verification, bootstrap, duplicates, Random Forest, historical VAL A/B/C, Phase 2 inference, and GPU-deferred protocols. Commands with arguments were checked against current parsers; the no-argument duplicate/RF entrypoints were inspected statically. It discloses the historical `fp=-1.0` versus current `fp=-2.0` drift and the removed Check A model, so byte-for-byte regeneration is not promised.
 - Annex B separates author-confirmed AMD EPYC 9005 / 128 GB / RTX 3090 Ti hardware from the artifact-recorded MAIN runtime and current installation contracts. Chapter 2 now identifies the laptop as development-only. The recorded cuDNN integer `92000` is decoded as 9.20.0; no unrecorded RTX 6000 upgrade is claimed.
@@ -328,6 +330,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 - PDF single-writer rule observed: all builds wrote to isolated `C:\Temp` directories; tracked `memoria/memoria.pdf` remained untouched and must be rebuilt on `main` only after merge.
 
 ### F9 — 2026-07-09 — F9.1–F9.3 done; F9.V verified
+
 - Branch `chore/yeaight7/thesis-f9-conclusiones-introduccion`; merged through PRs #52 and #53 (merge commits 7cb5300 and d15cd06).
 - `memoria/capitulos/conclusiones.tex` adds the contractual and specific-objective synthesis, author reflection, and cited short-, medium-, and long-term future-work horizons; OBJ-07 remains explicitly designed but pending GPU execution.
 - `memoria/capitulos/introduccion.tex` adds the PDS-adapted specification, contributions C1–C4 with evidence pointers, and a roadmap covering Chapters 2–10, bibliography, and Annexes A–D.
@@ -335,6 +338,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 - PDF single-writer rule observed: isolated output used for verification; tracked `memoria/memoria.pdf` remained untouched.
 
 ### F8 — 2026-07-09 — F8.1–F8.6 done; F8.V verified
+
 - Branch `chore/yeaight7/thesis-f8-discusion-limitaciones-etica`.
 - Commits: 4f06b22 (`discusion.tex`, F8.1–F8.4), 45c68f6 (`limitaciones.tex`, F8.5), 4ab4dd1 (`etica.tex`, F8.6).
 - `memoria/capitulos/discusion.tex` now follows the requested 7.1–7.6 structure: quantitative reading, random-vs-day generalization, QRDQN-vs-RF, SOTA positioning, C3 multiobjective reading, and threats to validity.
@@ -344,6 +348,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 - PDF single-writer rule observed: `memoria/memoria.pdf` restored before commits.
 
 ### F7 — 2026-07-09 — F7.1–F7.8 done; F7.V solved by Codex local check
+
 - Branch `chore/yeaight7/thesis-f7-resultados`.
 - `memoria/capitulos/resultados.tex` restructured into the requested 6.1–6.8 sequence: condiciones generales/trazabilidad, MAIN, bootstrap, escalera A/B/C, duplicados, Random Forest, Fase 2, and síntesis/cobertura de objetivos.
 - Added the missing Check C disclosure in the memoria: red proxy `[512,256]`, 30k steps, not MAIN weights. Added G5 baseline pattern `red proxy`.
@@ -354,6 +359,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 - PDF single-writer rule observed: `memoria/memoria.pdf` must be restored before committing this branch.
 
 ### F6 — 2026-07-07/09 — F6.1–F6.6 done; F6.V VERIFIED
+
 - Branch `claude/thesis-f6-objetivos`; PR #48 open. Commits: 118fa31, 6239a82, 16167a3, 2aa2c09, 52117c8, fd48682.
 - Chapter renamed; final section layout: 2.1 objetivo general · 2.2 objetivos contractuales (T-C cards) · 2.3 objetivos específicos (OBJ IDs + criterios + T-D) · 2.4 alcance · 2.5 no objetivos · 2.6 resultados esperados · 2.7 restricciones (T-J) · 2.8 recursos (T-B) · 2.9 planificación (T-I + Gantt).
 - **C1..C4 catalog**: no contract-objectives text exists anywhere in the repo (searched docs/, PR #41 body+comments); C3 anchored on the tracker's own definition (multiobjetivo {seguridad, impacto}); C1/C2/C4 derived from thesis contributions. USER should validate wording against the real anteproyecto/contrato if it lists objectives.
@@ -364,6 +370,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 
 
 ### F4 — 2026-07-06 — DONE except G1–G3 (user compiles manually)
+
 - Branch `claude/thesis-f4-split`. Commits: 7d510ac (F4.1 split), 6c52681 (F4.2 bibliografía), 21f358e (F4.3 anexos), 6e8a6f0 (F4.4 fallout).
 - Split executed as a scripted byte-exact move (scratchpad script with purity assertions; original snapshot hash-verified vs git blob). `diseno_sistema.tex` = visión, datos, limpieza, esquema canónico, formulación RL, agente QRDQN, implementación; `protocolo_experimental.tex` = fases, particiones, línea base, escala [pendiente-GPU], evaluación/reproducibilidad, Fase 2, limitaciones metodológicas. Within-file section order preserves the original relative order (the plan's "métricas/escalera … reproducibilidad" listing maps to the single moved section "Salidas de evaluación y reproducibilidad").
 - Chapter labels added: `cap:diseno-sistema`, `cap:protocolo-experimental` (unused until F5–F7 wiring; existing chapters keep the hardcoded-«Capítulo N» convention).
@@ -374,6 +381,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 - PDF not touched on branch (single-writer rule). WIP: none.
 
 ### F3 — 2026-07-06 — DONE
+
 - Branch `claude/thesis-f3-frontmatter`. Commits 36ae1c0 (design layer) + c1180b5 (front matter). Pages 118 → 130 (front matter now 18 physical pages incl. 6-page TOC).
 - Front matter: portada (Loyola logo, degree, tutor — user-provided), agradecimientos (user text), resumen 298 w + palabras clave, abstract EN, TOC/LOF/LOT/LOA (roman folios, indices read as text via linkcolor group), glossary of 30 census-grounded acronyms.
 - Design pass (user request): fancyhdr running headers, titlesec chapter format (gray small-caps label + blue rule), colored links + PDF metadata, microtype, caption styling, short captions for the 6 existing tables.
@@ -382,6 +390,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 - Remaining open item: portada date "Julio de 2026" — confirm vs defense date. *User will adjust this manually*
 
 ### F2 — 2026-07-06 — DONE
+
 - Branch `claude/thesis-f2-diagrams`. 7 TikZ diagrams authored by a 7-agent workflow (each grounded in its source files, compile-verified in isolated scratch dirs), plus `figuras/tikz_estilos.tex` (shared styles, wired into the preamble).
 - Session hit its limit mid-review; user committed all authored .tex + memoria.pdf (PDF-on-branch deviation accepted). Post-resume fixes (commit 6dfad5b): f2 wording + flow-extraction attribution corrected to the external CICFlowMeter-py extractor (`pcaps/README.md`); f3 benigno/omisión + label collisions; f5 hyphenation; f17 presence-mask wording + literal `--clip-z`.
 - False alarm during review: "decimal commas" in renders were a wrapper artifact — babel-spanish converts math-mode periods without `\decimalpoint`; memoria.tex has it, so the document renders points correctly.
@@ -391,6 +400,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 - Last-green commit: see PR. WIP: none.
 
 ### F1 — 2026-07-06 — DONE
+
 - Branch `claude/thesis-f1-figures`. Commits: 8667520 (generator), 89bb943 (TB scalar export), 816164a (10 figures + manifest + per-day data JSON).
 - 10 data figures generated from committed artifacts only; palette validated with the dataviz validator (DT-7); proxy-net (F11/F13) and lab-validity (F15) disclosures embedded as in-figure footnotes; QRDQN-LOO shown as "pendiente de GPU", no fabricated bar.
 - Discovered: MAIN `metrics.json` has no CM cells — F9 sources them from `bootstrap_ci_seed42.json` (`confusion_counts`, self-validated vs regenerated counts). TB event log is local-only → exported CSVs committed (DT-6). Infiltration day has 36 attacks (0.0125%) — F6 labels it "<0.1 % ataque", not 0.
@@ -399,6 +409,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 - Last-green commit: see PR. WIP: none.
 
 ### F0 — 2026-07-05 — DONE (this PR)
+
 - Branch `claude/thesis-f0-scaffold`. Toolchain verified with full `latexmk -gg` rebuild: biber 2.21 green under `TEMP=C:\Temp`, 118 pp, 0 undefined refs.
 - Preamble hardened in 3 individually-built batches (config → tikz/pgfgantt/longtable/pdflscape → algorithm/algpseudocode/caption/subcaption + Spanish float names). Pages unchanged (118).
 - `.gitattributes`: thesis PDFs `merge=binary`. `memoria/figuras/` created.
