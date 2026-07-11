@@ -267,7 +267,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 |---|---|---|---|---|---|
 | F12.1 | Conventions sweep: chapter lead-ins everywhere; bilingual glossing on first mention; captions end "Fuente: elaboración propia [a partir de `\texttt{<artifact>}`]"; RUN_ID in `\texttt{}` at first numeric use; quantitative discussion style | TOP | F11 | [ ] | |
 | F12.2 | Overfull/underfull box cleanup; float placement audit | cheap | F12.1 | [ ] | |
-| F12.3 | Full gate suite G1–G7; record final page count; tag `main` milestone `thesis-content-complete` | cheap | F12.2 | [ ] | |
+| F12.3 | Full gate suite G1–G7; record final page count; tag `main` milestone `thesis-content-complete` | medium | F12.2 | [ ] | |
 
 ## F13 — EN mirror re-sync (`report/` — FROZEN until F12 merged)
 
