@@ -19,8 +19,7 @@
 
 ## Environment (verified 2026-07-05)
 
-- TeX Live 2025 at `D:\texlive\2025`. All needed packages present (tikz, pgfgantt, algorithm,
-  algpseudocode, longtable, pdflscape, caption, subcaption — verified with kpsewhich).
+- TeX Live 2025 at `D:\texlive\2025`. All needed packages present (tikz, pgfgantt, algorithm, algpseudocode, longtable, pdflscape, caption, subcaption — verified with kpsewhich).
 - **BUILD** (PowerShell — the TEMP redirect is MANDATORY, biber 2.21 dies under AppData temp):
 
   ```powershell
@@ -46,7 +45,7 @@
 
 ## Verification gates
 
-| Gate | What | Command / rule |
+| Gate | What | Command/rule |
 |---|---|---|
 | G1 | Build exits 0 | BUILD command above |
 | G2 | Page count logged (delta investigated) | PAGES command; record in Evidence |
@@ -74,8 +73,7 @@
 | `precisión de muestreo` | 2 | bootstrap = sampling precision, not seed variance |
 | `red proxy` | 1 | Check C used proxy network, not MAIN weights |
 
-- **Disclosure added in F7:** Check C used a proxy network (`[512,256]`, 30k steps),
-  NOT the MAIN weights; G5 pattern `red proxy` must remain present from F7 onward.
+- **Disclosure added in F7:** Check C used a proxy network (`[512,256]`, 30k steps), NOT the MAIN weights; G5 pattern `red proxy` must remain present from F7 onward.
 - Chapter word counts at baseline: intro 2,139 · objetivos 2,964 · estado del arte 8,456 · metodología 8,488 · resultados 1,321 · discusión 632 · limitaciones 734 · ética 665.
 
 ## Honesty invariants (non-negotiable during ALL edits)
@@ -91,9 +89,7 @@ duplicate-leakage 22.30/24.86/40.12% cited ·
 - One branch per phase `chore/yeaight7/thesis-f<N>-<slug>` → PR to `main`. No force-push, no history rewrite (D-6).
 - One atomic commit per task ID; tree build-green at every commit; `wip(F5.3): ... [DO NOT MERGE]` allowed at session end with a WIP note here.
 - No need to reset/undo commits. If the something is committed twice is okay. Just commit again the new changes.
-- **PDF single-writer rule**: phase branches NEVER commit `memoria/memoria.pdf` (restore with
-  `git checkout -- memoria/memoria.pdf` before committing). Rebuild + commit the PDF only on `main`
-  right after each merge: `build: rebuild memoria.pdf (Fn, NNN pp)`. `.gitattributes` marks it `merge=binary`.
+- **PDF single-writer rule**: phase branches NEVER commit `memoria/memoria.pdf` (restore with `git checkout -- memoria/memoria.pdf` before committing). Rebuild + commit the PDF only on `main` right after each merge: `build: rebuild memoria.pdf (Fn, NNN pp)`. `.gitattributes` marks it `merge=binary`.
 - Commit style: `type: summary (F1.2,F1.3)`. **No AI co-author trailers, no "Generated with" footers** in commits or PR bodies (user rule, 2026-07-06).
 
 ## Subagent / model policy
