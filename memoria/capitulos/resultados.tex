@@ -17,7 +17,7 @@ El experimento principal y oficial de la tesis es la ejecución \texttt{MAIN\_\h
 \subsection{Dinámica de entrenamiento}
 La Figura~\ref{fig:curvas-entrenamiento} muestra las curvas registradas durante la ejecución MAIN. La recompensa media de episodio pasa de $-11\,325.875$ al inicio del registro a $2\,451.735$ al final, y la pérdida de entrenamiento baja de $8.0318$ a $1.6016$ en el último paso registrado. Estas curvas sirven como evidencia descriptiva del proceso de entrenamiento, no como sustituto de la evaluación final sobre la partición de prueba fija.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.92\textwidth]{f8_curvas_entrenamiento.pdf}
 \caption[Curvas de entrenamiento de MAIN]{Curvas de entrenamiento de la ejecución MAIN. Fuente: elaboración propia a partir de los escalares TensorBoard exportados de MAIN.}
@@ -27,7 +27,7 @@ La Figura~\ref{fig:curvas-entrenamiento} muestra las curvas registradas durante 
 \subsection{Resultados en prueba}
 Sobre la partición aleatoria fija, el modelo MAIN alcanza una exactitud de $0.99381$, con un recall de ataque de $0.99536$ y una puntuación F1 de ataque de $0.98445$ (Tabla~\ref{tab:main-metrics}). La matriz de confusión sobre las $566\,149$ filas de prueba es $\mathrm{TN}=451\,631$, $\mathrm{FP}=2\,989$, $\mathrm{FN}=518$, $\mathrm{TP}=111\,011$. La Figura~\ref{fig:cm-main} desagrega el resultado completo.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabular}{lc}
 \toprule
@@ -46,7 +46,7 @@ F1 (benigno) & $0.99613$ \\
 \label{tab:main-metrics}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.68\textwidth]{f9_cm_main.pdf}
 \caption[Matriz de confusión de MAIN]{Matriz de confusión del modelo MAIN sobre la partición aleatoria fija. Fuente: elaboración propia a partir de \texttt{runs/validation/bootstrap\_ci\_seed42.json}.}
@@ -60,7 +60,7 @@ El resultado confirma que la arquitectura y el contrato de datos permiten aprend
 \label{sec:resultados-bootstrap}
 Para cuantificar la precisión de muestreo de estas métricas sobre el conjunto de prueba fijo, se aplicó un bootstrap estratificado de $10\,000$ remuestreos sobre las $566\,149$ filas de prueba, sin reentrenar el modelo (artefacto \texttt{bootstrap\_ci\_seed42.json}). Los intervalos de confianza al 95\% son estrechos (Tabla~\ref{tab:bootstrap-ci}). Es importante delimitar su alcance: estos intervalos describen la precisión de muestreo del conjunto de prueba para este \emph{único} modelo entrenado; no cuantifican la varianza asociada a la semilla de entrenamiento, que requeriría múltiples ejecuciones y queda fuera del alcance de esta tesis.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \begin{tabular}{lcc}
 \toprule
@@ -82,7 +82,7 @@ FNR & $0.00465$ & $[0.00425,\ 0.00505]$ \\
 
 La Figura~\ref{fig:ic-bootstrap} representa los mismos intervalos como barras de error. La lectura debe mantenerse acotada: son intervalos de precisión de muestreo sobre un único modelo entrenado, no intervalos de variabilidad entre semillas.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{f10_ic_bootstrap.pdf}
 \caption[Intervalos bootstrap de MAIN]{Intervalos bootstrap al 95\% de las métricas de MAIN. Fuente: elaboración propia a partir de \texttt{runs/validation/bootstrap\_ci\_seed42.json}.}
@@ -97,7 +97,7 @@ La \textbf{Comprobación~C} (\texttt{VAL\_checks\_C\_20260213\_004847}) es la ev
 
 La matriz de confusión de la Comprobación~C se muestra en la Figura~\ref{fig:cm-check-c}. Esta comprobación usó una red proxy \texttt{[512,256]} entrenada durante $30\,000$ pasos, no los pesos del modelo MAIN; por tanto, se interpreta como peldaño de validación por día y no como evaluación directa del modelo oficial sobre la partición MAIN.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.68\textwidth]{f11_cm_check_c.pdf}
 \caption[Matriz de confusión de la Comprobación C]{Matriz de confusión de la Comprobación C sobre la partición por día. Fuente: elaboración propia a partir de \texttt{VAL\_checks\_C\_20260213\_004847/validation\_results.json}.}
@@ -110,7 +110,7 @@ Para explicar por qué la partición aleatoria es el peldaño más débil, se cu
 
 La Figura~\ref{fig:duplicados} resume visualmente estas cuatro tasas de duplicación y fuga. La barra de ataques de prueba ya presentes en entrenamiento es la más relevante para la interpretación de recall de ataque en la partición aleatoria.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{f12_duplicados.pdf}
 \caption[Duplicados y fuga entre entrenamiento y prueba]{Duplicados exactos y fuga entre entrenamiento y prueba en la partición aleatoria fija. Fuente: elaboración propia a partir de \texttt{runs/validation/duplicate\_analysis\_seed42.json}.}
@@ -121,7 +121,7 @@ La Figura~\ref{fig:duplicados} resume visualmente estas cuatro tasas de duplicac
 \label{sec:rf}
 La línea base de Random Forest se ejecutó bajo el mismo protocolo que QRDQN (representación canónica, escalado, particiones equivalentes y ponderación de clases balanceada), persistiendo \texttt{config.json} y \texttt{metrics.json} por barrido (\texttt{RUN\_ID} \texttt{rf\_cicids2017\_canonical\_20260628\_024735}). Sobre la partición aleatoria fija ---el mismo conjunto de prueba de $566\,149$ filas que MAIN--- el Random Forest alcanza una exactitud de $0.99872$ y una F1 de ataque de $0.99676$, por encima de QRDQN. Bajo la partición por día equivalente a la Comprobación~C (entrenamiento lunes/martes/miércoles, prueba jueves/viernes), su recall de ataque colapsa a $0.08135$ (F1 de ataque $0.15005$, exactitud $0.76913$), y bajo el leave-one-CSV-out con miércoles reservado el recall de ataque cae a $0.00719$. La Tabla~\ref{tab:rf-vs-qrdqn} resume la comparación con el mismo protocolo.
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{2pt}
@@ -145,14 +145,14 @@ Random Forest & Leave-one-CSV-out (miércoles) & $0.63782$ & $0.98482$ & $0.0071
 
 La Figura~\ref{fig:qrdqn-vs-rf} hace visible la diferencia principal de esta comparación: Random Forest supera a QRDQN en la partición aleatoria, pero su recall de ataque se desploma en la partición por día. El hueco leave-one-CSV-out de QRDQN se mantiene como pendiente de GPU, sin barra fabricada.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.92\textwidth]{f13_qrdqn_vs_rf.pdf}
 \caption[QRDQN frente a Random Forest]{Comparación visual de QRDQN y Random Forest en recall y F1 de ataque bajo particiones equivalentes. Fuente: elaboración propia a partir de MAIN, \texttt{VAL\_checks\_C\_20260213\_004847} y \texttt{rf\_cicids2017\_canonical\_20260628\_024735}.}
 \label{fig:qrdqn-vs-rf}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \tableplaceholder{Comparación leave-one-CSV-out entre QRDQN y Random Forest por escenario retenido}
 \caption[Comparación leave-one-CSV-out pendiente]{\placeholdercaption{Comparación leave-one-CSV-out entre QRDQN y Random Forest por escenario retenido.}}
@@ -161,7 +161,7 @@ La Figura~\ref{fig:qrdqn-vs-rf} hace visible la diferencia principal de esta com
 
 La matriz de confusión de Random Forest en la partición por día (Figura~\ref{fig:cm-rf-dia}) explica el bajo recall de ataque: el modelo conserva muy pocos falsos positivos, pero omite una gran mayoría de los ataques en jueves/viernes.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.68\textwidth]{f14_cm_rf_dia.pdf}
 \caption[Matriz de confusión de Random Forest por día]{Matriz de confusión de Random Forest en la partición por día. Fuente: elaboración propia a partir de \texttt{rf\_cicids2017\_canonical\_20260628\_024735\_\_day\_split/metrics.json}.}
@@ -174,7 +174,7 @@ La inferencia offline de la Fase~2 aplicó el modelo MAIN, junto con su escalado
 
 La Figura~\ref{fig:fase2-resultados} resume la matriz de confusión y la tasa de bloqueo de esta ejecución. Su función es documentar el comportamiento del pipeline sobre esta captura concreta, manteniendo explícita su validez externa limitada.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.82\textwidth]{f15_fase2.pdf}
 \caption[Resultados de la Fase 2]{Resultados de la inferencia de la Fase 2 sobre tráfico de laboratorio etiquetado. Fuente: elaboración propia a partir de \texttt{runs/phase2/P2v2\_pred\_20260610\_161231\_MAIN/metrics.json}.}
