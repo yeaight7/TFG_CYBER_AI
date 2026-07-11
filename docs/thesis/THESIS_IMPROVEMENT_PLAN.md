@@ -265,9 +265,9 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 
 | ID | Task | Model | Dep | Status | Evidence |
 |---|---|---|---|---|---|
-| F12.1 | Conventions sweep: chapter lead-ins everywhere; bilingual glossing on first mention; captions end "Fuente: elaboración propia [a partir de `\texttt{<artifact>}`]"; RUN_ID in `\texttt{}` at first numeric use; quantitative discussion style | TOP | F11 | [ ] | |
-| F12.2 | Overfull/underfull box cleanup; float placement audit | cheap | F12.1 | [ ] | |
-| F12.3 | Full gate suite G1–G7; record final page count; tag `main` milestone `thesis-content-complete` | medium | F12.2 | [ ] | |
+| F12.1 | Conventions sweep: chapter lead-ins everywhere; bilingual glossing on first mention; captions end "Fuente: elaboración propia [a partir de `\texttt{<artifact>}`]"; RUN_ID in `\texttt{}` at first numeric use; quantitative discussion style | TOP | F11 | [x] | Four substantive chapter lead-ins; first-use bilingual glosses; active non-placeholder captions normalized; RUN_ID/quantitative-discussion audit clean · isolated `latexmk -gg` exit 0, 221 pp · G3/G6 clean |
+| F12.2 | Overfull/underfull box cleanup; float placement audit | cheap | F12.1 | [x] | 0 overfull, float-too-large and headheight warnings; residual underfull boxes are intentional narrow-table/path wrapping and visually clean · isolated `latexmk -gg` exit 0, 221 pp · adjusted tables/diagrams, result floats and Annex B rendered/inspected · independent review PASS |
+| F12.3 | Full gate suite G1–G7; record final page count; tag `main` milestone `thesis-content-complete` | medium | F12.2 | [x] | G1–G7 PASS: isolated `latexmk -gg` exit 0, 221 pp; G3/G6 clean; G4 20/20; G5=10/5/3/6/5/14/4/2/8/9; independent G7 numeric/artifact audit PASS · post-merge `main` rebuild and `thesis-content-complete` tag remain deliberately deferred |
 
 ## F13 — EN mirror re-sync (`report/` — FROZEN until F12 merged)
 
@@ -313,6 +313,15 @@ No thesis claim or figure may depend on these until they are actually run and th
 - DT-10 (2026-07-06): TeX Live 2025 emits `ignored error: Infinite glue shrinkage found in box being split` on EVERY multi-page longtable (reproduced with a 6-line vanilla document). Benign engine diagnostic; G1 pass criterion remains exit 0 + no `^!` lines; do not chase these.
 
 ## Execution log (append one block per phase/session)
+
+### F12 — 2026-07-11 — F12.1–F12.3 done; final branch gates verified
+
+- Branch `chore/yeaight7/thesis-f12-style-qa-pass`; implementation commits a7f7944 (F12.1) and 0e115f8 (F12.2), followed by this gate-record commit (F12.3).
+- F12.1 standardized chapter lead-ins, first-use bilingual glosses, active caption provenance, and first numeric `RUN_ID` rendering without changing the thesis's quantitative conclusions or the visible deferred placeholders.
+- F12.2 removed material overflow/float/header warnings through local table and diagram adjustments. Residual underfull boxes are intentional narrow-table or long-path wrapping and were visually inspected; adjusted tables/diagrams, results floats, and Annex B render without clipping, collision, orphaning, or illegible text.
+- Final forced isolated `latexmk -gg` build with `TMP`, `TEMP`, and `TMPDIR` redirected under `C:\Temp` exits 0 at 221 pages. This is a +2-page delta from the 219-page F11 baseline, attributable to the F12.1 lead-ins and caption-provenance additions; F12.2 is page-neutral. G3 has no undefined or multiply-defined references; G4 is 20/20 manifest figure files; G5 is 10/5/3/6/5/14/4/2/8/9, all at or above baseline; and G6 is clean.
+- Independent G7 artifact review PASS: rounded values and captions in the summary/results, 76/152 feature and reward claims, and Annex B runtime/dependency material match their cited artifacts. The author-confirmed 24 GB VRAM value remains explicitly attributed, while `environment.json` verifies the GPU model.
+- Single-writer rule observed: all PDFs used for F12 verification were isolated under `C:\Temp`; tracked `memoria/memoria.pdf` remained untouched. After the F12 PR merges, rebuild the PDF on `main` and then create the `thesis-content-complete` tag on that merged commit.
 
 ### F11 — 2026-07-11 — F11.1–F11.4 done; F11.V verified
 

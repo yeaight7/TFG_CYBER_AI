@@ -1,5 +1,7 @@
 \chapter{Estado del arte}
 
+Este capítulo revisa el contexto técnico y metodológico que sitúa el prototipo, y delimita el alcance de las afirmaciones que se apoyarán después en los resultados.
+
 \section{Introducción y alcance del capítulo}
 
 Este capítulo mapea el trasfondo técnico de un defensor de ciberseguridad basado en aprendizaje por refuerzo que opera sobre observaciones de red a nivel de flujo. El alcance es deliberadamente más amplio que una comparación de clasificadores binarios. La tesis combina detección de intrusiones en red, representación de características de flujo, conjuntos de datos de referencia públicos, líneas base de aprendizaje supervisado, una formulación de conjunto de datos como entorno al estilo Gymnasium, QRDQN, preprocesamiento con control de fugas, comprobaciones de validación más estrictas, experimentos de eficiencia de datos, y validación planificada o preferida sobre tráfico capturado por el operador en un laboratorio doméstico cerrado y no adversarial.
@@ -12,7 +14,7 @@ La revisión también separa tres niveles que con frecuencia se confunden. El pr
 
 \section{Detección de intrusiones y monitorización de seguridad en red}
 
-Los sistemas de detección de intrusiones monitorizan la actividad de hosts o redes en busca de evidencias de ataques, usos indebidos o violaciones de políticas \parencite{ScarfoneMell2007}. Un sistema de detección de intrusiones en host observa endpoints, eventos del sistema operativo, registros, procesos, cambios en la integridad de archivos o llamadas al sistema. Un sistema de detección de intrusiones en red observa el tráfico que atraviesa enlaces, taps, puertos de mirror de switches, brokers de paquetes, interfaces de red virtual o colectores de flujos. Ambas perspectivas son complementarias: el HIDS puede ver el contexto local de procesos y archivos que los sensores de red no pueden, mientras que el NIDS puede inspeccionar movimientos laterales, escaneos, tráfico de mando y control, y patrones de comunicación agregados sin instalar un agente en cada host.
+Los sistemas de detección de intrusiones monitorizan la actividad de hosts o redes en busca de evidencias de ataques, usos indebidos o violaciones de políticas \parencite{ScarfoneMell2007}. Un sistema de detección de intrusiones en host (HIDS, del inglés \emph{Host Intrusion Detection System}) observa endpoints, eventos del sistema operativo, registros, procesos, cambios en la integridad de archivos o llamadas al sistema. Un sistema de detección de intrusiones en red (NIDS, del inglés \emph{Network Intrusion Detection System}) observa el tráfico que atraviesa enlaces, taps, puertos de mirror de switches, brokers de paquetes, interfaces de red virtual o colectores de flujos. Ambas perspectivas son complementarias: el HIDS puede ver el contexto local de procesos y archivos que los sensores de red no pueden, mientras que el NIDS puede inspeccionar movimientos laterales, escaneos, tráfico de mando y control, y patrones de comunicación agregados sin instalar un agente en cada host.
 
 También es necesario distinguir el IDS de los sistemas de prevención de intrusiones. Un IDS detecta y notifica principalmente actividad sospechosa. Su salida puede ser una alerta, un evento de registro, un registro de flujo enriquecido, un ticket, un evento SIEM o un artefacto forense. Un IPS se posiciona en línea y puede bloquear, descartar, modificar, limitar la tasa, reiniciar o redirigir el tráfico \parencite{ScarfoneMell2007}. En la práctica, los productos y arquitecturas frecuentemente difuminan esta frontera porque un motor de detección puede alimentar reglas de firewall, acciones EDR, playbooks SOAR o actualizaciones de política SDN. Para la evaluación, sin embargo, la distinción importa. Un detector puede tolerar un perfil de falsos positivos diferente al de un bloqueador en línea, dado que las alertas falsas principalmente afectan a la carga de trabajo del analista, mientras que los bloqueos falsos pueden interrumpir tráfico legítimo de negocio.
 
@@ -60,14 +62,14 @@ Conjunto de datos & Papel como benchmark & Representación & Principales fortale
 \midrule
 KDDCup99 & Benchmark histórico heredado & Registros de conexión con 41 características artesanales & Muy ampliamente utilizado; línea base sencilla para la bibliografía clásica de IDS \parencite{KDDCup1999} & Tráfico obsoleto; redundancia; débil como aproximación al NIDS moderno \parencite{Ring2019DatasetSurvey} \\
 NSL-KDD & Benchmark heredado depurado & Mismo esquema de conexión al estilo KDD & Reduce algunos problemas de registros duplicados; útil para comparación histórica \parencite{Tavallaee2009NSLKDD} & Sigue heredando las suposiciones antiguas de DARPA/KDD y el diseño de características \\
-UNSW-NB15 & Conjunto de datos moderno de laboratorio/cyber-range & PCAPs, registros y características tabulares de ingeniería & Taxonomía de ataques más contemporánea y características más ricas \parencite{MoustafaSlay2015UNSWNB15} & Entorno controlado; no constituye evidencia directa de producción \\
+UNSW-NB15 & Conjunto de datos moderno de laboratorio/\allowbreak cyber-range & PCAPs, registros y características tabulares de ingeniería & Taxonomía de ataques más contemporánea y características más ricas \parencite{MoustafaSlay2015UNSWNB15} & Entorno controlado; no constituye evidencia directa de producción \\
 CICIDS2017 & Benchmark interno principal de la tesis & PCAPs y CSV de flujos CICFlowMeter & PCAPs públicos; múltiples días de ataque; ricas características de flujo \parencite{Sharafaldin2018CICIDS2017} & Problemas conocidos de etiquetado, extracción, duplicación y sensibilidad a la partición \parencite{Engelen2021CICIDSIssues,Lanvin2023Errors} \\
 CSE-CIC-IDS2018 & Benchmark de mayor tamaño de la familia CIC & PCAPs y flujos al estilo CICFlowMeter & Colaboración más amplia CIC/CSE; comparación moderna útil \parencite{CSECICIDS2018AWS} & Advertencias similares sobre generación en laboratorio y artefactos de flujo \parencite{Liu2022ErrorPrevalenceNIDS} \\
 Bot-IoT & Benchmark de IoT/botnets & PCAPs, flujos al estilo Argus, exportaciones CSV & Escenarios de botnet, escaneo, DoS/DDoS y exfiltración orientados a IoT \parencite{Koroniotis2019BotIoT} & Fuerte desbalanceo y artefactos de topología específicos del conjunto de datos \\
 ToN\_IoT & Benchmark de telemetría IoT/IIoT & Flujos de red, registros de host y telemetría de sensores & Perspectiva multimodal de IoT/IIoT \parencite{Alsaedi2020ToNIoT} & Entorno de nicho; los artefactos de identificadores y escenarios siguen siendo posibles \\
 \bottomrule
 \end{tabular}
-\caption[Comparación de conjuntos de datos públicos de NIDS]{Comparación compacta de los conjuntos de datos públicos de NIDS relevantes para la tesis.}
+\caption[Comparación de conjuntos de datos públicos de NIDS]{Comparación compacta de los conjuntos de datos públicos de NIDS relevantes para la tesis. Fuente: elaboración propia a partir de las fuentes citadas.}
 \label{tab:nids-datasets}
 \end{table}
 
@@ -142,7 +144,7 @@ Una segunda rama estudia la defensa cibernética genuinamente secuencial. Los en
 \setlength{\tabcolsep}{2pt}
 \renewcommand{\arraystretch}{1.08}
 \begin{longtable}{@{}p{1.75cm}p{2.05cm}p{1.95cm}p{3.55cm}p{3.00cm}@{}}
-\caption[Trabajos de RL para NIDS]{Síntesis de trabajos de RL/DRL para NIDS y límites de comparabilidad con esta tesis. La relación indicada se infiere de cada fuente y de la formulación QRDQN offline sobre flujos de CICIDS2017 adoptada en este trabajo.}\label{tab:rl-nids-related-work}\\
+\caption[Trabajos de RL para NIDS]{Síntesis de trabajos de RL/DRL para NIDS y límites de comparabilidad con esta tesis. La relación indicada se infiere de cada fuente y de la formulación QRDQN offline sobre flujos de CICIDS2017 adoptada en este trabajo. Fuente: elaboración propia a partir de las fuentes citadas.}\label{tab:rl-nids-related-work}\\
 \toprule
 \textbf{Fuente} & \textbf{Formulación de RL} & \textbf{Datos / ámbito} & \textbf{Límite de evaluación} & \textbf{Relación / diferencia con esta tesis} \\
 \midrule
@@ -161,7 +163,7 @@ Una segunda rama estudia la defensa cibernética genuinamente secuencial. Los en
 \textcite{RLTechniques2023NIDS} & Técnicas de RL; algoritmo no verificable desde el registro primario público. & NIDS genérico; datos no verificables. & El registro no expone protocolo ni métricas comparables. & Antecedente genérico, sin comparabilidad empírica directa. \\
 \textcite{Sanusi2023DRLIDS} & DRL para IDS binario. & NSL-KDD; la tarea multiclase se reduce a binaria. & Tesis offline sobre benchmark; no evidencia de despliegue. & Antecedente de IDS binario con DRL, pero datos e implementación distintos. \\
 \textcite{Umer2022RLRLIDS} & DQN y gradiente de política con entrenamiento adversarial. & IDS a nivel de paquete y flujo; CICDDoS2019. & Evaluación de benchmark; sin evidencia de despliegue operativo. & Diseño paquete/flujo más rico y datos distintos de QRDQN/CICIDS2017. \\
-\textcite{Cevallos2023DRLIDSBP} & Revisión/taxonomía de DRL-IDS, no un algoritmo único. & Literatura de IDS en IoT. & Síntesis bibliográfica, sin benchmark propio. & Contexto de decisiones DRL en IoT, no línea base empírica. \\
+\textcite{Cevallos2023DRLIDSBP} & Revisión/\allowbreak taxonomía de DRL-IDS, no un algoritmo único. & Literatura de IDS en IoT. & Síntesis bibliográfica, sin benchmark propio. & Contexto de decisiones DRL en IoT, no línea base empírica. \\
 \textcite{DDPG2025AttackDetection} & DDPG. & Detección de ataques de red; datos no verificables. & El registro no expone protocolo ni métricas comparables. & Familia de RL distinta; solo antecedente a nivel de título. \\
 \textcite{DRLIDSSDN2025} & DRL-IDS con LFTS-RNN y PC-JTFOA. & SDN; NSL-KDD y WPPD. & Particiones de benchmark, no despliegue SDN vivo. & Tarea, modelo y datos distintos; no equivale a una evaluación QRDQN offline. \\
 \textcite{HCLRIDS2025IoMT} & CNN-LSTM con DQN y PPO. & IoMT sanitario; CICIoMT2024. & Benchmark especializado; el trabajo deja la detección \textit{zero-day} como trabajo futuro. & Propuesta IoMT específica, no línea base comparable con CICIDS2017. \\

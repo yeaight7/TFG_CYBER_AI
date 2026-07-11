@@ -8,7 +8,7 @@
   % ---------------------------------------------------------------
   % Fila superior: Fase 1 (entrenamiento offline sobre CICIDS2017)
   % ---------------------------------------------------------------
-  \node[cajaDato, text width=1.85cm] (csv) {\small 8 CSV\\CICIDS2017};
+  \node[cajaDato, text width=1.85cm] (csv) {\footnotesize 8 CSV\\CICIDS2017};
 
   \node[cajaProceso, text width=2.0cm, right=0.18cm of csv] (limpieza)
     {\small Limpieza: descarta ID (IP,\\puertos,\\timestamps);\\Inf/NaN$\to$0};
@@ -55,11 +55,11 @@
     {extractor externo\\(CICFlowMeter-py)};
 
   \node[cajaProceso, text width=1.9cm, below=2.05cm of entorno] (inferencia)
-    {\small Inferencia\\determinista};
+    {\footnotesize Inferencia\\determinista};
   \node[rutaFichero, below=1mm of inferencia] {scripts/\\predict\_real\_\\traffic\_v2.py};
 
   \node[cajaProceso, text width=1.9cm, right=0.5cm of inferencia] (predicciones)
-    {\small Predicciones +\\diagnósticos};
+    {\footnotesize Predicciones +\\diagnósticos};
   \node[rutaFichero, below=1mm of predicciones] {scripts/\\predict\_real\_\\traffic\_v2.py};
 
   \draw[flecha] (pcap) -- (flujos);

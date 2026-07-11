@@ -1,8 +1,10 @@
 \chapter{Protocolo experimental}
 \label{cap:protocolo-experimental}
 
+Este capítulo fija los protocolos con los que se obtiene y se interpreta la evidencia experimental, desde la partición interna hasta la inferencia fuera de línea de la Fase~2. La secuencia evita extender las conclusiones más allá de los artefactos disponibles.
+
 \section{Fases experimentales}
-La metodología experimental se divide en dos fases. La primera fase comprueba el aprendizaje y la generalización interna sobre un benchmark público. La segunda fase comprueba si el pipeline de preprocesamiento y modelo resultante es capaz de procesar tráfico capturado por el operador en un laboratorio doméstico cerrado bajo cambio de dominio.
+La metodología experimental se divide en dos fases. La primera fase comprueba el aprendizaje y la generalización interna sobre un banco de pruebas público (\emph{benchmark}). La segunda fase comprueba si el flujo de procesamiento (\emph{pipeline}) de preprocesamiento y modelo resultante es capaz de procesar tráfico capturado por el operador en un laboratorio doméstico cerrado bajo cambio de dominio.
 
 \subsection{Fase 1: benchmark interno de CICIDS2017}
 La Fase 1 utiliza CICIDS2017 como benchmark interno principal \parencite{Sharafaldin2018CICIDS2017,CICIDS2017Web}. CICIDS2017 es adecuado para esta tesis porque proporciona tráfico benigno y de ataque etiquetado, capturas de paquetes en bruto y CSVs de flujos derivados de una extracción al estilo CICFlowMeter \parencite{Lashkari2017CICFlowMeter}. También contiene múltiples escenarios de ataque en diferentes días de captura, lo que permite diseños de partición más estrictos que una única partición aleatoria entrenamiento-prueba.
@@ -152,12 +154,13 @@ Toda ejecución de entrenamiento o evaluación significativa debe persistir un \
 
 Esta disciplina de artefactos evita afirmaciones ambiguas. Un resultado solo se trata como medido cuando puede vincularse a una carpeta de ejecución y una configuración específicas. Las ejecuciones históricas no se fusionan en silencio con los valores por defecto actuales; los valores de recompensa, la lógica de partición, el preprocesamiento, los límites de filas y las semillas deben leerse del artefacto.
 
-La Tabla~\ref{tab:inventario-runs} recoge el inventario completo de las ejecuciones oficiales --organizadas por el peldaño de la escalera de validación o el análisis que respaldan-- junto con los artefactos concretos que permiten reproducir o auditar cada cifra citada en esta memoria. El Anexo~\ref{cap:anexo-artefactos} amplía este resumen con las rutas exactas, la función de cada fichero y su condición de rastreado o local. Las ejecuciones no listadas en la tabla (variantes históricas, sondeos previos al diseño o repeticiones posteriores con configuración distinta) se consideran no oficiales y no deben citarse como respaldo de ninguna cifra reportada.
+La Tabla~\ref{tab:inventario-runs} recoge el inventario completo de las ejecuciones oficiales -- organizadas por el peldaño de la escalera de validación o el análisis que respaldan -- junto con los artefactos concretos que permiten reproducir o auditar cada cifra citada en esta memoria. El Anexo~\ref{cap:anexo-artefactos} amplía este resumen con las rutas exactas, la función de cada fichero y su condición de rastreado o local. Las ejecuciones no listadas en la tabla (variantes históricas, sondeos previos al diseño o repeticiones posteriores con configuración distinta) se consideran no oficiales y no deben citarse como respaldo de ninguna cifra reportada.
 
 \begin{table}[htbp]
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{0.94}
 \begin{tabular}{p{3.2cm}p{3.4cm}p{5.6cm}}
 \toprule
 Ejecución (\texttt{RUN\_ID}) & Propósito & Artefactos clave \\

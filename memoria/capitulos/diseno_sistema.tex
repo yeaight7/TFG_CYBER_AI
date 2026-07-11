@@ -1,8 +1,10 @@
 \chapter{Diseño del sistema}
 \label{cap:diseno-sistema}
 
+Este capítulo concreta el diseño del prototipo: contrato de datos, entorno de decisión, agente QRDQN, recompensa y persistencia de artefactos. Describe un flujo de procesamiento experimental fuera de línea, no un mecanismo de bloqueo en producción.
+
 \section{Visión general metodológica}
-Este capítulo describe el diseño metodológico empleado para construir y evaluar el defensor de ciberseguridad basado en aprendizaje por refuerzo (RL) propuesto. El objetivo no es presentar un sistema de prevención de intrusiones (IPS) listo para producción, sino definir un marco experimental controlado, reproducible y offline para decisiones de seguridad binarias sobre registros de flujos de red. Cada flujo se trata como un único punto de decisión: el defensor observa una representación numérica del flujo y decide si permitirlo (\texttt{PERMIT}) como tráfico benigno o bloquearlo (\texttt{BLOCK}) como tráfico malicioso.
+Este capítulo describe el diseño metodológico empleado para construir y evaluar el defensor de ciberseguridad basado en aprendizaje por refuerzo (RL, del inglés \emph{Reinforcement Learning}) propuesto. El objetivo no es presentar un sistema de prevención de intrusiones (IPS, del inglés \emph{Intrusion Prevention System}) listo para producción, sino definir un marco experimental controlado, reproducible y fuera de línea (\emph{offline}) para decisiones de seguridad binarias sobre registros de flujos de red. Cada flujo se trata como un único punto de decisión: el defensor observa una representación numérica del flujo y decide si permitirlo (\texttt{PERMIT}) como tráfico benigno o bloquearlo (\texttt{BLOCK}) como tráfico malicioso.
 
 La metodología es deliberadamente conservadora. Los benchmarks públicos de detección de intrusiones pueden producir resultados inflados cuando el preprocesamiento, la construcción de las particiones, los controles de fuga de información y las comparaciones con líneas base son débiles \parencite{Arp2020DosDontsMLSecurity,Engelen2021CICIDSIssues,Lanvin2023Errors}. Por ello, el pipeline se ha diseñado en torno a contratos de datos explícitos, artefactos de ejecución reproducibles, normalización ajustada únicamente sobre datos de entrenamiento, y una validación progresivamente más estricta. La misma representación canónica se utiliza tanto para el benchmark interno de CICIDS2017 como para la inferencia offline sobre tráfico de laboratorio en la Fase 2, de modo que la pregunta experimental no queda ligada a una convención de nomenclatura de CSV concreta ni a un extractor de características particular.
 
@@ -79,7 +81,9 @@ La enumeración ordenada de las 76 características, junto con las columnas fuen
 
 \begin{table}[htbp]
 \centering
-\begin{tabular}{lcp{7cm}}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{p{4.1cm}cp{7.2cm}}
 \toprule
 Grupo de características & Cantidad & Estadísticas representativas \\
 \midrule
@@ -96,7 +100,7 @@ Estadísticas de subflujos & 6 & Promedios de paquetes y bytes de subflujo por d
 Temporización activa/inactiva & 6 & Media, desv.\ típica y máximo de las duraciones de los periodos activos e inactivos \\
 \bottomrule
 \end{tabular}
-\caption[Agrupación lógica de las 76 características canónicas]{Agrupación lógica de las 76 características canónicas de flujo. Todos los grupos se fusionan en un único vector plano antes de la entrada al modelo.}
+\caption[Agrupación lógica de las 76 características canónicas]{Agrupación lógica de las 76 características canónicas de flujo. Todos los grupos se fusionan en un único vector plano antes de la entrada al modelo. Fuente: elaboración propia.}
 \label{tab:canonical-groups}
 \end{table}
 
@@ -185,6 +189,8 @@ La Tabla~\ref{tab:reward-matrix} organiza estos valores como una matriz de decis
 
 \begin{table}[htbp]
 \centering
+\small
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{lcc}
 \toprule
 Decisión del agente & Etiqueta real: Ataque & Etiqueta real: Benigno \\
@@ -193,7 +199,7 @@ Decisión del agente & Etiqueta real: Ataque & Etiqueta real: Benigno \\
 \texttt{PERMIT} (Acción 0) & $-5.0$ (Falso Negativo) & $\phantom{-}0.0$ (Verdadero Negativo) \\
 \bottomrule
 \end{tabular}
-\caption[Matriz de recompensa del entorno del defensor binario]{Matriz de recompensa por defecto para el entorno del defensor binario. Los valores son supuestos experimentales registrados con cada ejecución.}
+\caption[Matriz de recompensa del entorno del defensor binario]{Matriz de recompensa por defecto para el entorno del defensor binario. Los valores son supuestos experimentales registrados con cada ejecución. Fuente: elaboración propia a partir de \texttt{src/rl\_defender\_env.py}.}
 \label{tab:reward-matrix}
 \end{table}
 
@@ -382,7 +388,7 @@ El listado completo de valores empleados en la ejecución oficial MAIN se recoge
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{p{4.6cm}p{2.6cm}p{4.6cm}}
+\begin{tabular}{p{4.5cm}p{2.8cm}p{4.5cm}}
 \toprule
 Hiperparámetro & Valor & Observación \\
 \midrule

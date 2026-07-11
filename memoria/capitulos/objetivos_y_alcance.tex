@@ -1,7 +1,9 @@
 \chapter{Objetivos, alcance y planificación}
 
+Este capítulo concreta los objetivos verificables de la tesis, delimita su alcance y documenta los recursos y la planificación que sostienen la evaluación experimental.
+
 \section{Objetivo general}
-El objetivo general de esta tesis es diseñar, implementar y evaluar rigurosamente un defensor de ciberseguridad basado en aprendizaje por refuerzo, de carácter offline, que toma decisiones binarias sensibles al coste (\texttt{PERMIT} o \texttt{BLOCK}) sobre observaciones de flujos de red estandarizados. Este objetivo se persigue mediante un \textit{pipeline} experimental controlado que opera íntegramente sobre datos de flujo etiquetados y estáticos, priorizando el rigor metodológico y la reproducibilidad sobre cualquier pretensión de preparación para el despliegue.
+El objetivo general de esta tesis es diseñar, implementar y evaluar rigurosamente un defensor de ciberseguridad basado en aprendizaje por refuerzo, de carácter fuera de línea (\emph{offline}), que toma decisiones binarias sensibles al coste (\texttt{PERMIT} o \texttt{BLOCK}) sobre observaciones de flujos de red estandarizados. Este objetivo se persigue mediante un flujo de procesamiento (\emph{pipeline}) experimental controlado que opera íntegramente sobre datos de flujo etiquetados y estáticos, priorizando el rigor metodológico y la reproducibilidad sobre cualquier pretensión de preparación para el despliegue.
 
 El enfoque se fundamenta en la observación de que la detección de intrusiones implica costes inherentemente asimétricos: permitir un ataque conlleva consecuencias que son, en general, considerablemente más graves que las de generar una falsa alarma. Una formulación basada en recompensas hace explícita esta asimetría en el objetivo de aprendizaje, en lugar de dejarla implícita en un ajuste posterior de umbrales. La pregunta central que guía el trabajo es si un algoritmo de RL distribucional como QRDQN puede configurarse, entrenarse y evaluarse de forma que demuestre un comportamiento sensible al coste y medible sobre un benchmark público bien estudiado, manteniéndose a la vez comparable con sólidas líneas base supervisadas bajo las mismas condiciones controladas.
 
@@ -49,7 +51,7 @@ Capítulos & 4, 5 y 6. \\
 \toprule
 \multicolumn{2}{p{12.6cm}}{\textbf{C3 --- Decisión sensible al coste con lectura multiobjetivo}} \\
 \midrule
-Descripción & Codificar en la función de recompensa la asimetría de costes del dominio con una lectura multiobjetivo explícita entre \emph{seguridad} ---minimizar ataques admitidos; el falso negativo, con recompensa $-5.0$, es el coste dominante--- e \emph{impacto operativo} ---minimizar el bloqueo de tráfico legítimo; falso positivo con recompensa $-2.0$---, y analizar los resultados por clase bajo esa lectura. \\
+Descripción & Codificar en la función de recompensa la asimetría de costes del dominio con una lectura multiobjetivo explícita entre \emph{seguridad} (minimizar ataques admitidos; el falso negativo, con recompensa $-5.0$, es el coste dominante) e \emph{impacto operativo} (minimizar el bloqueo de tráfico legítimo; falso positivo con recompensa $-2.0$), y analizar los resultados por clase bajo esa lectura. \\
 Tipo & Diseño y evaluación. \\
 Verificación & Tablas~\ref{tab:reward-matrix} y~\ref{tab:recompensa-multiobjetivo} contrastadas con \texttt{src/rl\_defender\_env.py}; tasas de falsos positivos y falsos negativos reportadas por clase en el capítulo de resultados y leídas en clave multiobjetivo en la discusión. \\
 Capítulos & 4, 6 y 7. \\
@@ -139,7 +141,8 @@ La Tabla~\ref{tab:trazabilidad} resume la trazabilidad entre los objetivos espec
 \begin{table}[htbp]
 \centering
 \footnotesize
-\begin{tabular}{lp{2.2cm}p{5.6cm}p{3.4cm}}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{p{1.35cm}p{2.05cm}p{5.7cm}p{3.15cm}}
 \toprule
 Objetivo & Capítulos & Evidencia (ejecución o artefacto) & Estado \\
 \midrule
@@ -163,7 +166,7 @@ El trabajo está delimitado por los requisitos de una evaluación offline de un 
 El alcance incluye explícitamente la escalera de validación multietapa descrita en los objetivos de evaluación. Esta escalera cubre particiones aleatorias estratificadas para comprobaciones básicas de aprendizaje, una comprobación de etiquetas barajadas para verificar que el rendimiento colapsa cuando las etiquetas no contienen señal real, una partición por día o por CSV para comprobar la generalización dentro de CICIDS2017, una evaluación \textit{leave-one-CSV-out} para comprobar la sensibilidad a ficheros de captura específicos, y la inferencia offline sobre flujos capturados por el operador en un laboratorio doméstico cerrado. Cada nivel aporta evidencia diferenciada y forma parte del alcance experimental acordado.
 
 \section{No objetivos}
-Esta tesis excluye explícitamente el desarrollo de monitorización de red en línea o la interceptación de paquetes en tiempo real. El sistema no se integrará con cortafuegos, reglas de \texttt{iptables}, controladores de Software-Defined Networking (SDN), ni sistemas de prevención de intrusiones (IPS) activos. Estas exclusiones existen porque el despliegue en producción requeriría un diseño de sistema sustancialmente diferente, una validación de seguridad y una metodología de pruebas operacionales que quedan fuera del alcance de un estudio académico controlado. La tesis está diseñada como un prototipo experimental, no como un producto operativo destinado a su uso en producción.
+Esta tesis excluye explícitamente el desarrollo de monitorización de red en línea o la interceptación de paquetes en tiempo real. El sistema no se integrará con cortafuegos, reglas de \texttt{iptables}, controladores de redes definidas por software (SDN, del inglés \emph{Software-Defined Networking}), ni sistemas de prevención de intrusiones (IPS, del inglés \emph{Intrusion Prevention System}) activos. Estas exclusiones existen porque el despliegue en producción requeriría un diseño de sistema sustancialmente diferente, una validación de seguridad y una metodología de pruebas operacionales que quedan fuera del alcance de un estudio académico controlado. La tesis está diseñada como un prototipo experimental, no como un producto operativo destinado a su uso en producción.
 
 La tesis tampoco pretende resolver el problema más amplio de las operaciones cibernéticas adversariales multiagente o la interrupción de ataques con dependencia de secuencias, donde el estado del entorno cambia dinámicamente en respuesta a las acciones del defensor. En la formulación actual, cada registro de flujo se clasifica de forma independiente, y el conjunto de datos no reacciona a las decisiones del agente. Esta es una limitación conocida del enfoque \textit{conjunto-de-datos-como-entorno}, e implica que el sistema no puede modelar la adaptación adversarial, la persistencia del atacante ni las cadenas de ataques multietapa que abarcan muchas decisiones individuales de flujo. Por último, el objetivo no es demostrar que QRDQN represente el estado del arte definitivo para todas las tareas de NIDS, sino evaluar su comportamiento bajo un marco experimental cuidadosamente controlado, libre de fugas y reproducible, y compararlo honestamente con líneas base supervisadas.
 
@@ -225,7 +228,7 @@ Contratos de instalación & \texttt{requirements.txt}, \texttt{requirements-\all
 Construcción de la memoria & Windows; TeX Live 2025; \texttt{latexmk} 4.87; \texttt{biber} 2.21 & Producción del documento; fuera del runtime del modelo & Tracker de mejora de la memoria \\
 \bottomrule
 \end{tabular}
-\caption[Recursos hardware y software del proyecto]{Recursos efectivamente utilizados y procedencia de cada dato. Las versiones observadas proceden de \texttt{environment.json}; los manifiestos expresan contratos de instalación, no observaciones de ejecución.}
+\caption[Recursos hardware y software del proyecto]{Recursos efectivamente utilizados y procedencia de cada dato. Las versiones observadas proceden de \texttt{environment.json}; los manifiestos expresan contratos de instalación, no observaciones de ejecución. Fuente: elaboración propia a partir de la confirmación del autor, \texttt{environment.json} y los manifiestos del repositorio.}
 \label{tab:recursos}
 \end{table}
 
