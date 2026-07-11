@@ -256,7 +256,7 @@ Rule: each algorithm written AFTER re-reading its source file; divergence = bug 
 | ID | Task | Model | Dep | Status | Evidence |
 |---|---|---|---|---|---|
 | F11.1 | Tighten 5–10% in the 3 longest sections (datasets, supervised DL, riesgos metodológicos) — nothing deleted or moved out | TOP | F9 | [x] | texcount text: datasets+CICIDS 1,024 (from 1,134), supervised/DL 657 (from 723), risks 587 (from 652) · forced isolated build exit 0, 214 pp (-1 from 215 baseline) |
-| F11.2 | T-H related-work RL-NIDS table weaving NIDSRL2023, RLTechniques2023NIDS, Sanusi2023DRLIDS, Umer2022RLRLIDS, Cevallos2023DRLIDSBP, DDPG2025AttackDetection, HCLRIDS2025IoMT, DRLIDSSDN2025 | TOP | F11.1 | [ ] | |
+| F11.2 | T-H related-work RL-NIDS table weaving NIDSRL2023, RLTechniques2023NIDS, Sanusi2023DRLIDS, Umer2022RLRLIDS, Cevallos2023DRLIDSBP, DDPG2025AttackDetection, HCLRIDS2025IoMT, DRLIDSSDN2025 | TOP | F11.1 | [x] | 8-source compact five-column portrait longtable before thesis positioning · primary metadata corrected for its cited records · forced isolated build exit 0, 216 pp (+1 from 215 baseline) · caption, label, continuation and columns rendered/inspected |
 | F11.3 | Weave remaining uncited: Layeghy2022, Boukhamla2021, Cantone2024, DatasetSurvey2025, Ozgur2016, Rodriguez2022, TrainingData2025, Farrukh2022, Pekar2024 (one claim-bearing citation each); prune Oyelakin2023Overview if no honest slot | TOP | F11.1 | [ ] | |
 | F11.4 | Sweep: zero uncited bib entries remain (`git grep` cite keys vs `memoria.bib`); biber log zero warnings | cheap | F11.3 | [ ] | |
 | F11.V | Gates + citation-context verification (top model) | TOP | F11.* | [ ] | |

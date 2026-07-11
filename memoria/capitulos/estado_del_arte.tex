@@ -137,6 +137,37 @@ Otros trabajos de RL orientados a IDS exploran DQN, Double DQN, DQN adversarial,
 
 Una segunda rama estudia la defensa cibernética genuinamente secuencial. Los enfoques POMDP y de grafo de ataque modelan acciones defensivas bajo incertidumbre \parencite{Hu2020POMDPDefense}. CybORG proporciona un entorno al estilo gym para agentes cibernéticos autónomos \parencite{Standen2021CybORG}. Los trabajos más amplios de defensa cibernética autónoma discuten agentes que seleccionan contramedidas en redes simuladas o emuladas \parencite{Palmer2023_weak,CSET2023AutonomousCyberDefense}. Estos escenarios son conceptualmente diferentes de esta tesis porque las acciones del defensor pueden alterar el estado futuro. Representan una forma más fuerte de problema de RL que la clasificación estática por filas.
 
+\begingroup
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{longtable}{@{}p{1.75cm}p{2.05cm}p{1.95cm}p{3.55cm}p{3.00cm}@{}}
+\caption[Trabajos de RL para NIDS]{Síntesis de trabajos de RL/DRL para NIDS y límites de comparabilidad con esta tesis. La relación indicada se infiere de cada fuente y de la formulación QRDQN offline sobre flujos de CICIDS2017 adoptada en este trabajo.}\label{tab:rl-nids-related-work}\\
+\toprule
+\textbf{Fuente} & \textbf{Formulación de RL} & \textbf{Datos / ámbito} & \textbf{Límite de evaluación} & \textbf{Relación / diferencia con esta tesis} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{@{}l}{\small\itshape Tabla \thetable{} (continuación)} \\
+\toprule
+\textbf{Fuente} & \textbf{Formulación de RL} & \textbf{Datos / ámbito} & \textbf{Límite de evaluación} & \textbf{Relación / diferencia con esta tesis} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r@{}}{\small\itshape Continúa en la página siguiente} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\textcite{NIDSRL2023} & RL; el algoritmo no es verificable desde el registro primario público. & NIDS genérico; datos no verificables. & El registro no expone protocolo ni métricas comparables. & Antecedente temático, no comparación directa con QRDQN/CICIDS2017. \\
+\textcite{RLTechniques2023NIDS} & Técnicas de RL; algoritmo no verificable desde el registro primario público. & NIDS genérico; datos no verificables. & El registro no expone protocolo ni métricas comparables. & Antecedente genérico, sin comparabilidad empírica directa. \\
+\textcite{Sanusi2023DRLIDS} & DRL para IDS binario. & NSL-KDD; la tarea multiclase se reduce a binaria. & Tesis offline sobre benchmark; no evidencia de despliegue. & Antecedente de IDS binario con DRL, pero datos e implementación distintos. \\
+\textcite{Umer2022RLRLIDS} & DQN y gradiente de política con entrenamiento adversarial. & IDS a nivel de paquete y flujo; CICDDoS2019. & Evaluación de benchmark; sin evidencia de despliegue operativo. & Diseño paquete/flujo más rico y datos distintos de QRDQN/CICIDS2017. \\
+\textcite{Cevallos2023DRLIDSBP} & Revisión/taxonomía de DRL-IDS, no un algoritmo único. & Literatura de IDS en IoT. & Síntesis bibliográfica, sin benchmark propio. & Contexto de decisiones DRL en IoT, no línea base empírica. \\
+\textcite{DDPG2025AttackDetection} & DDPG. & Detección de ataques de red; datos no verificables. & El registro no expone protocolo ni métricas comparables. & Familia de RL distinta; solo antecedente a nivel de título. \\
+\textcite{DRLIDSSDN2025} & DRL-IDS con LFTS-RNN y PC-JTFOA. & SDN; NSL-KDD y WPPD. & Particiones de benchmark, no despliegue SDN vivo. & Tarea, modelo y datos distintos; no equivale a una evaluación QRDQN offline. \\
+\textcite{HCLRIDS2025IoMT} & CNN-LSTM con DQN y PPO. & IoMT sanitario; CICIoMT2024. & Benchmark especializado; el trabajo deja la detección \textit{zero-day} como trabajo futuro. & Propuesta IoMT específica, no línea base comparable con CICIDS2017. \\
+\end{longtable}
+\endgroup
+
 La tesis pertenece, por tanto, principalmente a la primera rama: detección offline a nivel de flujo formulada a través de una interfaz de RL. Puede referenciar la defensa cibernética autónoma como contexto más amplio y dirección futura, pero no debe implicar que el sistema actual realice aprendizaje multiagente, adversarial o de control de red en vivo. La formulación más precisa es que la tesis implementa un benchmark de NIDS con conjunto de datos como entorno y una interfaz de acción de seguridad binaria sensible al coste, no un defensor de cyber-range completo.
 
 \section{Clasificación como RL y decisiones de seguridad binarias}
