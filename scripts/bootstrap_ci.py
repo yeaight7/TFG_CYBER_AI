@@ -266,7 +266,10 @@ def verify_from_model(
         for chunk in iter(lambda: fh.read(1 << 20), b""):
             h.update(chunk)
     return {
-        "model_file": model_path.name,
+        # "model_file": model_path.name,
+        "model_file_sha256": __import__("hashlib").sha256(
+            model_path.name.encode("utf-8")
+        ).hexdigest(),
         "model_sha256": h.hexdigest(),
         "n_test_predicted": int(len(y_pred)),
         "regenerated_counts": {"tn": tn, "fp": fp, "fn": fn, "tp": tp},
