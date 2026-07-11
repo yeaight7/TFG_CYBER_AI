@@ -1,8 +1,10 @@
 \chapter{Protocolo experimental}
 \label{cap:protocolo-experimental}
 
+Este capítulo fija los protocolos con los que se obtiene y se interpreta la evidencia experimental, desde la partición interna hasta la inferencia fuera de línea de la Fase~2. La secuencia evita extender las conclusiones más allá de los artefactos disponibles.
+
 \section{Fases experimentales}
-La metodología experimental se divide en dos fases. La primera fase comprueba el aprendizaje y la generalización interna sobre un benchmark público. La segunda fase comprueba si el pipeline de preprocesamiento y modelo resultante es capaz de procesar tráfico capturado por el operador en un laboratorio doméstico cerrado bajo cambio de dominio.
+La metodología experimental se divide en dos fases. La primera fase comprueba el aprendizaje y la generalización interna sobre un banco de pruebas público (\emph{benchmark}). La segunda fase comprueba si el flujo de procesamiento (\emph{pipeline}) de preprocesamiento y modelo resultante es capaz de procesar tráfico capturado por el operador en un laboratorio doméstico cerrado bajo cambio de dominio.
 
 \subsection{Fase 1: benchmark interno de CICIDS2017}
 La Fase 1 utiliza CICIDS2017 como benchmark interno principal \parencite{Sharafaldin2018CICIDS2017,CICIDS2017Web}. CICIDS2017 es adecuado para esta tesis porque proporciona tráfico benigno y de ataque etiquetado, capturas de paquetes en bruto y CSVs de flujos derivados de una extracción al estilo CICFlowMeter \parencite{Lashkari2017CICFlowMeter}. También contiene múltiples escenarios de ataque en diferentes días de captura, lo que permite diseños de partición más estrictos que una única partición aleatoria entrenamiento-prueba.

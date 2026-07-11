@@ -1,5 +1,7 @@
 \chapter{Estado del arte}
 
+Este capítulo revisa el contexto técnico y metodológico que sitúa el prototipo, y delimita el alcance de las afirmaciones que se apoyarán después en los resultados.
+
 \section{Introducción y alcance del capítulo}
 
 Este capítulo mapea el trasfondo técnico de un defensor de ciberseguridad basado en aprendizaje por refuerzo que opera sobre observaciones de red a nivel de flujo. El alcance es deliberadamente más amplio que una comparación de clasificadores binarios. La tesis combina detección de intrusiones en red, representación de características de flujo, conjuntos de datos de referencia públicos, líneas base de aprendizaje supervisado, una formulación de conjunto de datos como entorno al estilo Gymnasium, QRDQN, preprocesamiento con control de fugas, comprobaciones de validación más estrictas, experimentos de eficiencia de datos, y validación planificada o preferida sobre tráfico capturado por el operador en un laboratorio doméstico cerrado y no adversarial.
@@ -12,7 +14,7 @@ La revisión también separa tres niveles que con frecuencia se confunden. El pr
 
 \section{Detección de intrusiones y monitorización de seguridad en red}
 
-Los sistemas de detección de intrusiones monitorizan la actividad de hosts o redes en busca de evidencias de ataques, usos indebidos o violaciones de políticas \parencite{ScarfoneMell2007}. Un sistema de detección de intrusiones en host observa endpoints, eventos del sistema operativo, registros, procesos, cambios en la integridad de archivos o llamadas al sistema. Un sistema de detección de intrusiones en red observa el tráfico que atraviesa enlaces, taps, puertos de mirror de switches, brokers de paquetes, interfaces de red virtual o colectores de flujos. Ambas perspectivas son complementarias: el HIDS puede ver el contexto local de procesos y archivos que los sensores de red no pueden, mientras que el NIDS puede inspeccionar movimientos laterales, escaneos, tráfico de mando y control, y patrones de comunicación agregados sin instalar un agente en cada host.
+Los sistemas de detección de intrusiones monitorizan la actividad de hosts o redes en busca de evidencias de ataques, usos indebidos o violaciones de políticas \parencite{ScarfoneMell2007}. Un sistema de detección de intrusiones en host (HIDS, del inglés \emph{Host Intrusion Detection System}) observa endpoints, eventos del sistema operativo, registros, procesos, cambios en la integridad de archivos o llamadas al sistema. Un sistema de detección de intrusiones en red (NIDS, del inglés \emph{Network Intrusion Detection System}) observa el tráfico que atraviesa enlaces, taps, puertos de mirror de switches, brokers de paquetes, interfaces de red virtual o colectores de flujos. Ambas perspectivas son complementarias: el HIDS puede ver el contexto local de procesos y archivos que los sensores de red no pueden, mientras que el NIDS puede inspeccionar movimientos laterales, escaneos, tráfico de mando y control, y patrones de comunicación agregados sin instalar un agente en cada host.
 
 También es necesario distinguir el IDS de los sistemas de prevención de intrusiones. Un IDS detecta y notifica principalmente actividad sospechosa. Su salida puede ser una alerta, un evento de registro, un registro de flujo enriquecido, un ticket, un evento SIEM o un artefacto forense. Un IPS se posiciona en línea y puede bloquear, descartar, modificar, limitar la tasa, reiniciar o redirigir el tráfico \parencite{ScarfoneMell2007}. En la práctica, los productos y arquitecturas frecuentemente difuminan esta frontera porque un motor de detección puede alimentar reglas de firewall, acciones EDR, playbooks SOAR o actualizaciones de política SDN. Para la evaluación, sin embargo, la distinción importa. Un detector puede tolerar un perfil de falsos positivos diferente al de un bloqueador en línea, dado que las alertas falsas principalmente afectan a la carga de trabajo del analista, mientras que los bloqueos falsos pueden interrumpir tráfico legítimo de negocio.
 
@@ -67,7 +69,7 @@ Bot-IoT & Benchmark de IoT/botnets & PCAPs, flujos al estilo Argus, exportacione
 ToN\_IoT & Benchmark de telemetría IoT/IIoT & Flujos de red, registros de host y telemetría de sensores & Perspectiva multimodal de IoT/IIoT \parencite{Alsaedi2020ToNIoT} & Entorno de nicho; los artefactos de identificadores y escenarios siguen siendo posibles \\
 \bottomrule
 \end{tabular}
-\caption[Comparación de conjuntos de datos públicos de NIDS]{Comparación compacta de los conjuntos de datos públicos de NIDS relevantes para la tesis.}
+\caption[Comparación de conjuntos de datos públicos de NIDS]{Comparación compacta de los conjuntos de datos públicos de NIDS relevantes para la tesis. Fuente: elaboración propia a partir de las fuentes citadas.}
 \label{tab:nids-datasets}
 \end{table}
 
@@ -142,7 +144,7 @@ Una segunda rama estudia la defensa cibernética genuinamente secuencial. Los en
 \setlength{\tabcolsep}{2pt}
 \renewcommand{\arraystretch}{1.08}
 \begin{longtable}{@{}p{1.75cm}p{2.05cm}p{1.95cm}p{3.55cm}p{3.00cm}@{}}
-\caption[Trabajos de RL para NIDS]{Síntesis de trabajos de RL/DRL para NIDS y límites de comparabilidad con esta tesis. La relación indicada se infiere de cada fuente y de la formulación QRDQN offline sobre flujos de CICIDS2017 adoptada en este trabajo.}\label{tab:rl-nids-related-work}\\
+\caption[Trabajos de RL para NIDS]{Síntesis de trabajos de RL/DRL para NIDS y límites de comparabilidad con esta tesis. La relación indicada se infiere de cada fuente y de la formulación QRDQN offline sobre flujos de CICIDS2017 adoptada en este trabajo. Fuente: elaboración propia a partir de las fuentes citadas.}\label{tab:rl-nids-related-work}\\
 \toprule
 \textbf{Fuente} & \textbf{Formulación de RL} & \textbf{Datos / ámbito} & \textbf{Límite de evaluación} & \textbf{Relación / diferencia con esta tesis} \\
 \midrule

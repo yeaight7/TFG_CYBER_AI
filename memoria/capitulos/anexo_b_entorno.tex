@@ -31,7 +31,7 @@ GPU remota & NVIDIA GeForce RTX 3090 Ti, 24 GB de VRAM & Entrenamiento CUDA de \
 Ordenador portátil local & Sin atribuirle especificaciones de entrenamiento & Desarrollo, pruebas y construcción de la memoria; ningún entrenamiento de modelos & Uso confirmado por el autor \\
 \bottomrule
 \end{tabular}
-\caption[Hardware empleado en el proyecto]{Hardware empleado y función de cada entorno. Los datos del equipo remoto proceden de la confirmación del autor; \texttt{environment.json} corrobora de forma independiente el modelo de GPU.}
+\caption[Hardware empleado en el proyecto]{Hardware empleado y función de cada entorno. Fuente: elaboración propia a partir de la confirmación del autor y de \texttt{environment.json}.}
 \label{tab:entorno-hardware}
 \end{table}
 
@@ -59,7 +59,7 @@ CUDA informada por PyTorch & 13.0 & \texttt{torch\_\allowbreak cuda\_\allowbreak
 cuDNN & 9.20.0 (valor entero registrado: \texttt{92000}) & \texttt{torch\_\allowbreak cudnn\_\allowbreak version} \\
 \bottomrule
 \end{tabular}
-\caption[Runtime de la ejecución principal]{Runtime observado durante la ejecución principal. Fuente: \texttt{environment.json} de la ejecución \texttt{MAIN}.}
+\caption[Runtime de la ejecución principal]{Runtime observado durante la ejecución principal. Fuente: elaboración propia a partir de \texttt{environment.json} de la ejecución \texttt{MAIN}.}
 \label{tab:runtime-main}
 \end{table}
 
@@ -80,7 +80,7 @@ reconstrucción a partir del estado actual del entorno local.
 {\scriptsize\path{sb3-contrib}} & \texttt{2.8.0} & \texttt{joblib} & \texttt{1.5.3} \\
 \bottomrule
 \end{tabular}
-\caption[Paquetes registrados en la ejecución principal]{Versiones exactas de los paquetes registrados por \texttt{environment.json} para la ejecución \texttt{MAIN}.}
+\caption[Paquetes registrados en la ejecución principal]{Versiones exactas de los paquetes registrados por \texttt{environment.json} para la ejecución \texttt{MAIN}. Fuente: elaboración propia a partir de \texttt{environment.json} de la ejecución \texttt{MAIN}.}
 \label{tab:paquetes-main}
 \end{table}
 
@@ -103,7 +103,7 @@ diferencias se resumen en la Tabla~\ref{tab:contratos-dependencias}.
 \texttt{pyproject.toml} & Proyecto y resolución con \texttt{uv} & Exige Python \texttt{>=3.12,<3.13}. El núcleo usa \texttt{stable-baselines3[extra]==2.8.0}; el extra \texttt{dev} fija \texttt{pytest==9.0.3} y \texttt{ruff==0.15.12}, y \texttt{tune} fija \texttt{optuna==4.9.0}. \texttt{tool.uv.sources} dirige \texttt{torch} al índice \texttt{cu130} en Linux y al índice CPU fuera de Linux. \\
 \bottomrule
 \end{tabular}
-\caption[Contratos de dependencias del proyecto]{Contratos de dependencias y diferencias entre el runtime GPU, la instalación local, el desarrollo y el ajuste de hiperparámetros. Fuente: los tres manifiestos indicados.}
+\caption[Contratos de dependencias del proyecto]{Contratos de dependencias y diferencias entre el runtime GPU, la instalación local, el desarrollo y el ajuste de hiperparámetros. Fuente: elaboración propia a partir de \texttt{requirements-runpod-cu130.txt}, \texttt{requirements.txt} y \texttt{pyproject.toml}.}
 \label{tab:contratos-dependencias}
 \end{table}
 
@@ -133,6 +133,6 @@ Distribución TeX & TeX Live 2025 & Motor y paquetes LaTeX de la memoria \\
 \texttt{biber} & 2.21 & Procesamiento de la bibliografía \\
 \bottomrule
 \end{tabular}
-\caption[Entorno de construcción de la memoria]{Pila de construcción de la memoria. Fuente: tracker de mejora de la memoria; entorno distinto del runtime empleado para \texttt{MAIN}.}
+\caption[Entorno de construcción de la memoria]{Pila de construcción de la memoria. Fuente: elaboración propia a partir de \texttt{docs/thesis/THESIS\_IMPROVEMENT\_PLAN.md}; entorno distinto del runtime empleado para \texttt{MAIN}.}
 \label{tab:entorno-memoria}
 \end{table}
