@@ -65,6 +65,195 @@ def load_artifact_manifest(run_dir: Path) -> dict[str, Any]:
     return json.loads(manifest_path.read_text(encoding="utf-8"))
 
 
+def _schema_major(manifest: Mapping[str, Any]) -> int:
+    version = manifest.get("schema_version")
+    if not isinstance(version, str):
+        raise ArtifactTrustError("artifact_manifest.json has no string schema_version")
+    try:
+        return int(version.split(".", maxsplit=1)[0])
+    except ValueError as exc:
+        raise ArtifactTrustError(f"Unsupported artifact schema version: {version}") from exc
+
+
+def _resolve_run_relative(path: Path, run_dir: Path) -> Path:
+    if path.is_absolute() or ".." in path.parts:
+        raise ArtifactTrustError(f"Artifact path escapes run directory: {path}")
+    resolved = (run_dir / path).resolve()
+    try:
+        resolved.relative_to(run_dir.resolve())
+    except ValueError as exc:
+        raise ArtifactTrustError(f"Artifact path escapes run directory: {path}") from exc
+    if not resolved.is_file():
+        raise ArtifactTrustError(f"Trusted artifact does not exist: {resolved}")
+    return resolved
+
+
+def _verify_digest(path: Path, expected_sha256: str) -> None:
+    actual_sha256 = sha256_file(path)
+    if actual_sha256 != expected_sha256:
+        raise ArtifactTrustError(
+            f"SHA-256 mismatch for {path}: expected {expected_sha256}, got {actual_sha256}"
+        )
+
+
+def verify_artifact_manifest(
+    run_dir: Path,
+    *,
+    repo_root: Path = REPO_ROOT,
+    require_completed: bool = True,
+) -> dict[str, Any]:
+    """Verify schema-3 evidence or read historical schema-2 evidence compatibly."""
+    run_dir = Path(run_dir)
+    manifest = load_artifact_manifest(run_dir)
+    schema_major = _schema_major(manifest)
+    status = manifest.get("status")
+    if require_completed and status != "completed":
+        raise ArtifactTrustError(f"Artifact manifest is not completed: status={status!r}")
+
+    if schema_major == 2:
+        file_artifacts = manifest.get("file_artifacts")
+        if not isinstance(file_artifacts, Mapping):
+            raise ArtifactTrustError("Schema-2 manifest has no file_artifacts mapping")
+        verified = 0
+        for name in file_artifacts:
+            entry = file_artifacts[name]
+            if isinstance(entry, Mapping) and entry.get("relative_path") is None:
+                continue
+            trusted = artifact_manifest_entry(manifest, name)
+            relative_path = trusted["relative_path"]
+            expected_sha256 = trusted["sha256"]
+            if relative_path is None or expected_sha256 is None:
+                continue
+            path = _resolve_existing_path(Path(relative_path), repo_root)
+            _verify_digest(path, expected_sha256)
+            verified += 1
+        return {
+            "schema_version": str(manifest["schema_version"]),
+            "status": str(status),
+            "verified_files": verified,
+        }
+
+    if schema_major != 3 or manifest.get("path_base") != "run_dir":
+        raise ArtifactTrustError(
+            f"Unsupported artifact manifest contract: schema={manifest.get('schema_version')!r}"
+        )
+
+    requirements = manifest.get("required_artifacts")
+    inventory = manifest.get("inventory")
+    if not isinstance(requirements, Mapping) or not isinstance(inventory, Mapping):
+        raise ArtifactTrustError("Schema-3 manifest lacks requirements or inventory")
+
+    enforce_complete_contract = status == "completed"
+    expected_inventory_paths: set[str] = set()
+    expected_file_artifact_names: set[str] = set()
+    for name, requirement in requirements.items():
+        if not isinstance(requirement, Mapping):
+            raise ArtifactTrustError(f"Invalid requirement entry: {name}")
+        relative_value = requirement.get("relative_path")
+        kind = requirement.get("kind")
+        required = requirement.get("required", True)
+        if not isinstance(relative_value, str) or kind not in {"file", "directory"}:
+            raise ArtifactTrustError(f"Invalid requirement entry: {name}")
+        relative_path = Path(relative_value)
+        if relative_path.is_absolute() or ".." in relative_path.parts:
+            raise ArtifactTrustError(f"Artifact path escapes run directory: {relative_value}")
+        resolved = (run_dir / relative_path).resolve()
+        try:
+            resolved.relative_to(run_dir.resolve())
+        except ValueError as exc:
+            raise ArtifactTrustError(
+                f"Artifact path escapes run directory: {relative_value}"
+            ) from exc
+        exists = resolved.is_file() if kind == "file" else resolved.is_dir()
+        if required and enforce_complete_contract and not exists:
+            raise ArtifactTrustError(f"Required artifact is missing: {name} ({relative_value})")
+        if not exists:
+            continue
+        if kind == "file":
+            expected_inventory_paths.add(relative_path.as_posix())
+            expected_file_artifact_names.add(str(name))
+        else:
+            directory_files = {
+                path.relative_to(run_dir).as_posix()
+                for path in resolved.rglob("*")
+                if path.is_file()
+            }
+            if required and enforce_complete_contract and not directory_files:
+                raise ArtifactTrustError(
+                    f"Required artifact directory is empty: {name} ({relative_value})"
+                )
+            expected_inventory_paths.update(directory_files)
+
+    if enforce_complete_contract and set(inventory) != expected_inventory_paths:
+        missing = sorted(expected_inventory_paths - set(inventory))
+        unexpected = sorted(set(inventory) - expected_inventory_paths)
+        raise ArtifactTrustError(
+            f"Artifact inventory mismatch: missing={missing}, unexpected={unexpected}"
+        )
+
+    for relative_value, record in inventory.items():
+        if not isinstance(relative_value, str) or not isinstance(record, Mapping):
+            raise ArtifactTrustError("Invalid schema-3 inventory entry")
+        digest = record.get("sha256")
+        size_bytes = record.get("size_bytes")
+        if not isinstance(digest, str) or not isinstance(size_bytes, int):
+            raise ArtifactTrustError(f"Invalid inventory metadata for {relative_value}")
+        path = _resolve_run_relative(Path(relative_value), run_dir)
+        if path.stat().st_size != size_bytes:
+            raise ArtifactTrustError(
+                f"Size mismatch for {path}: expected {size_bytes}, got {path.stat().st_size}"
+            )
+        _verify_digest(path, digest)
+
+    file_artifacts = manifest.get("file_artifacts")
+    if not isinstance(file_artifacts, Mapping):
+        raise ArtifactTrustError("Schema-3 manifest has no file_artifacts mapping")
+    if enforce_complete_contract and set(file_artifacts) != expected_file_artifact_names:
+        raise ArtifactTrustError(
+            "Schema-3 file_artifacts do not match declared file requirements"
+        )
+    for name, entry in file_artifacts.items():
+        if not isinstance(entry, Mapping):
+            raise ArtifactTrustError(f"Invalid file_artifacts entry: {name}")
+        relative_value = entry.get("relative_path")
+        digest = entry.get("sha256")
+        size_bytes = entry.get("size_bytes")
+        inventory_record = inventory.get(relative_value) if isinstance(relative_value, str) else None
+        if (
+            not isinstance(inventory_record, Mapping)
+            or inventory_record.get("sha256") != digest
+            or inventory_record.get("size_bytes") != size_bytes
+        ):
+            raise ArtifactTrustError(
+                f"Schema-3 file_artifacts entry disagrees with inventory: {name}"
+            )
+
+    checksum_record = manifest.get("checksum_file")
+    if not isinstance(checksum_record, Mapping):
+        raise ArtifactTrustError("Schema-3 manifest has no checksum_file record")
+    checksum_relative = checksum_record.get("relative_path")
+    checksum_digest = checksum_record.get("sha256")
+    if not isinstance(checksum_relative, str) or not isinstance(checksum_digest, str):
+        raise ArtifactTrustError("Invalid schema-3 checksum_file record")
+    checksum_path = _resolve_run_relative(Path(checksum_relative), run_dir)
+    checksum_size = checksum_record.get("size_bytes")
+    if not isinstance(checksum_size, int) or checksum_path.stat().st_size != checksum_size:
+        raise ArtifactTrustError(f"Size mismatch for checksum file: {checksum_path}")
+    _verify_digest(checksum_path, checksum_digest)
+    expected_sums = "".join(
+        f"{record['sha256']}  {relative_path}\n"
+        for relative_path, record in sorted(inventory.items())
+    )
+    if checksum_path.read_text(encoding="utf-8") != expected_sums:
+        raise ArtifactTrustError("SHA256SUMS content does not match artifact inventory")
+
+    return {
+        "schema_version": str(manifest["schema_version"]),
+        "status": str(status),
+        "verified_files": len(inventory),
+    }
+
+
 def _legacy_artifact_entry(
     manifest: Mapping[str, Any],
     artifact_name: str,
@@ -133,10 +322,15 @@ def resolve_trusted_artifact(
     if rel_path is None or expected_sha256 is None:
         raise ArtifactTrustError(f"Artifact '{artifact_name}' is not hash-covered in manifest")
 
-    trusted_path = _resolve_existing_path(Path(rel_path), repo_root)
+    schema3_run_relative = _schema_major(manifest) == 3 and manifest.get("path_base") == "run_dir"
+    if schema3_run_relative:
+        trusted_path = _resolve_run_relative(Path(rel_path), Path(run_dir))
+    else:
+        trusted_path = _resolve_existing_path(Path(rel_path), repo_root)
     if requested_path is not None:
+        requested_base = Path(run_dir) if schema3_run_relative else repo_root
         requested_resolved = (
-            requested_path if requested_path.is_absolute() else repo_root / requested_path
+            requested_path if requested_path.is_absolute() else requested_base / requested_path
         ).resolve()
         if requested_resolved != trusted_path:
             raise ArtifactTrustError(
@@ -144,10 +338,5 @@ def resolve_trusted_artifact(
                 f"{requested_resolved} != {trusted_path}"
             )
 
-    actual_sha256 = sha256_file(trusted_path)
-    if actual_sha256 != expected_sha256:
-        raise ArtifactTrustError(
-            f"SHA-256 mismatch for {artifact_name}: "
-            f"expected {expected_sha256}, got {actual_sha256}"
-        )
+    _verify_digest(trusted_path, expected_sha256)
     return trusted_path
