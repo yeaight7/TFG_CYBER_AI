@@ -39,6 +39,10 @@ runs/**/events.out.tfevents.*
 runs/**/model.zip
 scratch/
 
+# Generated canonical dataset caches (rebuildable; never commit shard arrays).
+/cache/
+/.cache/
+
 # large models type shi
 models/rf_cicids2017_canonical_20260504_000432.joblib
 
