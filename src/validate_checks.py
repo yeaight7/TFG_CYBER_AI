@@ -30,26 +30,78 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
+import joblib
 import numpy as np
 import torch
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.preprocessing import StandardScaler
 
 from sb3_contrib import QRDQN
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import BaseCallback
 
-from rl_defender_env import RLDatasetDefenderEnv
-from load_cicids2017 import (
-    DEFAULT_TRAIN_DAYS,
-    DEFAULT_TEST_DAYS,
-    load_cicids2017_split,
-)
-from artifact_integrity import ArtifactTrustError, resolve_trusted_artifact
+if __package__ in {None, ""}:  # pragma: no cover - direct script execution
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+try:
+    from src.artifact_integrity import ArtifactTrustError, resolve_trusted_artifact
+    from src.cicids_cache import sha256_array
+    from src.experiment_profiles import MAIN_V1_PROFILE
+    from src.load_cicids2017 import (
+        DEFAULT_TEST_DAYS,
+        DEFAULT_TRAIN_DAYS,
+        load_cicids2017_split,
+    )
+    from src.metrics_utils import confusion_to_metrics
+    from src.qrdqn_experiment import (
+        PreparedSplit,
+        QRDQNRunConfig,
+        batched_predict,
+        load_experiment_split,
+        seed_model_rngs,
+    )
+    from src.resource_monitor import ResourceMonitor
+    from src.rl_defender_env import RLDatasetDefenderEnv
+    from src.run_artifacts import (
+        ArtifactManifestWriter,
+        ArtifactRequirement,
+        TimingRecorder,
+        atomic_write_json,
+        atomic_write_text,
+        collect_environment_metadata,
+        tee_output,
+    )
+except ModuleNotFoundError:  # pragma: no cover - direct ``python src/...`` execution
+    from artifact_integrity import ArtifactTrustError, resolve_trusted_artifact
+    from cicids_cache import sha256_array
+    from experiment_profiles import MAIN_V1_PROFILE
+    from load_cicids2017 import DEFAULT_TEST_DAYS, DEFAULT_TRAIN_DAYS, load_cicids2017_split
+    from metrics_utils import confusion_to_metrics
+    from qrdqn_experiment import (
+        PreparedSplit,
+        QRDQNRunConfig,
+        batched_predict,
+        load_experiment_split,
+        seed_model_rngs,
+    )
+    from resource_monitor import ResourceMonitor
+    from rl_defender_env import RLDatasetDefenderEnv
+    from run_artifacts import (
+        ArtifactManifestWriter,
+        ArtifactRequirement,
+        TimingRecorder,
+        atomic_write_json,
+        atomic_write_text,
+        collect_environment_metadata,
+        tee_output,
+    )
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 MODELS_DIR = _REPO_ROOT / "models"
@@ -57,12 +109,324 @@ RUNS_DIR = _REPO_ROOT / "runs"
 
 SEED = 42
 
-REWARD_CONFIG: Dict[str, float] = {
-    "tp": 1.5,
-    "fp": -2.0,
-    "fn": -5.0,
-    "omission": 0.0,
-}
+REWARD_CONFIG: Dict[str, float] = MAIN_V1_PROFILE.reward_config()
+
+
+@dataclass(frozen=True)
+class ShuffledLabelRunConfig:
+    artifact_root: Path
+    run_id: str
+    dataset_root: Path
+    cache_root: Path | None
+    cache_policy: str = "require"
+    split_seed: int = 42
+    model_seed: int = 42
+    shuffled_label_seed: int = 42
+    timesteps: int = 10_000
+    monitor_interval: float = 30.0
+    eval_batch_size: int = 8_192
+    attempt: int = 1
+    campaign_id: str | None = None
+    logical_run_id: str = "shuffled_label_validation_s42_m42"
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "artifact_root", Path(self.artifact_root))
+        object.__setattr__(self, "dataset_root", Path(self.dataset_root))
+        if self.cache_root is not None:
+            object.__setattr__(self, "cache_root", Path(self.cache_root))
+        if not self.run_id or Path(self.run_id).name != self.run_id:
+            raise ValueError("run_id must be one non-empty path component")
+        if self.cache_policy not in {"off", "prefer", "require"}:
+            raise ValueError("cache_policy must be off, prefer, or require")
+        if self.cache_policy == "require" and self.cache_root is None:
+            raise ValueError("cache_root is required when cache_policy='require'")
+        if self.split_seed != 42 or self.model_seed != 42:
+            raise ValueError("The shuffled-label campaign control requires split_seed=42 and model_seed=42")
+        if self.timesteps <= 0:
+            raise ValueError("timesteps must be greater than zero")
+        if self.monitor_interval <= 0:
+            raise ValueError("monitor_interval must be greater than zero")
+        if self.eval_batch_size <= 0:
+            raise ValueError("eval_batch_size must be greater than zero")
+
+
+ShuffledSplitLoader = Callable[[QRDQNRunConfig], PreparedSplit]
+ShuffledModelFactory = Callable[[ShuffledLabelRunConfig, DummyVecEnv, Path, str], Any]
+
+
+def build_label_permutation(
+    labels: np.ndarray,
+    *,
+    seed: int,
+) -> tuple[np.ndarray, np.ndarray, str]:
+    """Return deterministic permutation indices, labels, and the index-array hash."""
+    indices = np.random.default_rng(seed).permutation(len(labels)).astype(np.int64)
+    return indices, np.asarray(labels)[indices].copy(), sha256_array(indices)
+
+
+def _shuffled_training_config(timesteps: int) -> dict[str, Any]:
+    return {
+        "policy": "MlpPolicy",
+        "policy_kwargs": {"net_arch": [256, 128]},
+        "learning_rate": 1e-4,
+        "buffer_size": min(50_000, max(timesteps, 5_000)),
+        "batch_size": 256,
+        "gradient_steps": 10,
+        "gamma": 0.0,
+        "tau": 1.0,
+        "train_freq": 50,
+        "target_update_interval": 1_000,
+    }
+
+
+def _create_shuffled_model(
+    config: ShuffledLabelRunConfig,
+    environment: DummyVecEnv,
+    tensorboard_dir: Path,
+    device: str,
+) -> QRDQN:
+    training = _shuffled_training_config(config.timesteps)
+    return QRDQN(
+        training["policy"],
+        environment,
+        seed=config.model_seed,
+        policy_kwargs=training["policy_kwargs"],
+        learning_rate=training["learning_rate"],
+        buffer_size=training["buffer_size"],
+        batch_size=training["batch_size"],
+        gradient_steps=training["gradient_steps"],
+        gamma=training["gamma"],
+        tau=training["tau"],
+        train_freq=training["train_freq"],
+        target_update_interval=training["target_update_interval"],
+        verbose=1,
+        device=device,
+        tensorboard_log=str(tensorboard_dir),
+    )
+
+
+def _shuffled_requirements() -> dict[str, ArtifactRequirement]:
+    return {
+        "config": ArtifactRequirement("config.json"),
+        "metrics": ArtifactRequirement("metrics.json"),
+        "environment": ArtifactRequirement("environment.json"),
+        "model": ArtifactRequirement("model.zip"),
+        "scaler": ArtifactRequirement("scaler.joblib"),
+        "feature_names": ArtifactRequirement("feature_names.json"),
+        "predictions": ArtifactRequirement("predictions.npz"),
+        "timing": ArtifactRequirement("timing.json"),
+        "system_metrics": ArtifactRequirement("system_metrics.csv"),
+        "monitoring": ArtifactRequirement("monitoring.json"),
+        "stdout": ArtifactRequirement("stdout.log"),
+        "stderr": ArtifactRequirement("stderr.log"),
+        "tensorboard": ArtifactRequirement("tensorboard", kind="directory"),
+    }
+
+
+def _json_shuffled_config(config: ShuffledLabelRunConfig) -> dict[str, Any]:
+    payload = asdict(config)
+    for key in ("artifact_root", "dataset_root", "cache_root"):
+        value = payload[key]
+        payload[key] = None if value is None else str(value)
+    return payload
+
+
+def run_shuffled_label_validation(
+    config: ShuffledLabelRunConfig,
+    *,
+    split_loader: ShuffledSplitLoader = load_experiment_split,
+    model_factory: ShuffledModelFactory = _create_shuffled_model,
+    monitor_factory: Callable[..., ResourceMonitor] = ResourceMonitor,
+) -> Path:
+    """Run the artifact-backed lightweight anti-leakage auxiliary control."""
+    run_dir = config.artifact_root / config.run_id
+    run_metadata = {
+        "campaign_id": config.campaign_id,
+        "logical_run_id": config.logical_run_id,
+        "physical_run_id": config.run_id,
+        "attempt": config.attempt,
+        "split_seed": config.split_seed,
+        "model_seed": config.model_seed,
+        "job_classification": "auxiliary_validation",
+        "counts_toward_primary_model_training_executions": False,
+    }
+    writer = ArtifactManifestWriter(
+        run_dir,
+        run_metadata=run_metadata,
+        requirements=_shuffled_requirements(),
+    )
+    writer.start()
+    atomic_write_text(run_dir / "stdout.log", "")
+    atomic_write_text(run_dir / "stderr.log", "")
+    requested = {
+        "status": "running",
+        "run_id": config.run_id,
+        "request": _json_shuffled_config(config),
+        "argv": list(sys.argv),
+        "resolved_command": [sys.executable, *sys.argv],
+        "split_seed": config.split_seed,
+        "model_seed": config.model_seed,
+        "shuffled_label_seed": config.shuffled_label_seed,
+        "timesteps": config.timesteps,
+        "job_classification": "auxiliary_validation",
+        "counts_toward_primary_model_training_executions": False,
+        "performance_comparison_eligible": False,
+        "reward_config": REWARD_CONFIG,
+        "lightweight_training_config": _shuffled_training_config(config.timesteps),
+    }
+    atomic_write_json(run_dir / "config.json", requested)
+    timing = TimingRecorder()
+    monitor: ResourceMonitor | None = None
+    monitor_stopped = False
+    environment: DummyVecEnv | None = None
+
+    try:
+        with tee_output(run_dir / "stdout.log", run_dir / "stderr.log"):
+            seed_model_rngs(config.model_seed)
+            atomic_write_json(
+                run_dir / "environment.json",
+                collect_environment_metadata(repo_root=_REPO_ROOT),
+            )
+            monitor = monitor_factory(run_dir, interval_seconds=config.monitor_interval)
+            monitor.start()
+
+            with timing.measure("preprocessing") as measurement:
+                split_config = QRDQNRunConfig(
+                    artifact_root=config.artifact_root,
+                    run_id=config.run_id,
+                    dataset_root=config.dataset_root,
+                    cache_root=config.cache_root,
+                    cache_policy=config.cache_policy,
+                    split_mode="random",
+                    split_seed=config.split_seed,
+                    model_seed=config.model_seed,
+                    timesteps=1,
+                    checkpoint_freq=0,
+                )
+                raw_split = split_loader(split_config)
+                if raw_split.X_train.shape[1] != 152 or raw_split.X_test.shape[1] != 152:
+                    raise ValueError("Canonical shuffled-label observations must have 152 columns")
+                permutation, shuffled_labels, permutation_hash = build_label_permutation(
+                    raw_split.y_train,
+                    seed=config.shuffled_label_seed,
+                )
+                scaler = StandardScaler()
+                X_train = scaler.fit_transform(raw_split.X_train).astype(np.float32)
+                X_test = scaler.transform(raw_split.X_test).astype(np.float32)
+                split_metadata = {
+                    **raw_split.metadata,
+                    "split_mode": "random",
+                    "split_seed": config.split_seed,
+                    "model_seed_applies_to_partition": False,
+                    "train_set_sha256": sha256_array(raw_split.X_train),
+                    "y_train_sha256": sha256_array(raw_split.y_train),
+                    "test_set_sha256": sha256_array(raw_split.X_test),
+                    "y_test_sha256": sha256_array(raw_split.y_test),
+                    "label_permutation_sha256": permutation_hash,
+                    "shuffled_y_train_sha256": sha256_array(shuffled_labels),
+                    "array_hash_contract": "canonical_unscaled_v1",
+                    "n_train": int(len(raw_split.y_train)),
+                    "n_test": int(len(raw_split.y_test)),
+                }
+                measurement.set_units(len(X_train) + len(X_test), "rows")
+
+            joblib.dump(scaler, run_dir / "scaler.joblib")
+            atomic_write_json(run_dir / "feature_names.json", raw_split.feature_names)
+            tensorboard_dir = run_dir / "tensorboard"
+            tensorboard_dir.mkdir(parents=True, exist_ok=True)
+
+            max_steps = min(5_000, len(X_train))
+
+            def create_environment() -> Monitor:
+                return Monitor(
+                    RLDatasetDefenderEnv(
+                        X=X_train,
+                        y=shuffled_labels,
+                        benign_label=0,
+                        attack_label=1,
+                        reward_config=REWARD_CONFIG,
+                        max_steps_per_episode=max_steps,
+                        shuffle=True,
+                    )
+                )
+
+            environment = DummyVecEnv([create_environment])
+            environment.seed(config.model_seed)
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            model = model_factory(config, environment, tensorboard_dir, device)
+            with timing.measure("training") as measurement:
+                model.learn(
+                    total_timesteps=config.timesteps,
+                    tb_log_name=config.run_id,
+                    reset_num_timesteps=False,
+                )
+                measurement.set_units(config.timesteps, "timesteps")
+            model.save(str(run_dir / "model"))
+            if not (run_dir / "model.zip").is_file():
+                raise FileNotFoundError("Shuffled-label model.save did not produce model.zip")
+
+            with timing.measure("evaluation") as measurement:
+                y_pred = batched_predict(model, X_test, config.eval_batch_size)
+                measurement.set_units(len(y_pred), "rows")
+            y_true = raw_split.y_test.astype(np.int64)
+            matrix = confusion_matrix(y_true, y_pred, labels=[0, 1])
+            tn, fp, fn, tp = (int(value) for value in matrix.ravel())
+            metrics = confusion_to_metrics(
+                tn,
+                fp,
+                fn,
+                tp,
+                reward_config=REWARD_CONFIG,
+                undefined_metric_policy="null",
+            )
+            baseline_accuracy = max(float((y_true == 0).mean()), float((y_true == 1).mean()))
+            metrics.update(
+                {
+                    "confusion_matrix": {"tn": tn, "fp": fp, "fn": fn, "tp": tp},
+                    "shuffled_accuracy": metrics["accuracy"],
+                    "baseline_accuracy": baseline_accuracy,
+                    "leakage_threshold": baseline_accuracy + 0.05,
+                    "leakage_detected": bool(
+                        metrics["accuracy"] is not None
+                        and metrics["accuracy"] > baseline_accuracy + 0.05
+                    ),
+                    "control_interpretation": "anti_leakage_only_not_model_performance",
+                }
+            )
+            atomic_write_json(run_dir / "metrics.json", metrics)
+            np.savez_compressed(run_dir / "predictions.npz", y_true=y_true, y_pred=y_pred)
+            timing.write(run_dir / "timing.json")
+            monitor.stop()
+            monitor_stopped = True
+
+            requested.update(
+                {
+                    "status": "completed",
+                    "split_metadata": split_metadata,
+                    "label_permutation_sha256": permutation_hash,
+                    "permutation_length": int(len(permutation)),
+                    "scaler_fit": "final_training_partition_only",
+                }
+            )
+            atomic_write_json(run_dir / "config.json", requested)
+
+        writer.complete()
+        return run_dir
+    except BaseException as error:
+        if monitor is not None and not monitor_stopped:
+            try:
+                monitor.stop()
+            except Exception:
+                pass
+        try:
+            timing.write(run_dir / "timing.json")
+        except Exception:
+            pass
+        writer.fail(error)
+        raise
+    finally:
+        if environment is not None:
+            environment.close()
 
 
 class ProgressCallback(BaseCallback):
@@ -427,6 +791,26 @@ def parse_args() -> argparse.Namespace:
         help="Max rows to load from dataset (overrides preset default)",
     )
     parser.add_argument(
+        "--dataset-root", type=Path, default=_REPO_ROOT / "datasets" / "CICIDS2017",
+        help="Provider-neutral CICIDS2017 dataset root",
+    )
+    parser.add_argument(
+        "--cache-root", type=Path, default=None,
+        help="Validated canonical unscaled cache root required by Check B",
+    )
+    parser.add_argument(
+        "--cache-policy", choices=["off", "prefer", "require"], default="require",
+        help="Canonical cache policy for the artifact-backed Check B control",
+    )
+    parser.add_argument(
+        "--artifact-root", type=Path, default=RUNS_DIR / "validation",
+        help="Artifact root for the independent Check B auxiliary run",
+    )
+    parser.add_argument(
+        "--run-id-b", default=None,
+        help="Physical run ID for the artifact-backed shuffled-label control",
+    )
+    parser.add_argument(
         "--timesteps-b", type=int, default=10_000,
         help="Timesteps for Check B shuffled training (default: 10000)",
     )
@@ -443,14 +827,40 @@ def parse_args() -> argparse.Namespace:
         help="CSV name patterns for testing in Check C (default: Thursday Friday)",
     )
     parser.add_argument(
-        "--seed", type=int, default=42,
-        help="Random seed (default: 42)",
+        "--split-seed", type=int, default=None,
+        help="Partition seed (default: 42)",
+    )
+    parser.add_argument(
+        "--model-seed", type=int, default=None,
+        help="Model/environment seed (default: 42)",
+    )
+    parser.add_argument(
+        "--shuffled-label-seed", type=int, default=None,
+        help="Label permutation seed for Check B (default: 42)",
+    )
+    parser.add_argument(
+        "--seed", type=int, default=None,
+        help="Legacy alias setting split, model, and shuffled-label seeds",
     )
     parser.add_argument(
         "--allow-unsafe-artifacts", action="store_true",
         help="Allow direct model paths without manifest hash verification.",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    explicit_seeds = (args.split_seed, args.model_seed, args.shuffled_label_seed)
+    if args.seed is not None and any(seed is not None for seed in explicit_seeds):
+        parser.error("--seed cannot be combined with explicit seed flags")
+    if args.seed is not None:
+        args.split_seed = args.seed
+        args.model_seed = args.seed
+        args.shuffled_label_seed = args.seed
+    else:
+        args.split_seed = 42 if args.split_seed is None else args.split_seed
+        args.model_seed = 42 if args.model_seed is None else args.model_seed
+        args.shuffled_label_seed = (
+            42 if args.shuffled_label_seed is None else args.shuffled_label_seed
+        )
+    return args
 
 
 def main() -> None:
@@ -475,7 +885,7 @@ def main() -> None:
     results: Dict[str, Dict] = {}
 
     # ── Cargar datos para Check A y B (uses unified split API) ──
-    need_ab_data = "A" in checks or "B" in checks
+    need_ab_data = "A" in checks
     X_train = y_train = X_test = y_test = None
 
     if need_ab_data:
@@ -483,10 +893,13 @@ def main() -> None:
         X_train, y_train, X_test, y_test, _, _, ab_meta = load_cicids2017_split(
             split_mode=args.split_mode,
             preset=args.preset,
-            seed=args.seed,
+            split_seed=args.split_seed,
             max_rows=args.max_rows,
             scale=True,
             use_canonical=True,
+            local_dir=args.dataset_root,
+            cache_root=args.cache_root,
+            cache_policy="off" if args.cache_root is None else args.cache_policy,
         )
         print(f"Train: {X_train.shape}, Test: {X_test.shape}")
 
@@ -510,11 +923,22 @@ def main() -> None:
 
     # ── Check B ──
     if "B" in checks:
-        results["B"] = check_b_shuffled_labels(
-            X_train, y_train, X_test, y_test,
-            timesteps=args.timesteps_b,
-            seed=args.seed,
-            device=device,
+        shuffled_run_id = args.run_id_b or f"shuffled_label_validation_{timestamp}"
+        shuffled_run_dir = run_shuffled_label_validation(
+            ShuffledLabelRunConfig(
+                artifact_root=args.artifact_root,
+                run_id=shuffled_run_id,
+                dataset_root=args.dataset_root,
+                cache_root=args.cache_root,
+                cache_policy=args.cache_policy,
+                split_seed=args.split_seed,
+                model_seed=args.model_seed,
+                shuffled_label_seed=args.shuffled_label_seed,
+                timesteps=args.timesteps_b,
+            )
+        )
+        results["B"] = json.loads(
+            (shuffled_run_dir / "metrics.json").read_text(encoding="utf-8")
         )
 
     # ── Check C ──
@@ -525,7 +949,7 @@ def main() -> None:
             timesteps=args.timesteps_c,
             max_rows=args.max_rows,
             preset=args.preset,
-            seed=args.seed,
+            seed=args.split_seed,
             device=device,
         )
 
@@ -548,7 +972,9 @@ def main() -> None:
         "timesteps_c": args.timesteps_c,
         "train_csvs_c": args.train_csvs,
         "test_csvs_c": args.test_csvs,
-        "seed": args.seed,
+        "split_seed": args.split_seed,
+        "model_seed": args.model_seed,
+        "shuffled_label_seed": args.shuffled_label_seed,
         "device": device,
         "reward_config": REWARD_CONFIG,
     }
