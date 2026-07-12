@@ -4,7 +4,7 @@ Use this order when you need project context:
 
 1. [.github/AGENT_CONTEXT.md](.github/AGENT_CONTEXT.md) — project-wide technical source of truth (invariants, anti-leakage rules, entry points, reproducibility rules)
 2. [docs/README.md](docs/README.md) — documentation map and language policy
-3. [docs/AGENT_CONTEXT.md](docs/AGENT_CONTEXT.md) — Phase 2 scope and guardrails
+3. [docs/phase 2/AGENT_CONTEXT.md](docs/phase%202/AGENT_CONTEXT.md) — Phase 2 scope and guardrails
 4. [docs/results.md](docs/results.md) — artifact-backed results snapshot
 
 Rules:
