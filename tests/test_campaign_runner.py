@@ -13,12 +13,14 @@ import pytest
 from src.campaign import (
     CampaignArtifactError,
     CampaignDependencyError,
+    CampaignExecutionError,
     CampaignPaths,
     CampaignRunner,
     CampaignSpecError,
     load_campaign_spec,
     validate_campaign_spec,
 )
+from src.campaign_export import verify_final_bundle, verify_incremental_snapshot
 from src.cicids_cache import sha256_file
 from src.run_artifacts import ArtifactManifestWriter, ArtifactRequirement, atomic_write_json
 
@@ -29,12 +31,14 @@ FRESH_MAIN_ID = "qrdqn_main_random_full_s42_m42"
 
 
 def _paths(tmp_path: Path, *, phase2_input: Path | None = None) -> CampaignPaths:
+    preflight_report = tmp_path / "preflight.json"
+    atomic_write_json(preflight_report, {"status": "synthetic-test-preflight"})
     return CampaignPaths(
         artifact_root=tmp_path / "artifacts",
         cache_root=tmp_path / "cache",
         dataset_root=tmp_path / "dataset",
         snapshot_root=tmp_path / "snapshots",
-        preflight_report=tmp_path / "preflight.json",
+        preflight_report=preflight_report,
         phase2_input=phase2_input,
         phase2_input_sha256=(
             None if phase2_input is None else sha256_file(phase2_input)
@@ -50,6 +54,22 @@ def _valid_cache(_dataset_root: Path, cache_root: Path) -> dict[str, str]:
     return {
         "validation_status": "valid",
         "manifest_sha256": sha256_file(manifest_path),
+    }
+
+
+def _accepted_preflight(_path: Path, **expected) -> dict:
+    return {
+        "schema_version": "1.0",
+        "status": "passed",
+        "report_sha256": "c" * 64,
+        "bindings": {
+            key.removeprefix("expected_"): (
+                str(Path(value).resolve()) if key.endswith("_root") else value
+            )
+            for key, value in expected.items()
+            if value is not None
+        },
+        "phase2_input": {"path": None, "sha256": None},
     }
 
 
@@ -182,6 +202,7 @@ def test_dry_run_is_side_effect_free_and_reports_exact_counts(tmp_path: Path) ->
         campaign_id="campaign-test",
         paths=paths,
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
 
     report = runner.dry_run()
@@ -206,6 +227,7 @@ def test_selection_fails_without_dependencies_and_does_not_auto_dispatch(
         paths=_paths(tmp_path),
         dispatcher=_successful_dispatch(calls, "campaign-test"),
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
 
     with pytest.raises(CampaignDependencyError, match="fresh campaign MAIN"):
@@ -230,6 +252,7 @@ def test_full_dispatch_is_strictly_sequential_and_records_two_aliases(
             phase2_input=flows,
         ),
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
 
     report = runner.execute()
@@ -242,9 +265,24 @@ def test_full_dispatch_is_strictly_sequential_and_records_two_aliases(
     )
     assert calls[-1] == "rf_holdout_ddos_m42"
     assert report["status"] == "completed"
+    assert report["final_bundle"]["status"] == "verified"
+    assert Path(report["final_bundle"]["archive_path"]).is_file()
+    assert verify_final_bundle(Path(report["final_bundle"]["archive_path"]))["status"] == "verified"
+    snapshot_dir = runner.paths.snapshot_root / "campaign-test"
+    assert verify_incremental_snapshot(snapshot_dir)["status"] == "verified"
     state = json.loads(runner.state_path.read_text(encoding="utf-8"))
     assert state["entries"]["qrdqn_ladder_full_s42_m42"]["status"] == "reused"
     assert state["entries"]["qrdqn_seed_1m_s42_m42"]["status"] == "reused"
+    assert all(
+        record["snapshot"]["status"] == "verified"
+        for record in state["entries"].values()
+    )
+    assert {
+        "campaign_spec_original.json",
+        "campaign_spec_resolved.json",
+        "preflight_report.json",
+        "cache_manifest.json",
+    } <= {path.name for path in runner.campaign_dir.iterdir()}
 
 
 def test_resume_skips_valid_completion_and_retries_failed_or_interrupted(
@@ -258,6 +296,7 @@ def test_resume_skips_valid_completion_and_retries_failed_or_interrupted(
         paths=_paths(tmp_path),
         dispatcher=_successful_dispatch(calls, campaign_id),
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
     runner.execute(logical_run_id=FRESH_MAIN_ID)
     runner.execute(logical_run_id=FRESH_MAIN_ID, resume=True)
@@ -279,6 +318,83 @@ def test_resume_skips_valid_completion_and_retries_failed_or_interrupted(
     assert runner.attempt_dir(FRESH_MAIN_ID, 3).is_dir()
 
 
+def test_real_execution_refuses_missing_preflight_before_campaign_state(
+    tmp_path: Path,
+) -> None:
+    calls: list[str] = []
+    paths = _paths(tmp_path)
+    paths.preflight_report.unlink()
+    runner = CampaignRunner(
+        load_campaign_spec(SPEC_PATH),
+        campaign_id="campaign-test",
+        paths=paths,
+        dispatcher=_successful_dispatch(calls, "campaign-test"),
+        cache_validator=_valid_cache,
+    )
+
+    with pytest.raises(CampaignDependencyError, match="preflight"):
+        runner.execute(logical_run_id=FRESH_MAIN_ID)
+
+    assert calls == []
+    assert not runner.state_path.exists()
+    assert not runner.paths.cache_root.exists()
+
+
+def test_snapshot_failure_halts_then_resume_repairs_without_rerunning(
+    tmp_path: Path,
+) -> None:
+    calls: list[str] = []
+    snapshot_calls: list[str] = []
+
+    def failing_snapshot(_campaign_dir: Path, destination: Path) -> dict:
+        snapshot_calls.append(str(destination))
+        raise RuntimeError("durable destination unavailable")
+
+    runner = CampaignRunner(
+        load_campaign_spec(SPEC_PATH),
+        campaign_id="campaign-test",
+        paths=_paths(tmp_path),
+        dispatcher=_successful_dispatch(calls, "campaign-test"),
+        cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
+        snapshot_exporter=failing_snapshot,
+    )
+
+    with pytest.raises(CampaignExecutionError, match="snapshot"):
+        runner.execute(logical_run_id=FRESH_MAIN_ID)
+
+    state = json.loads(runner.state_path.read_text(encoding="utf-8"))
+    assert state["entries"][FRESH_MAIN_ID]["status"] == "snapshot-failed"
+    assert state["entries"][FRESH_MAIN_ID]["attempts"][-1]["status"] == "completed"
+    assert calls == [FRESH_MAIN_ID]
+
+    def successful_snapshot(_campaign_dir: Path, destination: Path) -> dict:
+        snapshot_calls.append(str(destination))
+        return {
+            "status": "verified",
+            "files": ["campaign_state.json"],
+            "snapshot_manifest_sha256": "a" * 64,
+        }
+
+    resumed = CampaignRunner(
+        load_campaign_spec(SPEC_PATH),
+        campaign_id="campaign-test",
+        paths=runner.paths,
+        dispatcher=_successful_dispatch(calls, "campaign-test"),
+        cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
+        snapshot_exporter=successful_snapshot,
+    )
+    result = resumed.execute(logical_run_id=FRESH_MAIN_ID, resume=True)
+
+    assert result["status"] == "selection_completed"
+    assert calls == [FRESH_MAIN_ID]
+    assert len(snapshot_calls) == 2
+    state = json.loads(resumed.state_path.read_text(encoding="utf-8"))
+    assert state["entries"][FRESH_MAIN_ID]["status"] == "completed"
+    assert state["entries"][FRESH_MAIN_ID]["snapshot"]["status"] == "verified"
+
+
 def test_invalid_completed_artifact_halts_before_next_dispatch(tmp_path: Path) -> None:
     calls: list[str] = []
     campaign_id = "campaign-test"
@@ -295,6 +411,7 @@ def test_invalid_completed_artifact_halts_before_next_dispatch(tmp_path: Path) -
         paths=_paths(tmp_path),
         dispatcher=corrupt_main,
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
 
     with pytest.raises(CampaignArtifactError, match="invalid"):
@@ -323,6 +440,7 @@ def test_primary_artifact_with_scientific_config_drift_is_invalid(tmp_path: Path
         paths=_paths(tmp_path),
         dispatcher=wrong_seed,
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
 
     with pytest.raises(CampaignArtifactError, match="scientific config"):
@@ -338,6 +456,7 @@ def test_fresh_main_gate_rejects_historical_or_foreign_manifest(tmp_path: Path) 
         paths=_paths(tmp_path),
         dispatcher=_successful_dispatch(calls, campaign_id),
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
     runner.execute(logical_run_id=FRESH_MAIN_ID)
     manifest_path = runner.attempt_dir(FRESH_MAIN_ID, 1) / "artifact_manifest.json"
@@ -360,6 +479,7 @@ def test_phase2_requires_matching_validated_input_hash(tmp_path: Path) -> None:
         paths=_paths(tmp_path),
         dispatcher=_successful_dispatch(calls, campaign_id),
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
     runner.execute(logical_run_id=FRESH_MAIN_ID)
 
@@ -377,6 +497,7 @@ def test_auxiliary_artifact_must_bind_to_fresh_main_manifest(tmp_path: Path) -> 
         paths=paths,
         dispatcher=_successful_dispatch(calls, campaign_id),
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
     runner.execute(logical_run_id=FRESH_MAIN_ID)
 
@@ -396,6 +517,7 @@ def test_auxiliary_artifact_must_bind_to_fresh_main_manifest(tmp_path: Path) -> 
         paths=paths,
         dispatcher=foreign_source,
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
     with pytest.raises(CampaignArtifactError, match="fresh campaign MAIN"):
         resumed.execute(logical_run_id="main_direct_validation", resume=True)
@@ -604,6 +726,7 @@ def test_spec_and_commands_use_provider_neutral_paths(tmp_path: Path) -> None:
         campaign_id="campaign-test",
         paths=_paths(tmp_path),
         cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
     )
     command = runner.command_for(FRESH_MAIN_ID, attempt=1)
     assert str(tmp_path) in " ".join(command)
