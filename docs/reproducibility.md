@@ -10,12 +10,15 @@ runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/envi
 
 Recorded runtime:
 
+*Note: can be subject to change*
 | Component | Version / value |
-|-----------|-----------------|
+|---|---|
 | Python | 3.12.11 |
 | Platform | Linux x86_64 |
-| Device | CUDA, NVIDIA GeForce RTX 3090 Ti |
-| torch | 2.12.1+cu130 |
+| CPU | AMD EPYC 9005 (i think) - confirmation pending |
+| Memory | 128GB DDR5 RAM |
+| GPU | CUDA, NVIDIA GeForce RTX 3090 Ti -> RTX 6000 BlackWell Pro |
+| torch | 2.12.1+cu130 (may be changed) |
 | CUDA reported by torch | 13.0 |
 | numpy | 2.4.6 |
 | pandas | 3.0.3 |
