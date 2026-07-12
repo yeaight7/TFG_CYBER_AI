@@ -1,4 +1,4 @@
-# AGENT_CONTEXT — TFG_CYBER_AI
+# AGENT_CONTEXT — TFG_CYBER_AI (could be obsolete or misaligned with new project direction)
 
 This file is the project-wide technical source of truth for contributors and coding agents.
 
@@ -101,7 +101,7 @@ Impact of this change: current defaults unchanged (`train_max_rows=None` reprodu
 Two versions of the CICIDS2017 data exist locally:
 
 | Version | Path | Tracked in git | Description |
-|---------|------|----------------|-------------|
+|---|---|---|---|
 | Curated | `datasets/CICIDS2017/*.csv` | Yes | Leakage-prone and redundant columns removed as a pre-ingestion step. This is what the adapter loads. |
 | Raw | `datasets/CICIDS2017/Raw_dataset/` | No (gitignored) | Original, unmodified CICFlowMeter CSV exports. All original columns preserved. Kept locally for reference and reproducibility. |
 
@@ -119,7 +119,7 @@ This dataset is kept for historical Phase 1 benchmarking.
 ## Main Code Entry Points
 
 | Purpose | File |
-|---------|------|
+|---|---|
 | Canonical schema | `src/canonical_schema.py` |
 | CICIDS2017 adapter | `src/load_cicids2017.py` |
 | NSL-KDD adapter | `src/load_nsl_kdd.py` |
@@ -170,7 +170,7 @@ Documentation must distinguish between:
 ### Validation Workflows
 
 | Validation | Status | Notes |
-|------------|--------|-------|
+|---|---|---|
 | Check A | Implemented | direct prediction vs `y_test` |
 | Check B | Implemented | shuffled-label anti-leakage |
 | Check C | Implemented | hard CSV/day split |
