@@ -1,3 +1,5 @@
+import pytest
+
 from src.metrics_utils import confusion_to_metrics
 
 
@@ -23,9 +25,45 @@ def test_perfect_classifier():
 
 def test_zero_division_is_safe():
     m = confusion_to_metrics(0, 0, 0, 0)
-    assert m["accuracy"] == 0.0
-    assert m["mcc"] == 0.0
-    assert m["precision_attack"] == 0.0
+    rate_keys = (
+        "accuracy",
+        "balanced_accuracy",
+        "mcc",
+        "precision_attack",
+        "recall_attack",
+        "f1_attack",
+        "precision_benign",
+        "recall_benign",
+        "f1_benign",
+        "specificity",
+        "fpr",
+        "fnr",
+        "block_rate",
+    )
+    assert all(m[key] == 0.0 for key in rate_keys)
+
+
+def test_nullable_policy_preserves_undefined_metrics_as_none():
+    m = confusion_to_metrics(10, 0, 0, 0, undefined_metric_policy="null")
+
+    assert m["accuracy"] == 1.0
+    assert m["precision_attack"] is None
+    assert m["recall_attack"] is None
+    assert m["f1_attack"] is None
+    assert m["balanced_accuracy"] is None
+    assert m["mcc"] is None
+    assert m["fnr"] is None
+    assert m["precision_benign"] == 1.0
+    assert m["recall_benign"] == 1.0
+    assert m["fpr"] == 0.0
+
+    empty = confusion_to_metrics(0, 0, 0, 0, undefined_metric_policy="null")
+    assert all(empty[key] is None for key in empty if key not in {"tp", "tn", "fp", "fn"})
+
+
+def test_nullable_policy_rejects_unknown_value():
+    with pytest.raises(ValueError, match="undefined_metric_policy"):
+        confusion_to_metrics(1, 0, 0, 1, undefined_metric_policy="missing")
 
 
 def test_reward_total_matches_cost_matrix():

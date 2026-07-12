@@ -607,7 +607,11 @@ def _sha256_of_array(arr: np.ndarray) -> str:
     return h.hexdigest()
 
 
-def _stratified_nested_prefix_indices(y_train: np.ndarray, n: int, seed: int) -> np.ndarray:
+def _stratified_nested_prefix_indices(
+    y_train: np.ndarray,
+    n: int,
+    split_seed: int,
+) -> np.ndarray:
     """
     Deterministic, stratified, *nested* train subsample indices.
 
@@ -634,7 +638,7 @@ def _stratified_nested_prefix_indices(y_train: np.ndarray, n: int, seed: int) ->
     n_attack = min(max(n_attack, n - len(benign_idx)), len(attack_idx), n)
     n_benign = n - n_attack
 
-    rng = np.random.default_rng(seed)
+    rng = np.random.default_rng(split_seed)
     benign_perm = rng.permutation(benign_idx)
     attack_perm = rng.permutation(attack_idx)
 
@@ -645,7 +649,7 @@ def _stratified_nested_prefix_indices(y_train: np.ndarray, n: int, seed: int) ->
 def load_cicids2017_split(
     split_mode: str = "random",
     preset: str = "fast",
-    seed: int = 42,
+    seed: Optional[int] = None,
     max_rows: Optional[int] = None,
     train_max_rows: Optional[int] = None,
     train_days: Optional[List[str]] = None,
@@ -653,6 +657,7 @@ def load_cicids2017_split(
     scale: bool = True,
     use_canonical: bool = True,
     allow_non_official_csvs: bool = False,
+    split_seed: Optional[int] = None,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str], Dict[str, Any]]:
     """
     Unified CICIDS2017 loader with split-mode and preset support.
@@ -665,8 +670,11 @@ def load_cicids2017_split(
     preset : ``"fast"`` | ``"full"``
         ``"fast"`` — lightweight defaults (capped rows) for quick iteration.
         ``"full"`` — load all available rows for the chosen split.
-    seed : int
-        Random seed for reproducibility.
+    seed : int or None
+        Legacy alias for ``split_seed``. Cannot be combined with it.
+    split_seed : int or None
+        Seed used exclusively for the random partition and nested train subset.
+        Defaults to 42 when neither seed argument is supplied.
     max_rows : int or None
         Explicit cap on rows loaded.  When *None*, the preset default is used.
     train_max_rows : int or None
@@ -699,6 +707,13 @@ def load_cicids2017_split(
         raise ValueError(f"split_mode must be 'random' or 'day', got '{split_mode}'")
     if preset not in ("fast", "full"):
         raise ValueError(f"preset must be 'fast' or 'full', got '{preset}'")
+    if seed is not None and split_seed is not None:
+        raise ValueError("seed and split_seed cannot be combined")
+
+    resolved_split_seed = 42 if seed is None and split_seed is None else (
+        seed if seed is not None else split_seed
+    )
+    assert resolved_split_seed is not None
 
     # Resolve effective max_rows
     effective_max_rows = max_rows if max_rows is not None else _PRESET_MAX_ROWS[preset][split_mode]
@@ -712,10 +727,10 @@ def load_cicids2017_split(
     cfg = CICIDSLoadConfig(
         max_rows=effective_max_rows,
         use_canonical=use_canonical,
-        # Scaling is deferred when subsampling: the scaler must be fit on the
-        # subsampled train partition, not on the full one.
-        scale=(scale and train_max_rows is None),
-        random_state=seed,
+        # Unified loader hashes canonical arrays before any scaling, then fits
+        # one scaler on the final selected train partition below.
+        scale=False,
+        random_state=resolved_split_seed,
         allow_non_official_csvs=allow_non_official_csvs,
     )
 
@@ -749,31 +764,41 @@ def load_cicids2017_split(
     n_train_full = int(len(y_train))
     subsample_method: Optional[str] = None
     if train_max_rows is not None:
-        sel = _stratified_nested_prefix_indices(y_train, train_max_rows, seed)
+        sel = _stratified_nested_prefix_indices(y_train, train_max_rows, resolved_split_seed)
         X_train = X_train[sel]
         y_train = y_train[sel]
         subsample_method = SUBSAMPLE_METHOD_STRATIFIED_NESTED_PREFIX
-        if scale:
-            scaler = StandardScaler()
-            X_train = scaler.fit_transform(X_train).astype(np.float32)
-            X_test = scaler.transform(X_test).astype(np.float32)
+
+    raw_train_hash = _sha256_of_array(X_train)
+    raw_test_hash = _sha256_of_array(X_test)
+    train_label_hash = _sha256_of_array(y_train)
+    test_label_hash = _sha256_of_array(y_test)
+
+    if scale:
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(X_train).astype(np.float32)
+        X_test = scaler.transform(X_test).astype(np.float32)
 
     # Build metadata dict (JSON-safe)
     metadata: Dict[str, Any] = {
         "split_mode": split_mode,
         "preset": preset,
-        "seed": seed,
+        "seed": resolved_split_seed,
+        "split_seed": resolved_split_seed,
         "max_rows": effective_max_rows,
         "train_max_rows": train_max_rows,
         "n_train_full": n_train_full,
         "subsample_method": subsample_method,
         "scale": bool(scale),
+        "array_hash_contract": (
+            "canonical_unscaled_v1" if use_canonical else "unscaled_noncanonical_v1"
+        ),
         "allow_non_official_csvs": bool(allow_non_official_csvs),
         "csv_selection_policy": "legacy_all_csvs" if allow_non_official_csvs else "official_cicids2017_8_csvs",
-        "test_set_sha256": _sha256_of_array(X_test),
-        "y_test_sha256": _sha256_of_array(y_test),
-        "train_set_sha256": _sha256_of_array(X_train),
-        "y_train_sha256": _sha256_of_array(y_train),
+        "test_set_sha256": raw_test_hash,
+        "y_test_sha256": test_label_hash,
+        "train_set_sha256": raw_train_hash,
+        "y_train_sha256": train_label_hash,
         "n_train": int(len(y_train)),
         "n_test": int(len(y_test)),
         "train_benign": int((y_train == 0).sum()),

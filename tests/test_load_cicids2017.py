@@ -1,8 +1,10 @@
+import random
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
+import torch
 from sklearn.preprocessing import StandardScaler
 
 import src.load_cicids2017 as lc
@@ -62,7 +64,7 @@ def _split(**kwargs):
     defaults = dict(
         split_mode="random",
         preset="full",
-        seed=42,
+        split_seed=42,
         scale=False,
         use_canonical=True,
         allow_non_official_csvs=True,
@@ -121,7 +123,7 @@ def test_nested_prefix_indices_nested_and_stratified():
 
     prev: set = set()
     for n in (1000, 2000, 5000):
-        idx = _stratified_nested_prefix_indices(y, n, seed=42)
+        idx = _stratified_nested_prefix_indices(y, n, split_seed=42)
         assert len(idx) == n
         assert len(np.unique(idx)) == n
         assert np.all(np.diff(idx) > 0)  # sorted ascending
@@ -134,9 +136,9 @@ def test_nested_prefix_indices_nested_and_stratified():
 
 def test_nested_prefix_indices_deterministic():
     y = np.array([0] * 800 + [1] * 200, dtype=np.int64)
-    a = _stratified_nested_prefix_indices(y, 100, seed=42)
-    b = _stratified_nested_prefix_indices(y, 100, seed=42)
-    c = _stratified_nested_prefix_indices(y, 100, seed=43)
+    a = _stratified_nested_prefix_indices(y, 100, split_seed=42)
+    b = _stratified_nested_prefix_indices(y, 100, split_seed=42)
+    c = _stratified_nested_prefix_indices(y, 100, split_seed=43)
     np.testing.assert_array_equal(a, b)
     assert not np.array_equal(a, c)
 
@@ -171,6 +173,8 @@ def test_metadata_new_keys(patched_loader):
     assert meta["n_train_full"] == 1600
     assert meta["subsample_method"] == SUBSAMPLE_METHOD_STRATIFIED_NESTED_PREFIX
     assert meta["scale"] is False
+    assert meta["split_seed"] == 42
+    assert meta["array_hash_contract"] == "canonical_unscaled_v1"
     for key in ("test_set_sha256", "y_test_sha256", "train_set_sha256", "y_train_sha256"):
         assert isinstance(meta[key], str) and len(meta[key]) == 64
 
@@ -181,7 +185,7 @@ def test_metadata_new_keys(patched_loader):
 
 
 def test_scale_true_refits_on_subsample(patched_loader):
-    X_tr_raw, _, X_te_raw, _, _, _, _ = _split(train_max_rows=800)
+    X_tr_raw, _, X_te_raw, _, _, _, meta_raw = _split(train_max_rows=800)
     X_tr_sc, _, X_te_sc, _, scaler, _, meta = _split(train_max_rows=800, scale=True)
 
     assert meta["scale"] is True
@@ -189,6 +193,44 @@ def test_scale_true_refits_on_subsample(patched_loader):
     np.testing.assert_allclose(scaler.mean_, manual.mean_)
     np.testing.assert_allclose(scaler.scale_, manual.scale_)
     np.testing.assert_allclose(X_te_sc, manual.transform(X_te_raw).astype(np.float32), rtol=1e-5)
+    assert meta["train_set_sha256"] == meta_raw["train_set_sha256"]
+    assert meta["test_set_sha256"] == meta_raw["test_set_sha256"]
+    assert meta["y_train_sha256"] == meta_raw["y_train_sha256"]
+    assert meta["y_test_sha256"] == meta_raw["y_test_sha256"]
+
+
+def test_split_seed_controls_partition_and_raw_hashes(patched_loader):
+    *_, meta_42_a = _split(split_seed=42)
+    *_, meta_42_b = _split(split_seed=42)
+    *_, meta_43 = _split(split_seed=43)
+
+    assert meta_42_a["train_set_sha256"] == meta_42_b["train_set_sha256"]
+    assert meta_42_a["test_set_sha256"] == meta_42_b["test_set_sha256"]
+    assert meta_42_a["train_set_sha256"] != meta_43["train_set_sha256"]
+    assert meta_42_a["test_set_sha256"] != meta_43["test_set_sha256"]
+
+
+def test_model_seed_changes_leave_raw_partition_hashes_unchanged(patched_loader):
+    random.seed(42)
+    np.random.seed(42)
+    torch.manual_seed(42)
+    *_, meta_model_42 = _split(split_seed=7)
+
+    random.seed(43)
+    np.random.seed(43)
+    torch.manual_seed(43)
+    *_, meta_model_43 = _split(split_seed=7)
+
+    for key in ("train_set_sha256", "test_set_sha256", "y_train_sha256", "y_test_sha256"):
+        assert meta_model_42[key] == meta_model_43[key]
+
+
+def test_legacy_loader_seed_alias_and_conflict(patched_loader):
+    *_, legacy_meta = _split(split_seed=None, seed=9)
+    assert legacy_meta["split_seed"] == 9
+
+    with pytest.raises(ValueError, match="seed and split_seed cannot be combined"):
+        _split(seed=9, split_seed=9)
 
 
 def test_sha256_of_array_stable():
