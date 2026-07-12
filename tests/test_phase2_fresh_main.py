@@ -7,12 +7,12 @@ import pandas as pd
 
 from scripts.predict_real_traffic_v2 import run_phase2_inference
 from src.artifact_integrity import sha256_file, verify_artifact_manifest
-from tests.conftest import FakeQRDQN
 
 
 def test_phase2_inference_records_fresh_main_and_input_provenance(
     tmp_path: Path,
     fresh_main_run: Path,
+    fake_model_factory,
 ):
     flows_path = tmp_path / "synthetic_flows.csv"
     pd.DataFrame(
@@ -30,12 +30,18 @@ def test_phase2_inference_records_fresh_main_and_input_provenance(
         output_dir=output_dir,
         clip_z=10.0,
         monitor_interval=0.01,
-        model_loader=lambda _path: (FakeQRDQN(output_dir / "unused"), "FakeQRDQN"),
+        model_loader=lambda _path: (
+            fake_model_factory(None, None, output_dir / "unused", "cpu"),
+            "FakeQRDQN",
+        ),
     )
 
     assert verify_artifact_manifest(output_dir)["status"] == "completed"
     config = json.loads((output_dir / "config.json").read_text(encoding="utf-8"))
+    source_manifest_sha256 = sha256_file(fresh_main_run / "artifact_manifest.json")
     assert config["source_run_id"] == fresh_main_run.name
+    assert config["source_manifest_sha256"] == source_manifest_sha256
+    assert config["source_artifact_sha256"]["manifest"] == source_manifest_sha256
     assert config["input"]["sha256"] == sha256_file(flows_path)
     assert config["input"]["filename"] == flows_path.name
     assert config["input"]["size_bytes"] == flows_path.stat().st_size
