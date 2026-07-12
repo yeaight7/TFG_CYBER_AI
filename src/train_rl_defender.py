@@ -19,9 +19,10 @@ import platform
 import random
 import shutil
 import sys
+from dataclasses import dataclass
 from importlib import metadata
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Sequence
 from datetime import datetime
 
 import joblib
@@ -40,6 +41,7 @@ from load_cicids2017 import (
     load_cicids2017_split,
 )
 from artifact_integrity import build_file_artifacts
+from experiment_profiles import MAIN_V1_PROFILE
 
 from canonical_schema import FEATURES_CANON
 _N_CANON = len(FEATURES_CANON)
@@ -58,12 +60,41 @@ RUNS_DIR = _REPO_ROOT / "runs"
 # --------------------------------------------------------------------------------------
 # Configuración de recompensa para el agente defensor
 # --------------------------------------------------------------------------------------
-REWARD_CONFIG: Dict[str, float] = {
-    "tp": 1.5,
-    "fp": -2.0,
-    "fn": -5.0,
-    "omission": 0.0,
-}
+REWARD_CONFIG: Dict[str, float] = MAIN_V1_PROFILE.reward_config()
+
+
+@dataclass(frozen=True)
+class ResolvedSeeds:
+    split_seed: int
+    model_seed: int
+    legacy_seed_used: bool
+
+
+def resolve_seeds(
+    *,
+    seed: int | None,
+    split_seed: int | None,
+    model_seed: int | None,
+) -> ResolvedSeeds:
+    """Resolve explicit seed ownership while preserving controlled ``--seed`` use."""
+    if seed is not None and (split_seed is not None or model_seed is not None):
+        raise ValueError("--seed cannot be combined with --split-seed or --model-seed")
+    if seed is not None:
+        return ResolvedSeeds(seed, seed, True)
+    return ResolvedSeeds(
+        split_seed=42 if split_seed is None else split_seed,
+        model_seed=42 if model_seed is None else model_seed,
+        legacy_seed_used=False,
+    )
+
+
+def seed_model_rngs(model_seed: int) -> None:
+    """Seed RNGs owned by model training; dataset partitioning is excluded."""
+    random.seed(model_seed)
+    np.random.seed(model_seed)
+    torch.manual_seed(model_seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(model_seed)
 
 
 def resolve_total_timesteps(args: argparse.Namespace, is_fast: bool) -> int:
@@ -80,27 +111,7 @@ def resolve_training_hyperparams(
     total_timesteps: int,
 ) -> Dict[str, Any]:
     if training_profile == "main-experiment":
-        policy_kwargs = {
-            "net_arch": [1024, 1024, 512],
-            "n_quantiles": 200,
-        }
-        return {
-            "policy": "MlpPolicy",
-            "policy_kwargs": policy_kwargs,
-            "learning_rate": 5e-5,
-            "buffer_size": 1_000_000,
-            "learning_starts": 50_000,
-            "batch_size": 2048,
-            "gamma": 0.0,
-            "tau": 1.0,
-            "train_freq": 100,
-            "gradient_steps": 20,
-            "target_update_interval": 10_000,
-            "exploration_initial_eps": 1.0,
-            "exploration_final_eps": 0.02,
-            "exploration_fraction": 0.10,
-            "max_grad_norm": 10.0,
-        }
+        return MAIN_V1_PROFILE.qrdqn_hyperparams()
 
     policy_kwargs = {
         "net_arch": [512, 256],
@@ -259,7 +270,7 @@ def evaluate_model(
     return metrics
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train RL Defender on CICIDS2017")
     parser.add_argument(
         "--smoke", action="store_true",
@@ -305,8 +316,19 @@ def parse_args() -> argparse.Namespace:
         help="Disable canonical schema + missingness mask (use raw features)",
     )
     parser.add_argument(
-        "--seed", type=int, default=42,
-        help="Random seed for reproducibility (default: 42)",
+        "--seed", type=int, default=None,
+        help=(
+            "Legacy compatibility alias: sets both --split-seed and --model-seed. "
+            "Cannot be mixed with either explicit seed flag."
+        ),
+    )
+    parser.add_argument(
+        "--split-seed", type=int, default=None,
+        help="Seed for random partitioning and nested train subsets. Default: 42",
+    )
+    parser.add_argument(
+        "--model-seed", type=int, default=None,
+        help="Seed for Python/NumPy/PyTorch/SB3/model/environment RNG. Default: 42",
     )
     parser.add_argument(
         "--training-profile",
@@ -351,7 +373,19 @@ def parse_args() -> argparse.Namespace:
         default=8192,
         help="Batch size for deterministic test-set evaluation. Default: 8192",
     )
-    return parser.parse_args()
+    args = parser.parse_args(argv)
+    try:
+        seeds = resolve_seeds(
+            seed=args.seed,
+            split_seed=args.split_seed,
+            model_seed=args.model_seed,
+        )
+    except ValueError as exc:
+        parser.error(str(exc))
+    args.split_seed = seeds.split_seed
+    args.model_seed = seeds.model_seed
+    args.legacy_seed_used = seeds.legacy_seed_used
+    return args
 
 
 def main() -> None:
@@ -361,23 +395,19 @@ def main() -> None:
     preset = "fast" if args.smoke else args.preset
     is_fast = preset == "fast"
     training_profile = args.training_profile
+    experiment_profile = MAIN_V1_PROFILE if training_profile == "main-experiment" else None
 
     # ── Smoke / fast vs full defaults ──
     total_timesteps = resolve_total_timesteps(args, is_fast)
 
     use_canonical = not args.no_canonical
-    seed = args.seed
+    split_seed = args.split_seed
+    model_seed = args.model_seed
     split_mode = args.split_mode
 
-    # ── Semillas globales al inicio de la ejecución (reproducibilidad,
-    #    cf. diseno_sistema.tex). La partición usa su propio random_state, así que
-    #    esto NO altera el split fijo seed-42; fija la inicialización de la red,
-    #    el muestreo del buffer de repetición y la política de exploración. ──
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
+    # Model-owned RNGs do not participate in data selection. The loader below
+    # receives only split_seed; SB3 and the environment receive only model_seed.
+    seed_model_rngs(model_seed)
     hyperparams = resolve_training_hyperparams(
         training_profile=training_profile,
         is_fast=is_fast,
@@ -424,7 +454,15 @@ def main() -> None:
     print(f"  Experimento: {RUN_ID}")
     print(f"  Preset: {preset.upper()}")
     print(f"  Training profile: {training_profile}")
+    print(
+        "  Scientific profile: "
+        f"{experiment_profile.profile_id if experiment_profile is not None else '(legacy default)'}"
+    )
+    if experiment_profile is not None:
+        print(f"  Profile hash: {experiment_profile.content_hash}")
     print(f"  Split mode: {split_mode}")
+    print(f"  Split seed: {split_seed}")
+    print(f"  Model seed: {model_seed}")
     print(f"  Max rows: {args.max_rows or '(preset default)'}")
     print(f"  Train max rows: {args.train_max_rows or '(full train partition)'}")
     print(f"  Timesteps: {total_timesteps}")
@@ -455,7 +493,7 @@ def main() -> None:
     X_train, y_train, X_test, y_test, _scaler_unused, feature_names, split_meta = load_cicids2017_split(
         split_mode=split_mode,
         preset=preset,
-        seed=seed,
+        split_seed=split_seed,
         max_rows=args.max_rows,
         train_max_rows=args.train_max_rows,
         train_days=args.train_days,
@@ -499,6 +537,8 @@ def main() -> None:
         "algorithm": "QRDQN",
         "policy": hyperparams["policy"],
         "training_profile": training_profile,
+        "profile_id": experiment_profile.profile_id if experiment_profile is not None else None,
+        "profile_hash": experiment_profile.content_hash if experiment_profile is not None else None,
         "dataset": "CICIDS2017",
         "split_mode": split_mode,
         "preset": preset,
@@ -506,7 +546,12 @@ def main() -> None:
         "max_rows": split_meta["max_rows"],
         "train_max_rows": args.train_max_rows,
         "total_timesteps": total_timesteps,
-        "seed": seed,
+        # A single legacy value is valid only when both owned seeds agree.
+        # New code must consume the two explicit fields below.
+        "seed": split_seed if split_seed == model_seed else None,
+        "split_seed": split_seed,
+        "model_seed": model_seed,
+        "legacy_seed_used": args.legacy_seed_used,
         "reward_config": REWARD_CONFIG,
         "train_shape": list(X_train.shape),
         "test_shape": list(X_test.shape),
@@ -601,13 +646,13 @@ def main() -> None:
     # ------------------------------------------------------------------
     # 3) Definir modelo QRDQN
     # ------------------------------------------------------------------
-    vec_env.seed(seed)
+    vec_env.seed(model_seed)
     model_policy_kwargs = copy.deepcopy(hyperparams["policy_kwargs"])
 
     model = QRDQN(
         hyperparams["policy"],
         vec_env,
-        seed=seed,
+        seed=model_seed,
         policy_kwargs=model_policy_kwargs,
         learning_rate=hyperparams["learning_rate"],
         buffer_size=hyperparams["buffer_size"],
