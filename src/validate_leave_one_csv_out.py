@@ -1,54 +1,52 @@
-"""
-validate_leave_one_csv_out.py — Validación leave-one-CSV-out para CICIDS2017.
+"""Locked four-file targeted QRDQN holdout workflow for CICIDS2017.
 
-Entrena QRDQN una vez por fold, dejando exactamente un CSV real como test y
-usando el resto de CSVs para train. Los resultados se guardan agregados en
-``runs/validation/VAL_leave_one_csv_out_<timestamp>/``.
-
-Uso:
-    python src/validate_leave_one_csv_out.py
-    python src/validate_leave_one_csv_out.py --timesteps 30000
-    python src/validate_leave_one_csv_out.py --holdout-csvs Friday-WorkingHours-Morning.pcap_ISCX.csv
-    python src/validate_leave_one_csv_out.py --timesteps 5000 --max-rows-per-csv 10000
+The legacy filename remains for compatibility, but this module is not an
+exhaustive leave-one-CSV-out runner. Omitting ``--holdout-csvs`` selects only
+the four targeted campaign holdouts.
 """
+
 from __future__ import annotations
 
 import argparse
 import json
-import time
-from datetime import datetime
+import sys
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Sequence, Tuple
+from typing import Any, Callable, Sequence
 
-import numpy as np
-import torch
-from sklearn.metrics import classification_report, confusion_matrix
+if __package__ in {None, ""}:  # pragma: no cover - direct script execution
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from sb3_contrib import QRDQN
-from stable_baselines3.common.monitor import Monitor
-from stable_baselines3.common.vec_env import DummyVecEnv
+try:
+    from src.artifact_integrity import verify_artifact_manifest
+    from src.load_cicids2017 import list_cicids2017_csv_files
+    from src.metrics_utils import confusion_to_metrics
+    from src.qrdqn_experiment import QRDQNRunConfig, run_qrdqn_experiment
+    from src.run_artifacts import atomic_write_json
+except ModuleNotFoundError:  # pragma: no cover - direct ``python src/...`` execution
+    from artifact_integrity import verify_artifact_manifest
+    from load_cicids2017 import list_cicids2017_csv_files
+    from metrics_utils import confusion_to_metrics
+    from qrdqn_experiment import QRDQNRunConfig, run_qrdqn_experiment
+    from run_artifacts import atomic_write_json
 
-from load_cicids2017 import (
-    CICIDSLoadConfig,
-    list_cicids2017_csv_files,
-    load_cicids2017_exact_csv_split,
-)
-from rl_defender_env import RLDatasetDefenderEnv
 
-
-_REPO_ROOT = Path(__file__).resolve().parent.parent
-RUNS_DIR = _REPO_ROOT / "runs"
-
-REWARD_CONFIG: Dict[str, float] = {
-    "tp": 1.5,
-    "fp": -2.0,
-    "fn": -5.0,
-    "omission": 0.0,
+TARGETED_QRDQN_HOLDOUTS = {
+    "qrdqn_holdout_webattacks_m42":
+        "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+    "qrdqn_holdout_infilteration_m42":
+        "Thursday-WorkingHours-Afternoon-Infilteration.pcap_ISCX.csv",
+    "qrdqn_holdout_portscan_m42":
+        "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv",
+    "qrdqn_holdout_ddos_m42":
+        "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv",
 }
 
-SUMMARY_METRICS: Tuple[str, ...] = (
+_TARGETED_FILENAMES = tuple(TARGETED_QRDQN_HOLDOUTS.values())
+_MACRO_METRICS = (
     "accuracy",
     "balanced_accuracy",
+    "mcc",
     "precision_attack",
     "recall_attack",
     "f1_attack",
@@ -61,407 +59,229 @@ SUMMARY_METRICS: Tuple[str, ...] = (
     "block_rate",
     "reward_total",
     "reward_per_sample",
-    "training_time_sec",
-    "evaluation_time_sec",
-    "total_time_sec",
 )
 
 
-def _safe_div(numerator: float, denominator: float) -> float:
-    return float(numerator / denominator) if denominator else 0.0
+@dataclass(frozen=True)
+class TargetedHoldoutWorkflowConfig:
+    artifact_root: Path
+    dataset_root: Path
+    cache_root: Path
+    holdout_csvs: tuple[str, ...] | None = None
+    profile_id: str = "main-v1"
+    timesteps: int = 1_000_000
+    split_seed: int = 42
+    model_seed: int = 42
+    cache_policy: str = "require"
+    resume: bool = False
+    checkpoint_freq: int | None = None
+    checkpoint_keep: int = 2
+    monitor_interval: float = 30.0
+    eval_batch_size: int = 8_192
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "artifact_root", Path(self.artifact_root))
+        object.__setattr__(self, "dataset_root", Path(self.dataset_root))
+        object.__setattr__(self, "cache_root", Path(self.cache_root))
+        if self.profile_id != "main-v1":
+            raise ValueError("Targeted holdouts require profile 'main-v1'")
+        if self.model_seed != 42:
+            raise ValueError("The locked targeted holdout study requires model_seed=42")
+        if self.timesteps <= 0:
+            raise ValueError("timesteps must be greater than zero")
+        selected = self.holdout_csvs or _TARGETED_FILENAMES
+        if len(selected) != len(set(selected)):
+            raise ValueError("duplicate targeted holdout filename")
+        unknown = [name for name in selected if name not in _TARGETED_FILENAMES]
+        if unknown:
+            raise ValueError(f"Unknown targeted holdout filename: {unknown}")
+
+    @property
+    def summary_path(self) -> Path:
+        return self.artifact_root / "qrdqn_targeted_holdouts_summary.json"
 
 
-def make_env_fn(
-    X: np.ndarray,
-    y: np.ndarray,
-    reward_config: Dict[str, float],
-    max_steps: int,
-):
-    """Devuelve una función creadora de entornos para DummyVecEnv."""
-
-    def _init():
-        env = RLDatasetDefenderEnv(
-            X=X,
-            y=y,
-            benign_label=0,
-            attack_label=1,
-            reward_config=reward_config,
-            max_steps_per_episode=max_steps,
-            shuffle=True,
-        )
-        return Monitor(env)
-
-    return _init
+HoldoutExecutor = Callable[[QRDQNRunConfig], Path]
 
 
-def _compute_reward_total(tp: int, fp: int, fn: int, tn: int, reward_config: Dict[str, float]) -> float:
-    return float(
-        tp * reward_config["tp"]
-        + fp * reward_config["fp"]
-        + fn * reward_config["fn"]
-        + tn * reward_config.get("omission", 0.0)
-    )
+def resolve_targeted_holdouts(
+    requested_csvs: Sequence[str] | None,
+    available_csvs: Sequence[str],
+) -> list[str]:
+    """Resolve an exact subset of the locked four holdouts, never all eight."""
+    requested = list(_TARGETED_FILENAMES if requested_csvs is None else requested_csvs)
+    if len(requested) != len(set(requested)):
+        raise ValueError("duplicate targeted holdout filename")
 
-
-def _metrics_from_confusion(
-    tn: int,
-    fp: int,
-    fn: int,
-    tp: int,
-    reward_config: Dict[str, float],
-) -> Dict[str, float]:
-    total = tn + fp + fn + tp
-
-    precision_attack = _safe_div(tp, tp + fp)
-    recall_attack = _safe_div(tp, tp + fn)
-    f1_attack = _safe_div(2 * precision_attack * recall_attack, precision_attack + recall_attack)
-
-    precision_benign = _safe_div(tn, tn + fn)
-    recall_benign = _safe_div(tn, tn + fp)
-    f1_benign = _safe_div(2 * precision_benign * recall_benign, precision_benign + recall_benign)
-
-    accuracy = _safe_div(tp + tn, total)
-    specificity = recall_benign
-    fpr = _safe_div(fp, fp + tn)
-    fnr = _safe_div(fn, fn + tp)
-    block_rate = _safe_div(tp + fp, total)
-    reward_total = _compute_reward_total(tp, fp, fn, tn, reward_config)
-    reward_per_sample = _safe_div(reward_total, total)
-
-    return {
-        "accuracy": accuracy,
-        "balanced_accuracy": (recall_attack + recall_benign) / 2.0,
-        "precision_attack": precision_attack,
-        "recall_attack": recall_attack,
-        "f1_attack": f1_attack,
-        "precision_benign": precision_benign,
-        "recall_benign": recall_benign,
-        "f1_benign": f1_benign,
-        "specificity": specificity,
-        "fpr": fpr,
-        "fnr": fnr,
-        "block_rate": block_rate,
-        "reward_total": reward_total,
-        "reward_per_sample": reward_per_sample,
-    }
-
-
-def evaluate_model_direct(
-    model: QRDQN,
-    X_test: np.ndarray,
-    y_test: np.ndarray,
-    reward_config: Dict[str, float],
-    predict_batch_size: int = 8192,
-) -> Dict[str, Any]:
-    """Evalúa el modelo sobre `X_test` frente a `y_test` en inferencia por lotes."""
-    if predict_batch_size <= 0:
-        raise ValueError("predict_batch_size debe ser > 0")
-
-    eval_start = time.perf_counter()
-    n_samples = int(X_test.shape[0])
-    y_pred = np.empty(n_samples, dtype=np.int64)
-
-    for start_idx in range(0, n_samples, predict_batch_size):
-        end_idx = min(start_idx + predict_batch_size, n_samples)
-        actions, _ = model.predict(X_test[start_idx:end_idx], deterministic=True)
-        y_pred[start_idx:end_idx] = np.asarray(actions, dtype=np.int64).reshape(-1)
-
-    evaluation_time_sec = time.perf_counter() - eval_start
-
-    cm = confusion_matrix(y_test, y_pred, labels=[0, 1])
-    report = classification_report(
-        y_test,
-        y_pred,
-        labels=[0, 1],
-        digits=4,
-        output_dict=True,
-        zero_division=0,
-    )
-    tn, fp, fn, tp = (int(value) for value in cm.ravel())
-    metrics = _metrics_from_confusion(tn, fp, fn, tp, reward_config)
-
-    return {
-        "confusion_matrix": cm.tolist(),
-        "classification_report": report,
-        "tp": tp,
-        "fp": fp,
-        "fn": fn,
-        "tn": tn,
-        **metrics,
-        "evaluation_time_sec": float(evaluation_time_sec),
-    }
-
-
-def _summarize_metric(values: Sequence[float]) -> Dict[str, float]:
-    arr = np.asarray(values, dtype=np.float64)
-    return {
-        "mean": float(arr.mean()),
-        "std": float(arr.std(ddof=0)),
-        "min": float(arr.min()),
-        "max": float(arr.max()),
-    }
-
-
-def _build_aggregate_results(
-    folds: List[Dict[str, Any]],
-    reward_config: Dict[str, float],
-) -> Dict[str, Any]:
-    per_metric = {
-        metric_name: _summarize_metric([float(fold[metric_name]) for fold in folds])
-        for metric_name in SUMMARY_METRICS
-    }
-
-    total_tp = int(sum(fold["tp"] for fold in folds))
-    total_fp = int(sum(fold["fp"] for fold in folds))
-    total_fn = int(sum(fold["fn"] for fold in folds))
-    total_tn = int(sum(fold["tn"] for fold in folds))
-
-    global_metrics = _metrics_from_confusion(
-        tn=total_tn,
-        fp=total_fp,
-        fn=total_fn,
-        tp=total_tp,
-        reward_config=reward_config,
-    )
-
-    return {
-        "n_folds": len(folds),
-        "per_metric": per_metric,
-        "sum_counts": {
-            "tp": total_tp,
-            "fp": total_fp,
-            "fn": total_fn,
-            "tn": total_tn,
-        },
-        "global_confusion_matrix": [
-            [total_tn, total_fp],
-            [total_fn, total_tp],
-        ],
-        "global_support": {
-            "n_samples": total_tn + total_fp + total_fn + total_tp,
-            "benign": total_tn + total_fp,
-            "attack": total_fn + total_tp,
-            "train_samples": int(sum(fold["n_train"] for fold in folds)),
-            "test_samples": int(sum(fold["n_test"] for fold in folds)),
-        },
-        "global_metrics": global_metrics,
-    }
-
-
-def _resolve_holdout_csvs(requested_csvs: List[str] | None, available_csvs: List[str]) -> List[str]:
-    if requested_csvs is None:
-        return list(available_csvs)
-
-    available_map = {csv_name.lower(): csv_name for csv_name in available_csvs}
-    resolved: List[str] = []
-    seen: set[str] = set()
-
-    for requested in requested_csvs:
-        key = requested.strip().lower()
-        if key not in available_map:
-            raise ValueError(
-                f"CSV holdout no encontrado: '{requested}'. Disponibles: {available_csvs}"
-            )
-        canonical_name = available_map[key]
-        if canonical_name in seen:
-            raise ValueError(f"CSV holdout duplicado: '{canonical_name}'")
-        resolved.append(canonical_name)
-        seen.add(canonical_name)
-
+    available = set(available_csvs)
+    resolved: list[str] = []
+    for name in requested:
+        if name not in _TARGETED_FILENAMES:
+            if name.lower() in {target.lower() for target in _TARGETED_FILENAMES}:
+                raise ValueError(f"Targeted holdout filenames must match exactly: {name}")
+            raise ValueError(f"Unknown targeted holdout filename: {name}")
+        if name not in available:
+            raise ValueError(f"Targeted holdout is not available in the dataset: {name}")
+        resolved.append(name)
     return resolved
+
+
+def aggregate_holdout_metrics(fold_metrics: Sequence[dict[str, Any]]) -> dict[str, Any]:
+    """Compute defined-only macro summaries and separately labelled pooled metrics."""
+    if not fold_metrics:
+        raise ValueError("At least one completed holdout is required for aggregation")
+
+    macro: dict[str, dict[str, float | int | None]] = {}
+    for metric_name in _MACRO_METRICS:
+        defined = [
+            float(metrics[metric_name])
+            for metrics in fold_metrics
+            if metrics.get(metric_name) is not None
+        ]
+        if defined or any(metric_name in metrics for metrics in fold_metrics):
+            macro[metric_name] = {
+                "mean": None if not defined else float(sum(defined) / len(defined)),
+                "n_defined": len(defined),
+            }
+
+    pooled = {"tn": 0, "fp": 0, "fn": 0, "tp": 0}
+    for metrics in fold_metrics:
+        matrix = metrics.get("confusion_matrix")
+        if not isinstance(matrix, dict) or set(matrix) != set(pooled):
+            raise ValueError("Each holdout must contain a labelled confusion_matrix")
+        for count_name in pooled:
+            pooled[count_name] += int(matrix[count_name])
+
+    pooled_metrics = confusion_to_metrics(
+        pooled["tn"],
+        pooled["fp"],
+        pooled["fn"],
+        pooled["tp"],
+        undefined_metric_policy="null",
+    )
+    return {
+        "n_holdouts": len(fold_metrics),
+        "defined_only_macro": macro,
+        "pooled_confusion_matrix": pooled,
+        "pooled_metrics": pooled_metrics,
+    }
+
+
+def _read_completed_metrics(run_dir: Path) -> dict[str, Any]:
+    verify_artifact_manifest(run_dir)
+    return json.loads((run_dir / "metrics.json").read_text(encoding="utf-8"))
+
+
+def run_targeted_holdouts(
+    config: TargetedHoldoutWorkflowConfig,
+    *,
+    executor: HoldoutExecutor = run_qrdqn_experiment,
+) -> dict[str, Any]:
+    """Run or resume the selected locked holdouts, sealing each run immediately."""
+    selected = list(config.holdout_csvs or _TARGETED_FILENAMES)
+    filename_to_run_id = {filename: run_id for run_id, filename in TARGETED_QRDQN_HOLDOUTS.items()}
+    records: list[dict[str, Any]] = []
+    completed_metrics: list[dict[str, Any]] = []
+
+    for holdout_csv in selected:
+        run_id = filename_to_run_id[holdout_csv]
+        run_dir = config.artifact_root / run_id
+        execution = "completed"
+        if run_dir.exists() and config.resume:
+            metrics = _read_completed_metrics(run_dir)
+            execution = "skipped_completed"
+        else:
+            run_config = QRDQNRunConfig(
+                artifact_root=config.artifact_root,
+                run_id=run_id,
+                dataset_root=config.dataset_root,
+                cache_root=config.cache_root,
+                cache_policy=config.cache_policy,
+                split_mode="exact-holdout",
+                split_seed=config.split_seed,
+                model_seed=config.model_seed,
+                profile_id=config.profile_id,
+                timesteps=config.timesteps,
+                holdout_csv=holdout_csv,
+                checkpoint_freq=config.checkpoint_freq,
+                checkpoint_keep=config.checkpoint_keep,
+                monitor_interval=config.monitor_interval,
+                eval_batch_size=config.eval_batch_size,
+                logical_run_id=run_id,
+            )
+            completed_dir = executor(run_config)
+            if Path(completed_dir).resolve() != run_dir.resolve():
+                raise ValueError("Targeted holdout executor returned an unexpected run directory")
+            metrics = _read_completed_metrics(run_dir)
+
+        completed_metrics.append(metrics)
+        records.append(
+            {
+                "logical_run_id": run_id,
+                "holdout_csv": holdout_csv,
+                "execution": execution,
+                "run_dir": str(run_dir),
+            }
+        )
+        summary = {
+            "workflow": "targeted_four_holdout_qrdqn",
+            "profile_id": config.profile_id,
+            "timesteps": config.timesteps,
+            "split_seed": config.split_seed,
+            "model_seed": config.model_seed,
+            "holdout_csvs": selected,
+            "runs": records,
+            "aggregate": aggregate_holdout_metrics(completed_metrics),
+        }
+        atomic_write_json(config.summary_path, summary)
+
+    return summary
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Leave-one-CSV-out validation for CICIDS2017",
+        description="Locked four-file targeted QRDQN holdout workflow for CICIDS2017",
     )
-    parser.add_argument(
-        "--timesteps",
-        type=int,
-        default=30_000,
-        help="Timesteps de entrenamiento por fold (default: 30000)",
-    )
-    parser.add_argument(
-        "--seed",
-        type=int,
-        default=42,
-        help="Semilla aleatoria (default: 42)",
-    )
-    parser.add_argument(
-        "--holdout-csvs",
-        nargs="+",
-        default=None,
-        help="Nombres exactos de CSVs a usar como holdout. Por defecto, se ejecutan todos.",
-    )
-    parser.add_argument(
-        "--max-rows-per-csv",
-        type=int,
-        default=None,
-        help="Cap opcional de filas por CSV para smoke/dev runs",
-    )
-    parser.add_argument(
-        "--predict-batch-size",
-        type=int,
-        default=8192,
-        help="Tamaño de lote para inferencia en evaluación (default: 8192)",
-    )
+    parser.add_argument("--holdout-csvs", nargs="+", default=None)
+    parser.add_argument("--profile", default="main-v1", choices=["main-v1"])
+    parser.add_argument("--timesteps", type=int, default=1_000_000)
+    parser.add_argument("--split-seed", type=int, default=42)
+    parser.add_argument("--model-seed", type=int, default=42)
+    parser.add_argument("--dataset-root", type=Path, default=Path("datasets/CICIDS2017"))
+    parser.add_argument("--cache-root", type=Path, required=True)
+    parser.add_argument("--cache-policy", choices=["off", "prefer", "require"], default="require")
+    parser.add_argument("--artifact-root", type=Path, required=True)
+    parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--checkpoint-freq", type=int, default=None)
+    parser.add_argument("--checkpoint-keep", type=int, default=2)
+    parser.add_argument("--monitor-interval", type=float, default=30.0)
+    parser.add_argument("--eval-batch-size", type=int, default=8_192)
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-
-    available_csv_paths = list_cicids2017_csv_files()
-    available_csvs = [path.name for path in available_csv_paths]
-    holdout_csvs = _resolve_holdout_csvs(args.holdout_csvs, available_csvs)
-
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    run_id = f"VAL_leave_one_csv_out_{timestamp}"
-    run_dir = RUNS_DIR / "validation" / run_id
-    run_dir.mkdir(parents=True, exist_ok=True)
-
-    print(f"{'=' * 72}")
-    print("  Leave-One-CSV-Out Validation")
-    print(f"  RUN_ID:            {run_id}")
-    print(f"  Device:            {device}")
-    print(f"  Timesteps/fold:    {args.timesteps}")
-    print(f"  Max rows per CSV:  {args.max_rows_per_csv if args.max_rows_per_csv is not None else 'ALL'}")
-    print(f"  Predict batch sz:  {args.predict_batch_size}")
-    print(f"  Folds a ejecutar:  {len(holdout_csvs)}")
-    print(f"  Output:            {run_dir}")
-    print(f"{'=' * 72}")
-
-    cfg = CICIDSLoadConfig(
-        max_rows=None,
-        sample_frac=None,
-        scale=True,
-        use_canonical=True,
-        random_state=args.seed,
+    available = [path.name for path in list_cicids2017_csv_files(args.dataset_root)]
+    selected = resolve_targeted_holdouts(args.holdout_csvs, available)
+    config = TargetedHoldoutWorkflowConfig(
+        artifact_root=args.artifact_root,
+        dataset_root=args.dataset_root,
+        cache_root=args.cache_root,
+        cache_policy=args.cache_policy,
+        holdout_csvs=tuple(selected),
+        profile_id=args.profile,
+        timesteps=args.timesteps,
+        split_seed=args.split_seed,
+        model_seed=args.model_seed,
+        resume=args.resume,
+        checkpoint_freq=args.checkpoint_freq,
+        checkpoint_keep=args.checkpoint_keep,
+        monitor_interval=args.monitor_interval,
+        eval_batch_size=args.eval_batch_size,
     )
-
-    folds: List[Dict[str, Any]] = []
-
-    for fold_idx, holdout_csv in enumerate(holdout_csvs, start=1):
-        train_csvs = [csv_name for csv_name in available_csvs if csv_name != holdout_csv]
-        print(f"\n{'-' * 72}")
-        print(f"Fold {fold_idx}/{len(holdout_csvs)}")
-        print(f"  Test CSV:  {holdout_csv}")
-        print(f"  Train CSVs: {len(train_csvs)}")
-        print(f"{'-' * 72}")
-
-        X_train, y_train, X_test, y_test, _, feature_names = load_cicids2017_exact_csv_split(
-            train_csv_names=train_csvs,
-            test_csv_names=[holdout_csv],
-            cfg=cfg,
-            max_rows_per_csv=args.max_rows_per_csv,
-        )
-
-        max_steps_ep = min(10_000, len(X_train))
-        vec_env = DummyVecEnv([make_env_fn(X_train, y_train, REWARD_CONFIG, max_steps_ep)])
-        vec_env.seed(args.seed)
-
-        model = QRDQN(
-            "MlpPolicy",
-            vec_env,
-            seed=args.seed,
-            policy_kwargs=dict(net_arch=[512, 256]),
-            learning_rate=1e-4,
-            buffer_size=min(200_000, max(args.timesteps, 10_000)),
-            batch_size=512,
-            gradient_steps=20,
-            gamma=0.0,
-            tau=1.0,
-            train_freq=100,
-            target_update_interval=10_000,
-            verbose=1,
-            device=device,
-        )
-
-        train_start = time.perf_counter()
-        model.learn(total_timesteps=args.timesteps)
-        training_time_sec = time.perf_counter() - train_start
-
-        eval_result = evaluate_model_direct(
-            model,
-            X_test,
-            y_test,
-            REWARD_CONFIG,
-            predict_batch_size=args.predict_batch_size,
-        )
-        total_time_sec = training_time_sec + float(eval_result["evaluation_time_sec"])
-
-        fold_result: Dict[str, Any] = {
-            "fold_index": fold_idx,
-            "train_csvs": train_csvs,
-            "test_csv": holdout_csv,
-            "n_train": int(len(y_train)),
-            "n_test": int(len(y_test)),
-            "train_benign": int((y_train == 0).sum()),
-            "train_attack": int((y_train == 1).sum()),
-            "test_benign": int((y_test == 0).sum()),
-            "test_attack": int((y_test == 1).sum()),
-            "n_features": int(len(feature_names)),
-            "training_time_sec": float(training_time_sec),
-            "total_time_sec": float(total_time_sec),
-            **eval_result,
-        }
-        folds.append(fold_result)
-
-        print(
-            "  Resultados fold: "
-            f"acc={fold_result['accuracy']:.4f}, "
-            f"bal_acc={fold_result['balanced_accuracy']:.4f}, "
-            f"f1_atk={fold_result['f1_attack']:.4f}, "
-            f"reward/sample={fold_result['reward_per_sample']:.4f}"
-        )
-
-        vec_env.close()
-
-    results = {
-        "csv_order": holdout_csvs,
-        "folds": folds,
-        "aggregate": _build_aggregate_results(folds, REWARD_CONFIG),
-    }
-
-    config = {
-        "run_id": run_id,
-        "dataset": "CICIDS2017",
-        "validation_mode": "leave_one_exact_csv_out",
-        "csv_order": holdout_csvs,
-        "available_csvs": available_csvs,
-        "timesteps": args.timesteps,
-        "seed": args.seed,
-        "max_rows_per_csv": args.max_rows_per_csv,
-        "predict_batch_size": args.predict_batch_size,
-        "device": device,
-        "reward_config": REWARD_CONFIG,
-        "policy_kwargs": {"net_arch": [512, 256]},
-        "learning_rate": 1e-4,
-        "batch_size": 512,
-        "gradient_steps": 20,
-        "train_freq": 100,
-        "target_update_interval": 10_000,
-    }
-
-    config_path = run_dir / "config.json"
-    results_path = run_dir / "validation_results.json"
-
-    with open(config_path, "w", encoding="utf-8") as f:
-        json.dump(config, f, indent=2)
-
-    with open(results_path, "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2)
-
-    print(f"\n{'=' * 72}")
-    print("  Resumen agregado")
-    print(f"  Accuracy global:        {results['aggregate']['global_metrics']['accuracy']:.4f}")
-    print(f"  Balanced accuracy:      {results['aggregate']['global_metrics']['balanced_accuracy']:.4f}")
-    print(f"  F1 attack global:       {results['aggregate']['global_metrics']['f1_attack']:.4f}")
-    print(f"  Reward/sample global:   {results['aggregate']['global_metrics']['reward_per_sample']:.4f}")
-    print(f"  Resultados:             {results_path}")
-    print(f"  Config:                 {config_path}")
-    print(f"{'=' * 72}")
+    summary = run_targeted_holdouts(config)
+    print(f"Targeted holdouts complete: {len(summary['runs'])}")
+    print(f"Summary: {config.summary_path}")
 
 
 if __name__ == "__main__":
