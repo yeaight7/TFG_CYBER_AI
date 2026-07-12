@@ -229,7 +229,7 @@ Exact option names may only change through an explicit plan revision. Expected i
 
 ### 5.1 Cache
 
-```powershell
+```bash
 python scripts/build_cicids_cache.py build \
   --dataset-root datasets/CICIDS2017 \
   --cache-root <CACHE_ROOT> \
@@ -244,7 +244,7 @@ python scripts/build_cicids_cache.py validate \
 
 ### 5.2 Single QRDQN run
 
-```powershell
+```bash
 python src/train_rl_defender.py \
   --split-mode random|day|exact-holdout \
   --split-seed 42 \
@@ -265,7 +265,7 @@ python src/train_rl_defender.py \
 
 ### 5.3 Targeted QRDQN holdout wrapper
 
-```powershell
+```bash
 python src/validate_leave_one_csv_out.py \
   --holdout-csvs <EXACT_NAME> <EXACT_NAME> <EXACT_NAME> <EXACT_NAME> \
   --profile main-v1 \
@@ -280,7 +280,7 @@ The legacy filename may remain for compatibility, but help text and outputs must
 
 ### 5.4 Single Random Forest run
 
-```powershell
+```bash
 python src/baseline_random_forest.py \
   --split-mode random|day|exact-holdout \
   --split-seed 42 \
@@ -295,7 +295,7 @@ python src/baseline_random_forest.py \
 
 ### 5.5 Campaign runner
 
-```powershell
+```bash
 python scripts/run_campaign.py experiments/final_experiment_campaign.json \
   --campaign-id <CAMPAIGN_ID> \
   --artifact-root <ARTIFACT_ROOT> \
@@ -317,7 +317,7 @@ Selection flags: `--stage <STAGE_ID>` and `--run <LOGICAL_RUN_ID>`. Real executi
 
 ### 5.6 Runtime benchmark, preflight, export, aggregation, figures
 
-```powershell
+```bash
 python scripts/benchmark_experimental_runtime.py --output <JSON> --thread-config 1:1 4:1 8:1 16:1
 python scripts/preflight_gpu_environment.py --dataset-root <PATH> --cache-root <PATH> --artifact-root <PATH> --snapshot-root <PATH>
 python scripts/export_campaign.py snapshot --campaign-dir <PATH> --destination <PATH>
@@ -1049,7 +1049,7 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 
 **Tests and validation:**
 
-```powershell
+```bash
 uv lock --check
 uv run pytest
 uv run ruff check .
@@ -1134,16 +1134,16 @@ Campaign preparation is complete only when all ten phases have been requested an
 - validated unscaled canonical cache implementation;
 - complete artifact/monitoring/checkpoint foundation;
 - single-run QRDQN, targeted holdout, and scoped RF runners;
-- exact sequential 22-execution campaign specification and safe state machine;
+- exact sequential campaign specification covering 22 primary model-training executions, five auxiliary jobs, two aliases, and a safe state machine;
 - provider-neutral preflight, benchmark, snapshot, and bundle tooling;
 - artifact-driven aggregation/future-rendering code;
 - provider-neutral maintained documentation;
 - full passing unit/lint suite using only cheap/synthetic validation;
 - no modifications to historical evidence, `memoria/`, `report/`, or pending thesis placeholders;
-- fresh-MAIN direct-validation artifacts;
-- fresh-MAIN bootstrap confidence intervals;
-- fresh-MAIN duplicate/cross-split analysis;
-- lightweight shuffled-label anti-leakage evidence;
-- fresh-MAIN Phase 2 inference artifacts tied to the validated laboratory input.
+- implemented and synthetic-tested workflow for fresh-MAIN direct validation;
+- implemented and synthetic-tested workflow for fresh-MAIN bootstrap confidence intervals;
+- implemented and synthetic-tested workflow for fresh-MAIN duplicate/cross-split analysis;
+- implemented and synthetic-tested lightweight shuffled-label anti-leakage workflow;
+- implemented and synthetic-tested fresh-MAIN Phase 2 inference workflow, including validation of the laboratory input contract;
 
 Campaign execution itself is a separate activity and requires explicit authorisation after host preflight succeeds.
