@@ -391,6 +391,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--artifact-root", type=Path, required=True)
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--monitor-interval", type=float, default=30.0)
+    parser.add_argument("--campaign-id", default=None)
+    parser.add_argument("--logical-run-id", default=None)
+    parser.add_argument("--attempt", type=int, default=1)
     return parser.parse_args()
 
 
@@ -409,6 +412,9 @@ def main() -> None:
         holdout_csv=args.holdout_csv,
         n_jobs=args.n_jobs,
         monitor_interval=args.monitor_interval,
+        campaign_id=args.campaign_id,
+        logical_run_id=args.logical_run_id,
+        attempt=args.attempt,
     )
     run_dir = run_random_forest(config)
     print(f"Random Forest run complete: {run_dir}")

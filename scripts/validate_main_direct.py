@@ -73,6 +73,9 @@ def run_main_direct_validation(
     split_provider: SplitProvider = _default_split_provider,
     model_loader: ModelLoader = _default_model_loader,
     eval_batch_size: int = 8_192,
+    campaign_id: str | None = None,
+    logical_run_id: str | None = None,
+    attempt: int = 1,
 ) -> Path:
     """Reproduce test labels, predict independently, and seal direct evidence."""
     source_run_dir = Path(source_run_dir)
@@ -82,9 +85,10 @@ def run_main_direct_validation(
     source_config, _verification = _load_source(source_run_dir)
     source_manifest_sha256 = sha256_file(source_run_dir / "artifact_manifest.json")
     run_metadata = {
-        "logical_run_id": output_dir.name,
+        "campaign_id": campaign_id,
+        "logical_run_id": logical_run_id or output_dir.name,
         "physical_run_id": output_dir.name,
-        "attempt": 1,
+        "attempt": attempt,
         "split_seed": source_config["split_seed"],
         "model_seed": source_config["model_seed"],
         "source_run_id": source_config["run_id"],
@@ -198,6 +202,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--artifact-root", required=True, type=Path)
     parser.add_argument("--job-id", required=True)
     parser.add_argument("--eval-batch-size", type=int, default=8_192)
+    parser.add_argument("--campaign-id", default=None)
+    parser.add_argument("--logical-run-id", default=None)
+    parser.add_argument("--attempt", type=int, default=1)
     return parser.parse_args(argv)
 
 
@@ -207,6 +214,9 @@ def main() -> None:
         source_run_dir=args.run_dir,
         output_dir=args.artifact_root / args.job_id,
         eval_batch_size=args.eval_batch_size,
+        campaign_id=args.campaign_id,
+        logical_run_id=args.logical_run_id,
+        attempt=args.attempt,
     )
 
 

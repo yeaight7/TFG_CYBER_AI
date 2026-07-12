@@ -367,6 +367,9 @@ def run_phase2_inference(
     clip_z: float | None = None,
     monitor_interval: float = 30.0,
     model_loader=load_model,
+    campaign_id: str | None = None,
+    logical_run_id: str | None = None,
+    attempt: int = 1,
 ) -> Path:
     """Run fresh-MAIN Phase 2 inference with schema-3 provenance and artifacts."""
     source_run_dir = Path(source_run_dir)
@@ -394,9 +397,10 @@ def run_phase2_inference(
     writer = ArtifactManifestWriter(
         output_dir,
         run_metadata={
-            "logical_run_id": output_dir.name,
+            "campaign_id": campaign_id,
+            "logical_run_id": logical_run_id or output_dir.name,
             "physical_run_id": output_dir.name,
-            "attempt": 1,
+            "attempt": attempt,
             "split_seed": source_config["split_seed"],
             "model_seed": source_config["model_seed"],
             "source_run_id": source_config["run_id"],
@@ -516,7 +520,7 @@ def run_phase2_inference(
 # CLI
 # ---------------------------------------------------------------------------
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Phase 2 robust offline inference pipeline for RL defender."
     )
@@ -575,7 +579,10 @@ def parse_args() -> argparse.Namespace:
         "--allow-unsafe-artifacts", action="store_true",
         help="Allow direct model/scaler/percentile paths without manifest hash verification.",
     )
-    return parser.parse_args()
+    parser.add_argument("--campaign-id", default=None)
+    parser.add_argument("--logical-run-id", default=None)
+    parser.add_argument("--attempt", type=int, default=1)
+    return parser.parse_args(argv)
 
 
 # ---------------------------------------------------------------------------
@@ -605,6 +612,9 @@ def main() -> None:
                     output_dir=(args.artifact_root or (_REPO / "runs" / "phase2")) / run_id,
                     clip_z=args.clip_z,
                     monitor_interval=args.monitor_interval,
+                    campaign_id=args.campaign_id,
+                    logical_run_id=args.logical_run_id,
+                    attempt=args.attempt,
                 )
                 return
     out_dir = _REPO / "runs" / "phase2" / run_id

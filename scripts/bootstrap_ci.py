@@ -254,6 +254,9 @@ def run_bootstrap_from_predictions(
     n_boot: int = 10_000,
     boot_seed: int = 12_345,
     stratified: bool = True,
+    campaign_id: str | None = None,
+    logical_run_id: str | None = None,
+    attempt: int = 1,
 ) -> Path:
     """Bootstrap persisted fresh-MAIN y_true/y_pred and bind output to its hash."""
     if n_boot <= 0:
@@ -300,9 +303,10 @@ def run_bootstrap_from_predictions(
     writer = ArtifactManifestWriter(
         output_dir,
         run_metadata={
-            "logical_run_id": output_dir.name,
+            "campaign_id": campaign_id,
+            "logical_run_id": logical_run_id or output_dir.name,
             "physical_run_id": output_dir.name,
-            "attempt": 1,
+            "attempt": attempt,
             "split_seed": source_config["split_seed"],
             "model_seed": source_config["model_seed"],
             "source_run_id": source_config["run_id"],
@@ -345,7 +349,7 @@ def run_bootstrap_from_predictions(
         raise
 
 
-def main() -> None:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap = argparse.ArgumentParser(
         description="Bootstrap confidence intervals from fresh MAIN persisted predictions"
     )
@@ -355,13 +359,23 @@ def main() -> None:
     ap.add_argument("--boot-seed", type=int, default=12345, help="Bootstrap RNG seed (default 12345)")
     ap.add_argument("--unstratified", action="store_true",
                     help="Use the unconditional multinomial bootstrap (default: stratified per-class)")
-    args = ap.parse_args()
+    ap.add_argument("--campaign-id", default=None)
+    ap.add_argument("--logical-run-id", default=None)
+    ap.add_argument("--attempt", type=int, default=1)
+    return ap.parse_args(argv)
+
+
+def main() -> None:
+    args = parse_args()
     run_bootstrap_from_predictions(
         source_run_dir=args.run_dir,
         output_dir=args.output_dir,
         n_boot=args.n_boot,
         boot_seed=args.boot_seed,
         stratified=not args.unstratified,
+        campaign_id=args.campaign_id,
+        logical_run_id=args.logical_run_id,
+        attempt=args.attempt,
     )
 
 

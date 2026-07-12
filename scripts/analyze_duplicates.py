@@ -70,6 +70,9 @@ def run_duplicate_analysis(
     source_run_dir: Path,
     output_dir: Path,
     split_provider: SplitProvider = _default_split_provider,
+    campaign_id: str | None = None,
+    logical_run_id: str | None = None,
+    attempt: int = 1,
 ) -> Path:
     """Verify the fresh MAIN raw split identity, then quantify exact duplicates."""
     source_run_dir = Path(source_run_dir)
@@ -86,9 +89,10 @@ def run_duplicate_analysis(
     writer = ArtifactManifestWriter(
         output_dir,
         run_metadata={
-            "logical_run_id": output_dir.name,
+            "campaign_id": campaign_id,
+            "logical_run_id": logical_run_id or output_dir.name,
             "physical_run_id": output_dir.name,
-            "attempt": 1,
+            "attempt": attempt,
             "split_seed": source_config["split_seed"],
             "model_seed": source_config["model_seed"],
             "source_run_id": source_config["run_id"],
@@ -210,12 +214,21 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--run-dir", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--campaign-id", default=None)
+    parser.add_argument("--logical-run-id", default=None)
+    parser.add_argument("--attempt", type=int, default=1)
     return parser.parse_args(argv)
 
 
 def main() -> None:
     args = parse_args()
-    run_duplicate_analysis(source_run_dir=args.run_dir, output_dir=args.output_dir)
+    run_duplicate_analysis(
+        source_run_dir=args.run_dir,
+        output_dir=args.output_dir,
+        campaign_id=args.campaign_id,
+        logical_run_id=args.logical_run_id,
+        attempt=args.attempt,
+    )
 
 
 if __name__ == "__main__":
