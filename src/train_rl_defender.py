@@ -9,6 +9,10 @@ Uso:
     python src/train_rl_defender.py --split-mode day --train-days Monday Tuesday --test-days Friday
     python src/train_rl_defender.py --preset full --split-mode day  # Full day split
     python src/train_rl_defender.py --timesteps 200000     # Custom timesteps
+    python src/train_rl_defender.py --profile main-v1 --split-mode random \
+        --split-seed 42 --model-seed 42 --dataset-root <PATH> \
+        --cache-root <PATH> --cache-policy require --artifact-root <PATH> \
+        --run-id <RUN_ID> --timesteps <N>
 """
 from __future__ import annotations
 
@@ -281,8 +285,11 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Preset: fast (lightweight, capped rows) or full (all rows). Default: fast",
     )
     parser.add_argument(
-        "--split-mode", type=str, default="random", choices=["random", "day"],
-        help="Split mode: random (stratified 80/20) or day (CSV/day group split). Default: random",
+        "--split-mode",
+        type=str,
+        default="random",
+        choices=["random", "day", "exact-holdout"],
+        help="Split mode: random, day, or one exact held-out official CSV.",
     )
     parser.add_argument(
         "--train-days", nargs="+", default=None,
@@ -291,6 +298,11 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--test-days", nargs="+", default=None,
         help="Day patterns for testing (split-mode=day). Default: Thursday Friday",
+    )
+    parser.add_argument(
+        "--holdout-csv",
+        default=None,
+        help="Exact official CSV filename required by --split-mode exact-holdout.",
     )
     parser.add_argument(
         "--timesteps", type=int, default=None,
@@ -337,8 +349,43 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         choices=["default", "main-experiment"],
         help=(
             "Training hyperparameter profile. 'default' preserves current "
-            "behavior; 'main-experiment' uses the fixed RunPod main run config."
+            "behavior; 'main-experiment' uses the historical fixed MAIN config."
         ),
+    )
+    parser.add_argument(
+        "--profile",
+        choices=["main-v1"],
+        default=None,
+        help="Use the Phase 4 artifact-complete single-run API with the frozen main-v1 profile.",
+    )
+    parser.add_argument(
+        "--dataset-root",
+        type=Path,
+        default=_REPO_ROOT / "datasets" / "CICIDS2017",
+        help="Configurable CICIDS2017 dataset root.",
+    )
+    parser.add_argument(
+        "--cache-root",
+        type=Path,
+        default=None,
+        help="Canonical unscaled cache root.",
+    )
+    parser.add_argument(
+        "--cache-policy",
+        choices=["off", "prefer", "require"],
+        default="require",
+        help="Cache policy for the Phase 4 single-run API. Official runs use require.",
+    )
+    parser.add_argument(
+        "--artifact-root",
+        type=Path,
+        default=_REPO_ROOT / "runs" / "cicids2017",
+        help="Root under which the Phase 4 run directory is created.",
+    )
+    parser.add_argument(
+        "--run-id",
+        default=None,
+        help="Explicit physical run ID. Defaults to a timestamped MAIN identifier.",
     )
     parser.add_argument(
         "--checkpoint-freq",
@@ -346,8 +393,21 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         default=None,
         help=(
             "Save model checkpoints every N timesteps. 0 disables. "
-            "Default: disabled for default profile, 250k for main-experiment."
+            "Legacy default: disabled/default or 250k/main-experiment; "
+            "main-v1 official default is 500k for runs of at least 1M timesteps."
         ),
+    )
+    parser.add_argument(
+        "--checkpoint-keep",
+        type=int,
+        default=2,
+        help="Number of newest verified model-only checkpoints to retain. Default: 2",
+    )
+    parser.add_argument(
+        "--monitor-interval",
+        type=float,
+        default=30.0,
+        help="Resource-monitoring interval in seconds. Default: 30",
     )
     parser.add_argument(
         "--torch-threads",
@@ -385,12 +445,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     args.split_seed = seeds.split_seed
     args.model_seed = seeds.model_seed
     args.legacy_seed_used = seeds.legacy_seed_used
+    if args.split_mode == "exact-holdout" and args.profile is None:
+        parser.error("--split-mode exact-holdout requires --profile main-v1")
     return args
 
 
-def main() -> None:
-    args = parse_args()
-
+def _legacy_main(args: argparse.Namespace) -> None:
     # ── Resolve preset (--smoke is an alias for --preset fast) ──
     preset = "fast" if args.smoke else args.preset
     is_fast = preset == "fast"
@@ -757,6 +817,50 @@ def main() -> None:
     print(f"\n{'='*60}")
     print(f"  Experimento completado: {RUN_ID}")
     print(f"{'='*60}")
+
+
+def _phase4_main(args: argparse.Namespace) -> None:
+    if args.max_rows is not None:
+        raise ValueError("--max-rows is not supported by the main-v1 single-run API")
+    if args.no_canonical:
+        raise ValueError("main-v1 requires the canonical 152-dimensional observation contract")
+    if str(_REPO_ROOT) not in sys.path:
+        sys.path.insert(0, str(_REPO_ROOT))
+    from src.qrdqn_experiment import QRDQNRunConfig, run_qrdqn_experiment
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_id = args.run_id or f"MAIN_qrdqn_cicids2017_canonical_{args.split_mode}_{timestamp}"
+    config = QRDQNRunConfig(
+        artifact_root=args.artifact_root,
+        run_id=run_id,
+        dataset_root=args.dataset_root,
+        cache_root=args.cache_root,
+        cache_policy=args.cache_policy,
+        split_mode=args.split_mode,
+        split_seed=args.split_seed,
+        model_seed=args.model_seed,
+        profile_id=args.profile,
+        timesteps=3_000_000 if args.timesteps is None else args.timesteps,
+        train_max_rows=args.train_max_rows,
+        holdout_csv=args.holdout_csv,
+        train_days=None if args.train_days is None else tuple(args.train_days),
+        test_days=None if args.test_days is None else tuple(args.test_days),
+        checkpoint_freq=args.checkpoint_freq,
+        checkpoint_keep=args.checkpoint_keep,
+        monitor_interval=args.monitor_interval,
+        eval_batch_size=args.eval_batch_size,
+        torch_threads=args.torch_threads,
+        torch_inter_op_threads=args.torch_inter_op_threads,
+    )
+    run_qrdqn_experiment(config)
+
+
+def main() -> None:
+    args = parse_args()
+    if args.profile is not None:
+        _phase4_main(args)
+    else:
+        _legacy_main(args)
 
 
 if __name__ == "__main__":
