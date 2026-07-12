@@ -1,46 +1,24 @@
 # Reproducibility Notes
 
-## Main QRDQN RunPod Environment
+## GPU experimental environment
 
-The current source of truth for the successful main QRDQN training environment is:
+The final campaign uses a provider-neutral Linux GPU environment. The maintained pinned direct dependency set is `requirements-gpu-cu130.txt`; `pyproject.toml` and `uv.lock` define the development/test environment. Host identity, remote access, account details, and mount paths are operational inputs, not scientific configuration.
 
-```text
-runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json
-```
-
-Recorded runtime:
-
-*Note: can be subject to change*
-| Component | Version / value |
-|---|---|
-| Python | 3.12.11 |
-| Platform | Linux x86_64 |
-| CPU | AMD EPYC 9005 (i think) - confirmation pending |
-| Memory | 128GB DDR5 RAM |
-| GPU | CUDA, NVIDIA GeForce RTX 3090 Ti -> RTX 6000 BlackWell Pro |
-| torch | 2.12.1+cu130 (may be changed) |
-| CUDA reported by torch | 13.0 |
-| numpy | 2.4.6 |
-| pandas | 3.0.3 |
-| scikit-learn | 1.9.0 |
-| gymnasium | 1.2.3 |
-| stable-baselines3 | 2.8.0 |
-| sb3-contrib | 2.8.0 |
-| joblib | 1.5.3 |
+Setup, preflight, cache, campaign, snapshot, and aggregation commands live in [gpu_experimental_environment.md](gpu_experimental_environment.md). Actual CPU, RAM, GPU, driver, CUDA, cuDNN, storage, dataset, cache, and snapshot readiness remain unverified until a successful preflight report is produced on the final host.
 
 ## Dependency Files
 
-- `requirements-runpod-cu130.txt` is the direct RunPod/GPU reproduction file for the main QRDQN stack.
+- `requirements-gpu-cu130.txt` is the direct Linux GPU environment file for the QRDQN campaign stack.
 - `requirements.txt` is the generic local/dev install file. It pins the same core ML stack but uses `torch==2.12.1` without a CUDA local-version suffix so pip can select the platform-appropriate wheel.
 - `pyproject.toml` pins the same core project dependencies. For uv, `tool.uv.sources` sends Linux torch resolution to the PyTorch CUDA 13.0 index and non-Linux torch resolution to the CPU index.
 
-RunPod setup:
+GPU host setup:
 
 ```bash
 python -m venv venv
 source venv/bin/activate
 pip install -U pip
-pip install -r requirements-runpod-cu130.txt
+pip install -r requirements-gpu-cu130.txt
 ```
 
 uv setup:
@@ -55,15 +33,25 @@ On Linux, uv resolves torch through:
 https://download.pytorch.org/whl/cu130
 ```
 
-If using `uv pip install` directly against `requirements-runpod-cu130.txt`,
+If using `uv pip install` directly against `requirements-gpu-cu130.txt`,
 include uv's multi-index strategy flag:
 
 ```bash
-uv pip install -r requirements-runpod-cu130.txt --index-strategy unsafe-best-match
+uv pip install -r requirements-gpu-cu130.txt --index-strategy unsafe-best-match
 ```
 
 The project-mode `uv sync` path does not need that flag because `pyproject.toml`
 uses per-package `tool.uv.sources` for torch.
+
+## Historical MAIN environment and compatibility filename
+
+The committed historical MAIN environment remains recorded in:
+
+```text
+runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json
+```
+
+That artifact records the original RunPod execution and its measured hardware/software metadata. It is evidence for the historical MAIN only; it does not verify or constrain the future campaign host. `requirements-runpod-cu130.txt` is retained as a compatibility filename and includes the provider-neutral `requirements-gpu-cu130.txt` file.
 
 ## PyTorch Advisory Handling
 
