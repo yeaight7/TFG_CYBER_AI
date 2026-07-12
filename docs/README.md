@@ -8,12 +8,14 @@ This directory contains the maintained project documentation used for developmen
 |----------|----------|---------|--------|
 | [../README.md](../README.md) | Evaluators, contributors, reviewers | Public project overview and quickstart | Maintained |
 | [../.github/AGENT_CONTEXT.md](../.github/AGENT_CONTEXT.md) | Contributors and agents | Project-wide technical source of truth | Maintained |
-| [AGENT_CONTEXT.md](AGENT_CONTEXT.md) | Contributors working on Phase 2 | Phase 2 scope, guardrails, and run conventions | Maintained |
+| [phase 2/AGENT_CONTEXT.md](phase%202/AGENT_CONTEXT.md) | Contributors working on Phase 2 | Phase 2 scope, guardrails, and run conventions | Maintained |
 | [results.md](results.md) | Evaluators, author, reviewers | Artifact-backed results snapshot | Maintained |
-| [phase2_plan.md](phase2_plan.md) | Author, contributors | Execution plan for the Phase 2 workflow | Maintained |
-| [gcp_lab.md](gcp_lab.md) | Author, contributors | Private lab setup guide | Maintained |
-| [runpod_main_experiment.md](runpod_main_experiment.md) | Author, contributors | Single main RunPod training run guide | Maintained |
+| [phase 2/phase2_plan.md](phase%202/phase2_plan.md) | Author, contributors | Execution plan for the Phase 2 workflow | Maintained |
+| [gpu_experimental_environment.md](gpu_experimental_environment.md) | Experiment operators, contributors | Provider-neutral GPU setup, preflight, campaign, snapshot, and aggregation guide | Maintained |
+| [runpod_main_experiment.md](runpod_main_experiment.md) | Historical readers | Compatibility pointer for the committed historical MAIN procedure | Historical pointer |
 | [reproducibility.md](reproducibility.md) | Author, contributors | Dependency and environment reproduction notes | Maintained |
+| [plans/FINAL_EXPERIMENT_CAMPAIGN_PREPARATION.md](plans/FINAL_EXPERIMENT_CAMPAIGN_PREPARATION.md) | Contributors, reviewers | Approved phase-gated preparation plan | Maintained specification |
+| [../experiments/final_experiment_campaign.json](../experiments/final_experiment_campaign.json) | Experiment operators, reviewers | Locked final campaign matrix | Maintained specification |
 | [research/personal/deep-defense-research/README.md](research/personal/deep-defense-research/README.md) | Author | Deep multi-file thesis/defense research notes (Spanish, Markdown) — research only, **not a strong source of truth** | Reference |
 | [../experiments/README.md](../experiments/README.md) | Author, reviewers | Historical experiment archive index | Maintained |
 | [defensa/README.md](defensa/README.md) | Author | Index of Spanish defense-prep material | Maintained, Spanish by design |
@@ -35,9 +37,10 @@ If you are new to the repository, read in this order:
 1. [../README.md](../README.md)
 2. [../.github/AGENT_CONTEXT.md](../.github/AGENT_CONTEXT.md)
 3. [results.md](results.md)
-4. [AGENT_CONTEXT.md](AGENT_CONTEXT.md)
-5. [phase2_plan.md](phase2_plan.md)
-6. [reproducibility.md](reproducibility.md)
+4. [gpu_experimental_environment.md](gpu_experimental_environment.md)
+5. [reproducibility.md](reproducibility.md)
+6. [phase 2/AGENT_CONTEXT.md](phase%202/AGENT_CONTEXT.md)
+7. [phase 2/phase2_plan.md](phase%202/phase2_plan.md)
 
 ## Language Policy
 
