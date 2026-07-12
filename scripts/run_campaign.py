@@ -17,6 +17,7 @@ from src.campaign import (  # noqa: E402
     CampaignRunner,
     load_campaign_spec,
 )
+from src.gpu_preflight import PreflightError, verify_preflight_report  # noqa: E402
 
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -52,18 +53,23 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def _read_preflight(path: Path) -> dict[str, Any]:
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as error:
-        raise ValueError(f"Real execution requires a readable preflight report: {path}") from error
-    if not isinstance(payload, dict) or payload.get("status") not in {
-        "passed",
-        "completed",
-        "valid",
-    }:
-        raise ValueError("Real execution requires a successful preflight report")
-    return payload
+def _read_preflight(
+    path: Path,
+    *,
+    campaign_spec_sha256: str,
+    dataset_root: Path,
+    cache_root: Path,
+    artifact_root: Path,
+    snapshot_root: Path,
+) -> dict[str, Any]:
+    return verify_preflight_report(
+        path,
+        expected_campaign_spec_sha256=campaign_spec_sha256,
+        expected_dataset_root=dataset_root,
+        expected_cache_root=cache_root,
+        expected_artifact_root=artifact_root,
+        expected_snapshot_root=snapshot_root,
+    )
 
 
 def _phase2_binding(
@@ -95,11 +101,22 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     try:
         spec = load_campaign_spec(args.spec)
-        preflight = None if args.dry_run else _read_preflight(args.preflight_report)
-        phase2_input, phase2_input_sha256 = _phase2_binding(args, preflight)
         dataset_root = args.dataset_root
         if dataset_root is None:
             dataset_root = _REPO_ROOT / str(spec.raw["dataset_root"])
+        preflight = (
+            None
+            if args.dry_run
+            else _read_preflight(
+                args.preflight_report,
+                campaign_spec_sha256=spec.content_hash,
+                dataset_root=dataset_root,
+                cache_root=args.cache_root,
+                artifact_root=args.artifact_root,
+                snapshot_root=args.snapshot_root,
+            )
+        )
+        phase2_input, phase2_input_sha256 = _phase2_binding(args, preflight)
         paths = CampaignPaths(
             artifact_root=args.artifact_root,
             cache_root=args.cache_root,
@@ -125,7 +142,7 @@ def main(argv: list[str] | None = None) -> int:
                 stage=args.stage,
                 logical_run_id=args.logical_run_id,
             )
-    except (CampaignError, ValueError) as error:
+    except (CampaignError, PreflightError, ValueError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
     print(json.dumps(result, indent=2, sort_keys=True))
