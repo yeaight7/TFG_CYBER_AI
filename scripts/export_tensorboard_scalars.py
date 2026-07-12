@@ -10,20 +10,17 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
+import sys
 from pathlib import Path
-from typing import Any
-
-import matplotlib
-
-matplotlib.use("Agg")
-
-import matplotlib.pyplot as plt
-import pandas as pd
-from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
-
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
+from src.run_artifacts import atomic_write_json  # noqa: E402
+from src.tensorboard_export import export_tensorboard_scalars  # noqa: E402
+
+
 _DEFAULT_RUNS_DIR = _REPO_ROOT / "runs" / "cicids2017"
 
 
@@ -56,11 +53,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _safe_filename(tag: str) -> str:
-    safe = re.sub(r"[^A-Za-z0-9_.-]+", "__", tag).strip("_")
-    return safe or "scalar"
-
-
 def _find_event_dirs(runs_dir: Path, run_id: str) -> list[Path]:
     candidates = []
     for path in sorted(runs_dir.glob(f"{run_id}*")):
@@ -71,43 +63,21 @@ def _find_event_dirs(runs_dir: Path, run_id: str) -> list[Path]:
     return candidates
 
 
-def _read_scalars(event_dir: Path) -> dict[str, pd.DataFrame]:
-    accumulator = EventAccumulator(str(event_dir))
-    accumulator.Reload()
-
-    scalars: dict[str, pd.DataFrame] = {}
-    for tag in accumulator.Tags().get("scalars", []):
-        rows = [
-            {"step": event.step, "wall_time": event.wall_time, "value": event.value}
-            for event in accumulator.Scalars(tag)
-        ]
-        if rows:
-            scalars[tag] = pd.DataFrame(rows)
-    return scalars
-
-
-def _plot_scalar(tag: str, df: pd.DataFrame, output_path: Path) -> None:
-    fig, ax = plt.subplots(figsize=(8, 4.5))
-    ax.plot(df["step"], df["value"], linewidth=1.8)
-    ax.set_title(tag)
-    ax.set_xlabel("Timesteps")
-    ax.set_ylabel("Value")
-    ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(output_path, dpi=200)
-    plt.close(fig)
-
-
-def _update_artifact_manifest(run_dir: Path, export_manifest_path: Path, output_dir: Path) -> None:
+def _update_legacy_running_manifest(
+    run_dir: Path, export_manifest_path: Path, output_dir: Path
+) -> bool:
     manifest_path = run_dir / "artifact_manifest.json"
     if not manifest_path.exists():
-        return
+        return False
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    artifacts: dict[str, Any] = manifest.setdefault("artifacts", {})
+    if manifest.get("schema_version") != "2.0" or manifest.get("status") == "completed":
+        return False
+    artifacts = manifest.setdefault("artifacts", {})
     artifacts["tensorboard_scalar_plots"] = str(output_dir)
     artifacts["tensorboard_scalar_export_manifest"] = str(export_manifest_path)
-    manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    atomic_write_json(manifest_path, manifest)
+    return True
 
 
 def main() -> None:
@@ -123,43 +93,20 @@ def main() -> None:
             f"No TensorBoard event dirs found for RUN_ID={args.run_id} under {runs_dir}"
         )
 
-    exported: list[dict[str, Any]] = []
-    for event_dir in event_dirs:
-        scalars = _read_scalars(event_dir)
-        for tag, df in scalars.items():
-            event_prefix = _safe_filename(event_dir.name)
-            tag_name = _safe_filename(tag)
-            stem = f"{event_prefix}__{tag_name}"
-            csv_path = output_dir / f"{stem}.csv"
-            png_path = output_dir / f"{stem}.png"
-
-            df.to_csv(csv_path, index=False)
-            _plot_scalar(tag, df, png_path)
-
-            exported.append(
-                {
-                    "event_dir": str(event_dir),
-                    "tag": tag,
-                    "rows": int(len(df)),
-                    "csv": str(csv_path),
-                    "png": str(png_path),
-                }
-            )
-
-    export_manifest = {
-        "run_id": args.run_id,
-        "runs_dir": str(runs_dir),
-        "output_dir": str(output_dir),
-        "event_dirs": [str(path) for path in event_dirs],
-        "exported_scalars": exported,
-    }
+    export_manifest = export_tensorboard_scalars(
+        event_dirs,
+        output_dir,
+        run_id=args.run_id,
+        include_plots=True,
+    )
     export_manifest_path = output_dir / "tensorboard_scalar_export_manifest.json"
-    export_manifest_path.write_text(json.dumps(export_manifest, indent=2), encoding="utf-8")
 
     if not args.no_update_manifest:
-        _update_artifact_manifest(run_dir, export_manifest_path, output_dir)
+        updated = _update_legacy_running_manifest(run_dir, export_manifest_path, output_dir)
+        if not updated and (run_dir / "artifact_manifest.json").exists():
+            print("Artifact manifest left unchanged because completed evidence is immutable.")
 
-    print(f"Exported {len(exported)} scalar curve(s) to: {output_dir}")
+    print(f"Exported {len(export_manifest['exported_scalars'])} scalar curve(s) to: {output_dir}")
     print(f"Export manifest: {export_manifest_path}")
 
 

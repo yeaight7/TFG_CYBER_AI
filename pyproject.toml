@@ -13,6 +13,7 @@ dependencies = [
     "sb3-contrib==2.8.0",
     "torch==2.12.1",
     "joblib==1.5.3",
+    "psutil==7.2.2",
 ]
 
 [project.optional-dependencies]
