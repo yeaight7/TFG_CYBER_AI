@@ -1077,7 +1077,7 @@ Review must also confirm:
 
 **Stopping point:** stop. GPU-host setup or campaign execution requires a new explicit user request.
 
-**Very Important Note:** If you see fit, the user can run smoke tests of the experiments (run the trainings but with a very small number of timesteps and rows), in the local laptop WSL2 environment, just to verify that the code runs and produces artifacts. After behaviour is verified, the user can then run the full experiments on the GPU host. The smoke tests are not part of the official campaign and do not produce scientific evidence.
+**Very Important Note:** If you see fit, the user can run smoke tests of the experiments (run the trainings but with a very small number of timesteps and rows), in the local laptop WSL2 environment, just to verify that the code runs and produces artifacts. After behaviour is verified, the user can then run the full experiments on the GPU host. The smoke tests are not part of the official campaign and do not produce scientific evidence. If you agree, after completing the final review, tell the user what to run and how.
 
 ---
 
