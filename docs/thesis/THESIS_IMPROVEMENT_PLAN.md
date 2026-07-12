@@ -311,6 +311,7 @@ No thesis claim or figure may depend on these until they are actually run and th
 - DT-8 (2026-07-06): babel options `es-lcroman` (lowercase roman folios — the default `\es@scroman` small-caps folios force nonexistent bold-smallcaps in the TOC) and `es-tabla` (floats say "Tabla", matching the prose).
 - DT-9 (2026-07-06): fancyhdr v5 requires BOTH page styles defined via `\fancypagestyle{...}` — global `\fancyhf`/`\fancyhead` config gets clobbered by a later `\fancypagestyle{plain}` definition (empirically verified).
 - DT-10 (2026-07-06): TeX Live 2025 emits `ignored error: Infinite glue shrinkage found in box being split` on EVERY multi-page longtable (reproduced with a 6-line vanilla document). Benign engine diagnostic; G1 pass criterion remains exit 0 + no `^!` lines; do not chase these.
+- DT-11 (2026-07-13): The forward-only LFS policy supersedes the storage part of DT-6: the historical MAIN TensorBoard event log is now committed through Git LFS, while its exported scalar CSVs remain durable figure inputs. No history was rewritten.
 
 ## Execution log (append one block per phase/session)
 
