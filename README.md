@@ -17,8 +17,9 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 | CICIDS2017 adapter | Implemented |
 | NSL-KDD adapter | Legacy — data/model dropped from the repo (see [experiments/nslkdd_experiments.md](experiments/nslkdd_experiments.md)); code kept for history only |
 | RL algorithm | QRDQN |
-| Validation suite | Checks A, B, C + leave-one-CSV-out script |
+| Validation suite | Historical Checks A/B/C + campaign direct, shuffled-label, day, and targeted four-holdout workflows |
 | Phase 2 inference | Robust offline pipeline available (`predict_real_traffic_v2.py`) |
+| Final campaign preparation | Phases 1–9 implemented; provider-neutral operating documentation maintained here; campaign not yet executed |
 | Active blocking | Not implemented |
 
 ## Documentation Map
@@ -26,11 +27,12 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 - [docs/README.md](docs/README.md): documentation index and document roles
 - [.github/AGENT_CONTEXT.md](.github/AGENT_CONTEXT.md): project-wide technical source of truth
 - [docs/results.md](docs/results.md): artifact-backed results snapshot
-- [docs/AGENT_CONTEXT.md](docs/AGENT_CONTEXT.md): Phase 2 scope and guardrails
-- [docs/phase2_plan.md](docs/phase2_plan.md): execution plan for the lab workflow
-- [docs/gcp_lab.md](docs/gcp_lab.md): private lab deployment guide
-- [docs/runpod_main_experiment.md](docs/runpod_main_experiment.md): single main RunPod training run guide
-- [docs/reproducibility.md](docs/reproducibility.md): recorded environment for the main QRDQN run and dependency-file strategy
+- [docs/phase 2/AGENT_CONTEXT.md](docs/phase%202/AGENT_CONTEXT.md): Phase 2 scope and guardrails
+- [docs/phase 2/phase2_plan.md](docs/phase%202/phase2_plan.md): execution plan for the lab workflow
+- [docs/gpu_experimental_environment.md](docs/gpu_experimental_environment.md): maintained GPU setup, preflight, campaign, snapshot, and aggregation guide
+- [docs/runpod_main_experiment.md](docs/runpod_main_experiment.md): historical compatibility pointer for the committed historical MAIN procedure
+- [docs/reproducibility.md](docs/reproducibility.md): current dependency strategy plus labelled historical environment record
+- [experiments/final_experiment_campaign.json](experiments/final_experiment_campaign.json): locked final campaign matrix
 - [experiments/README.md](experiments/README.md): experiment archive index
 - [experiments/cicids2017_qrdqn_experiments.md](experiments/cicids2017_qrdqn_experiments.md): maintained CICIDS2017 + QRDQN run history
 - [docs/defensa/](docs/defensa/): Spanish defense-prep material (progress notes, defense script, tutor guide, question bank, study packet)
@@ -120,13 +122,13 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-For the pinned RunPod CUDA 13.0 environment used by the main QRDQN run, use:
+For the pinned Linux CUDA 13.0 GPU experimental environment, use:
 
 ```bash
-pip install -r requirements-runpod-cu130.txt
+pip install -r requirements-gpu-cu130.txt
 ```
 
-See [docs/reproducibility.md](docs/reproducibility.md) for the exact recorded environment.
+See [docs/gpu_experimental_environment.md](docs/gpu_experimental_environment.md) for maintained setup and campaign instructions. The historical compatibility dependency filename remains documented in [docs/reproducibility.md](docs/reproducibility.md).
 
 Train the RL model on CICIDS2017:
 
@@ -142,12 +144,16 @@ Run the validation suite:
 python src/validate_checks.py --run-dir runs/cicids2017/<RUN_ID> --checks A B C
 ```
 
-Run leave-one-CSV-out validation:
+Run the locked targeted four-holdout workflow:
 
 ```bash
-python src/validate_leave_one_csv_out.py --timesteps 30000
-python src/validate_leave_one_csv_out.py --timesteps 5000 --max-rows-per-csv 10000
+python src/validate_leave_one_csv_out.py \
+  --cache-root <CACHE_ROOT> \
+  --artifact-root <ARTIFACT_ROOT> \
+  --resume
 ```
+
+The legacy script filename is retained for compatibility; it does not launch an implicit eight-fold study.
 
 Run robust Phase 2 offline inference:
 
@@ -169,15 +175,21 @@ The repository currently includes four validation workflows:
 | Check A | Direct prediction on `X_test` vs `y_test` without relying on the environment |
 | Check B | Shuffled-label anti-leakage test |
 | Check C | Hard CSV/day split generalisation test |
-| leave-one-CSV-out | One held-out CICIDS2017 CSV per fold, train on the remaining seven |
+| Targeted four-holdout study | Four locked held-out CICIDS2017 CSVs, each trained on the remaining seven |
 
-The leave-one-CSV-out workflow is implemented in code, but this repository does not currently contain a committed full run artifact for it under `runs/validation/`.
+The targeted workflow is implemented, but no fresh final-campaign holdout artifacts exist yet. It is a targeted four-holdout generalisation study, not exhaustive eight-fold leave-one-CSV-out.
+
+## Final Experiment Campaign
+
+The prepared campaign is locked by [experiments/final_experiment_campaign.json](experiments/final_experiment_campaign.json): 22 new primary model-training executions, five auxiliary jobs, and two aliases. The fresh campaign MAIN will be a new 3,000,000-timestep run; the committed historical MAIN remains separate evidence and is not reused as campaign MAIN.
+
+The model-seed study measures **seed sensitivity under a fixed 1M-row / 1,324,741-timestep budget** for model seeds 42–46. It does not measure variance of the 3M fresh campaign MAIN. Full matrix, caveats, and commands: [docs/gpu_experimental_environment.md](docs/gpu_experimental_environment.md).
 
 ## Results Snapshot
 
 Artifact-backed historical results are summarised in [docs/results.md](docs/results.md). Highlights:
 
-- Official run (MAIN) — full dataset, fixed test partition:
+- Historical MAIN — full dataset, fixed test partition:
   - `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`
   - train_shape [2264594, 152], test_shape [566149, 152]
   - accuracy `0.9938055`
@@ -205,7 +217,7 @@ The longer experiment-by-experiment narrative now lives in [experiments/cicids20
 - The two defense-support documents remain in Spanish by design:
   - [docs/defensa/DEFENSA_TFG_PROGRESO.md](docs/defensa/DEFENSA_TFG_PROGRESO.md)
   - [docs/defensa/DEFENSA_TFG_SCRIPT.md](docs/defensa/DEFENSA_TFG_SCRIPT.md)
-- Historical results are preserved, but they must not be confused with the **current code defaults**.
+- Historical results are preserved, but they must not be confused with the **current code defaults** or future fresh campaign evidence.
 
 ## Safety and Reproducibility
 
