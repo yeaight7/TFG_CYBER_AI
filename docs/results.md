@@ -7,6 +7,15 @@ This document summarises **artifact-backed** results currently present under `ru
 - If a metric comes from a committed artifact, it is presented as a measured result.
 - If a behaviour changed across runs, the result is tied to the exact `RUN_ID`.
 - Historical run metadata must not be confused with the **current code defaults**.
+- No future final-campaign value is reported until its complete artifact set and checksums validate.
+
+## Historical evidence versus the future final campaign
+
+Every number below comes from existing committed historical evidence. The committed `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` is the historical MAIN. It is not the fresh campaign MAIN and will not be reused as its physical execution or as a source for fresh-MAIN auxiliary jobs.
+
+The approved future campaign contains 22 new primary model-training executions, five auxiliary validation, analysis, and inference jobs, and two aliases. Its fresh MAIN will be `qrdqn_main_random_full_s42_m42`, a new 3,000,000-timestep run. No final-campaign metrics or aggregates exist yet.
+
+The four future CSV holdouts form a targeted four-holdout generalisation study, not exhaustive eight-fold leave-one-CSV-out. The future model-seed block measures **seed sensitivity under a fixed 1M-row / 1,324,741-timestep budget** and does not estimate variance of the 3M MAIN execution. See [GPU Experimental Environment](gpu_experimental_environment.md) for the exact matrix and operating contract.
 
 ## Current Code Defaults vs Historical Run Settings
 
@@ -23,9 +32,9 @@ REWARD_CONFIG = {
 
 ## CICIDS2017 Training Runs
 
-The **official trunk** is the MAIN run (full data, fixed test partition). Secondary runs (same design, fewer training rows) form the training-size benchmark (pending). The earlier `C0x` runs were **pre-design probes** (exploration before the experimental design was fixed); they are kept below as a historical appendix only and are **not** part of the official results.
+The historical result trunk is the committed MAIN run (full data, fixed test partition). Secondary runs (same design, fewer training rows) form the historical training-size benchmark proposal (pending). The earlier `C0x` runs were **pre-design probes** (exploration before the experimental design was fixed); they are kept below as a historical appendix only and are **not** part of the official historical result.
 
-### Official run (MAIN)
+### Historical MAIN
 
 | Run | Train/test rows | Timesteps | Split | Accuracy | Recall attack | F1 attack | Reward config |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -33,7 +42,7 @@ The **official trunk** is the MAIN run (full data, fixed test partition). Second
 
 Secondary runs (training-size benchmark, fewer `--train-max-rows` over the same fixed test partition) are tracked under [Training-Size Benchmark](#training-size-benchmark-fixed-test-partition) (pending).
 
-### Main Committed Run (full data)
+### Historical Main Committed Run (full data)
 
 | Field | Value |
 |---|---|
@@ -193,14 +202,15 @@ Artifact:
 
 This remains the hardest committed generalisation artifact in the repository.
 
-### leave-one-CSV-out
+### Targeted four-holdout campaign workflow
 
 Status:
 
-- implemented in `src/validate_leave_one_csv_out.py`
-- no committed full artifact currently exists under `runs/validation/`
+- implemented in `src/validate_leave_one_csv_out.py` under its compatibility filename
+- locked to WebAttacks, Infilteration, PortScan, and DDoS holdouts
+- no fresh campaign artifact currently exists under `runs/validation/`
 
-Because there is no committed run folder for this validation yet, no measured metrics are reported here.
+Because there is no committed fresh campaign artifact for this targeted study, no measured metrics are reported here. It must not be described as exhaustive eight-fold leave-one-CSV-out.
 
 ## Phase 2 Offline Inference
 
@@ -319,6 +329,6 @@ Per-sweep artifacts under `runs/cicids2017/baseline_random_forest_comparison/rf_
 | Day Split | 1,162,213 (Thu+Fri) | 0.76913 | 0.15005 | 0.96473 | 0.08135 | **Same partition as QRDQN Check C** (train Mon–Wed). Directly comparable: QRDQN Check C recall attack 0.52954 / F1 0.62578 — RF attack recall collapses far more under day-shift. |
 | Leave-One-Out | 692,703 (Wed) | 0.63782 | 0.01427 | 0.98482 | 0.00719 | Wednesday held-out; domain-shift stress. RF-only (no committed QRDQN LOO artifact). |
 
-## Open Documentation Gap
+## Pending Future Evidence
 
-The repository now includes code for leave-one-CSV-out validation, but the documentation cannot yet report aggregate metrics for it until a full committed run is added under `runs/validation/`.
+Fresh campaign MAIN, direct validation, bootstrap, duplicate analysis, shuffled-label control, Phase 2 inference, day split, ladder, seed-sensitivity, targeted-holdout, and Random Forest outputs remain pending. This page must not add those metrics until validated campaign artifacts and hashes exist.
