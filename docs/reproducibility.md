@@ -43,6 +43,20 @@ uv pip install -r requirements-gpu-cu130.txt --index-strategy unsafe-best-match
 The project-mode `uv sync` path does not need that flag because `pyproject.toml`
 uses per-package `tool.uv.sources` for torch.
 
+## Experimental artifact versioning
+
+Campaign artifact roots intended for later evidence commits must be placed under
+the repository, for example `runs/final_campaign/`. Final models, retained
+checkpoints, TensorBoard events, joblib files, source datasets, PCAPs, existing
+prediction CSV evidence, and TensorBoard scalar CSVs use Git LFS. Small configs,
+metrics, environment metadata, manifests, checksums, logs, monitoring, timings,
+system metrics, feature importances, and aggregate CSVs use normal Git.
+
+Future per-row `runs/**/predictions*.csv` exports and downloaded `.tar.gz`
+bundles remain ignored. Existing committed prediction CSVs remain tracked. Git
+complements but does not replace verified incremental snapshots to a separate
+durable storage destination on an ephemeral GPU host.
+
 ## Historical MAIN environment and compatibility filename
 
 The committed historical MAIN environment remains recorded in:

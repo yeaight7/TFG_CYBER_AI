@@ -11,6 +11,8 @@ __pycache__/
 *.blg
 report/*.log
 *.log
+!runs/**/stdout.log
+!runs/**/stderr.log
 *.out
 *.run.xml
 *.toc
@@ -34,9 +36,7 @@ runs/archive/phase2/P2v2_pred_20260412_004102/predictions.csv
 runs/archive/phase2/P2v2_pred_20260412_004624/predictions.csv
 runs/phase2/**/predictions_sensitive_local.csv
 runs/archive/phase2/**/predictions_sensitive_local.csv
-runs/cicids2017/*/checkpoints/
-runs/**/events.out.tfevents.*
-runs/**/model.zip
+runs/**/predictions*.csv
 scratch/
 
 # Generated canonical dataset caches (rebuildable; never commit shard arrays).
