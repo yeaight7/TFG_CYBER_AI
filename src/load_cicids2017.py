@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, List
@@ -9,6 +8,23 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+
+try:
+    from src.cicids_cache import (
+        CacheValidationError,
+        load_cached_csvs,
+        sha256_array,
+        sha256_file,
+        validate_cache,
+    )
+except ModuleNotFoundError:
+    from cicids_cache import (
+        CacheValidationError,
+        load_cached_csvs,
+        sha256_array,
+        sha256_file,
+        validate_cache,
+    )
 
 try:
     from src.canonical_schema import (
@@ -79,6 +95,11 @@ class CICIDSLoadConfig:
     test_size: float = 0.2
     random_state: int = 42
     allow_non_official_csvs: bool = False
+
+    # Canonical unscaled cache. ``off`` preserves the legacy uncached path;
+    # ``prefer`` falls back without consuming invalid data; ``require`` fails.
+    cache_root: Optional[Path] = None
+    cache_policy: str = "off"
 
 
 def _list_csv_files(root: Path) -> List[Path]:
@@ -349,10 +370,56 @@ def _load_and_process_csv_paths(
     if max_rows_per_csv is not None and max_rows_per_csv <= 0:
         raise ValueError("max_rows_per_csv debe ser > 0.")
 
+    if cfg.cache_policy not in ("off", "prefer", "require"):
+        raise ValueError(
+            "cache_policy must be 'off', 'prefer', or 'require'; "
+            f"got '{cfg.cache_policy}'"
+        )
+
+    cache_incompatibilities = []
+    if not cfg.use_canonical:
+        cache_incompatibilities.append("use_canonical must be true")
+    if not cfg.drop_identifier_cols:
+        cache_incompatibilities.append("drop_identifier_cols must be true")
+    if cfg.label_col.strip().lower() != "label":
+        cache_incompatibilities.append("label_col must be 'Label'")
+    if cfg.benign_value.strip().upper() != "BENIGN":
+        cache_incompatibilities.append("benign_value must be 'BENIGN'")
+    if cfg.allow_non_official_csvs:
+        cache_incompatibilities.append("allow_non_official_csvs must be false")
+    if cfg.cache_root is None:
+        cache_incompatibilities.append("cache_root is required")
+
+    if cfg.cache_policy != "off" and not cache_incompatibilities:
+        assert cfg.cache_root is not None
+        try:
+            observations, labels, feature_names, _manifest_hash = load_cached_csvs(
+                dataset_root=cfg.local_dir,
+                cache_root=cfg.cache_root,
+                csv_paths=csv_paths,
+                max_rows=cfg.max_rows if max_rows_per_csv is None else None,
+                max_rows_per_csv=max_rows_per_csv,
+                sample_frac=cfg.sample_frac,
+                sample_seed=cfg.random_state,
+            )
+            return observations, labels, feature_names
+        except CacheValidationError:
+            if cfg.cache_policy == "require":
+                raise
+            print("[CICIDS2017] Cache unavailable or invalid; using uncached CSV path")
+    elif cfg.cache_policy == "require":
+        raise CacheValidationError(
+            "cache cannot satisfy this loader configuration: "
+            + "; ".join(cache_incompatibilities)
+        )
+
     if max_rows_per_csv is None:
         df = _load_all_csvs(csv_paths, cfg)
     else:
-        frames = [_load_csv_with_row_limit(path, cfg, row_limit=max_rows_per_csv) for path in csv_paths]
+        frames = [
+            _load_csv_with_row_limit(path, cfg, row_limit=max_rows_per_csv)
+            for path in csv_paths
+        ]
         df = pd.concat(frames, ignore_index=True)
 
     return _prepare_cicids_features(df, cfg)
@@ -404,8 +471,7 @@ def load_cicids2017_binary(
     csvs = _select_csv_files(local_dir, cfg)
     print(f"[CICIDS2017] Cargando {len(csvs)} archivos CSV desde {local_dir}")
 
-    df = _load_all_csvs(csvs, cfg)
-    X_clean, y_clean, feature_names = _prepare_cicids_features(df, cfg)
+    X_clean, y_clean, feature_names = _load_and_process_csv_paths(csvs, cfg)
 
     # Split estratificado
     X_train, X_test, y_train, y_test = train_test_split(
@@ -596,15 +662,32 @@ _PRESET_MAX_ROWS: Dict[str, Dict[str, Optional[int]]] = {
 SUBSAMPLE_METHOD_STRATIFIED_NESTED_PREFIX = "stratified_nested_prefix_v1"
 
 
+def _cache_manifest_hash_if_used(cfg: CICIDSLoadConfig) -> Optional[str]:
+    if cfg.cache_policy == "off" or cfg.cache_root is None:
+        return None
+    if (
+        not cfg.use_canonical
+        or not cfg.drop_identifier_cols
+        or cfg.label_col.strip().lower() != "label"
+        or cfg.benign_value.strip().upper() != "BENIGN"
+        or cfg.allow_non_official_csvs
+    ):
+        return None
+    try:
+        validate_cache(cfg.local_dir, cfg.cache_root)
+    except CacheValidationError:
+        if cfg.cache_policy == "require":
+            raise
+        return None
+    return sha256_file(Path(cfg.cache_root) / "cache_manifest.json")
+
+
 def _sha256_of_array(arr: np.ndarray) -> str:
     """
     SHA-256 content hash of an ndarray, prefixed with dtype and shape so that
     arrays with identical bytes but different layout do not collide.
     """
-    h = hashlib.sha256()
-    h.update(f"{arr.dtype}|{arr.shape}|".encode())
-    h.update(np.ascontiguousarray(arr))
-    return h.hexdigest()
+    return sha256_array(arr)
 
 
 def _stratified_nested_prefix_indices(
@@ -658,6 +741,9 @@ def load_cicids2017_split(
     use_canonical: bool = True,
     allow_non_official_csvs: bool = False,
     split_seed: Optional[int] = None,
+    local_dir: Optional[Path] = None,
+    cache_root: Optional[Path] = None,
+    cache_policy: str = "off",
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str], Dict[str, Any]]:
     """
     Unified CICIDS2017 loader with split-mode and preset support.
@@ -696,6 +782,12 @@ def load_cicids2017_split(
         Whether to map features to the canonical schema (76 + 76 mask = 152).
     allow_non_official_csvs : bool
         Opt-in legacy mode that loads/matches any ``*.csv`` in the dataset dir.
+    local_dir : Path or None
+        Configurable dataset root. Defaults to ``datasets/CICIDS2017``.
+    cache_root : Path or None
+        Configurable canonical unscaled cache root.
+    cache_policy : ``"off"`` | ``"prefer"`` | ``"require"``
+        Cache consumption policy. Invalid cache data is never consumed.
 
     Returns
     -------
@@ -725,6 +817,7 @@ def load_cicids2017_split(
         )
 
     cfg = CICIDSLoadConfig(
+        local_dir=local_dir or _DEFAULT_LOCAL_DIR,
         max_rows=effective_max_rows,
         use_canonical=use_canonical,
         # Unified loader hashes canonical arrays before any scaling, then fits
@@ -732,6 +825,8 @@ def load_cicids2017_split(
         scale=False,
         random_state=resolved_split_seed,
         allow_non_official_csvs=allow_non_official_csvs,
+        cache_root=cache_root,
+        cache_policy=cache_policy,
     )
 
     if split_mode == "random":
@@ -794,6 +889,8 @@ def load_cicids2017_split(
             "canonical_unscaled_v1" if use_canonical else "unscaled_noncanonical_v1"
         ),
         "allow_non_official_csvs": bool(allow_non_official_csvs),
+        "cache_policy": cache_policy,
+        "cache_manifest_sha256": _cache_manifest_hash_if_used(cfg),
         "csv_selection_policy": "legacy_all_csvs" if allow_non_official_csvs else "official_cicids2017_8_csvs",
         "test_set_sha256": raw_test_hash,
         "y_test_sha256": test_label_hash,
