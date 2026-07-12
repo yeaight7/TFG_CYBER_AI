@@ -4,15 +4,20 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import shutil
 import subprocess
 import sys
+import uuid
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
 from src.artifact_integrity import ArtifactTrustError, verify_artifact_manifest
+from src.campaign_export import create_final_bundle, create_incremental_snapshot
 from src.cicids_cache import sha256_file, validate_cache
+from src.gpu_preflight import verify_preflight_report
 from src.run_artifacts import atomic_write_json
 
 
@@ -477,6 +482,19 @@ def load_campaign_spec(path: Path | str) -> CampaignSpec:
 
 Dispatch = Callable[[CampaignEntry, Sequence[str], Path], subprocess.CompletedProcess[Any]]
 CacheValidator = Callable[[Path, Path], Mapping[str, Any]]
+PreflightValidator = Callable[..., Mapping[str, Any]]
+SnapshotExporter = Callable[[Path, Path], Mapping[str, Any]]
+BundleExporter = Callable[[Path, Path], Mapping[str, Any]]
+
+
+def _copy_file_atomic(source: Path, destination: Path) -> None:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    temporary = destination.with_name(f".{destination.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        shutil.copyfile(source, temporary)
+        os.replace(temporary, destination)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def _dispatch_subprocess(
@@ -498,14 +516,23 @@ class CampaignRunner:
         paths: CampaignPaths,
         dispatcher: Dispatch = _dispatch_subprocess,
         cache_validator: CacheValidator = validate_cache,
+        preflight_validator: PreflightValidator = verify_preflight_report,
+        snapshot_exporter: SnapshotExporter = create_incremental_snapshot,
+        bundle_exporter: BundleExporter = create_final_bundle,
     ) -> None:
         self.spec = spec
         self.campaign_id = _safe_component(campaign_id, "campaign_id")
         self.paths = paths
         self.dispatcher = dispatcher
         self.cache_validator = cache_validator
+        self.preflight_validator = preflight_validator
+        self.snapshot_exporter = snapshot_exporter
+        self.bundle_exporter = bundle_exporter
         self.campaign_dir = self.paths.artifact_root / self.campaign_id
         self.state_path = self.campaign_dir / "campaign_state.json"
+        self._preflight: dict[str, Any] | None = None
+        self._preflight_report_sha256: str | None = None
+        self._validated_cache_sha256: str | None = None
 
     def attempt_dir(self, logical_id: str, attempt: int) -> Path:
         return self.campaign_dir / "attempts" / logical_id / f"attempt-{attempt}"
@@ -562,6 +589,92 @@ class CampaignRunner:
             "entries": entries,
         }
 
+    def _validate_preflight_gate(self) -> None:
+        if self.paths.preflight_report is None:
+            raise CampaignDependencyError("A successful matching preflight report is required")
+        if not self.paths.preflight_report.is_file():
+            raise CampaignDependencyError(
+                f"A successful matching preflight report is required: "
+                f"missing {self.paths.preflight_report}"
+            )
+        if self.paths.snapshot_root is None:
+            raise CampaignDependencyError("A snapshot root is required for real campaign execution")
+        try:
+            cache_result = dict(
+                self.cache_validator(self.paths.dataset_root, self.paths.cache_root)
+            )
+        except Exception as error:
+            raise CampaignDependencyError(
+                f"A successful matching preflight requires a validated cache: {error}"
+            ) from error
+        if cache_result.get("validation_status") != "valid":
+            raise CampaignDependencyError(
+                "A successful matching preflight requires a validated cache"
+            )
+        cache_manifest = self.paths.cache_root / "cache_manifest.json"
+        cache_sha256 = cache_result.get("manifest_sha256")
+        if cache_sha256 is None:
+            if not cache_manifest.is_file():
+                raise CampaignDependencyError("Validated cache manifest is missing")
+            cache_sha256 = sha256_file(cache_manifest)
+        try:
+            report = dict(
+                self.preflight_validator(
+                    self.paths.preflight_report,
+                    expected_campaign_spec_sha256=self.spec.content_hash,
+                    expected_dataset_root=self.paths.dataset_root,
+                    expected_cache_root=self.paths.cache_root,
+                    expected_artifact_root=self.paths.artifact_root,
+                    expected_snapshot_root=self.paths.snapshot_root,
+                    expected_cache_manifest_sha256=str(cache_sha256),
+                    expected_phase2_input_sha256=self.paths.phase2_input_sha256,
+                )
+            )
+        except Exception as error:
+            raise CampaignDependencyError(
+                f"A successful matching preflight report is required: {error}"
+            ) from error
+        if report.get("status") != "passed":
+            raise CampaignDependencyError("A successful matching preflight report is required")
+        report_sha256 = report.get("report_sha256")
+        if not isinstance(report_sha256, str) or len(report_sha256) != 64:
+            raise CampaignDependencyError("Preflight report has no valid content hash")
+        self._preflight = report
+        self._preflight_report_sha256 = report_sha256
+        self._validated_cache_sha256 = str(cache_sha256)
+
+    def _write_campaign_inputs(self) -> None:
+        if (
+            self._preflight is None
+            or self._preflight_report_sha256 is None
+            or self._validated_cache_sha256 is None
+        ):
+            raise CampaignExecutionError("Preflight gate was not evaluated")
+        cache_manifest = self.paths.cache_root / "cache_manifest.json"
+        if not cache_manifest.is_file():
+            raise CampaignExecutionError("Validated cache manifest disappeared")
+        resolved_spec = {
+            **dict(self.spec.raw),
+            "resolved_runtime": {
+                "artifact_root": str(self.paths.artifact_root.resolve()),
+                "cache_root": str(self.paths.cache_root.resolve()),
+                "dataset_root": str(self.paths.dataset_root.resolve()),
+                "snapshot_root": str(self.paths.snapshot_root.resolve()),
+                "phase2_input": (
+                    None
+                    if self.paths.phase2_input is None
+                    else str(self.paths.phase2_input.resolve())
+                ),
+                "phase2_input_sha256": self.paths.phase2_input_sha256,
+                "preflight_report_sha256": self._preflight_report_sha256,
+                "cache_manifest_sha256": self._validated_cache_sha256,
+            },
+        }
+        atomic_write_json(self.campaign_dir / "campaign_spec_original.json", self.spec.raw)
+        atomic_write_json(self.campaign_dir / "campaign_spec_resolved.json", resolved_spec)
+        atomic_write_json(self.campaign_dir / "preflight_report.json", self._preflight)
+        _copy_file_atomic(cache_manifest, self.campaign_dir / "cache_manifest.json")
+
     def _state_template(self) -> dict[str, Any]:
         return {
             "schema_version": CAMPAIGN_STATE_SCHEMA_VERSION,
@@ -571,7 +684,8 @@ class CampaignRunner:
             "dispatch_mode": "sequential",
             "created_at": _utc_now(),
             "updated_at": _utc_now(),
-            "cache_manifest_sha256": None,
+            "cache_manifest_sha256": self._validated_cache_sha256,
+            "preflight_report_sha256": self._preflight_report_sha256,
             "entries": {
                 entry.logical_id: {
                     "classification": entry.classification,
@@ -608,8 +722,26 @@ class CampaignRunner:
                 or state.get("campaign_spec_sha256") != self.spec.content_hash
             ):
                 raise CampaignExecutionError("Campaign state identity does not match this run")
+            if (
+                state.get("preflight_report_sha256") != self._preflight_report_sha256
+                or state.get("cache_manifest_sha256") != self._validated_cache_sha256
+            ):
+                raise CampaignExecutionError(
+                    "Campaign state preflight/cache binding does not match this run"
+                )
+            for relative in (
+                "campaign_spec_original.json",
+                "campaign_spec_resolved.json",
+                "preflight_report.json",
+                "cache_manifest.json",
+            ):
+                if not (self.campaign_dir / relative).is_file():
+                    raise CampaignExecutionError(
+                        f"Campaign evidence input is missing: {relative}"
+                    )
             return state
         self.campaign_dir.mkdir(parents=True, exist_ok=False)
+        self._write_campaign_inputs()
         state = self._state_template()
         self._write_state(state)
         return state
@@ -1029,6 +1161,67 @@ class CampaignRunner:
         state["entries"][entry.logical_id]["status"] = "invalid"
         self._write_state(state)
 
+    def _snapshot_destination(self) -> Path:
+        if self.paths.snapshot_root is None:
+            raise CampaignExecutionError("A snapshot root is required")
+        return self.paths.snapshot_root / self.campaign_id
+
+    def _snapshot_entry(
+        self,
+        entry: CampaignEntry,
+        state: dict[str, Any],
+    ) -> dict[str, Any]:
+        record = state["entries"][entry.logical_id]
+        completed_status = "reused" if entry.classification == "alias" else "completed"
+        snapshot = record.get("snapshot")
+        if record.get("status") == "snapshot-failed" or not isinstance(snapshot, Mapping):
+            record["status"] = completed_status
+            record["snapshot"] = {
+                "status": "verified",
+                "destination": str(self._snapshot_destination()),
+            }
+            self._write_state(state)
+        elif snapshot.get("status") != "verified":
+            record["status"] = completed_status
+            record["snapshot"] = {
+                "status": "verified",
+                "destination": str(self._snapshot_destination()),
+            }
+            self._write_state(state)
+        try:
+            result = dict(
+                self.snapshot_exporter(
+                    self.campaign_dir,
+                    self._snapshot_destination(),
+                )
+            )
+            if result.get("status") != "verified":
+                raise CampaignExecutionError("Snapshot exporter did not return verified status")
+        except Exception as error:
+            record["status"] = "snapshot-failed"
+            record["snapshot"] = {
+                "status": "failed",
+                "destination": str(self._snapshot_destination()),
+                "error": str(error),
+            }
+            self._write_state(state)
+            raise CampaignExecutionError(
+                f"Verified snapshot failed after {entry.logical_id}: {error}"
+            ) from error
+        return result
+
+    def _create_final_bundle(self) -> dict[str, Any]:
+        if self.paths.snapshot_root is None:
+            raise CampaignExecutionError("A snapshot root is required")
+        destination = self.paths.snapshot_root / f"{self.campaign_id}.tar.gz"
+        try:
+            result = dict(self.bundle_exporter(self.campaign_dir, destination))
+        except Exception as error:
+            raise CampaignExecutionError(f"Final bundle verification failed: {error}") from error
+        if result.get("status") != "verified":
+            raise CampaignExecutionError("Final bundle exporter did not return verified status")
+        return result
+
     def execute(
         self,
         *,
@@ -1037,6 +1230,7 @@ class CampaignRunner:
         logical_run_id: str | None = None,
     ) -> dict[str, Any]:
         selected = self._selected(stage=stage, logical_run_id=logical_run_id)
+        self._validate_preflight_gate()
         state = self._load_state(resume=resume)
         dispatched: list[str] = []
         skipped: list[str] = []
@@ -1046,13 +1240,19 @@ class CampaignRunner:
             record = state["entries"][entry.logical_id]
             if entry.classification == "alias":
                 if record.get("status") == "reused":
+                    self._snapshot_entry(entry, state)
+                    skipped.append(entry.logical_id)
+                    continue
+                if record.get("status") == "snapshot-failed":
+                    self._snapshot_entry(entry, state)
                     skipped.append(entry.logical_id)
                     continue
                 self._complete_alias(entry, state)
+                self._snapshot_entry(entry, state)
                 reused.append(entry.logical_id)
                 continue
 
-            if record.get("status") == "completed":
+            if record.get("status") in {"completed", "snapshot-failed"}:
                 attempt_record = record["attempts"][-1]
                 attempt_dir = self._record_attempt_path(record)
                 try:
@@ -1064,6 +1264,7 @@ class CampaignRunner:
                 except CampaignArtifactError as error:
                     self._mark_invalid(state, entry, attempt_record, error)
                     raise
+                self._snapshot_entry(entry, state)
                 skipped.append(entry.logical_id)
                 continue
 
@@ -1133,12 +1334,13 @@ class CampaignRunner:
             )
             record["status"] = "completed"
             self._write_state(state)
+            self._snapshot_entry(entry, state)
 
         all_complete = all(
             record["status"] in {"completed", "reused"}
             for record in state["entries"].values()
         )
-        return {
+        response = {
             "status": "completed" if all_complete else "selection_completed",
             "campaign_id": self.campaign_id,
             "dispatched": dispatched,
@@ -1146,6 +1348,9 @@ class CampaignRunner:
             "reused": reused,
             "state_path": str(self.state_path),
         }
+        if all_complete:
+            response["final_bundle"] = self._create_final_bundle()
+        return response
 
 
 __all__ = [
