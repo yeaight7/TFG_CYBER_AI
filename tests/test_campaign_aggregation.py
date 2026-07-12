@@ -588,6 +588,14 @@ def test_aggregation_writes_exact_groups_macros_and_alias_provenance(tmp_path: P
         "auxiliary_jobs": 5,
         "aliases": 2,
     }
+    assert summary["profile_id"] == "main-v1"
+    assert summary["profile_hash"] == MAIN_V1_PROFILE_HASH
+
+    main_row = _read_json(output_dir / "main.json")["rows"][0]
+    assert main_row["campaign_profile_id"] == "main-v1"
+    assert main_row["campaign_profile_hash"] == MAIN_V1_PROFILE_HASH
+    assert main_row["support"] == {"n_test": 100, "benign": 82, "attack": 18}
+    assert main_row["timings"]["phases"]["training"]["duration_seconds"] == 1.0
 
     size_rows = _read_json(output_dir / "size_ladder.json")["rows"]
     assert len(size_rows) == 6
@@ -716,3 +724,38 @@ def test_figure_generator_requires_validated_aggregates_and_writes_future_svgs(
             repo_root=tmp_path,
         )
     assert not (tmp_path / "invalid-figures").exists()
+
+
+def test_phase8_clis_aggregate_and_render_from_explicit_paths(tmp_path: Path, capsys):
+    from scripts.aggregate_campaign import main as aggregate_main
+    from scripts.generate_campaign_figures import main as figure_main
+
+    campaign_dir = _synthetic_campaign(tmp_path)
+    aggregate_dir = tmp_path / "cli-aggregates"
+    figure_dir = tmp_path / "cli-figures"
+
+    assert (
+        aggregate_main(
+            [
+                "--campaign-dir",
+                str(campaign_dir),
+                "--output-dir",
+                str(aggregate_dir),
+            ]
+        )
+        == 0
+    )
+    assert json.loads(capsys.readouterr().out)["status"] == "completed"
+
+    assert (
+        figure_main(
+            [
+                "--aggregate-dir",
+                str(aggregate_dir),
+                "--output-dir",
+                str(figure_dir),
+            ]
+        )
+        == 0
+    )
+    assert json.loads(capsys.readouterr().out)["status"] == "completed"
