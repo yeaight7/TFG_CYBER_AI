@@ -25,8 +25,14 @@ The project is organised in two major phases:
 - Custom Gymnasium environment for binary defender actions
 - QRDQN training pipeline
 - Validation checks A, B, and C
-- leave-one-CSV-out validation script for CICIDS2017
+- locked targeted four-holdout QRDQN and Random Forest workflows
 - Robust Phase 2 offline inference pipeline (`predict_real_traffic_v2.py`)
+- Frozen `main-v1` QRDQN profile with separate split/model seeds
+- Canonical unscaled CICIDS2017 cache with validation and stale-data rejection
+- Complete run-artifact, monitoring, checkpoint, and checksum contracts
+- Sequential 22-execution campaign specification with five auxiliary jobs and two aliases
+- Provider-neutral preflight, runtime benchmark, verified snapshot, and final-bundle tooling
+- Validated campaign aggregation and future-figure completeness gates
 
 ### Not Implemented
 
@@ -80,7 +86,7 @@ This is the primary dataset and the basis for the canonical schema.
 - current adapter supports:
   - random stratified split
   - CSV/day pattern split
-  - exact-file split for leave-one-CSV-out validation
+  - exact-file split for the locked targeted four-holdout study
   - train-only subsampling for the internal training-size benchmark (`train_max_rows`)
 
 #### Train-only subsampling (`train_max_rows`)
@@ -91,7 +97,7 @@ This is the primary dataset and the basis for the canonical schema.
 - subsampling is deterministic, stratified, and **nested** (`stratified_nested_prefix_v1`: 500k ⊂ 1M ⊂ full for the same seed)
 - every load **via the current code** (`src/load_cicids2017.py`) records `test_set_sha256`, `y_test_sha256`, `train_set_sha256`, `y_train_sha256`, `n_train_full`, `subsample_method`, and `scale` in `split_metadata`
 - **the committed MAIN run predates this hashing**: `runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/config.json → split_metadata` contains only counts/ratios (no `*_sha256` keys). The byte-identity guarantee therefore applies to runs produced after the hashing was added, not to MAIN's committed artifact.
-- the fixed test-partition reference manifest will live at `runs/cicids2017/test_partition_reference_seed42.json` once minted on RunPod by `scripts/verify_fixed_test_split.py` (**pending — the hash-based cross-run verification has not yet been exercised against a committed reference**)
+- the fixed test-partition reference manifest will live at `runs/cicids2017/test_partition_reference_seed42.json` once minted on the final GPU host by `scripts/verify_fixed_test_split.py` (**pending — the hash-based cross-run verification has not yet been exercised against a committed reference**)
 - this is an **internal benchmark** mechanism only; do not mix its claims with Phase 2 / offline-inference results
 
 Impact of this change: current defaults unchanged (`train_max_rows=None` reproduces prior behavior exactly), historical comparisons unaffected, prior run artifacts remain reproducible, and the new `split_metadata` keys are additive.
@@ -126,9 +132,14 @@ This dataset is kept for historical Phase 1 benchmarking.
 | RL environment | `src/rl_defender_env.py` |
 | Training | `src/train_rl_defender.py` |
 | Validation checks A/B/C | `src/validate_checks.py` |
-| leave-one-CSV-out | `src/validate_leave_one_csv_out.py` |
+| Targeted four-holdout QRDQN wrapper (legacy filename) | `src/validate_leave_one_csv_out.py` |
 | Phase 2 robust inference | `scripts/predict_real_traffic_v2.py` |
 | Random Forest baseline | `src/baseline_random_forest.py` |
+| Campaign specification | `experiments/final_experiment_campaign.json` |
+| Sequential campaign runner | `scripts/run_campaign.py` |
+| GPU host preflight | `scripts/preflight_gpu_environment.py` |
+| Snapshot and bundle export | `scripts/export_campaign.py` |
+| Campaign aggregation | `scripts/aggregate_campaign.py` |
 
 ## Training and Validation
 
@@ -174,7 +185,22 @@ Documentation must distinguish between:
 | Check A | Implemented | direct prediction vs `y_test` |
 | Check B | Implemented | shuffled-label anti-leakage |
 | Check C | Implemented | hard CSV/day split |
-| leave-one-CSV-out | Implemented in code | no committed full run artifact yet |
+| Targeted four-holdout study | Implemented in code | exact four-file scope; no fresh campaign artifact yet |
+
+The targeted study is not exhaustive eight-fold leave-one-CSV-out. The selected files are not claimed to be the only CICIDS2017 CSVs containing attacks.
+
+## Final Experiment Campaign
+
+The approved future campaign is defined by `experiments/final_experiment_campaign.json` and operated through `docs/gpu_experimental_environment.md`.
+
+- 22 new primary model-training executions;
+- five auxiliary validation, analysis, and inference jobs;
+- two aliases, yielding 24 logical primary-training result points;
+- a fresh 3,000,000-timestep campaign MAIN distinct from the committed historical MAIN;
+- a targeted four-holdout generalisation study for both QRDQN and Random Forest;
+- seed sensitivity under a fixed 1M-row / 1,324,741-timestep budget for QRDQN model seeds 42–46.
+
+The seed-sensitivity block does not estimate variance of the 3M MAIN execution. Official processes run sequentially, consume validated cache/preflight inputs, and snapshot each validated physical execution before progression. No final campaign result exists until complete checksum-validated artifacts are produced.
 
 ## Phase 2 Status
 
@@ -202,9 +228,9 @@ Key features:
 
 ## Results Snapshot
 
-Artifact-backed highlights currently available in the repository:
+Artifact-backed historical highlights currently available in the repository:
 
-- Official run (MAIN) — completed, fixed test partition:
+- Historical MAIN — completed, fixed test partition:
   - `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655`
   - training_profile: `main-experiment`, preset: `full`, timesteps: 3,000,000
   - train shape: [2,264,594 × 152], test shape: [566,149 × 152]
@@ -223,17 +249,17 @@ See [../docs/results.md](../docs/results.md) for the maintained results snapshot
 
 ## Immediate Next Steps
 
-- Run and review a full leave-one-CSV-out validation artifact
-- Reassess Phase 2 behaviour on benign and mixed traffic with the current robust inference settings
-- Decide whether additional calibration or fine-tuning on lab-derived data is required
-- Keep documentation aligned with run artifacts instead of stale narrative
+- Complete the separately requested read-only integration review before any host transfer.
+- On the final GPU host, build and validate the cache, run preflight, review the exact campaign dry-run, and launch only with explicit authorisation.
+- Keep historical and fresh campaign evidence separate; update thesis-facing results only after validated campaign artifacts exist and a separate task authorises it.
 
 ## Documentation Map
 
 - [../README.md](../README.md): public overview
 - [../docs/README.md](../docs/README.md): documentation index
 - [../docs/results.md](../docs/results.md): artifact-backed results
-- [../docs/AGENT_CONTEXT.md](../docs/AGENT_CONTEXT.md): Phase 2 scope only
+- [../docs/gpu_experimental_environment.md](../docs/gpu_experimental_environment.md): maintained final-campaign operating guide
+- [../docs/phase 2/AGENT_CONTEXT.md](../docs/phase%202/AGENT_CONTEXT.md): Phase 2 scope only
 
 ## Rule for Contributors
 
