@@ -1,10 +1,26 @@
-# CICIDS2017 + QRDQN Experiment History
+# CICIDS2017 + QRDQN Historical Evidence and Future Protocol
 
 This document archives the committed CICIDS2017 training, validation, and Phase 2-facing runs built around the current QRDQN pipeline.
 
-> **Official run:** `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` is the project's official result (full data, fixed 566,149-row test partition, 3,000,000 timesteps). Runs C01–C03 are **pre-design probes** — exploration runs from before the experimental design was fixed — and have been archived under `runs/archive/cicids2017/`. They are not official results and their metrics are not comparable to MAIN's fixed test partition.
+> **Historical MAIN:** `MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655` is the project's committed historical result (full data, fixed 566,149-row test partition, 3,000,000 timesteps). It is not the future fresh campaign MAIN. Runs C01–C03 are **pre-design probes** — exploration runs from before the experimental design was fixed — and have been archived under `runs/archive/cicids2017/`. They are not official results and their metrics are not comparable to the historical MAIN's fixed test partition.
 
 > **Hyperparameter provenance:** the MAIN hyperparameters (`gamma=0.0`, `net_arch=[1024,1024,512]`, `n_quantiles=200`, `lr=5e-5`, `gradient_steps=20`, 3M steps) are a **hand-set fixed profile**, not an Optuna output. The repo's Optuna probe (`src/tune_hparams.py`) searches `gamma∈[0.95,0.999]`, `net_arch∈{[256,128],[512,256],[256,256]}`, `gradient_steps∈{10,50,100}` — which **excludes** the MAIN values, so MAIN could not have come from that search. The profile is frozen by `tests/` (`test_main_experiment_profile_resolves_fixed_config`).
+
+## Approved future protocol
+
+The locked future campaign is defined by [`final_experiment_campaign.json`](final_experiment_campaign.json) and operated through [the provider-neutral GPU environment guide](../docs/gpu_experimental_environment.md). It contains:
+
+- a fresh 3,000,000-timestep campaign MAIN, separate from all historical evidence;
+- a full 3,000,000-timestep Monday–Wednesday to Thursday–Friday QRDQN run;
+- QRDQN nested training points at 100k, 250k, 500k, 1M, 2M, and full rows, with the full point aliasing fresh MAIN;
+- QRDQN model seeds 42–46 on the same 1M rows and 1,324,741 timesteps, with seed 42 aliasing the 1M ladder execution;
+- four QRDQN and four Random Forest exact-file holdouts: WebAttacks, Infilteration, PortScan, and DDoS;
+- Random Forest full-random, 1M-random, and full-day runs;
+- five separate auxiliary jobs: direct validation, bootstrap confidence intervals, duplicate analysis, shuffled-label validation, and fresh-MAIN Phase 2 inference.
+
+This is exactly 22 new primary model-training executions, five auxiliary jobs, two aliases, and 24 logical primary-training result points. No new campaign result is reported in this document until checksum-validated artifacts exist.
+
+The four holdouts are a targeted four-holdout generalisation study, not exhaustive eight-fold leave-one-CSV-out, and are not claimed to be the only CICIDS2017 files containing attacks. The seed block measures **seed sensitivity under a fixed 1M-row / 1,324,741-timestep budget**; it is not variance of the 3M fresh campaign MAIN.
 
 ## Status
 
