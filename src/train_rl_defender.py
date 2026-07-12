@@ -433,6 +433,9 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         default=8192,
         help="Batch size for deterministic test-set evaluation. Default: 8192",
     )
+    parser.add_argument("--campaign-id", default=None)
+    parser.add_argument("--logical-run-id", default=None)
+    parser.add_argument("--attempt", type=int, default=1)
     args = parser.parse_args(argv)
     try:
         seeds = resolve_seeds(
@@ -851,6 +854,9 @@ def _phase4_main(args: argparse.Namespace) -> None:
         eval_batch_size=args.eval_batch_size,
         torch_threads=args.torch_threads,
         torch_inter_op_threads=args.torch_inter_op_threads,
+        campaign_id=args.campaign_id,
+        logical_run_id=args.logical_run_id,
+        attempt=args.attempt,
     )
     run_qrdqn_experiment(config)
 
