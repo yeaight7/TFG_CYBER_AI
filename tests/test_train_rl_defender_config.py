@@ -174,3 +174,43 @@ def test_model_seed_deterministically_controls_python_numpy_and_torch_rngs():
 
     assert first == second
     assert first != third
+
+
+def test_phase4_cli_exposes_single_run_contract(tmp_path):
+    parsed = parse_args(
+        [
+            "--profile",
+            "main-v1",
+            "--split-mode",
+            "exact-holdout",
+            "--holdout-csv",
+            "held-out.csv",
+            "--dataset-root",
+            str(tmp_path / "dataset"),
+            "--cache-root",
+            str(tmp_path / "cache"),
+            "--cache-policy",
+            "require",
+            "--artifact-root",
+            str(tmp_path / "artifacts"),
+            "--run-id",
+            "phase4-run",
+            "--checkpoint-freq",
+            "500000",
+            "--checkpoint-keep",
+            "2",
+            "--monitor-interval",
+            "30",
+        ]
+    )
+
+    assert parsed.profile == "main-v1"
+    assert parsed.split_mode == "exact-holdout"
+    assert parsed.holdout_csv == "held-out.csv"
+    assert parsed.dataset_root == tmp_path / "dataset"
+    assert parsed.cache_root == tmp_path / "cache"
+    assert parsed.cache_policy == "require"
+    assert parsed.artifact_root == tmp_path / "artifacts"
+    assert parsed.run_id == "phase4-run"
+    assert parsed.checkpoint_keep == 2
+    assert parsed.monitor_interval == 30

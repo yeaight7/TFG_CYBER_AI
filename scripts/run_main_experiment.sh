@@ -5,6 +5,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${REPO_ROOT}"
 
+DATASET_ROOT="${DATASET_ROOT:-${REPO_ROOT}/datasets/CICIDS2017}"
+CACHE_ROOT="${CACHE_ROOT:-${REPO_ROOT}/.cache/cicids2017}"
+ARTIFACT_ROOT="${ARTIFACT_ROOT:-${REPO_ROOT}/runs/cicids2017}"
+RUN_ID="${RUN_ID:-qrdqn_main_random_full_s42_m42_$(date -u +%Y%m%d_%H%M%S)}"
+
 if command -v nvidia-smi >/dev/null 2>&1; then
   nvidia-smi
 else
@@ -22,8 +27,16 @@ else
 fi
 
 python src/train_rl_defender.py \
-  --preset full \
   --split-mode random \
+  --split-seed 42 \
+  --model-seed 42 \
+  --profile main-v1 \
   --timesteps 3000000 \
-  --seed 42 \
-  --training-profile main-experiment
+  --dataset-root "${DATASET_ROOT}" \
+  --cache-root "${CACHE_ROOT}" \
+  --cache-policy require \
+  --artifact-root "${ARTIFACT_ROOT}" \
+  --run-id "${RUN_ID}" \
+  --checkpoint-freq 500000 \
+  --checkpoint-keep 2 \
+  --monitor-interval 30

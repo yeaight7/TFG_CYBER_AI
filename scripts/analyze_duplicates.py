@@ -1,40 +1,39 @@
-"""
-analyze_duplicates.py — Phase-0 / Task A1 (read-only analysis).
+"""Fresh-MAIN duplicate and cross-split analysis without training.
 
-Quantifies, WITHOUT any training, how much the headline random-split metric is
-inflated by duplicate CICIDS2017 flows:
+The script reproduces the canonical unscaled partition declared by a completed
+schema-3 ``main-v1`` run, rejects any feature or label hash mismatch, then
+measures exact duplicates using byte-level row views. Output is a separate
+schema-3 job bound to the source manifest, dataset, cache, and split hashes.
 
-  1. Exact-duplicate rate over the full cleaned canonical dataset
-     (feature-only, and feature+label).
-  2. Cross-split leakage: how many seed-42 TEST rows are exact duplicates of a
-     TRAIN row -- the channel that inflates the random-split test metrics.
-  3. Per-class breakdown (benign vs attack).
-
-It uses the SAME loader / canonical schema / seed-42 stratified split as the
-MAIN run (``src/load_cicids2017.load_cicids2017_binary`` with ``scale=False``).
-No model is loaded or trained. Results are printed and written to
-``runs/validation/duplicate_analysis_seed42.json``.
-
-Exact-duplicate detection uses a byte-level void-view of each row, so matches
-are exact (no hashing / no collision risk).
-
-Run:
-    python scripts/analyze_duplicates.py
-    (requires the CICIDS2017 LFS CSVs in datasets/CICIDS2017/; `git lfs pull`)
+Example:
+    python scripts/analyze_duplicates.py --run-dir <FRESH_MAIN_RUN> \
+        --output-dir <DUPLICATE_JOB_DIR>
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
-from datetime import datetime
 from pathlib import Path
+from typing import Any, Callable
 
 import numpy as np
 
 _REPO = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(_REPO / "src"))
+sys.path.insert(0, str(_REPO))
 
-from load_cicids2017 import CICIDSLoadConfig, load_cicids2017_binary  # noqa: E402
+from src.artifact_integrity import sha256_file, verify_artifact_manifest  # noqa: E402
+from src.cicids_cache import sha256_array  # noqa: E402
+from src.qrdqn_experiment import (  # noqa: E402
+    PreparedSplit,
+    config_from_run_payload,
+    load_experiment_split,
+)
+from src.run_artifacts import (  # noqa: E402
+    ArtifactManifestWriter,
+    ArtifactRequirement,
+    atomic_write_json,
+)
 
 
 def _void_rows(X: np.ndarray) -> np.ndarray:
@@ -59,105 +58,164 @@ def _pct(n: int, d: int) -> float:
     return round(100.0 * n / d, 4) if d else 0.0
 
 
+SplitProvider = Callable[[dict[str, Any]], PreparedSplit]
+
+
+def _default_split_provider(source_config: dict[str, Any]) -> PreparedSplit:
+    return load_experiment_split(config_from_run_payload(source_config))
+
+
+def run_duplicate_analysis(
+    *,
+    source_run_dir: Path,
+    output_dir: Path,
+    split_provider: SplitProvider = _default_split_provider,
+) -> Path:
+    """Verify the fresh MAIN raw split identity, then quantify exact duplicates."""
+    source_run_dir = Path(source_run_dir)
+    output_dir = Path(output_dir)
+    verification = verify_artifact_manifest(source_run_dir)
+    if verification["schema_version"] != "3.0":
+        raise ValueError("Fresh MAIN duplicate analysis requires a schema-3 source run")
+    source_config = json.loads(
+        (source_run_dir / "config.json").read_text(encoding="utf-8")
+    )
+    if source_config.get("profile_id") != "main-v1":
+        raise ValueError("Fresh MAIN duplicate analysis requires profile_id='main-v1'")
+    source_manifest_sha256 = sha256_file(source_run_dir / "artifact_manifest.json")
+    writer = ArtifactManifestWriter(
+        output_dir,
+        run_metadata={
+            "logical_run_id": output_dir.name,
+            "physical_run_id": output_dir.name,
+            "attempt": 1,
+            "split_seed": source_config["split_seed"],
+            "model_seed": source_config["model_seed"],
+            "source_run_id": source_config["run_id"],
+            "source_manifest_sha256": source_manifest_sha256,
+        },
+        requirements={
+            "config": ArtifactRequirement("config.json"),
+            "duplicate_analysis": ArtifactRequirement("duplicate_analysis.json"),
+        },
+    )
+    writer.start()
+    try:
+        split = split_provider(source_config)
+        expected = source_config["split_metadata"]
+        actual = {
+            "train_set_sha256": sha256_array(split.X_train),
+            "y_train_sha256": sha256_array(split.y_train),
+            "test_set_sha256": sha256_array(split.X_test),
+            "y_test_sha256": sha256_array(split.y_test),
+        }
+        for key, value in actual.items():
+            if value != expected.get(key):
+                raise ValueError(f"Reproduced {key} does not match fresh MAIN source metadata")
+
+        X_train = split.X_train
+        y_train = split.y_train
+        X_test = split.X_test
+        y_test = split.y_test
+        n_features = int(X_train.shape[1])
+        y_all = np.concatenate([y_train, y_test])
+        tr_feat = _void_rows(X_train)
+        te_feat = _void_rows(X_test)
+        all_feat = np.concatenate([tr_feat, te_feat])
+
+        Xtr_l = np.hstack([X_train, y_train.reshape(-1, 1).astype(np.float32)])
+        Xte_l = np.hstack([X_test, y_test.reshape(-1, 1).astype(np.float32)])
+        tr_fl = _void_rows(Xtr_l)
+        te_fl = _void_rows(Xte_l)
+        all_fl = np.concatenate([tr_fl, te_fl])
+
+        overall_feat = _dup_stats(all_feat)
+        overall_fl = _dup_stats(all_fl)
+        tr_feat_u = np.unique(tr_feat)
+        test_in_train_feat = np.isin(te_feat, tr_feat_u)
+        tr_fl_u = np.unique(tr_fl)
+        test_in_train_fl = np.isin(te_fl, tr_fl_u)
+
+        n_test = int(len(y_test))
+        attack_mask = y_test == 1
+        benign_mask = y_test == 0
+        n_leak_feat = int(test_in_train_feat.sum())
+        n_leak_fl = int(test_in_train_fl.sum())
+        leak_feat_attack = int((test_in_train_feat & attack_mask).sum())
+        leak_feat_benign = int((test_in_train_feat & benign_mask).sum())
+        dup_attack = _dup_stats(all_feat[y_all == 1])
+        dup_benign = _dup_stats(all_feat[y_all == 0])
+
+        summary = {
+            "job_type": "fresh_main_duplicate_cross_split_analysis",
+            "source_run_id": source_config["run_id"],
+            "source_manifest_sha256": source_manifest_sha256,
+            "source_cache_manifest_sha256": expected.get("cache_manifest_sha256"),
+            "source_dataset_sha256": expected.get("source_csv_sha256", {}),
+            "verified_split_hashes": actual,
+            "config": {
+                "split_seed": source_config["split_seed"],
+                "n_features": n_features,
+            },
+            "counts": {
+                "n_train": int(len(y_train)),
+                "n_test": n_test,
+                "n_total": int(len(y_all)),
+            },
+            "overall_duplicates_feature_only": overall_feat,
+            "overall_duplicates_feature_plus_label": overall_fl,
+            "cross_split_leakage_feature_only": {
+                "n_test_rows_also_in_train": n_leak_feat,
+                "pct_of_test": _pct(n_leak_feat, n_test),
+                "attack_test_rows_in_train": leak_feat_attack,
+                "attack_pct_of_test_attacks": _pct(
+                    leak_feat_attack, int(attack_mask.sum())
+                ),
+                "benign_test_rows_in_train": leak_feat_benign,
+                "benign_pct_of_test_benigns": _pct(
+                    leak_feat_benign, int(benign_mask.sum())
+                ),
+            },
+            "cross_split_leakage_feature_plus_label": {
+                "n_test_rows_also_in_train": n_leak_fl,
+                "pct_of_test": _pct(n_leak_fl, n_test),
+            },
+            "per_class_duplicate_rate_full_set_feature_only": {
+                "attack": dup_attack,
+                "benign": dup_benign,
+            },
+        }
+        atomic_write_json(
+            output_dir / "config.json",
+            {
+                "job_type": summary["job_type"],
+                "source_run_id": source_config["run_id"],
+                "source_manifest_sha256": source_manifest_sha256,
+                "source_cache_manifest_sha256": expected.get("cache_manifest_sha256"),
+                "source_dataset_sha256": expected.get("source_csv_sha256", {}),
+                "split_seed": source_config["split_seed"],
+            },
+        )
+        atomic_write_json(output_dir / "duplicate_analysis.json", summary)
+        writer.complete()
+        return output_dir
+    except BaseException as error:
+        writer.fail(error)
+        raise
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Duplicate/cross-split analysis for a fresh schema-3 MAIN run"
+    )
+    parser.add_argument("--run-dir", required=True, type=Path)
+    parser.add_argument("--output-dir", required=True, type=Path)
+    return parser.parse_args(argv)
+
+
 def main() -> None:
-    print("=" * 72)
-    print("  A1 — CICIDS2017 duplicate / cross-split leakage analysis (read-only)")
-    print("=" * 72)
-
-    # Same config as the MAIN run's loader path: seed 42, 80/20 stratified,
-    # canonical schema, NO scaling (scaling is monotone per feature and does not
-    # change exact-duplicate structure; raw values keep the comparison clean).
-    cfg = CICIDSLoadConfig(max_rows=None, use_canonical=True, scale=False)
-    X_train, y_train, X_test, y_test, _scaler, feature_names = load_cicids2017_binary(cfg)
-
-    n_features = int(X_train.shape[1])
-    y_all = np.concatenate([y_train, y_test])
-    print(f"\nLoaded: train={X_train.shape}, test={X_test.shape}, features={n_features}")
-    print(f"seed={cfg.random_state}, test_size={cfg.test_size}, canonical={cfg.use_canonical}")
-
-    # ---- byte-exact row records -----------------------------------------
-    tr_feat = _void_rows(X_train)
-    te_feat = _void_rows(X_test)
-    all_feat = np.concatenate([tr_feat, te_feat])
-
-    Xtr_l = np.hstack([X_train, y_train.reshape(-1, 1).astype(np.float32)])
-    Xte_l = np.hstack([X_test, y_test.reshape(-1, 1).astype(np.float32)])
-    tr_fl = _void_rows(Xtr_l)
-    te_fl = _void_rows(Xte_l)
-    all_fl = np.concatenate([tr_fl, te_fl])
-
-    overall_feat = _dup_stats(all_feat)
-    overall_fl = _dup_stats(all_fl)
-
-    # ---- cross-split leakage: TEST rows that exactly match a TRAIN row ----
-    tr_feat_u = np.unique(tr_feat)
-    test_in_train_feat = np.isin(te_feat, tr_feat_u)
-    tr_fl_u = np.unique(tr_fl)
-    test_in_train_fl = np.isin(te_fl, tr_fl_u)
-
-    n_test = int(len(y_test))
-    attack_mask = (y_test == 1)
-    benign_mask = (y_test == 0)
-    n_leak_feat = int(test_in_train_feat.sum())
-    n_leak_fl = int(test_in_train_fl.sum())
-    leak_feat_attack = int((test_in_train_feat & attack_mask).sum())
-    leak_feat_benign = int((test_in_train_feat & benign_mask).sum())
-
-    # ---- per-class duplicate rate within the full set --------------------
-    dup_attack = _dup_stats(all_feat[(y_all == 1)])
-    dup_benign = _dup_stats(all_feat[(y_all == 0)])
-
-    summary = {
-        "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "task": "A1 - duplicate / cross-split leakage",
-        "loader": "src/load_cicids2017.load_cicids2017_binary",
-        "config": {
-            "seed": cfg.random_state,
-            "test_size": cfg.test_size,
-            "use_canonical": cfg.use_canonical,
-            "scale": cfg.scale,
-            "n_features": n_features,
-        },
-        "counts": {"n_train": int(len(y_train)), "n_test": n_test, "n_total": int(len(y_all))},
-        "overall_duplicates_feature_only": overall_feat,
-        "overall_duplicates_feature_plus_label": overall_fl,
-        "cross_split_leakage_feature_only": {
-            "n_test_rows_also_in_train": n_leak_feat,
-            "pct_of_test": _pct(n_leak_feat, n_test),
-            "attack_test_rows_in_train": leak_feat_attack,
-            "attack_pct_of_test_attacks": _pct(leak_feat_attack, int(attack_mask.sum())),
-            "benign_test_rows_in_train": leak_feat_benign,
-            "benign_pct_of_test_benigns": _pct(leak_feat_benign, int(benign_mask.sum())),
-        },
-        "cross_split_leakage_feature_plus_label": {
-            "n_test_rows_also_in_train": n_leak_fl,
-            "pct_of_test": _pct(n_leak_fl, n_test),
-        },
-        "per_class_duplicate_rate_full_set_feature_only": {"attack": dup_attack, "benign": dup_benign},
-    }
-
-    csl = summary["cross_split_leakage_feature_only"]
-    print("\n--- Overall exact-duplicate rate (full cleaned canonical set) ---")
-    print(f"  feature-only    : {overall_feat['n_duplicate_rows']:>10,} / {overall_feat['n_rows']:,}  ({overall_feat['duplicate_pct']}%)")
-    print(f"  feature + label : {overall_fl['n_duplicate_rows']:>10,} / {overall_fl['n_rows']:,}  ({overall_fl['duplicate_pct']}%)")
-
-    print("\n--- Cross-split leakage (seed-42 random 80/20 split) ---")
-    print("  TEST rows that are an exact duplicate of a TRAIN row (feature-only):")
-    print(f"    {n_leak_feat:>10,} / {n_test:,}  ({csl['pct_of_test']}% of the test set)")
-    print(f"    attack: {leak_feat_attack:,} ({csl['attack_pct_of_test_attacks']}% of test attacks)")
-    print(f"    benign: {leak_feat_benign:,} ({csl['benign_pct_of_test_benigns']}% of test benigns)")
-    print(f"  feature + label exact match: {n_leak_fl:,} / {n_test:,}  ({summary['cross_split_leakage_feature_plus_label']['pct_of_test']}%)")
-
-    print("\n--- Per-class duplicate rate (full set, feature-only) ---")
-    print(f"  attack rows: {dup_attack['n_duplicate_rows']:,} dup / {dup_attack['n_rows']:,}  ({dup_attack['duplicate_pct']}%)")
-    print(f"  benign rows: {dup_benign['n_duplicate_rows']:,} dup / {dup_benign['n_rows']:,}  ({dup_benign['duplicate_pct']}%)")
-
-    out_dir = _REPO / "runs" / "validation"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / "duplicate_analysis_seed42.json"
-    out_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    print(f"\n[output] {out_path}")
-    print("=" * 72)
+    args = parse_args()
+    run_duplicate_analysis(source_run_dir=args.run_dir, output_dir=args.output_dir)
 
 
 if __name__ == "__main__":

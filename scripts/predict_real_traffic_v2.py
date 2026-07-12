@@ -14,8 +14,9 @@ Key improvements over v1:
 Usage:
     python scripts/predict_real_traffic_v2.py \\
         --flows pcaps/flows.csv \\
-        --run-dir runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655 \\
-        --percentiles runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/train_percentiles.npz \\
+        --run-dir <FRESH_MAIN_SCHEMA3_RUN> \\
+        --artifact-root <PHASE2_ARTIFACT_ROOT> \\
+        --run-id phase2_fresh_main \\
         --clip-z 10.0 \\
         --export-diagnostics
 """
@@ -34,12 +35,26 @@ import numpy as np
 import pandas as pd
 
 _REPO = Path(__file__).resolve().parents[1]
-sys.path.append(str(_REPO / "src"))
+sys.path.insert(0, str(_REPO))
 
-from canonical_schema import FEATURES_CANON, map_to_canonical  # noqa: E402
-from scaling_utils import apply_percentile_clipping, apply_z_clipping  # noqa: E402
-from metrics_utils import confusion_to_metrics  # noqa: E402
-from artifact_integrity import resolve_trusted_artifact  # noqa: E402
+from src.canonical_schema import FEATURES_CANON, map_to_canonical  # noqa: E402
+from src.scaling_utils import apply_percentile_clipping, apply_z_clipping  # noqa: E402
+from src.metrics_utils import confusion_to_metrics  # noqa: E402
+from src.artifact_integrity import (  # noqa: E402
+    resolve_trusted_artifact,
+    sha256_file,
+    verify_artifact_manifest,
+)
+from src.resource_monitor import ResourceMonitor  # noqa: E402
+from src.run_artifacts import (  # noqa: E402
+    ArtifactManifestWriter,
+    ArtifactRequirement,
+    TimingRecorder,
+    atomic_write_json,
+    atomic_write_text,
+    collect_environment_metadata,
+    tee_output,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -326,6 +341,177 @@ def compute_truth_metrics(df: pd.DataFrame, y_pred: np.ndarray) -> Optional[Dict
     }
 
 
+def _truth_array(df: pd.DataFrame) -> Optional[np.ndarray]:
+    if "truth_y" in df.columns:
+        truth = pd.to_numeric(df["truth_y"], errors="coerce")
+    elif "truth_label" in df.columns:
+        truth = (
+            df["truth_label"]
+            .astype(str)
+            .str.strip()
+            .str.upper()
+            .map({"BENIGN": 0, "ATTACK": 1, "MALICIOUS": 1})
+        )
+    else:
+        return None
+    if not truth.isin([0, 1]).all():
+        return None
+    return truth.to_numpy(dtype=np.int64)
+
+
+def run_phase2_inference(
+    *,
+    source_run_dir: Path,
+    flows_path: Path,
+    output_dir: Path,
+    clip_z: float | None = None,
+    monitor_interval: float = 30.0,
+    model_loader=load_model,
+) -> Path:
+    """Run fresh-MAIN Phase 2 inference with schema-3 provenance and artifacts."""
+    source_run_dir = Path(source_run_dir)
+    flows_path = Path(flows_path)
+    output_dir = Path(output_dir)
+    verification = verify_artifact_manifest(source_run_dir)
+    if verification["schema_version"] != "3.0":
+        raise ValueError("Fresh MAIN Phase 2 inference requires a schema-3 source run")
+    source_config = json.loads(
+        (source_run_dir / "config.json").read_text(encoding="utf-8")
+    )
+    if source_config.get("profile_id") != "main-v1":
+        raise ValueError("Fresh MAIN Phase 2 inference requires profile_id='main-v1'")
+    if not flows_path.is_file():
+        raise FileNotFoundError(f"Phase 2 input not found: {flows_path}")
+
+    artifact_paths = {
+        name: resolve_trusted_artifact(source_run_dir, name, repo_root=_REPO)
+        for name in ("model", "scaler", "train_percentiles", "feature_names")
+    }
+    source_hashes = {
+        name: sha256_file(path) for name, path in artifact_paths.items()
+    }
+    source_hashes["manifest"] = sha256_file(source_run_dir / "artifact_manifest.json")
+    writer = ArtifactManifestWriter(
+        output_dir,
+        run_metadata={
+            "logical_run_id": output_dir.name,
+            "physical_run_id": output_dir.name,
+            "attempt": 1,
+            "split_seed": source_config["split_seed"],
+            "model_seed": source_config["model_seed"],
+            "source_run_id": source_config["run_id"],
+            "source_manifest_sha256": source_hashes["manifest"],
+        },
+        requirements={
+            "config": ArtifactRequirement("config.json"),
+            "metrics": ArtifactRequirement("metrics.json"),
+            "diagnostics": ArtifactRequirement("diagnostics.json"),
+            "predictions": ArtifactRequirement("predictions.npz"),
+            "environment": ArtifactRequirement("environment.json"),
+            "timing": ArtifactRequirement("timing.json"),
+            "system_metrics": ArtifactRequirement("system_metrics.csv"),
+            "monitoring": ArtifactRequirement("monitoring.json"),
+            "stdout": ArtifactRequirement("stdout.log"),
+            "stderr": ArtifactRequirement("stderr.log"),
+        },
+    )
+    writer.start()
+    atomic_write_text(output_dir / "stdout.log", "")
+    atomic_write_text(output_dir / "stderr.log", "")
+    timing = TimingRecorder()
+    monitor = None
+    monitor_stopped = False
+    try:
+        with tee_output(output_dir / "stdout.log", output_dir / "stderr.log"):
+            atomic_write_json(
+                output_dir / "environment.json",
+                collect_environment_metadata(repo_root=_REPO),
+            )
+            monitor = ResourceMonitor(output_dir, interval_seconds=monitor_interval)
+            monitor.start()
+            with timing.measure("input_preprocessing") as measurement:
+                df = pd.read_csv(flows_path)
+                df = maybe_convert_time_units(df)
+                canonical = map_to_canonical(df, FLOWMETER_PY_TO_CANON)
+                X = canonical.combined.astype(np.float32)
+                percentiles = np.load(artifact_paths["train_percentiles"])
+                X_features = apply_percentile_clipping(
+                    X[:, :_N_CANON],
+                    percentiles["p_low"][:_N_CANON],
+                    percentiles["p_high"][:_N_CANON],
+                )
+                X = np.concatenate([X_features, X[:, _N_CANON:]], axis=1)
+                scaler = joblib.load(artifact_paths["scaler"])
+                X = scaler.transform(X).astype(np.float32)
+                if clip_z is not None:
+                    X = apply_z_clipping(X, clip_z)
+                measurement.set_units(len(X), "rows")
+
+            feature_names = json.loads(
+                artifact_paths["feature_names"].read_text(encoding="utf-8")
+            )
+            diagnostics = compute_diagnostics(X, feature_names)
+            model, model_class = model_loader(artifact_paths["model"])
+            with timing.measure("inference") as measurement:
+                y_pred = batched_predict(model, X, batch_size=4_096).astype(np.int64)
+                measurement.set_units(len(y_pred), "rows")
+            if len(y_pred) != len(df):
+                raise ValueError("Prediction count does not match Phase 2 input row count")
+
+            metrics = {
+                "n_flows": int(len(y_pred)),
+                "block_rate": float((y_pred == 1).mean()),
+                "allow_rate": float((y_pred == 0).mean()),
+            }
+            truth_metrics = compute_truth_metrics(df, y_pred)
+            if truth_metrics is not None:
+                metrics.update(truth_metrics)
+            y_true = _truth_array(df)
+            prediction_payload = {"y_pred": y_pred}
+            if y_true is not None:
+                prediction_payload["y_true"] = y_true
+            np.savez_compressed(output_dir / "predictions.npz", **prediction_payload)
+
+            config = {
+                "job_type": "phase2_fresh_main",
+                "source_run_id": source_config["run_id"],
+                "source_artifact_sha256": source_hashes,
+                "input": {
+                    "filename": flows_path.name,
+                    "size_bytes": flows_path.stat().st_size,
+                    "sha256": sha256_file(flows_path),
+                },
+                "preprocessing": {
+                    "percentile_clipping": "training_p0.5_p99.5",
+                    "clip_z": clip_z,
+                    "scaler": "fresh_main_train_only_standard_scaler",
+                },
+                "model_class": model_class,
+                "sensitive_metadata_exported": False,
+                "truth_labels_available": y_true is not None,
+            }
+            atomic_write_json(output_dir / "config.json", config)
+            atomic_write_json(output_dir / "metrics.json", metrics)
+            atomic_write_json(output_dir / "diagnostics.json", diagnostics)
+            timing.write(output_dir / "timing.json")
+            monitor.stop()
+            monitor_stopped = True
+        writer.complete()
+        return output_dir
+    except BaseException as error:
+        if monitor is not None and not monitor_stopped:
+            try:
+                monitor.stop()
+            except Exception:
+                pass
+        try:
+            timing.write(output_dir / "timing.json")
+        except Exception:
+            pass
+        writer.fail(error)
+        raise
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -344,6 +530,18 @@ def parse_args() -> argparse.Namespace:
             "Trusted training run dir containing artifact_manifest.json. "
             "When provided, model/scaler/percentiles paths must match manifest hashes."
         ),
+    )
+    parser.add_argument(
+        "--artifact-root", type=Path, default=None,
+        help="Artifact root for fresh schema-3 Phase 2 jobs (default: runs/phase2).",
+    )
+    parser.add_argument(
+        "--run-id", default=None,
+        help="Fresh Phase 2 job ID (default: timestamped P2v2_pred_*).",
+    )
+    parser.add_argument(
+        "--monitor-interval", type=float, default=30.0,
+        help="Resource-monitoring interval in seconds (default: 30).",
     )
     parser.add_argument(
         "--model", type=Path, default=None,
@@ -388,6 +586,27 @@ def main() -> None:
     args = parse_args()
 
     run_id = "P2v2_pred_" + datetime.now().strftime("%Y%m%d_%H%M%S")
+    if args.run_id is not None:
+        run_id = args.run_id
+    if args.run_dir is not None:
+        manifest_path = args.run_dir / "artifact_manifest.json"
+        if manifest_path.is_file():
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if manifest.get("schema_version") == "3.0":
+                if args.no_scale:
+                    raise ValueError("Fresh MAIN Phase 2 inference requires its persisted scaler")
+                if args.include_sensitive_metadata:
+                    raise ValueError(
+                        "Fresh campaign Phase 2 artifacts do not export sensitive metadata"
+                    )
+                run_phase2_inference(
+                    source_run_dir=args.run_dir,
+                    flows_path=args.flows,
+                    output_dir=(args.artifact_root or (_REPO / "runs" / "phase2")) / run_id,
+                    clip_z=args.clip_z,
+                    monitor_interval=args.monitor_interval,
+                )
+                return
     out_dir = _REPO / "runs" / "phase2" / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
