@@ -11,6 +11,7 @@
 - Execute only the requested phase, verify its acceptance criteria, report its stopping point, and stop.
 - Never continue automatically into a later phase, even when the next dependency is obvious.
 - Historical artifacts, `memoria/`, `report/`, and pending thesis placeholders are outside the implementation scope.
+- Create a new branch for each phase. Resume at the first open task, on that phase's branch (`chore/yeaight7/final-experiment-phase-<N>-<slug>`)
 
 ---
 
