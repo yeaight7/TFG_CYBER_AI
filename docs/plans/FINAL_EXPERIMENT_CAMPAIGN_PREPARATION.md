@@ -127,11 +127,11 @@ This is a targeted four-holdout generalisation study. It is not exhaustive eight
 
 There is no Random Forest six-point ladder and no Random Forest multi-seed study.
 
-### 2.4 Physical run count
+### 2.4 Primary model-training execution count
 
 **[SPEC]**
 
-| Group | New executions |
+| Group | New primary model-training executions |
 |---|---:|
 | Fresh QRDQN MAIN | 1 |
 | Full day-split QRDQN | 1 |
@@ -141,12 +141,36 @@ There is no Random Forest six-point ladder and no Random Forest multi-seed study
 | Random Forest | 7 |
 | **Total** | **22** |
 
-There are 24 logical result points and two aliases:
+There are 24 logical primary-training result points and two aliases:
 
 1. ladder/full aliases the fresh campaign MAIN;
 2. seed-sensitivity model seed 42 aliases the 1M ladder execution.
 
-The historical RTX 3090 Ti MAIN is historical evidence only. It is not the campaign MAIN, not an alias target, and not one of the 22 new executions.
+The historical RTX 3090 Ti MAIN is historical evidence only. It is not the campaign MAIN, not an alias target, and not one of the 22 new primary model-training executions.
+
+The campaign also contains five auxiliary validation, analysis, and inference jobs. These jobs are not included in the count of 22 primary model-training executions.
+
+### 2.5 Auxiliary validation, analysis, and inference jobs
+
+**[SPEC]**
+
+| Logical job | Purpose | Dependency | Training budget |
+|---|---|---|---:|
+| `main_direct_validation` | Independently compare fresh MAIN model predictions against the fixed test labels, without relying on environment-reported truth metadata | Fresh campaign MAIN | No training |
+| `shuffled_label_validation_s42_m42` | Lightweight anti-leakage validation using shuffled training labels, the current reward matrix, and the maintained code path | Shared profile, fixed random split, and validated cache | 10,000 timesteps |
+| `main_bootstrap_ci` | Compute confidence intervals from the fresh MAIN `y_true` and `y_pred` artifacts | Fresh campaign MAIN and direct prediction artifacts | No training |
+| `main_duplicate_analysis` | Recompute or verify exact duplicates and cross-split leakage for the fresh MAIN fixed random partition | Fresh campaign MAIN split hashes and canonical unscaled data | No training |
+| `phase2_fresh_main` | Run offline Phase 2 inference with the fresh MAIN model, scaler, and training percentiles | Fresh campaign MAIN and validated laboratory-flow input | No training |
+
+Rules:
+
+- These are auxiliary jobs, not primary campaign model-training executions.
+- The direct validation, bootstrap, duplicate analysis, and Phase 2 inference must reference the fresh campaign MAIN physical run and its artifact hashes.
+- Historical Check A, Check B, bootstrap, duplicate-analysis, and Phase 2 artifacts remain historical evidence only.
+- The fresh 3M day-split run supersedes the historical reduced Check C as the official day-generalisation evidence.
+- No additional reduced Check C is required except, optionally, as a cheap smoke test with no scientific result claim.
+- Bootstrap confidence intervals quantify fixed-test sampling precision for one trained model. They do not quantify training-seed variance.
+- The shuffled-label validation is an anti-leakage control and must not be interpreted as a performance comparison with MAIN.
 
 ---
 
@@ -374,6 +398,118 @@ Use the equivalent applicable artifact contract, replacing `model.zip` with `mod
 **[SPEC]**
 A failed attempt retains its directory with config, environment, logs, monitoring gathered so far, `error.json`, timestamps, and a manifest with `status=failed`. It is never overwritten or marked complete.
 
+### 6.5 Auxiliary-job artifact contracts
+
+#### 6.5.1 Fresh MAIN direct validation
+
+**[SPEC]**
+The direct-validation job must persist:
+
+```text
+<job-dir>/
+├── config.json
+├── validation_results.json
+├── predictions.npz
+├── environment.json
+├── artifact_manifest.json
+├── SHA256SUMS
+├── timing.json
+├── stdout.log
+└── stderr.log
+
+```
+
+It must record:
+
+* fresh MAIN physical run ID and manifest hash;
+* fresh model hash;
+* scaler hash;
+* fixed test feature and label hashes;
+* direct `y_true` and `y_pred`;
+* confusion matrix and derived metrics;
+* proof that predictions were evaluated directly against persisted test labels rather than environment-reported truth metadata.
+
+#### 6.5.2 Shuffled-label validation
+
+**[SPEC]**
+The shuffled-label auxiliary job must persist:
+
+* resolved lightweight training configuration;
+* `split_seed=42` and `model_seed=42`;
+* shuffled-label seed and label-permutation hash;
+* model and scaler artifacts;
+* metrics and compressed predictions;
+* environment metadata;
+* TensorBoard data where available;
+* logs, timings, monitoring, manifest, and checksums.
+
+Its default scientific-control budget is 10,000 timesteps. Any change to this budget must be explicit in the campaign specification and must not be presented as equivalent to MAIN training.
+
+#### 6.5.3 Bootstrap confidence intervals
+
+**[SPEC]**
+The bootstrap job must persist:
+
+* `config.json`;
+* `bootstrap_ci.json`;
+* source fresh MAIN run ID;
+* source `predictions.npz` hash;
+* bootstrap seed;
+* number of resamples;
+* point estimates and interval bounds;
+* manifest and checksums.
+
+The default protocol remains 10,000 stratified resamples with bootstrap seed `12345`, unless a later explicit protocol revision changes it.
+
+#### 6.5.4 Duplicate and cross-split analysis
+
+**[SPEC]**
+The duplicate-analysis job must persist:
+
+* `config.json`;
+* `duplicate_analysis.json`;
+* source dataset and cache-manifest hashes;
+* fresh MAIN train/test feature and label hashes;
+* exact duplicate counts;
+* test rows present in train;
+* benign and attack-specific cross-split rates;
+* manifest and checksums.
+
+It must analyse the same canonical unscaled random partition used by the fresh campaign MAIN.
+
+#### 6.5.5 Phase 2 inference with fresh MAIN
+
+**[SPEC]**
+The Phase 2 job must persist:
+
+```text
+<job-dir>/
+├── config.json
+├── metrics.json
+├── diagnostics.json
+├── predictions.npz
+├── environment.json
+├── artifact_manifest.json
+├── SHA256SUMS
+├── timing.json
+├── system_metrics.csv
+├── monitoring.json
+├── stdout.log
+└── stderr.log
+```
+
+It must record:
+
+* fresh MAIN run, model, scaler, percentile, feature-name, and manifest hashes;
+* input laboratory-flow filename, size, and SHA-256;
+* exact clipping and preprocessing options;
+* predictions and truth labels when available;
+* metrics only when valid truth labels are present;
+* distribution-shift diagnostics;
+* no sensitive network metadata by default.
+
+Historical Phase 2 results must not be reused as results of the fresh campaign MAIN.
+
 ---
 
 ## 7. Resumability and Overwrite Safety
@@ -396,12 +532,25 @@ A failed attempt retains its directory with config, environment, logs, monitorin
 Campaign stages execute in this order:
 
 1. `qrdqn_main`;
-2. `qrdqn_day`;
-3. `qrdqn_ladder`;
-4. `qrdqn_seed_sensitivity`;
-5. `qrdqn_targeted_holdouts`;
-6. `random_forest`;
-7. aggregation and final bundle after all required runs validate.
+2. `main_direct_validation`;
+3. `main_bootstrap_and_duplicate_analysis`;
+4. `shuffled_label_validation`;
+5. `phase2_fresh_main`;
+6. `qrdqn_day`;
+7. `qrdqn_ladder`;
+8. `qrdqn_seed_sensitivity`;
+9. `qrdqn_targeted_holdouts`;
+10. `random_forest`;
+11. aggregation and final bundle after all required primary and auxiliary jobs validate.
+
+Dependency rules:
+
+- direct validation depends on the validated fresh campaign MAIN;
+- bootstrap depends on validated fresh MAIN predictions;
+- duplicate analysis depends on the exact fresh MAIN fixed random partition;
+- shuffled-label validation depends on the validated fixed split, cache, profile, and auxiliary configuration;
+- Phase 2 depends on the fresh MAIN model, scaler, percentiles, and a validated laboratory-flow input;
+- no result aggregation or final bundle may complete while a required auxiliary job is missing, failed, or invalid.
 
 ---
 
@@ -438,6 +587,7 @@ Preflight must use the repository's isolated Python environment and produce a ha
 - Git commit/dirty state;
 - Git LFS availability and materialisation of all eight dataset CSVs;
 - source dataset SHA-256 values;
+- availability, readability, size, and SHA-256 of the required Phase 2 laboratory-flow input; presence and validity of truth-label columns when Phase 2 metrics are expected; confirmation that sensitive metadata export is disabled by default;
 - cache validation and cache-manifest hash;
 - minimal CUDA tensor operation;
 - tiny synthetic end-to-end QRDQN artifact run;
@@ -454,6 +604,8 @@ Default host acceptance thresholds for the expected platform:
 - at least 100 GiB free in the configured artifact/snapshot capacity, or a larger value derived from measured checkpoint/model sizes.
 
 Real campaign execution refuses a missing, failed, stale, or cache-mismatched preflight report. Threshold overrides must be explicit and recorded.
+
+The preflight report must bind the Phase 2 input hash to the resolved campaign specification. A different laboratory-flow file requires a new or explicitly amended preflight report before Phase 2 execution.
 
 ---
 
@@ -482,6 +634,11 @@ Prepare aggregation code that validates campaign state and manifests before prod
 <aggregate-output>/
 ├── campaign_summary.json
 ├── main.json
+├── main_direct_validation.json
+├── main_bootstrap_ci.json
+├── main_duplicate_analysis.json
+├── shuffled_label_validation.json
+├── phase2_fresh_main.json
 ├── day_split.json
 ├── size_ladder.json
 ├── size_ladder.csv
@@ -503,6 +660,10 @@ Aggregation rules:
 - include aliased logical points once in their intended analysis group without duplicating physical evidence;
 - reject missing, corrupt, failed, or incompatible runs;
 - never invent values for pending runs.
+- require the direct-validation, bootstrap, duplicate-analysis, and Phase 2 artifacts to reference the same fresh campaign MAIN and expected artifact hashes;
+- keep shuffled-label results in a separate auxiliary-control group and never mix them into MAIN performance aggregates;
+- preserve the Phase 2 input hash, preprocessing options, clipping configuration, and domain-shift diagnostics;
+- reject historical MAIN-derived auxiliary artifacts as substitutes for fresh campaign auxiliary jobs;
 
 Figure/table generators may later produce size-ladder curves, seed-sensitivity distributions, day/generalisation comparisons, targeted-holdout summaries, and matched QRDQN/RF comparisons. They must require an explicit output directory outside `memoria/` and `report/`, refuse final output from an incomplete campaign, and remain unexecuted until real campaign artifacts exist.
 
@@ -624,7 +785,12 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 **[SPEC]**
 **Objective:** make one QRDQN run reproducible, configurable, cache-backed, and artifact-complete across random, day, and exact-holdout partitions.
 
-**Scope:** reusable single-run API, CLI integration, shared MAIN profile consumption, separate seeds, fresh scaler/percentiles, batched prediction, complete artifacts, throughput, TensorBoard, model-only checkpoints.
+**Scope:**
+- reusable single-run API, CLI integration, shared MAIN profile consumption, separate seeds, fresh scaler/percentiles, batched prediction, complete artifacts, throughput, TensorBoard, model-only checkpoints.
+- implement an independent fresh-MAIN direct-validation job;
+- make bootstrap confidence intervals consume the fresh MAIN persisted `y_true` and `y_pred` artifacts rather than historical counts;
+- make duplicate/cross-split analysis consume and verify the fresh MAIN canonical unscaled split hashes;
+- adapt the maintained Phase 2 inference path to the common artifact schema and fresh-MAIN artifact resolution;
 
 **Files likely affected:**
 
@@ -632,15 +798,39 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 - create `tests/test_qrdqn_experiment.py`;
 - modify `src/train_rl_defender.py`;
 - modify `scripts/run_main_experiment.sh`;
-- modify `scripts/verify_fixed_test_split.py`.
+- modify `scripts/verify_fixed_test_split.py`;
+- create `scripts/validate_main_direct.py`;
+- create `tests/test_main_direct_validation.py`;
+- create `tests/test_bootstrap_fresh_main.py`;
+- create `tests/test_duplicate_analysis_fresh_main.py`;
+- create `tests/test_phase2_fresh_main.py`;
+- modify `scripts/bootstrap_ci.py`;
+- modify `scripts/analyze_duplicates.py`;
+- modify `scripts/predict_real_traffic_v2.py`.
 
 **Dependencies:** Phases 1–3.
 
-**Non-goals:** multi-run holdout orchestration, RF refactor, campaign state, full training, multiple environments, replay persistence, exact interrupted-training continuation.
+**Non-goals:**
+- multi-run holdout orchestration, RF refactor, campaign state, full training, multiple environments, replay persistence, exact interrupted-training continuation.
+- real Phase 2 execution;
+- publication of fresh metrics;
+- reuse of historical MAIN-derived validation or Phase 2 results as fresh campaign evidence;
 
-**Tests and validation:** tiny synthetic end-to-end run; profile equality for all split modes; seed ownership; scaler train-only fit; prediction/artifact completeness; checkpoint retention; failed-run evidence; direct-script CLI help; unit suite and Ruff.
+**Tests and validation:**
+- tiny synthetic end-to-end run;
+- profile equality for all split modes;
+- seed ownership; scaler train-only fit;
+- prediction/artifact completeness;
+- checkpoint retention;
+- failed-run evidence;
+- direct-script CLI help;
+- unit suite and Ruff
+- synthetic direct validation matches independently generated truth labels;
+- bootstrap output is bound to the source prediction hash;
+- duplicate analysis rejects mismatched split hashes;
+- Phase 2 synthetic inference persists input/model/scaler/percentile hashes and complete artifacts;
 
-**Acceptance criteria:** a tiny run produces a valid complete manifest; day/holdout override only split, timesteps, and seeds; no reduced holdout profile remains in the single-run path.
+**Acceptance criteria:** a tiny run produces a valid complete manifest; day/holdout override only split, timesteps, and seeds; no reduced holdout profile remains in the single-run path. The direct-validation, bootstrap, duplicate-analysis, and Phase 2 utilities can consume a synthetic fresh MAIN run and produce independently valid artifact manifests without using any historical result as evidence.
 
 **Expected deliverables:** reusable QRDQN runner and compatible CLI.
 
@@ -651,7 +841,10 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 **[SPEC]**
 **Objective:** implement only the locked targeted holdout study and seven-run RF comparison surface.
 
-**Scope:** explicit QRDQN holdout list, per-holdout immediate artifacts/resume, defined-only macro and pooled metrics, configurable one-run RF modes, shared cache/splits/scalers/hashes, RF evidence.
+**Scope:**
+- explicit QRDQN holdout list, per-holdout immediate artifacts/resume, defined-only macro and pooled metrics, configurable one-run RF modes, shared cache/splits/scalers/hashes, RF evidence.
+- implement the lightweight shuffled-label anti-leakage auxiliary workflow using the current reward matrix, fixed split contract, and separate artifact directory;
+- ensure the shuffled-label job uses the explicit 10,000-timestep auxiliary budget by default and is never treated as a primary campaign training execution;
 
 **Files likely affected:**
 
@@ -659,15 +852,32 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 - create `tests/test_random_forest_runner.py`;
 - modify `src/validate_leave_one_csv_out.py`;
 - modify `src/baseline_random_forest.py`;
-- modify `src/metrics_utils.py` only if aggregation helpers cannot remain external.
+- modify `src/metrics_utils.py` only if aggregation helpers cannot remain external;
+- modify `src/validate_checks.py` or replace its maintained Check-B path with a dedicated provider-neutral auxiliary runner;
+- create `tests/test_shuffled_label_validation.py`.
 
 **Dependencies:** Phases 1–4.
 
-**Non-goals:** eight-fold automatic execution, claims of exhaustive coverage, RF ladder beyond full/1M, RF multi-seed study, campaign orchestration, real training.
+**Non-goals:**
+- eight-fold automatic execution, claims of exhaustive coverage, RF ladder beyond full/1M, RF multi-seed study, campaign orchestration, real training;
+- another reduced Check C scientific execution;
+- treating shuffled-label metrics as comparable model-performance evidence.
 
-**Tests and validation:** exact selected filenames; unknown/duplicate rejection; no implicit all-eight default; per-holdout resume/skip; null metrics; pooled confusion metrics; RF/QRDQN test-hash equality for matched partitions; RF artifact completeness; suite and Ruff.
+**Tests and validation:**
+- exact selected filenames;
+- unknown/duplicate rejection;
+- no implicit all-eight default;
+- per-holdout resume/skip;
+- null metrics; pooled confusion metrics;
+- RF/QRDQN test-hash equality for matched partitions;
+- RF artifact completeness;
+- suite and Ruff;
+- shuffled labels are deterministic under the configured seed and have a persisted permutation hash;
+- the auxiliary job uses the current reward configuration;
+- its complete artifacts validate independently;
+- it is classified as an auxiliary job rather than one of the 22 primary model-training executions.
 
-**Acceptance criteria:** only four targeted QRDQN and four targeted RF holdouts are represented; RF supports exactly random/full, random/1M, day/full, and those holdouts; every synthetic run validates independently.
+**Acceptance criteria:** only four targeted QRDQN and four targeted RF holdouts are represented; RF supports exactly random/full, random/1M, day/full, and those holdouts; every synthetic run validates independently. A lightweight, artifact-backed shuffled-label validation is available for the final campaign, while the full 3M day split remains the only official replacement for the historical proxy Check C.
 
 **Expected deliverables:** targeted holdout workflow, configurable RF runner, focused tests.
 
@@ -678,7 +888,11 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 **[SPEC]**
 **Objective:** encode the exact 22-execution campaign and execute/resume it safely one physical run at a time.
 
-**Scope:** committed JSON specification, validation, logical aliases, sequential subprocess dispatch, campaign IDs/state, attempts, dry-run, stage/run selection, artifact gates, overwrite protection.
+**Scope:**
+- committed JSON specification, validation, logical aliases, sequential subprocess dispatch, campaign IDs/state, attempts, dry-run, stage/run selection, artifact gates, overwrite protection;
+- encode and dispatch the five auxiliary jobs defined in Section 2.5;
+- enforce their dependencies on the fresh MAIN, fixed split, validated cache, and Phase 2 input;
+- distinguish primary model-training executions, aliases, and auxiliary jobs in campaign state and dry-run output.
 
 **Files likely affected:**
 
@@ -691,9 +905,26 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 
 **Non-goals:** real campaign execution, host preflight implementation, snapshots, aggregation, automatic dependency execution outside selection, mid-training resume.
 
-**Tests and validation:** schema rejection; exact matrix/count; two aliases; fresh MAIN enforcement; sequential ordering; dry-run no artifacts; completed skip; failed/interrupted retry; invalid artifact halt; stage/run dependency gates; provider-neutral paths; suite and Ruff.
+**Tests and validation:**
+- schema rejection;
+- exact matrix/count;
+- two aliases;
+- fresh MAIN enforcement;
+- sequential ordering;
+- dry-run no artifacts;
+- completed skip;
+- failed/interrupted retry;
+- invalid artifact halt;
+- stage/run dependency gates;
+- provider-neutral paths;
+- suite and Ruff;
+- dry-run reports exactly 22 new primary model-training executions;
+- dry-run reports exactly five auxiliary jobs;
+- dry-run reports exactly two approved logical aliases;
+- fresh-MAIN auxiliary jobs cannot resolve to historical MAIN artifacts;
+- Phase 2 cannot start without its validated input hash.
 
-**Acceptance criteria:** dry-run shows exactly 22 new physical executions, 24 logical points, and two approved aliases; no historical MAIN reuse; no concurrent dispatch; state survives interruption without overwriting evidence.
+**Acceptance criteria:** dry-run shows exactly 22 new primary model-training executions, five auxiliary validation/analysis/inference jobs, 24 primary-training logical result points, and two approved aliases. No historical MAIN reuse, no concurrent dispatch, and no auxiliary job may consume incompatible or historical substitute evidence.
 
 **Expected deliverables:** committed campaign spec, runner, state schema, resume tests.
 
@@ -736,7 +967,9 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 **[SPEC]**
 **Objective:** prepare artifact-driven result aggregation and rendering without producing or inserting pending results.
 
-**Scope:** manifest/state validation, JSON/CSV groups, alias provenance, nullable macro/pooled metrics, future chart/table generators with completeness gates.
+**Scope:**
+- manifest/state validation, JSON/CSV groups, alias provenance, nullable macro/pooled metrics, future chart/table generators with completeness gates;
+- aggregate fresh MAIN direct validation, bootstrap intervals, duplicate analysis, shuffled-label validation, and fresh-MAIN Phase 2 outputs as separate provenance-preserving groups.
 
 **Files likely affected:**
 
@@ -749,7 +982,19 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 
 **Non-goals:** real aggregates, final figures/tables, thesis edits, placeholder removal, result claims.
 
-**Tests and validation:** synthetic expected rows; alias deduplication; defined-only macros; pooled metrics; incompatible run rejection; incomplete-campaign refusal; output path guard against `memoria/`/`report/`; suite and Ruff.
+**Tests and validation:**
+- synthetic expected rows;
+- alias deduplication;
+- defined-only macros;
+- pooled metrics;
+- incompatible run rejection;
+- incomplete-campaign refusal;
+- output path guard against `memoria/`/`report/`;
+- suite and Ruff;
+- fresh MAIN and all derived auxiliary outputs share the expected source run and hashes;
+- historical auxiliary artifacts are rejected as fresh substitutes;
+- shuffled-label controls remain excluded from performance aggregates;
+- Phase 2 remains separate from CICIDS2017 internal-test metrics.
 
 **Acceptance criteria:** generators consume only validated aggregates and refuse incomplete evidence; no final output is produced during implementation.
 
@@ -873,6 +1118,10 @@ After real artifacts exist, any separately authorised thesis update must state:
 10. Model-only checkpoints and run-level retry do not constitute exact mid-training continuation.
 11. Hardware utilisation observations describe the measured platform and do not justify an algorithmic-semantic change by themselves.
 12. No figure, table, aggregate, or conclusion becomes final until backed by validated campaign artifacts and hashes.
+13. The fresh MAIN direct validation, bootstrap confidence intervals, duplicate analysis, and Phase 2 inference are all regenerated from or explicitly verified against the fresh campaign MAIN; historical derived results are not silently inherited.
+14. The shuffled-label validation uses a lightweight 10,000-timestep auxiliary budget and is an anti-leakage control, not a performance-equivalent MAIN repetition.
+15. The fresh 3M day-split result supersedes the historical reduced Check C as official day-generalisation evidence.
+16. Phase 2 results remain a separate offline laboratory-domain evaluation and must not be merged with CICIDS2017 internal-test metrics.
 
 ---
 
@@ -890,6 +1139,11 @@ Campaign preparation is complete only when all ten phases have been requested an
 - artifact-driven aggregation/future-rendering code;
 - provider-neutral maintained documentation;
 - full passing unit/lint suite using only cheap/synthetic validation;
-- no modifications to historical evidence, `memoria/`, `report/`, or pending thesis placeholders.
+- no modifications to historical evidence, `memoria/`, `report/`, or pending thesis placeholders;
+- fresh-MAIN direct-validation artifacts;
+- fresh-MAIN bootstrap confidence intervals;
+- fresh-MAIN duplicate/cross-split analysis;
+- lightweight shuffled-label anti-leakage evidence;
+- fresh-MAIN Phase 2 inference artifacts tied to the validated laboratory input.
 
 Campaign execution itself is a separate activity and requires explicit authorisation after host preflight succeeds.
