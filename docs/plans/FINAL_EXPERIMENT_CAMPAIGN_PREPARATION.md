@@ -230,13 +230,13 @@ Exact option names may only change through an explicit plan revision. Expected i
 ### 5.1 Cache
 
 ```powershell
-python scripts/build_cicids_cache.py build `
-  --dataset-root datasets/CICIDS2017 `
-  --cache-root <CACHE_ROOT> `
+python scripts/build_cicids_cache.py build \
+  --dataset-root datasets/CICIDS2017 \
+  --cache-root <CACHE_ROOT> \
   --workers 8
 
-python scripts/build_cicids_cache.py validate `
-  --dataset-root datasets/CICIDS2017 `
+python scripts/build_cicids_cache.py validate \
+  --dataset-root datasets/CICIDS2017 \
   --cache-root <CACHE_ROOT>
 ```
 
@@ -245,34 +245,34 @@ python scripts/build_cicids_cache.py validate `
 ### 5.2 Single QRDQN run
 
 ```powershell
-python src/train_rl_defender.py `
-  --split-mode random|day|exact-holdout `
-  --split-seed 42 `
-  --model-seed 42 `
-  --profile main-v1 `
-  --timesteps <N> `
-  --train-max-rows <N-or-omit> `
-  --holdout-csv <EXACT_NAME-or-omit> `
-  --dataset-root <DATASET_ROOT> `
-  --cache-root <CACHE_ROOT> `
-  --cache-policy require `
-  --artifact-root <ARTIFACT_ROOT> `
-  --run-id <RUN_ID> `
-  --checkpoint-freq <N> `
-  --checkpoint-keep <N> `
+python src/train_rl_defender.py \
+  --split-mode random|day|exact-holdout \
+  --split-seed 42 \
+  --model-seed 42 \
+  --profile main-v1 \
+  --timesteps <N> \
+  --train-max-rows <N-or-omit> \
+  --holdout-csv <EXACT_NAME-or-omit> \
+  --dataset-root <DATASET_ROOT> \
+  --cache-root <CACHE_ROOT> \
+  --cache-policy require \
+  --artifact-root <ARTIFACT_ROOT> \
+  --run-id <RUN_ID> \
+  --checkpoint-freq <N> \
+  --checkpoint-keep <N> \
   --monitor-interval 30
 ```
 
 ### 5.3 Targeted QRDQN holdout wrapper
 
 ```powershell
-python src/validate_leave_one_csv_out.py `
-  --holdout-csvs <EXACT_NAME> <EXACT_NAME> <EXACT_NAME> <EXACT_NAME> `
-  --profile main-v1 `
-  --timesteps 1000000 `
-  --model-seed 42 `
-  --cache-root <CACHE_ROOT> `
-  --artifact-root <ARTIFACT_ROOT> `
+python src/validate_leave_one_csv_out.py \
+  --holdout-csvs <EXACT_NAME> <EXACT_NAME> <EXACT_NAME> <EXACT_NAME> \
+  --profile main-v1 \
+  --timesteps 1000000 \
+  --model-seed 42 \
+  --cache-root <CACHE_ROOT> \
+  --artifact-root <ARTIFACT_ROOT> \
   --resume
 ```
 
@@ -281,35 +281,35 @@ The legacy filename may remain for compatibility, but help text and outputs must
 ### 5.4 Single Random Forest run
 
 ```powershell
-python src/baseline_random_forest.py `
-  --split-mode random|day|exact-holdout `
-  --split-seed 42 `
-  --model-seed 42 `
-  --train-max-rows <1000000-or-omit> `
-  --holdout-csv <EXACT_NAME-or-omit> `
-  --n-jobs -1 `
-  --cache-root <CACHE_ROOT> `
-  --artifact-root <ARTIFACT_ROOT> `
+python src/baseline_random_forest.py \
+  --split-mode random|day|exact-holdout \
+  --split-seed 42 \
+  --model-seed 42 \
+  --train-max-rows <1000000-or-omit> \
+  --holdout-csv <EXACT_NAME-or-omit> \
+  --n-jobs -1 \
+  --cache-root <CACHE_ROOT> \
+  --artifact-root <ARTIFACT_ROOT> \
   --run-id <RUN_ID>
 ```
 
 ### 5.5 Campaign runner
 
 ```powershell
-python scripts/run_campaign.py experiments/final_experiment_campaign.json `
-  --campaign-id <CAMPAIGN_ID> `
-  --artifact-root <ARTIFACT_ROOT> `
-  --cache-root <CACHE_ROOT> `
-  --snapshot-root <SNAPSHOT_ROOT> `
-  --preflight-report <PREFLIGHT_JSON> `
+python scripts/run_campaign.py experiments/final_experiment_campaign.json \
+  --campaign-id <CAMPAIGN_ID> \
+  --artifact-root <ARTIFACT_ROOT> \
+  --cache-root <CACHE_ROOT> \
+  --snapshot-root <SNAPSHOT_ROOT> \
+  --preflight-report <PREFLIGHT_JSON> \
   --dry-run
 
-python scripts/run_campaign.py experiments/final_experiment_campaign.json `
-  --campaign-id <CAMPAIGN_ID> `
-  --artifact-root <ARTIFACT_ROOT> `
-  --cache-root <CACHE_ROOT> `
-  --snapshot-root <SNAPSHOT_ROOT> `
-  --preflight-report <PREFLIGHT_JSON> `
+python scripts/run_campaign.py experiments/final_experiment_campaign.json \
+  --campaign-id <CAMPAIGN_ID> \
+  --artifact-root <ARTIFACT_ROOT> \
+  --cache-root <CACHE_ROOT> \
+  --snapshot-root <SNAPSHOT_ROOT> \
+  --preflight-report <PREFLIGHT_JSON> \
   --resume
 ```
 
