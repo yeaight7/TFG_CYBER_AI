@@ -846,6 +846,9 @@ def parse_args() -> argparse.Namespace:
         "--allow-unsafe-artifacts", action="store_true",
         help="Allow direct model paths without manifest hash verification.",
     )
+    parser.add_argument("--campaign-id", default=None)
+    parser.add_argument("--logical-run-id", default=None)
+    parser.add_argument("--attempt", type=int, default=1)
     args = parser.parse_args()
     explicit_seeds = (args.split_seed, args.model_seed, args.shuffled_label_seed)
     if args.seed is not None and any(seed is not None for seed in explicit_seeds):
@@ -867,6 +870,32 @@ def main() -> None:
     args = parse_args()
     checks = [c.upper() for c in args.checks]
     device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    if args.campaign_id is not None:
+        if checks != ["B"]:
+            raise ValueError("Campaign auxiliary mode supports only --checks B")
+        if args.artifact_root is None or args.cache_root is None or args.run_id_b is None:
+            raise ValueError(
+                "Campaign shuffled-label mode requires artifact/cache roots and run ID"
+            )
+        run_dir = run_shuffled_label_validation(
+            ShuffledLabelRunConfig(
+                artifact_root=args.artifact_root,
+                run_id=args.run_id_b,
+                dataset_root=args.dataset_root,
+                cache_root=args.cache_root,
+                cache_policy=args.cache_policy,
+                split_seed=args.split_seed,
+                model_seed=args.model_seed,
+                shuffled_label_seed=args.shuffled_label_seed,
+                timesteps=args.timesteps_b,
+                campaign_id=args.campaign_id,
+                logical_run_id=args.logical_run_id,
+                attempt=args.attempt,
+            )
+        )
+        print(f"Campaign shuffled-label auxiliary complete: {run_dir}")
+        return
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     RUN_ID = f"VAL_checks_{''.join(checks)}_{timestamp}"
@@ -935,6 +964,9 @@ def main() -> None:
                 model_seed=args.model_seed,
                 shuffled_label_seed=args.shuffled_label_seed,
                 timesteps=args.timesteps_b,
+                campaign_id=args.campaign_id,
+                logical_run_id=args.logical_run_id,
+                attempt=args.attempt,
             )
         )
         results["B"] = json.loads(
