@@ -1,68 +1,38 @@
-"""
-bootstrap_ci.py — Task A4 (no-retrain).
+"""Bootstrap confidence intervals from fresh MAIN persisted predictions.
 
-Puts a confidence interval (CI = *confidence interval*, NOT CI/CD) around the
-existing MAIN test metrics by bootstrap-resampling the fixed seed-42 test set.
-This answers the "single seed — is 0.9938 just a lucky number?" question
-WITHOUT retraining: it characterises the sampling precision of the published
-point estimates on the test set the headline model was evaluated on.
+The maintained CLI accepts only a completed schema-3 ``main-v1`` run and binds
+its output to the source manifest and ``predictions.npz`` hashes. Legacy
+confusion-count helpers remain importable for historical-result verification,
+but the fresh campaign path never treats historical counts as new evidence.
 
-Why this needs no GPU / LFS by default
----------------------------------------
-Every metric the project reports (accuracy, recall_attack, precision_attack,
-f1, FPR, FNR, balanced-accuracy, MCC, ...) is a deterministic function of the
-four confusion-matrix cell counts ``(tn, fp, fn, tp)``. The seed-42 split is
-*stratified* (``src/load_cicids2017.py``), so the per-class test totals
-(``N- = tn+fp`` benign, ``N+ = fn+tp`` attack) are fixed by design. The
-bootstrap faithful to that design resamples WITHIN each class:
-
-    fp ~ Binomial(N-, fp/N-),  tn = N- - fp     (benign rows)
-    tp ~ Binomial(N+, tp/N+),  fn = N+ - tp     (attack rows)
-
-i.e. it conditions on the fixed class totals (the row-level with-replacement
-bootstrap, restricted to within-class resampling, is identically distributed to
-these two binomials). Because every metric is a function of the four cells, the
-full bootstrap distribution follows from these per-class draws — no model, no
-data, no per-row resampling needed. (``--unstratified`` uses the unconditional
-``Multinomial(n, cells/n)`` bootstrap instead; it lets the class mix vary and
-gives negligibly wider CIs at this n.)
-
-The exact cell counts are recovered from the committed MAIN artifacts: the
-**full-precision float64** per-class recalls in ``metrics.json`` (e.g.
-``recall_attack = 0.995355468084534``) times the integer class totals in
-``config.json`` land exactly on integers. (Recovery is safe ONLY at full
-precision — the rounded values shown in result tables would be off by one, e.g.
-``round(0.99536 * 111529) = 111012`` vs the true ``111011``.) The recovered
-counts are then *self-validated*: every published metric is re-derived from the
-recovered integers and asserted to match ``metrics.json`` to 1e-9 — so if that
-passes, the counts are provably the ones the headline used.
-
-``--from-model`` (optional, needs the CICIDS2017 LFS CSVs + the MAIN model)
-re-runs the actual saved model over the reproduced seed-42 test split and
-asserts the regenerated confusion matrix equals the recovered counts —
-closing the loop end-to-end.
-
-Run:
-    python scripts/bootstrap_ci.py                 # instant; counts mode
-    python scripts/bootstrap_ci.py --from-model     # end-to-end re-prediction
-    python scripts/bootstrap_ci.py --n-boot 10000 --boot-seed 12345
+Example:
+    python scripts/bootstrap_ci.py --run-dir <FRESH_MAIN_RUN> \
+        --output-dir <BOOTSTRAP_JOB_DIR> --n-boot 10000 --boot-seed 12345
 """
 from __future__ import annotations
 
 import argparse
 import json
 import sys
-from datetime import datetime
 from pathlib import Path
 from typing import Dict, Tuple
 
 import numpy as np
 
 _REPO = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(_REPO / "src"))
+sys.path.insert(0, str(_REPO))
 
-from metrics_utils import confusion_to_metrics  # noqa: E402
-from artifact_integrity import resolve_trusted_artifact  # noqa: E402
+from src.metrics_utils import confusion_to_metrics  # noqa: E402
+from src.artifact_integrity import (  # noqa: E402
+    resolve_trusted_artifact,
+    sha256_file,
+    verify_artifact_manifest,
+)
+from src.run_artifacts import (  # noqa: E402
+    ArtifactManifestWriter,
+    ArtifactRequirement,
+    atomic_write_json,
+)
 
 # Metrics to report CIs for (headline + operational). Keys must exist in
 # metrics_utils.confusion_to_metrics output.
@@ -206,7 +176,7 @@ def verify_from_model(
     import joblib  # noqa: PLC0415
     from sklearn.metrics import confusion_matrix  # noqa: PLC0415
     from sb3_contrib import QRDQN  # noqa: PLC0415
-    from load_cicids2017 import load_cicids2017_split  # noqa: PLC0415
+    from src.load_cicids2017 import load_cicids2017_split  # noqa: PLC0415
 
     model_path = _REPO / "models" / f"{run_dir.name}.zip"
     if not model_path.exists():
@@ -277,85 +247,122 @@ def verify_from_model(
     }
 
 
+def run_bootstrap_from_predictions(
+    *,
+    source_run_dir: Path,
+    output_dir: Path,
+    n_boot: int = 10_000,
+    boot_seed: int = 12_345,
+    stratified: bool = True,
+) -> Path:
+    """Bootstrap persisted fresh-MAIN y_true/y_pred and bind output to its hash."""
+    if n_boot <= 0:
+        raise ValueError("n_boot must be greater than zero")
+    source_run_dir = Path(source_run_dir)
+    output_dir = Path(output_dir)
+    verification = verify_artifact_manifest(source_run_dir)
+    if verification["schema_version"] != "3.0":
+        raise ValueError("Fresh MAIN bootstrap requires a schema-3 source run")
+    source_config = json.loads(
+        (source_run_dir / "config.json").read_text(encoding="utf-8")
+    )
+    if source_config.get("profile_id") != "main-v1":
+        raise ValueError("Fresh MAIN bootstrap requires profile_id='main-v1'")
+    predictions_path = resolve_trusted_artifact(
+        source_run_dir,
+        "predictions",
+        repo_root=_REPO,
+    )
+    source_predictions_sha256 = sha256_file(predictions_path)
+    source_manifest_sha256 = sha256_file(source_run_dir / "artifact_manifest.json")
+    predictions = np.load(predictions_path)
+    if set(predictions.files) < {"y_true", "y_pred"}:
+        raise ValueError("Fresh MAIN predictions.npz must contain y_true and y_pred")
+    y_true = np.asarray(predictions["y_true"], dtype=np.int64).reshape(-1)
+    y_pred = np.asarray(predictions["y_pred"], dtype=np.int64).reshape(-1)
+    if len(y_true) != len(y_pred):
+        raise ValueError("Fresh MAIN y_true/y_pred lengths differ")
+    tn = int(((y_true == 0) & (y_pred == 0)).sum())
+    fp = int(((y_true == 0) & (y_pred == 1)).sum())
+    fn = int(((y_true == 1) & (y_pred == 0)).sum())
+    tp = int(((y_true == 1) & (y_pred == 1)).sum())
+    reward_config = source_config.get("reward_config")
+    ci = bootstrap_metrics(
+        tn,
+        fp,
+        fn,
+        tp,
+        n_boot,
+        np.random.default_rng(boot_seed),
+        reward_config,
+        stratified=stratified,
+    )
+    writer = ArtifactManifestWriter(
+        output_dir,
+        run_metadata={
+            "logical_run_id": output_dir.name,
+            "physical_run_id": output_dir.name,
+            "attempt": 1,
+            "split_seed": source_config["split_seed"],
+            "model_seed": source_config["model_seed"],
+            "source_run_id": source_config["run_id"],
+            "source_manifest_sha256": source_manifest_sha256,
+        },
+        requirements={
+            "config": ArtifactRequirement("config.json"),
+            "bootstrap_ci": ArtifactRequirement("bootstrap_ci.json"),
+        },
+    )
+    writer.start()
+    try:
+        config = {
+            "job_type": "fresh_main_bootstrap_ci",
+            "source_run_id": source_config["run_id"],
+            "source_manifest_sha256": source_manifest_sha256,
+            "source_predictions_sha256": source_predictions_sha256,
+            "bootstrap_seed": boot_seed,
+            "n_resamples": n_boot,
+            "stratified": stratified,
+        }
+        result = {
+            "source_run_id": source_config["run_id"],
+            "source_manifest_sha256": source_manifest_sha256,
+            "source_predictions_sha256": source_predictions_sha256,
+            "n_test": int(len(y_true)),
+            "n_boot": n_boot,
+            "boot_seed": boot_seed,
+            "bootstrap": "stratified" if stratified else "unstratified",
+            "ci_level": 0.95,
+            "confusion_counts": {"tn": tn, "fp": fp, "fn": fn, "tp": tp},
+            "metrics_ci": ci,
+        }
+        atomic_write_json(output_dir / "config.json", config)
+        atomic_write_json(output_dir / "bootstrap_ci.json", result)
+        writer.complete()
+        return output_dir
+    except BaseException as error:
+        writer.fail(error)
+        raise
+
+
 def main() -> None:
-    ap = argparse.ArgumentParser(description="Bootstrap CI for the MAIN test metrics (no retrain)")
-    ap.add_argument("--run-dir", default=None, help="MAIN run dir (default: auto-resolve)")
+    ap = argparse.ArgumentParser(
+        description="Bootstrap confidence intervals from fresh MAIN persisted predictions"
+    )
+    ap.add_argument("--run-dir", required=True, type=Path, help="Fresh schema-3 MAIN run dir")
+    ap.add_argument("--output-dir", required=True, type=Path, help="Bootstrap job artifact dir")
     ap.add_argument("--n-boot", type=int, default=10000, help="Bootstrap replicates (default 10000)")
     ap.add_argument("--boot-seed", type=int, default=12345, help="Bootstrap RNG seed (default 12345)")
-    ap.add_argument("--from-model", action="store_true",
-                    help="Also re-run the saved model over the reproduced split and verify counts")
     ap.add_argument("--unstratified", action="store_true",
                     help="Use the unconditional multinomial bootstrap (default: stratified per-class)")
-    ap.add_argument("--out", default="runs/validation/bootstrap_ci_seed42.json", help="Output JSON path")
-    ap.add_argument("--allow-unsafe-artifacts", action="store_true",
-                    help="Allow --from-model to load artifacts without manifest hash verification")
     args = ap.parse_args()
-
-    run_dir = _find_main_run(args.run_dir)
-    metrics = json.loads((run_dir / "metrics.json").read_text(encoding="utf-8"))
-    config = json.loads((run_dir / "config.json").read_text(encoding="utf-8"))
-    split_meta = config["split_metadata"]
-    reward_config = config.get("reward_config")
-
-    print("=" * 72)
-    print("  A4 — Bootstrap CI for the MAIN test metrics (no retrain)")
-    print("=" * 72)
-    print(f"run: {run_dir.name}")
-
-    # 1) recover + self-validate the exact confusion counts
-    tn, fp, fn, tp = recover_confusion_counts(metrics, split_meta)
-    self_validate(tn, fp, fn, tp, metrics, reward_config)
-    n_test = tn + fp + fn + tp
-    print("\nRecovered confusion (self-validated vs metrics.json, tol=1e-9):")
-    print(f"  tn={tn:,}  fp={fp:,}  fn={fn:,}  tp={tp:,}   n_test={n_test:,}")
-    assert n_test == int(split_meta["n_test"]), "recovered n_test != config split_metadata n_test"
-
-    # 2) bootstrap
-    stratified = not args.unstratified
-    rng = np.random.default_rng(args.boot_seed)
-    kind = "stratified per-class" if stratified else "unconditional multinomial"
-    print(f"\nBootstrapping {args.n_boot:,} {kind} resamples (seed={args.boot_seed}) ...")
-    ci = bootstrap_metrics(tn, fp, fn, tp, args.n_boot, rng, reward_config, stratified=stratified)
-
-    print("\n--- 95% bootstrap CI (point [ci_low, ci_high]) ---")
-    for k in _REPORT_KEYS:
-        c = ci[k]
-        print(f"  {k:<18} {c['point']:.6f}  [{c['ci95_low']:.6f}, {c['ci95_high']:.6f}]")
-
-    summary = {
-        "generated_at": datetime.now().isoformat(timespec="seconds"),
-        "task": "A4 - bootstrap CI of MAIN test metrics (no retrain)",
-        "run_id": config.get("run_id", run_dir.name),
-        "bootstrap": "stratified" if stratified else "unstratified",
-        "method": (
-            ("Stratified " if stratified else "Unconditional multinomial ")
-            + "nonparametric percentile bootstrap of the fixed seed-42 test set. "
-            + ("Per-class resampling conditioning on the fixed stratified class totals "
-               "(fp~Binomial(N-,.), tp~Binomial(N+,.)). " if stratified else
-               "Multinomial(n, cells/n) resampling. ")
-            + "Every reported metric is a function of the confusion cells (tn,fp,fn,tp)."
-        ),
-        "n_test": n_test,
-        "n_boot": args.n_boot,
-        "boot_seed": args.boot_seed,
-        "ci_level": 0.95,
-        "confusion_counts": {"tn": tn, "fp": fp, "fn": fn, "tp": tp},
-        "counts_self_validated": True,
-        "metrics_ci": ci,
-    }
-
-    if args.from_model:
-        summary["model_verification"] = verify_from_model(
-            run_dir,
-            (tn, fp, fn, tp),
-            allow_unsafe_artifacts=args.allow_unsafe_artifacts,
-        )
-
-    out_path = (_REPO / args.out) if not Path(args.out).is_absolute() else Path(args.out)
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    print(f"\n[output] {out_path}")
-    print("=" * 72)
+    run_bootstrap_from_predictions(
+        source_run_dir=args.run_dir,
+        output_dir=args.output_dir,
+        n_boot=args.n_boot,
+        boot_seed=args.boot_seed,
+        stratified=not args.unstratified,
+    )
 
 
 if __name__ == "__main__":
