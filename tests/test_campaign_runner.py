@@ -10,6 +10,7 @@ import sys
 
 import pytest
 
+from scripts.predict_real_traffic_v2 import run_phase2_inference
 from src.campaign import (
     CampaignArtifactError,
     CampaignDependencyError,
@@ -22,6 +23,7 @@ from src.campaign import (
 )
 from src.campaign_export import verify_final_bundle, verify_incremental_snapshot
 from src.cicids_cache import sha256_file
+from src.qrdqn_experiment import PreparedSplit, QRDQNRunConfig, run_qrdqn_experiment
 from src.run_artifacts import ArtifactManifestWriter, ArtifactRequirement, atomic_write_json
 
 
@@ -485,6 +487,82 @@ def test_phase2_requires_matching_validated_input_hash(tmp_path: Path) -> None:
 
     with pytest.raises(CampaignDependencyError, match="Phase 2 input hash"):
         runner.execute(logical_run_id="phase2_fresh_main", resume=True)
+
+
+def test_phase2_real_writer_binds_config_to_campaign_fresh_main(
+    tmp_path: Path,
+    synthetic_split: PreparedSplit,
+    fake_model_factory,
+) -> None:
+    campaign_id = "campaign-test"
+    flows = tmp_path / "lab-flows.csv"
+    flows.write_text(
+        "flow_duration,truth_y\n1000,0\n2000,1\n",
+        encoding="utf-8",
+    )
+    paths = _paths(tmp_path, phase2_input=flows)
+    calls: list[str] = []
+
+    def dispatch(entry, command, attempt_dir):
+        calls.append(entry.logical_id)
+        attempt = int(attempt_dir.name.rsplit("-", 1)[1])
+        if entry.logical_id == FRESH_MAIN_ID:
+            run_qrdqn_experiment(
+                QRDQNRunConfig(
+                    artifact_root=attempt_dir.parent,
+                    run_id=attempt_dir.name,
+                    dataset_root=paths.dataset_root,
+                    cache_root=paths.cache_root,
+                    cache_policy="require",
+                    split_mode=entry.config["split_mode"],
+                    split_seed=entry.config["split_seed"],
+                    model_seed=entry.config["model_seed"],
+                    timesteps=entry.config["timesteps"],
+                    train_max_rows=entry.config.get("train_max_rows"),
+                    holdout_csv=entry.config.get("holdout_csv"),
+                    checkpoint_freq=0,
+                    monitor_interval=0.01,
+                    campaign_id=campaign_id,
+                    logical_run_id=entry.logical_id,
+                    attempt=attempt,
+                ),
+                split_loader=lambda _config: synthetic_split,
+                model_factory=fake_model_factory,
+            )
+        elif entry.logical_id == "phase2_fresh_main":
+            source_run_dir = attempt_dir.parents[1] / FRESH_MAIN_ID / "attempt-1"
+            run_phase2_inference(
+                source_run_dir=source_run_dir,
+                flows_path=flows,
+                output_dir=attempt_dir,
+                clip_z=10.0,
+                monitor_interval=0.01,
+                model_loader=lambda _path: (
+                    fake_model_factory(None, None, attempt_dir / "unused", "cpu"),
+                    "FakeQRDQN",
+                ),
+                campaign_id=campaign_id,
+                logical_run_id=entry.logical_id,
+                attempt=attempt,
+            )
+        else:
+            raise AssertionError(f"Unexpected campaign dispatch: {entry.logical_id}")
+        return CompletedProcess(command, 0)
+
+    runner = CampaignRunner(
+        load_campaign_spec(SPEC_PATH),
+        campaign_id=campaign_id,
+        paths=paths,
+        dispatcher=dispatch,
+        cache_validator=_valid_cache,
+        preflight_validator=_accepted_preflight,
+    )
+    runner.execute(logical_run_id=FRESH_MAIN_ID)
+
+    result = runner.execute(logical_run_id="phase2_fresh_main", resume=True)
+
+    assert result["status"] == "selection_completed"
+    assert calls == [FRESH_MAIN_ID, "phase2_fresh_main"]
 
 
 def test_auxiliary_artifact_must_bind_to_fresh_main_manifest(tmp_path: Path) -> None:

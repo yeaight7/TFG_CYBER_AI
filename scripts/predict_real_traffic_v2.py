@@ -479,6 +479,7 @@ def run_phase2_inference(
             config = {
                 "job_type": "phase2_fresh_main",
                 "source_run_id": source_config["run_id"],
+                "source_manifest_sha256": source_hashes["manifest"],
                 "source_artifact_sha256": source_hashes,
                 "input": {
                     "filename": flows_path.name,
