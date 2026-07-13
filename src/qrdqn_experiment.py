@@ -44,6 +44,7 @@ from src.run_artifacts import (
     retain_checkpoints,
     tee_output,
 )
+from src.run_summary import build_run_summary
 from src.tensorboard_export import export_tensorboard_scalars
 
 
@@ -75,6 +76,7 @@ class QRDQNRunConfig:
     eval_batch_size: int = 8_192
     torch_threads: int | None = None
     torch_inter_op_threads: int | None = None
+    verbose: int = 1
     attempt: int = 1
     campaign_id: str | None = None
     logical_run_id: str | None = None
@@ -110,6 +112,8 @@ class QRDQNRunConfig:
             raise ValueError("monitor_interval must be greater than zero")
         if self.eval_batch_size <= 0:
             raise ValueError("eval_batch_size must be greater than zero")
+        if self.verbose not in {0, 1, 2}:
+            raise ValueError("verbose must be 0, 1, or 2")
 
     @property
     def effective_checkpoint_freq(self) -> int:
@@ -332,7 +336,7 @@ def create_qrdqn_model(
         exploration_final_eps=hyperparameters["exploration_final_eps"],
         exploration_fraction=hyperparameters["exploration_fraction"],
         max_grad_norm=hyperparameters["max_grad_norm"],
-        verbose=1,
+        verbose=config.verbose,
         device=device,
         tensorboard_log=str(tensorboard_dir),
     )
@@ -369,6 +373,7 @@ def _requirements(checkpoints_enabled: bool) -> dict[str, ArtifactRequirement]:
         "tensorboard_scalars": ArtifactRequirement(
             "tensorboard_scalars", kind="directory"
         ),
+        "run_summary": ArtifactRequirement("run_summary.json"),
     }
     if checkpoints_enabled:
         requirements["checkpoints"] = ArtifactRequirement("checkpoints", kind="directory")
@@ -442,6 +447,16 @@ def run_qrdqn_experiment(
                 repo_root=_REPO_ROOT,
                 requested_torch_threads=config.torch_threads,
                 requested_torch_interop_threads=config.torch_inter_op_threads,
+                storage_paths={
+                    "repository": _REPO_ROOT,
+                    "run_artifacts": run_dir,
+                    "dataset": config.dataset_root,
+                    **(
+                        {}
+                        if config.cache_root is None
+                        else {"cache": config.cache_root}
+                    ),
+                },
             )
             environment_metadata["device_selected"] = (
                 "cuda" if torch.cuda.is_available() else "cpu"
@@ -519,7 +534,29 @@ def run_qrdqn_experiment(
                     tb_log_name=config.run_id,
                     reset_num_timesteps=False,
                 )
-                measurement.set_units(config.timesteps, "timesteps")
+                actual_timesteps = getattr(model, "num_timesteps", None)
+                if not isinstance(actual_timesteps, int) or isinstance(
+                    actual_timesteps, bool
+                ):
+                    actual_timesteps = None
+                if actual_timesteps is not None:
+                    measurement.set_units(actual_timesteps, "timesteps")
+
+            resolved_config["training_execution"] = {
+                "requested_timesteps": config.timesteps,
+                "actual_timesteps": actual_timesteps,
+                "overshoot_timesteps": (
+                    None
+                    if actual_timesteps is None
+                    else actual_timesteps - config.timesteps
+                ),
+                "completion_reason": (
+                    "requested_timesteps_reached"
+                    if actual_timesteps is not None
+                    and actual_timesteps >= config.timesteps
+                    else "model_returned_early_or_unreported"
+                ),
+            }
 
             model.save(str(run_dir / "model"))
             if not (run_dir / "model.zip").is_file():
@@ -576,6 +613,7 @@ def run_qrdqn_experiment(
                 for name, requirement in _requirements(checkpoints_enabled).items()
             }
             atomic_write_json(run_dir / "config.json", resolved_config)
+            atomic_write_json(run_dir / "run_summary.json", build_run_summary(run_dir))
 
         manifest_writer.complete()
         return run_dir
