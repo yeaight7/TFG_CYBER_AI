@@ -50,7 +50,18 @@ the repository, for example `runs/final_campaign/`. Final models, retained
 checkpoints, TensorBoard events, joblib files, source datasets, PCAPs, existing
 prediction CSV evidence, and TensorBoard scalar CSVs use Git LFS. Small configs,
 metrics, environment metadata, manifests, checksums, logs, monitoring, timings,
-system metrics, feature importances, and aggregate CSVs use normal Git.
+system metrics, run summaries, feature importances, and aggregate CSVs use
+normal Git.
+
+New QRDQN runs keep static and dynamic execution evidence separate but
+cross-referenced. `environment.json` captures the runtime-visible hardware and
+software inventory at startup. `system_metrics.csv` records timestamped
+process/system/GPU samples, while `monitoring.json` records collection errors,
+field coverage, and numeric aggregates. `run_summary.json` is a generated,
+checksum-backed discovery view of the authoritative config, hardware, actual
+timestep count, metrics, timings, monitoring, and every exported TensorBoard
+scalar's latest value. Historical manifests remain valid because each manifest
+declares its own required artifacts.
 
 Future per-row `runs/**/predictions*.csv` exports and downloaded `.tar.gz`
 bundles remain ignored. Existing committed prediction CSVs remain tracked. Git
