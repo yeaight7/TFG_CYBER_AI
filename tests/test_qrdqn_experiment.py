@@ -12,6 +12,7 @@ from src.experiment_profiles import MAIN_V1_PROFILE
 from src.qrdqn_experiment import (
     PreparedSplit,
     QRDQNRunConfig,
+    create_qrdqn_model,
     load_experiment_split,
     resolved_scientific_profile,
     run_qrdqn_experiment,
@@ -98,6 +99,45 @@ def test_tiny_run_is_artifact_complete_and_scaler_is_train_only(
     np.testing.assert_array_equal(predictions["y_true"], synthetic_split.y_test)
     assert len(list((run_dir / "checkpoints").glob("*.zip"))) == 2
     assert (run_dir / "tensorboard_scalars" / "tensorboard_scalar_export_manifest.json").is_file()
+    assert (run_dir / "run_summary.json").is_file()
+    assert manifest["required_artifacts"]["run_summary"]["relative_path"] == (
+        "run_summary.json"
+    )
+
+
+def test_run_records_actual_timesteps_and_uses_them_for_throughput(fresh_main_run):
+    config = json.loads((fresh_main_run / "config.json").read_text(encoding="utf-8"))
+    timing = json.loads((fresh_main_run / "timing.json").read_text(encoding="utf-8"))
+
+    assert config["training_execution"] == {
+        "requested_timesteps": 2,
+        "actual_timesteps": 10,
+        "overshoot_timesteps": 8,
+        "completion_reason": "requested_timesteps_reached",
+    }
+    assert timing["phases"]["training"]["units"] == 10
+
+
+def test_model_verbosity_is_runtime_configurable(tmp_path: Path, monkeypatch):
+    captured = {}
+
+    class CapturingQRDQN:
+        def __init__(self, *_args, **kwargs):
+            captured.update(kwargs)
+
+    monkeypatch.setattr("src.qrdqn_experiment.QRDQN", CapturingQRDQN)
+    config = QRDQNRunConfig(
+        artifact_root=tmp_path,
+        run_id="quiet-smoke",
+        dataset_root=tmp_path / "dataset",
+        cache_root=None,
+        cache_policy="off",
+        verbose=0,
+    )
+
+    create_qrdqn_model(config, object(), tmp_path / "tensorboard", "cpu")
+
+    assert captured["verbose"] == 0
 
 
 def test_failed_training_persists_failed_attempt_evidence(
