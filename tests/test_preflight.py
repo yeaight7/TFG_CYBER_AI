@@ -14,6 +14,8 @@ from scripts.benchmark_experimental_runtime import (
 )
 from src.artifact_integrity import verify_artifact_manifest
 from src.gpu_preflight import (
+    DEFAULT_SMOKE_MONITOR_INTERVAL_SECONDS,
+    DEFAULT_SMOKE_TIMESTEPS,
     PreflightError,
     PreflightThresholds,
     collect_hardware,
@@ -229,6 +231,38 @@ def test_nvidia_smi_absence_is_recorded_without_crashing() -> None:
     assert hardware["gpus"] == []
 
 
+def test_preflight_hardware_preserves_threshold_keys_from_shared_inventory() -> None:
+    inventory = {
+        "cpu": {
+            "model": "Synthetic CPU",
+            "sockets": 1,
+            "physical_cores": 16,
+            "logical_cpus": 32,
+        },
+        "memory": {"total_bytes": 140 * 1024**3},
+        "swap": {"total_bytes": 8 * 1024**3},
+        "gpus": [
+            {
+                "index": 0,
+                "name": "Synthetic GPU",
+                "memory_total_bytes": 96 * 1024**3,
+            }
+        ],
+        "runtime": {"wsl": False, "container": True},
+        "cgroup": {"version": 2},
+        "nvidia_smi": {"status": "available", "gpu_count": 1},
+        "errors": [],
+    }
+
+    hardware = collect_hardware(inventory_collector=lambda **_kwargs: inventory)
+
+    assert hardware["status"] == "passed"
+    assert hardware["cpu"]["logical_cpus"] == 32
+    assert hardware["ram"]["total_bytes"] == 140 * 1024**3
+    assert hardware["gpus"][0]["vram_bytes"] == 96 * 1024**3
+    assert hardware["runtime"]["container"] is True
+
+
 def test_tiny_qrdqn_artifact_and_incremental_snapshot_smoke(
     tmp_path: Path,
     fake_model_factory,
@@ -245,6 +279,10 @@ def test_tiny_qrdqn_artifact_and_incremental_snapshot_smoke(
         model_factory=fake_model_factory,
     )
     assert artifact["status"] == "passed"
+    assert artifact["requested_timesteps"] == 50_200
+    assert artifact["run_summary"]["training_hyperparameters"]["learning_rate"] == 5e-5
+    assert "train/learning_rate" in artifact["run_summary"]["tensorboard_scalars"]
+    assert "train/loss" in artifact["run_summary"]["tensorboard_scalars"]
     assert verify_artifact_manifest(Path(artifact["run_dir"]))["status"] == "completed"
 
     snapshot = run_snapshot_smoke(
@@ -255,6 +293,19 @@ def test_tiny_qrdqn_artifact_and_incremental_snapshot_smoke(
     )
     assert snapshot["status"] == "passed"
     assert snapshot["incremental_noop_verified"] is True
+
+
+def test_smoke_defaults_cross_learning_start_and_use_one_second_monitoring() -> None:
+    assert DEFAULT_SMOKE_TIMESTEPS == 50_200
+    assert DEFAULT_SMOKE_MONITOR_INTERVAL_SECONDS == 1.0
+
+
+def test_smoke_rejects_workload_below_training_scalar_floor(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="at least 50200"):
+        run_synthetic_artifact_smoke(
+            artifact_root=tmp_path,
+            smoke_timesteps=50_199,
+        )
 
 
 def test_runtime_benchmark_uses_one_subprocess_per_thread_config(tmp_path: Path) -> None:
@@ -323,6 +374,8 @@ def test_preflight_cli_exposes_required_provider_neutral_paths(tmp_path: Path) -
     assert args.cache_root == tmp_path / "cache"
     assert args.artifact_root == tmp_path / "artifacts"
     assert args.snapshot_root == tmp_path / "snapshots"
+    assert args.smoke_timesteps == DEFAULT_SMOKE_TIMESTEPS
+    assert args.smoke_monitor_interval == DEFAULT_SMOKE_MONITOR_INTERVAL_SECONDS
 
 
 def test_gpu_requirements_are_neutral_and_legacy_file_is_only_a_pointer() -> None:

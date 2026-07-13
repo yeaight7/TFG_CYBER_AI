@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-import csv
 import hashlib
 import importlib.metadata
 import json
-import os
 import platform
 import shutil
 import subprocess
@@ -17,17 +15,24 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
-import psutil
-
 from src.artifact_integrity import verify_artifact_manifest
 from src.campaign_export import create_incremental_snapshot, verify_incremental_snapshot
 from src.cicids_cache import validate_cache
+from src.experiment_profiles import MAIN_V1_PROFILE
 from src.load_cicids2017 import list_cicids2017_csv_files
 from src.run_artifacts import atomic_write_json
+from src.system_telemetry import collect_host_inventory
 
 
 PREFLIGHT_SCHEMA_VERSION = "1.0"
 DEFAULT_MAX_AGE_HOURS = 24.0
+_SMOKE_HYPERPARAMETERS = MAIN_V1_PROFILE.qrdqn_hyperparams()
+DEFAULT_SMOKE_TIMESTEPS = int(
+    _SMOKE_HYPERPARAMETERS["learning_starts"]
+    + 2 * _SMOKE_HYPERPARAMETERS["train_freq"]
+)
+DEFAULT_SMOKE_MONITOR_INTERVAL_SECONDS = 1.0
+REQUIRED_SMOKE_SCALARS = frozenset({"train/learning_rate", "train/loss"})
 _GIB = 1024**3
 _REQUIRED_PACKAGES = (
     "numpy",
@@ -91,78 +96,30 @@ def _read_json(path: Path, *, label: str) -> dict[str, Any]:
     return value
 
 
-def _cpu_socket_count() -> int | None:
-    cpuinfo = Path("/proc/cpuinfo")
-    if not cpuinfo.is_file():
-        return None
-    identifiers: set[str] = set()
-    try:
-        for line in cpuinfo.read_text(encoding="utf-8", errors="replace").splitlines():
-            if line.lower().startswith("physical id") and ":" in line:
-                identifiers.add(line.split(":", 1)[1].strip())
-    except OSError:
-        return None
-    return len(identifiers) or None
-
-
 def collect_hardware(
     *,
     command_runner: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
+    inventory_collector: Callable[..., Mapping[str, Any]] = collect_host_inventory,
 ) -> dict[str, Any]:
-    cpu_model = platform.processor() or os.environ.get("PROCESSOR_IDENTIFIER") or "unknown"
-    record: dict[str, Any] = {
-        "status": "failed",
-        "cpu": {
-            "model": cpu_model,
-            "sockets": _cpu_socket_count(),
-            "physical_cores": psutil.cpu_count(logical=False),
-            "logical_cpus": psutil.cpu_count(logical=True),
-        },
-        "ram": {"total_bytes": int(psutil.virtual_memory().total)},
-        "gpus": [],
-    }
-    command = [
-        "nvidia-smi",
-        "--query-gpu=index,name,memory.total,driver_version",
-        "--format=csv,noheader,nounits",
+    inventory = dict(inventory_collector(command_runner=command_runner))
+    gpus = [
+        {**dict(gpu), "vram_bytes": gpu.get("memory_total_bytes")}
+        for gpu in inventory.get("gpus", [])
     ]
-    try:
-        completed = command_runner(
-            command,
-            capture_output=True,
-            text=True,
-            check=False,
-            timeout=15,
-        )
-    except (FileNotFoundError, OSError, subprocess.SubprocessError) as error:
-        record["nvidia_smi"] = {"status": "unavailable", "error": str(error)}
-        return record
-    if completed.returncode != 0:
-        record["nvidia_smi"] = {
-            "status": "failed",
-            "returncode": int(completed.returncode),
-            "stderr": completed.stderr.strip(),
-        }
-        return record
-    try:
-        rows = list(csv.reader(line for line in completed.stdout.splitlines() if line.strip()))
-        gpus = [
-            {
-                "index": int(row[0].strip()),
-                "name": row[1].strip(),
-                "vram_bytes": int(float(row[2].strip()) * 1024**2),
-                "driver_version": row[3].strip(),
-            }
-            for row in rows
-            if len(row) == 4
-        ]
-    except (ValueError, IndexError) as error:
-        record["nvidia_smi"] = {"status": "failed", "error": f"invalid output: {error}"}
-        return record
-    record["gpus"] = gpus
-    record["nvidia_smi"] = {"status": "available", "gpu_count": len(gpus)}
-    record["status"] = "passed" if gpus else "failed"
-    return record
+    nvidia_smi = dict(inventory.get("nvidia_smi", {}))
+    return {
+        "status": (
+            "passed" if gpus and nvidia_smi.get("status") == "available" else "failed"
+        ),
+        "cpu": inventory.get("cpu", {}),
+        "ram": inventory.get("memory", {}),
+        "gpus": gpus,
+        "nvidia_smi": nvidia_smi,
+        "runtime": inventory.get("runtime", {}),
+        "swap": inventory.get("swap", {}),
+        "cgroup": inventory.get("cgroup", {}),
+        "errors": inventory.get("errors", []),
+    }
 
 
 def collect_software(*, repo_root: Path) -> dict[str, Any]:
@@ -398,7 +355,16 @@ def run_synthetic_artifact_smoke(
     *,
     artifact_root: Path,
     model_factory: Callable[..., Any] | None = None,
+    smoke_timesteps: int = DEFAULT_SMOKE_TIMESTEPS,
+    monitor_interval: float = DEFAULT_SMOKE_MONITOR_INTERVAL_SECONDS,
 ) -> dict[str, Any]:
+    if smoke_timesteps < DEFAULT_SMOKE_TIMESTEPS:
+        raise ValueError(
+            f"smoke_timesteps must be at least {DEFAULT_SMOKE_TIMESTEPS} "
+            "to produce real training scalars"
+        )
+    if monitor_interval <= 0:
+        raise ValueError("monitor_interval must be greater than zero")
     import numpy as np
 
     from src.qrdqn_experiment import PreparedSplit, QRDQNRunConfig, run_qrdqn_experiment
@@ -426,11 +392,12 @@ def run_synthetic_artifact_smoke(
         cache_policy="off",
         split_seed=42,
         model_seed=42,
-        timesteps=2,
+        timesteps=smoke_timesteps,
         checkpoint_freq=0,
-        monitor_interval=0.05,
+        monitor_interval=monitor_interval,
         torch_threads=1,
         torch_inter_op_threads=1,
+        verbose=0,
         campaign_id="preflight-smoke",
         logical_run_id="preflight_qrdqn",
         attempt=1,
@@ -441,15 +408,25 @@ def run_synthetic_artifact_smoke(
     run_dir = run_qrdqn_experiment(config, **kwargs)
     verified = verify_artifact_manifest(run_dir)
     environment = _read_json(run_dir / "environment.json", label="smoke environment")
+    run_summary = _read_json(run_dir / "run_summary.json", label="smoke run summary")
+    scalar_tags = set(run_summary.get("tensorboard_scalars", {}))
+    missing_scalars = sorted(REQUIRED_SMOKE_SCALARS - scalar_tags)
+    if missing_scalars:
+        raise PreflightError(
+            f"Synthetic smoke missing required training scalars: {missing_scalars}"
+        )
     return {
         "status": "passed",
-        "workload": "tiny-synthetic-qrdqn-artifact-v1",
+        "workload": "synthetic-qrdqn-training-artifact-v2",
         "scientific_result": False,
+        "requested_timesteps": smoke_timesteps,
+        "monitor_interval_seconds": monitor_interval,
         "campaign_dir": str(campaign_dir),
         "run_dir": str(run_dir),
         "manifest_sha256": _sha256_file(run_dir / "artifact_manifest.json"),
         "verified_schema_version": verified["schema_version"],
         "device_selected": environment.get("device_selected"),
+        "run_summary": run_summary,
     }
 
 
@@ -655,6 +632,8 @@ def run_preflight(
     thresholds: PreflightThresholds | None = None,
     max_age_hours: float = DEFAULT_MAX_AGE_HOURS,
     runtime_benchmark: Path | str | None = None,
+    smoke_timesteps: int = DEFAULT_SMOKE_TIMESTEPS,
+    smoke_monitor_interval: float = DEFAULT_SMOKE_MONITOR_INTERVAL_SECONDS,
     repo_root: Path | str | None = None,
     now: datetime | None = None,
     collectors: Mapping[str, Callable[..., Mapping[str, Any]]] | None = None,
@@ -708,7 +687,11 @@ def run_preflight(
     )
     checks["cuda"] = _call_probe("cuda", probes["cuda"])
     checks["artifact_smoke"] = _call_probe(
-        "artifact_smoke", probes["artifact_smoke"], artifact_root=artifact_root
+        "artifact_smoke",
+        probes["artifact_smoke"],
+        artifact_root=artifact_root,
+        smoke_timesteps=smoke_timesteps,
+        monitor_interval=smoke_monitor_interval,
     )
     checks["snapshot_smoke"] = _call_probe(
         "snapshot_smoke",
@@ -838,6 +821,8 @@ def verify_preflight_report(
 
 __all__ = [
     "DEFAULT_MAX_AGE_HOURS",
+    "DEFAULT_SMOKE_MONITOR_INTERVAL_SECONDS",
+    "DEFAULT_SMOKE_TIMESTEPS",
     "PREFLIGHT_SCHEMA_VERSION",
     "PreflightError",
     "PreflightThresholds",

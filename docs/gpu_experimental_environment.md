@@ -150,6 +150,60 @@ python scripts/preflight_gpu_environment.py \
   --output "$PREFLIGHT_REPORT"
 ```
 
+The preflight includes a non-scientific synthetic QRDQN smoke. Its default
+workload is 50,200 timesteps with one-second resource sampling. This crosses
+the frozen `main-v1` profile's 50,000-step `learning_starts` boundary and
+allows a real update plus a later TensorBoard flush. A successful smoke must
+export both `train/learning_rate` and `train/loss`. Runtime is hardware
+dependent; it is intended to finish within a few minutes on the WSL2
+development host and materially faster on the final GPU host. The CLI records
+explicit `--smoke-timesteps` and `--smoke-monitor-interval` overrides, but it
+rejects a workload below the scalar-production floor.
+
+To run only this real synthetic smoke in WSL2 and print its complete summary:
+
+```bash
+uv run python - <<'PY'
+import json
+from pathlib import Path
+from src.gpu_preflight import run_synthetic_artifact_smoke
+
+result = run_synthetic_artifact_smoke(
+    artifact_root=Path.home() / "tfg-qrdqn-test-artifacts",
+)
+print(json.dumps(result, indent=2))
+PY
+```
+
+Each new QRDQN attempt contains these complementary evidence files:
+
+| Artifact | Purpose |
+|---|---|
+| `environment.json` | Static runtime-visible CPU, RAM, swap, cgroup, storage, GPU, CUDA, package, Git, OS, and thread inventory |
+| `system_metrics.csv` | Timestamped process, CPU, RAM, swap, disk-I/O, GPU-utilisation, VRAM, power, clock, fan, and temperature samples |
+| `monitoring.json` | Collection status, warnings, field coverage, and min/max/mean/last numeric summaries |
+| `run_summary.json` | Resolved hyperparameters, requested/actual timesteps, device, hardware, metrics, timings, monitoring summary, and latest value of every exported TensorBoard scalar |
+| `config.json` | Authoritative resolved run request, frozen profile, seeds, split metadata, and artifact paths |
+| `artifact_manifest.json` / `SHA256SUMS` | Required-file contract, inventory, sizes, and integrity hashes |
+
+The returned smoke JSON embeds `run_summary.json`, so learning rate and other
+resolved hyperparameters and scalar values appear directly in the terminal.
+The smoke suppresses per-rollout SB3 tables; normal campaign runs retain their
+existing verbosity.
+To inspect the newest saved smoke without copying its generated identifier:
+
+```bash
+RUN_DIR="$(find "$HOME/tfg-qrdqn-test-artifacts/preflight-smoke" -type f -name run_summary.json -printf '%T@ %h\n' | sort -nr | head -n1 | cut -d' ' -f2-)"
+python -m json.tool "$RUN_DIR/environment.json"
+python -m json.tool "$RUN_DIR/run_summary.json"
+column -s, -t < <(head -n 6 "$RUN_DIR/system_metrics.csv")
+```
+
+On WSL2, CPU counts, RAM, cgroup limits, and filesystem capacity describe the
+Linux runtime allocation available to the experiment, not unallocated Windows
+host resources. The same rule applies to container-visible resources on a GPU
+provider.
+
 Real campaign execution rejects a missing, failed, stale, or cache-mismatched preflight report. A changed Phase 2 input requires a new or explicitly amended report. Actual hardware, driver, CUDA, storage, dataset, cache, monitoring, and snapshot checks remain host-only until this command succeeds on the final host.
 
 ## Campaign dry-run and execution

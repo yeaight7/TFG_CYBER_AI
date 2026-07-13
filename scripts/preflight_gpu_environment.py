@@ -12,6 +12,8 @@ if __package__ in {None, ""}:  # pragma: no cover - direct script execution
 
 from src.gpu_preflight import (  # noqa: E402
     DEFAULT_MAX_AGE_HOURS,
+    DEFAULT_SMOKE_MONITOR_INTERVAL_SECONDS,
+    DEFAULT_SMOKE_TIMESTEPS,
     PreflightError,
     PreflightThresholds,
     run_preflight,
@@ -37,6 +39,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--phase2-input", type=Path)
     parser.add_argument("--expect-phase2-labels", action="store_true")
     parser.add_argument("--runtime-benchmark", type=Path)
+    parser.add_argument("--smoke-timesteps", type=int, default=DEFAULT_SMOKE_TIMESTEPS)
+    parser.add_argument(
+        "--smoke-monitor-interval",
+        type=float,
+        default=DEFAULT_SMOKE_MONITOR_INTERVAL_SECONDS,
+    )
     parser.add_argument("--output", type=Path)
     parser.add_argument("--repo-root", type=Path, default=_REPO_ROOT)
     parser.add_argument("--max-age-hours", type=float, default=DEFAULT_MAX_AGE_HOURS)
@@ -71,6 +79,8 @@ def main(argv: list[str] | None = None) -> int:
             thresholds=thresholds,
             max_age_hours=args.max_age_hours,
             runtime_benchmark=args.runtime_benchmark,
+            smoke_timesteps=args.smoke_timesteps,
+            smoke_monitor_interval=args.smoke_monitor_interval,
             repo_root=args.repo_root,
         )
     except (OSError, PreflightError, ValueError) as error:
