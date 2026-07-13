@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any, Callable, Iterator, Mapping, TextIO
 
 from src.artifact_integrity import sha256_file
+from src.system_telemetry import collect_host_inventory
 
 
 ARTIFACT_SCHEMA_VERSION = "3.0"
@@ -455,43 +456,13 @@ def _package_version(package_name: str) -> str | None:
         return None
 
 
-def _nvidia_environment() -> dict[str, Any]:
-    command = [
-        "nvidia-smi",
-        "--query-gpu=index,name,memory.total,driver_version",
-        "--format=csv,noheader,nounits",
-    ]
-    try:
-        result = subprocess.run(command, check=True, capture_output=True, text=True)
-    except (OSError, subprocess.CalledProcessError):
-        return {"available": False, "gpus": []}
-
-    gpus = []
-    for line in result.stdout.splitlines():
-        values = [value.strip() for value in line.split(",")]
-        if len(values) != 4:
-            continue
-        index, name, memory_mib, driver = values
-        try:
-            memory_bytes = int(float(memory_mib) * 1024 * 1024)
-        except ValueError:
-            memory_bytes = None
-        gpus.append(
-            {
-                "index": int(index) if index.isdigit() else index,
-                "name": name,
-                "memory_total_bytes": memory_bytes,
-                "driver_version": driver,
-            }
-        )
-    return {"available": bool(gpus), "gpus": gpus}
-
-
 def collect_environment_metadata(
     *,
     repo_root: Path,
     requested_torch_threads: int | None = None,
     requested_torch_interop_threads: int | None = None,
+    storage_paths: Mapping[str, Path] | None = None,
+    hardware_collector: Callable[..., dict[str, Any]] = collect_host_inventory,
     package_names: tuple[str, ...] = (
         "numpy",
         "pandas",
@@ -534,6 +505,7 @@ def collect_environment_metadata(
         }
         effective_threads = {"torch_intra_op": None, "torch_inter_op": None}
 
+    hardware = hardware_collector(storage_paths=storage_paths)
     return {
         "captured_at": _utc_now(),
         "git": {
@@ -555,7 +527,10 @@ def collect_environment_metadata(
         },
         "packages": {name: _package_version(name) for name in package_names},
         "torch": torch_metadata,
-        "nvidia_smi": _nvidia_environment(),
+        "nvidia_smi": hardware.get(
+            "nvidia_smi", {"available": False, "gpus": []}
+        ),
+        "hardware": hardware,
         "threads": {
             "requested": {
                 "torch_intra_op": requested_torch_threads,
