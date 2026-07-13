@@ -342,6 +342,25 @@ def test_environment_metadata_records_git_packages_cuda_and_thread_settings(tmp_
     }
 
 
+def test_environment_metadata_embeds_shared_hardware_inventory(tmp_path):
+    collect = _api("src.run_artifacts", "collect_environment_metadata")
+    inventory = {
+        "schema_version": "1.0",
+        "cpu": {"model": "Synthetic CPU"},
+        "nvidia_smi": {"status": "available", "gpu_count": 1},
+    }
+
+    metadata = collect(
+        repo_root=tmp_path,
+        storage_paths={"artifacts": tmp_path},
+        hardware_collector=lambda **_kwargs: inventory,
+        package_names=(),
+    )
+
+    assert metadata["hardware"] == inventory
+    assert metadata["nvidia_smi"] == inventory["nvidia_smi"]
+
+
 def test_checkpoint_retention_is_bounded_and_checksum_backed(tmp_path):
     retain = _api("src.run_artifacts", "retain_checkpoints")
     checkpoints = tmp_path / "checkpoints"
