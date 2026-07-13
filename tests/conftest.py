@@ -13,13 +13,17 @@ class FakeQRDQN:
     def __init__(self, tensorboard_dir: Path, *, fail: bool = False) -> None:
         self.tensorboard_dir = Path(tensorboard_dir)
         self.fail = fail
+        self.num_timesteps = 0
 
     def learn(self, *, total_timesteps: int, callback=None, tb_log_name: str, **_kwargs):
         if self.fail:
             raise RuntimeError("synthetic training failure")
+        self.num_timesteps = total_timesteps + 8
         event_dir = self.tensorboard_dir / tb_log_name
         writer = SummaryWriter(log_dir=event_dir)
-        writer.add_scalar("train/synthetic_reward", 1.0, total_timesteps)
+        writer.add_scalar("train/synthetic_reward", 1.0, self.num_timesteps)
+        writer.add_scalar("train/learning_rate", 5e-5, self.num_timesteps)
+        writer.add_scalar("train/loss", 0.25, self.num_timesteps)
         writer.flush()
         writer.close()
         if callback is not None:
