@@ -96,6 +96,17 @@ def _read_json(path: Path, *, label: str) -> dict[str, Any]:
     return value
 
 
+def _artifact_root_reference(path: Path | str, *, repository_root: Path) -> str:
+    resolved = Path(path)
+    if not resolved.is_absolute():
+        resolved = repository_root / resolved
+    resolved = resolved.resolve()
+    try:
+        return resolved.relative_to(repository_root.resolve()).as_posix()
+    except ValueError:
+        return str(resolved)
+
+
 def collect_hardware(
     *,
     command_runner: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
@@ -725,7 +736,10 @@ def run_preflight(
         "campaign_spec_file_sha256": _sha256_file(campaign_spec),
         "dataset_root": str(dataset_root),
         "cache_root": str(cache_root),
-        "artifact_root": str(artifact_root),
+        "artifact_root": _artifact_root_reference(
+            artifact_root,
+            repository_root=repo_root,
+        ),
         "snapshot_root": str(snapshot_root),
         "cache_manifest_sha256": cache_sha,
         "phase2_input_path": None if phase2_path is None else str(phase2_path),
@@ -775,6 +789,7 @@ def verify_preflight_report(
     expected_snapshot_root: Path | str | None = None,
     expected_cache_manifest_sha256: str | None = None,
     expected_phase2_input_sha256: str | None = None,
+    repository_root: Path | str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     report = _read_json(Path(report_path), label="preflight report")
@@ -794,6 +809,9 @@ def verify_preflight_report(
     bindings = report.get("bindings")
     if not isinstance(bindings, Mapping):
         raise PreflightError("Preflight bindings are missing")
+    repository_root = Path(
+        repository_root or Path(__file__).resolve().parent.parent
+    ).resolve()
     expected = {
         "campaign_spec_sha256": expected_campaign_spec_sha256,
         "dataset_root": (
@@ -801,7 +819,12 @@ def verify_preflight_report(
         ),
         "cache_root": None if expected_cache_root is None else str(Path(expected_cache_root).resolve()),
         "artifact_root": (
-            None if expected_artifact_root is None else str(Path(expected_artifact_root).resolve())
+            None
+            if expected_artifact_root is None
+            else _artifact_root_reference(
+                expected_artifact_root,
+                repository_root=repository_root,
+            )
         ),
         "snapshot_root": (
             None if expected_snapshot_root is None else str(Path(expected_snapshot_root).resolve())

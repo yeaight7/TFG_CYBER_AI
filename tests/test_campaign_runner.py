@@ -10,6 +10,7 @@ import sys
 
 import pytest
 
+from src import campaign_export
 from scripts.predict_real_traffic_v2 import run_phase2_inference
 from src.campaign import (
     CampaignArtifactError,
@@ -21,7 +22,7 @@ from src.campaign import (
     load_campaign_spec,
     validate_campaign_spec,
 )
-from src.campaign_export import verify_final_bundle, verify_incremental_snapshot
+from src.campaign_export import verify_final_bundle
 from src.cicids_cache import sha256_file
 from src.qrdqn_experiment import PreparedSplit, QRDQNRunConfig, run_qrdqn_experiment
 from src.run_artifacts import ArtifactManifestWriter, ArtifactRequirement, atomic_write_json
@@ -33,10 +34,11 @@ FRESH_MAIN_ID = "qrdqn_main_random_full_s42_m42"
 
 
 def _paths(tmp_path: Path, *, phase2_input: Path | None = None) -> CampaignPaths:
+    repository_root = tmp_path / "repository"
     preflight_report = tmp_path / "preflight.json"
     atomic_write_json(preflight_report, {"status": "synthetic-test-preflight"})
     return CampaignPaths(
-        artifact_root=tmp_path / "artifacts",
+        artifact_root=repository_root / "runs" / "final_campaign",
         cache_root=tmp_path / "cache",
         dataset_root=tmp_path / "dataset",
         snapshot_root=tmp_path / "snapshots",
@@ -45,6 +47,7 @@ def _paths(tmp_path: Path, *, phase2_input: Path | None = None) -> CampaignPaths
         phase2_input_sha256=(
             None if phase2_input is None else sha256_file(phase2_input)
         ),
+        repository_root=repository_root,
     )
 
 
@@ -270,14 +273,28 @@ def test_full_dispatch_is_strictly_sequential_and_records_two_aliases(
     assert report["final_bundle"]["status"] == "verified"
     assert Path(report["final_bundle"]["archive_path"]).is_file()
     assert verify_final_bundle(Path(report["final_bundle"]["archive_path"]))["status"] == "verified"
-    snapshot_dir = runner.paths.snapshot_root / "campaign-test"
-    assert verify_incremental_snapshot(snapshot_dir)["status"] == "verified"
     state = json.loads(runner.state_path.read_text(encoding="utf-8"))
     assert state["entries"]["qrdqn_ladder_full_s42_m42"]["status"] == "reused"
     assert state["entries"]["qrdqn_seed_1m_s42_m42"]["status"] == "reused"
-    assert all(
-        record["snapshot"]["status"] == "verified"
+    physical_records = [
+        record
         for record in state["entries"].values()
+        if record["classification"] != "alias"
+    ]
+    alias_records = [
+        record
+        for record in state["entries"].values()
+        if record["classification"] == "alias"
+    ]
+    assert all(record["export"]["status"] == "verified" for record in physical_records)
+    assert all("export" not in record for record in alias_records)
+    assert all(
+        campaign_export.verify_run_export(
+            runner.paths.snapshot_root,
+            record["export"]["repository_relative_run_dir"],
+        )["status"]
+        == "verified"
+        for record in physical_records
     )
     assert {
         "campaign_spec_original.json",
@@ -285,6 +302,16 @@ def test_full_dispatch_is_strictly_sequential_and_records_two_aliases(
         "preflight_report.json",
         "cache_manifest.json",
     } <= {path.name for path in runner.campaign_dir.iterdir()}
+    resolved_spec = json.loads(
+        (runner.campaign_dir / "campaign_spec_resolved.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert resolved_spec["resolved_runtime"]["artifact_root"] == "runs/final_campaign"
+    main_command = state["entries"][FRESH_MAIN_ID]["attempts"][0]["command"]
+    artifact_argument = main_command[main_command.index("--artifact-root") + 1]
+    assert artifact_argument.startswith("runs/final_campaign/")
+    assert not Path(artifact_argument).is_absolute()
 
 
 def test_resume_skips_valid_completion_and_retries_failed_or_interrupted(
@@ -342,15 +369,15 @@ def test_real_execution_refuses_missing_preflight_before_campaign_state(
     assert not runner.paths.cache_root.exists()
 
 
-def test_snapshot_failure_halts_then_resume_repairs_without_rerunning(
+def test_run_export_failure_is_reported_then_resume_repairs_without_rerunning(
     tmp_path: Path,
 ) -> None:
     calls: list[str] = []
-    snapshot_calls: list[str] = []
+    export_calls: list[str] = []
 
-    def failing_snapshot(_campaign_dir: Path, destination: Path) -> dict:
-        snapshot_calls.append(str(destination))
-        raise RuntimeError("durable destination unavailable")
+    def failing_export(run_dir: Path, _destination: Path, **_kwargs) -> dict:
+        export_calls.append(str(run_dir))
+        raise RuntimeError("export destination unavailable")
 
     runner = CampaignRunner(
         load_campaign_spec(SPEC_PATH),
@@ -359,23 +386,31 @@ def test_snapshot_failure_halts_then_resume_repairs_without_rerunning(
         dispatcher=_successful_dispatch(calls, "campaign-test"),
         cache_validator=_valid_cache,
         preflight_validator=_accepted_preflight,
-        snapshot_exporter=failing_snapshot,
+        run_exporter=failing_export,
     )
 
-    with pytest.raises(CampaignExecutionError, match="snapshot"):
+    with pytest.raises(CampaignExecutionError, match="export"):
         runner.execute(logical_run_id=FRESH_MAIN_ID)
 
     state = json.loads(runner.state_path.read_text(encoding="utf-8"))
-    assert state["entries"][FRESH_MAIN_ID]["status"] == "snapshot-failed"
+    assert state["entries"][FRESH_MAIN_ID]["status"] == "completed"
+    assert state["entries"][FRESH_MAIN_ID]["export"]["status"] == "failed"
     assert state["entries"][FRESH_MAIN_ID]["attempts"][-1]["status"] == "completed"
     assert calls == [FRESH_MAIN_ID]
 
-    def successful_snapshot(_campaign_dir: Path, destination: Path) -> dict:
-        snapshot_calls.append(str(destination))
+    def successful_export(run_dir: Path, _destination: Path, **_kwargs) -> dict:
+        export_calls.append(str(run_dir))
         return {
             "status": "verified",
-            "files": ["campaign_state.json"],
-            "snapshot_manifest_sha256": "a" * 64,
+            "repository_relative_run_dir": (
+                "runs/final_campaign/campaign-test/attempts/"
+                f"{FRESH_MAIN_ID}/attempt-1"
+            ),
+            "export_directory": "runs/final_campaign/campaign-test",
+            "archive_path": "tarballs/attempt-1.tar.gz",
+            "checksum_path": "tarballs/attempt-1.tar.gz.sha256",
+            "manifest_path": "tarballs/attempt-1.export.json",
+            "archive_sha256": "a" * 64,
         }
 
     resumed = CampaignRunner(
@@ -385,16 +420,16 @@ def test_snapshot_failure_halts_then_resume_repairs_without_rerunning(
         dispatcher=_successful_dispatch(calls, "campaign-test"),
         cache_validator=_valid_cache,
         preflight_validator=_accepted_preflight,
-        snapshot_exporter=successful_snapshot,
+        run_exporter=successful_export,
     )
     result = resumed.execute(logical_run_id=FRESH_MAIN_ID, resume=True)
 
     assert result["status"] == "selection_completed"
     assert calls == [FRESH_MAIN_ID]
-    assert len(snapshot_calls) == 2
+    assert len(export_calls) == 2
     state = json.loads(resumed.state_path.read_text(encoding="utf-8"))
     assert state["entries"][FRESH_MAIN_ID]["status"] == "completed"
-    assert state["entries"][FRESH_MAIN_ID]["snapshot"]["status"] == "verified"
+    assert state["entries"][FRESH_MAIN_ID]["export"]["status"] == "verified"
 
 
 def test_invalid_completed_artifact_halts_before_next_dispatch(tmp_path: Path) -> None:
@@ -604,7 +639,9 @@ def test_auxiliary_artifact_must_bind_to_fresh_main_manifest(tmp_path: Path) -> 
 def test_campaign_cli_dry_run_reports_contract_without_writing_artifacts(
     tmp_path: Path,
 ) -> None:
-    artifact_root = tmp_path / "artifacts"
+    artifact_root = (
+        REPO_ROOT / "runs" / "final_campaign" / "dry-run-tests" / tmp_path.name
+    )
     result = run(
         [
             "uv",

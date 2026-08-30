@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
 from src.artifact_integrity import ArtifactTrustError, verify_artifact_manifest
-from src.campaign_export import create_final_bundle, create_incremental_snapshot
+from src.campaign_export import create_final_bundle, create_run_export
 from src.cicids_cache import sha256_file, validate_cache
 from src.gpu_preflight import verify_preflight_report
 from src.run_artifacts import atomic_write_json
@@ -24,6 +24,7 @@ from src.run_artifacts import atomic_write_json
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 CAMPAIGN_STATE_SCHEMA_VERSION = "1.0"
 CAMPAIGN_SPEC_SCHEMA_VERSION = "1.0"
+DEFAULT_CAMPAIGN_ARTIFACT_ROOT = Path("runs/final_campaign")
 FRESH_MAIN_ID = "qrdqn_main_random_full_s42_m42"
 STAGE_ORDER = (
     "qrdqn_main",
@@ -306,10 +307,12 @@ class CampaignPaths:
     preflight_report: Path | None = None
     phase2_input: Path | None = None
     phase2_input_sha256: str | None = None
+    repository_root: Path = _REPO_ROOT
 
     def __post_init__(self) -> None:
+        repository_root = Path(self.repository_root).resolve()
+        object.__setattr__(self, "repository_root", repository_root)
         for field in (
-            "artifact_root",
             "cache_root",
             "dataset_root",
             "snapshot_root",
@@ -318,7 +321,28 @@ class CampaignPaths:
         ):
             value = getattr(self, field)
             if value is not None:
-                object.__setattr__(self, field, Path(value))
+                path = Path(value)
+                if not path.is_absolute():
+                    path = repository_root / path
+                object.__setattr__(self, field, path.resolve())
+        artifact_root = Path(self.artifact_root)
+        if not artifact_root.is_absolute():
+            artifact_root = repository_root / artifact_root
+        artifact_root = artifact_root.resolve()
+        try:
+            artifact_root.relative_to(repository_root)
+        except ValueError as error:
+            raise ValueError(
+                "Official campaign artifact_root must live beneath the repository"
+            ) from error
+        object.__setattr__(self, "artifact_root", artifact_root)
+        if self.snapshot_root is not None:
+            try:
+                self.snapshot_root.relative_to(repository_root)
+            except ValueError:
+                pass
+            else:
+                raise ValueError("snapshot_root must remain outside the repository")
         if self.phase2_input_sha256 is not None:
             digest = self.phase2_input_sha256.lower()
             if len(digest) != 64 or any(ch not in "0123456789abcdef" for ch in digest):
@@ -483,7 +507,7 @@ def load_campaign_spec(path: Path | str) -> CampaignSpec:
 Dispatch = Callable[[CampaignEntry, Sequence[str], Path], subprocess.CompletedProcess[Any]]
 CacheValidator = Callable[[Path, Path], Mapping[str, Any]]
 PreflightValidator = Callable[..., Mapping[str, Any]]
-SnapshotExporter = Callable[[Path, Path], Mapping[str, Any]]
+RunExporter = Callable[..., Mapping[str, Any]]
 BundleExporter = Callable[[Path, Path], Mapping[str, Any]]
 
 
@@ -502,7 +526,7 @@ def _dispatch_subprocess(
     command: Sequence[str],
     _attempt_dir: Path,
 ) -> subprocess.CompletedProcess[Any]:
-    return subprocess.run(list(command), check=False)
+    return subprocess.run(list(command), check=False, cwd=_REPO_ROOT)
 
 
 class CampaignRunner:
@@ -517,7 +541,7 @@ class CampaignRunner:
         dispatcher: Dispatch = _dispatch_subprocess,
         cache_validator: CacheValidator = validate_cache,
         preflight_validator: PreflightValidator = verify_preflight_report,
-        snapshot_exporter: SnapshotExporter = create_incremental_snapshot,
+        run_exporter: RunExporter = create_run_export,
         bundle_exporter: BundleExporter = create_final_bundle,
     ) -> None:
         self.spec = spec
@@ -526,7 +550,7 @@ class CampaignRunner:
         self.dispatcher = dispatcher
         self.cache_validator = cache_validator
         self.preflight_validator = preflight_validator
-        self.snapshot_exporter = snapshot_exporter
+        self.run_exporter = run_exporter
         self.bundle_exporter = bundle_exporter
         self.campaign_dir = self.paths.artifact_root / self.campaign_id
         self.state_path = self.campaign_dir / "campaign_state.json"
@@ -536,6 +560,14 @@ class CampaignRunner:
 
     def attempt_dir(self, logical_id: str, attempt: int) -> Path:
         return self.campaign_dir / "attempts" / logical_id / f"attempt-{attempt}"
+
+    def _repository_relative(self, path: Path) -> str:
+        try:
+            return path.resolve().relative_to(self.paths.repository_root).as_posix()
+        except ValueError as error:
+            raise CampaignExecutionError(
+                f"Campaign artifact path is outside the repository: {path}"
+            ) from error
 
     def _selected(
         self,
@@ -628,6 +660,7 @@ class CampaignRunner:
                     expected_snapshot_root=self.paths.snapshot_root,
                     expected_cache_manifest_sha256=str(cache_sha256),
                     expected_phase2_input_sha256=self.paths.phase2_input_sha256,
+                    repository_root=self.paths.repository_root,
                 )
             )
         except Exception as error:
@@ -656,7 +689,7 @@ class CampaignRunner:
         resolved_spec = {
             **dict(self.spec.raw),
             "resolved_runtime": {
-                "artifact_root": str(self.paths.artifact_root.resolve()),
+                "artifact_root": self._repository_relative(self.paths.artifact_root),
                 "cache_root": str(self.paths.cache_root.resolve()),
                 "dataset_root": str(self.paths.dataset_root.resolve()),
                 "snapshot_root": str(self.paths.snapshot_root.resolve()),
@@ -960,7 +993,9 @@ class CampaignRunner:
             run_dir = self._fresh_main_dir(state)
         except CampaignDependencyError:
             return "<fresh-campaign-main>", "<fresh-main-manifest-sha256>"
-        return str(run_dir), sha256_file(run_dir / "artifact_manifest.json")
+        return self._repository_relative(run_dir), sha256_file(
+            run_dir / "artifact_manifest.json"
+        )
 
     def command_for(self, logical_id: str, *, attempt: int) -> list[str]:
         entry = self.spec.by_id.get(logical_id)
@@ -978,7 +1013,7 @@ class CampaignRunner:
         if entry.runner == "qrdqn":
             command = [
                 sys.executable,
-                str(_REPO_ROOT / "src" / "train_rl_defender.py"),
+                "src/train_rl_defender.py",
                 "--split-mode",
                 str(entry.config["split_mode"]),
                 "--split-seed",
@@ -996,7 +1031,7 @@ class CampaignRunner:
                 "--cache-policy",
                 "require",
                 "--artifact-root",
-                str(attempt_dir.parent),
+                self._repository_relative(attempt_dir.parent),
                 "--run-id",
                 attempt_dir.name,
                 *common_identity,
@@ -1009,7 +1044,7 @@ class CampaignRunner:
         if entry.runner == "random_forest":
             command = [
                 sys.executable,
-                str(_REPO_ROOT / "src" / "baseline_random_forest.py"),
+                "src/baseline_random_forest.py",
                 "--split-mode",
                 str(entry.config["split_mode"]),
                 "--split-seed",
@@ -1025,7 +1060,7 @@ class CampaignRunner:
                 "--cache-policy",
                 "require",
                 "--artifact-root",
-                str(attempt_dir.parent),
+                self._repository_relative(attempt_dir.parent),
                 "--run-id",
                 attempt_dir.name,
                 *common_identity,
@@ -1040,11 +1075,11 @@ class CampaignRunner:
         if entry.runner == "main_direct_validation":
             return [
                 sys.executable,
-                str(_REPO_ROOT / "scripts" / "validate_main_direct.py"),
+                "scripts/validate_main_direct.py",
                 "--run-dir",
                 source_main,
                 "--artifact-root",
-                str(attempt_dir.parent),
+                self._repository_relative(attempt_dir.parent),
                 "--job-id",
                 attempt_dir.name,
                 *common_identity,
@@ -1052,11 +1087,11 @@ class CampaignRunner:
         if entry.runner == "bootstrap_ci":
             return [
                 sys.executable,
-                str(_REPO_ROOT / "scripts" / "bootstrap_ci.py"),
+                "scripts/bootstrap_ci.py",
                 "--run-dir",
                 source_main,
                 "--output-dir",
-                str(attempt_dir),
+                self._repository_relative(attempt_dir),
                 "--n-boot",
                 str(entry.config["n_resamples"]),
                 "--boot-seed",
@@ -1066,17 +1101,17 @@ class CampaignRunner:
         if entry.runner == "duplicate_analysis":
             return [
                 sys.executable,
-                str(_REPO_ROOT / "scripts" / "analyze_duplicates.py"),
+                "scripts/analyze_duplicates.py",
                 "--run-dir",
                 source_main,
                 "--output-dir",
-                str(attempt_dir),
+                self._repository_relative(attempt_dir),
                 *common_identity,
             ]
         if entry.runner == "shuffled_label_validation":
             return [
                 sys.executable,
-                str(_REPO_ROOT / "src" / "validate_checks.py"),
+                "src/validate_checks.py",
                 "--checks",
                 "B",
                 "--dataset-root",
@@ -1086,7 +1121,7 @@ class CampaignRunner:
                 "--cache-policy",
                 "require",
                 "--artifact-root",
-                str(attempt_dir.parent),
+                self._repository_relative(attempt_dir.parent),
                 "--run-id-b",
                 attempt_dir.name,
                 "--timesteps-b",
@@ -1107,13 +1142,13 @@ class CampaignRunner:
             )
             return [
                 sys.executable,
-                str(_REPO_ROOT / "scripts" / "predict_real_traffic_v2.py"),
+                "scripts/predict_real_traffic_v2.py",
                 "--flows",
                 flows,
                 "--run-dir",
                 source_main,
                 "--artifact-root",
-                str(attempt_dir.parent),
+                self._repository_relative(attempt_dir.parent),
                 "--run-id",
                 attempt_dir.name,
                 "--export-diagnostics",
@@ -1161,53 +1196,54 @@ class CampaignRunner:
         state["entries"][entry.logical_id]["status"] = "invalid"
         self._write_state(state)
 
-    def _snapshot_destination(self) -> Path:
+    def _export_destination(self) -> Path:
         if self.paths.snapshot_root is None:
-            raise CampaignExecutionError("A snapshot root is required")
-        return self.paths.snapshot_root / self.campaign_id
+            raise CampaignExecutionError("An external export root is required")
+        return self.paths.snapshot_root
 
-    def _snapshot_entry(
+    def _export_entry(
         self,
         entry: CampaignEntry,
         state: dict[str, Any],
     ) -> dict[str, Any]:
+        if entry.classification == "alias":
+            raise CampaignExecutionError("Logical aliases have no physical run to export")
         record = state["entries"][entry.logical_id]
-        completed_status = "reused" if entry.classification == "alias" else "completed"
-        snapshot = record.get("snapshot")
-        if record.get("status") == "snapshot-failed" or not isinstance(snapshot, Mapping):
-            record["status"] = completed_status
-            record["snapshot"] = {
-                "status": "verified",
-                "destination": str(self._snapshot_destination()),
-            }
-            self._write_state(state)
-        elif snapshot.get("status") != "verified":
-            record["status"] = completed_status
-            record["snapshot"] = {
-                "status": "verified",
-                "destination": str(self._snapshot_destination()),
-            }
-            self._write_state(state)
+        attempt_dir = self._record_attempt_path(record)
         try:
             result = dict(
-                self.snapshot_exporter(
-                    self.campaign_dir,
-                    self._snapshot_destination(),
+                self.run_exporter(
+                    attempt_dir,
+                    self._export_destination(),
+                    repository_root=self.paths.repository_root,
                 )
             )
             if result.get("status") != "verified":
-                raise CampaignExecutionError("Snapshot exporter did not return verified status")
+                raise CampaignExecutionError("Run exporter did not return verified status")
         except Exception as error:
-            record["status"] = "snapshot-failed"
-            record["snapshot"] = {
+            record["export"] = {
                 "status": "failed",
-                "destination": str(self._snapshot_destination()),
+                "repository_relative_run_dir": self._repository_relative(attempt_dir),
                 "error": str(error),
             }
             self._write_state(state)
             raise CampaignExecutionError(
-                f"Verified snapshot failed after {entry.logical_id}: {error}"
+                f"Verified per-run export failed after {entry.logical_id}: {error}"
             ) from error
+        record["export"] = {
+            key: result[key]
+            for key in (
+                "status",
+                "repository_relative_run_dir",
+                "export_directory",
+                "archive_path",
+                "checksum_path",
+                "manifest_path",
+                "archive_sha256",
+            )
+            if key in result
+        }
+        self._write_state(state)
         return result
 
     def _create_final_bundle(self) -> dict[str, Any]:
@@ -1240,19 +1276,13 @@ class CampaignRunner:
             record = state["entries"][entry.logical_id]
             if entry.classification == "alias":
                 if record.get("status") == "reused":
-                    self._snapshot_entry(entry, state)
-                    skipped.append(entry.logical_id)
-                    continue
-                if record.get("status") == "snapshot-failed":
-                    self._snapshot_entry(entry, state)
                     skipped.append(entry.logical_id)
                     continue
                 self._complete_alias(entry, state)
-                self._snapshot_entry(entry, state)
                 reused.append(entry.logical_id)
                 continue
 
-            if record.get("status") in {"completed", "snapshot-failed"}:
+            if record.get("status") == "completed":
                 attempt_record = record["attempts"][-1]
                 attempt_dir = self._record_attempt_path(record)
                 try:
@@ -1264,7 +1294,7 @@ class CampaignRunner:
                 except CampaignArtifactError as error:
                     self._mark_invalid(state, entry, attempt_record, error)
                     raise
-                self._snapshot_entry(entry, state)
+                self._export_entry(entry, state)
                 skipped.append(entry.logical_id)
                 continue
 
@@ -1334,7 +1364,7 @@ class CampaignRunner:
             )
             record["status"] = "completed"
             self._write_state(state)
-            self._snapshot_entry(entry, state)
+            self._export_entry(entry, state)
 
         all_complete = all(
             record["status"] in {"completed", "reused"}
@@ -1365,6 +1395,7 @@ __all__ = [
     "CampaignRunner",
     "CampaignSpec",
     "CampaignSpecError",
+    "DEFAULT_CAMPAIGN_ARTIFACT_ROOT",
     "FRESH_MAIN_ID",
     "STAGE_ORDER",
     "load_campaign_spec",

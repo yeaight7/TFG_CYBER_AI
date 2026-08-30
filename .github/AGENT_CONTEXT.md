@@ -138,7 +138,7 @@ This dataset is kept for historical Phase 1 benchmarking.
 | Campaign specification | `experiments/final_experiment_campaign.json` |
 | Sequential campaign runner | `scripts/run_campaign.py` |
 | GPU host preflight | `scripts/preflight_gpu_environment.py` |
-| Snapshot and bundle export | `scripts/export_campaign.py` |
+| Per-run export, snapshot, and bundle export | `scripts/export_campaign.py` |
 | Campaign aggregation | `scripts/aggregate_campaign.py` |
 
 ## Training and Validation
@@ -200,7 +200,7 @@ The approved future campaign is defined by `experiments/final_experiment_campaig
 - a targeted four-holdout generalisation study for both QRDQN and Random Forest;
 - seed sensitivity under a fixed 1M-row / 1,324,741-timestep budget for QRDQN model seeds 42–46.
 
-The seed-sensitivity block does not estimate variance of the 3M MAIN execution. Official processes run sequentially, consume validated cache/preflight inputs, and snapshot each validated physical execution before progression. No final campaign result exists until complete checksum-validated artifacts are produced.
+The seed-sensitivity block does not estimate variance of the 3M MAIN execution. Official processes run sequentially, consume validated cache/preflight inputs, and create a complete verified external copy and restore-ready tarball for each validated physical execution. These exports are recovery/download conveniences, not independent-durability proof or scientific-result gates. No final campaign result exists until complete checksum-validated artifacts are produced.
 
 ## Phase 2 Status
 

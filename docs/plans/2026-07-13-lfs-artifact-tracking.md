@@ -213,9 +213,10 @@ environment metadata, manifests, checksums, logs, monitoring, timings, and
 summary CSVs use normal Git.
 
 Future per-row `predictions*.csv` exports and downloaded `.tar.gz` bundles remain
-ignored. Existing committed prediction CSVs remain tracked. Git complements but
-does not replace verified incremental snapshots to a separate durable storage
-destination on an ephemeral GPU host.
+ignored. Existing committed prediction CSVs remain tracked. External exports may
+use any filesystem destination outside the repository, including a same-device
+sibling, and are transfer/recovery conveniences rather than proof of independent
+durability.
 ```
 
 - [ ] **Step 2:** Run documentation and policy tests.

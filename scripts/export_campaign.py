@@ -14,6 +14,7 @@ from src.campaign_export import (  # noqa: E402
     CampaignExportError,
     create_final_bundle,
     create_incremental_snapshot,
+    create_run_export,
 )
 
 
@@ -26,13 +27,23 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         subparser = subparsers.add_parser(command)
         subparser.add_argument("--campaign-dir", required=True, type=Path)
         subparser.add_argument("--destination", required=True, type=Path)
+    run_parser = subparsers.add_parser("run")
+    run_parser.add_argument("--run-dir", required=True, type=Path)
+    run_parser.add_argument("--destination", required=True, type=Path)
+    run_parser.add_argument("--repository-root", required=True, type=Path)
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     try:
-        if args.command == "snapshot":
+        if args.command == "run":
+            result = create_run_export(
+                args.run_dir,
+                args.destination,
+                repository_root=args.repository_root,
+            )
+        elif args.command == "snapshot":
             result = create_incremental_snapshot(args.campaign_dir, args.destination)
         else:
             result = create_final_bundle(args.campaign_dir, args.destination)

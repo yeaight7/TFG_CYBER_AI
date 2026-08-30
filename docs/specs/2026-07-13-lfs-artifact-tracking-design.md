@@ -46,7 +46,7 @@ commit IDs.
 | `predictions.npz`, percentiles, feature names | Normal Git | Required compact evidence |
 | Future per-row `runs/**/predictions*.csv` | Ignored | Large rebuildable/exportable representation |
 | Sensitive prediction CSVs | Ignored | Existing privacy boundary |
-| Downloaded `.tar.gz` bundles | Ignored | Durable transfer artifact, not repository content |
+| Downloaded `.tar.gz` bundles | Ignored | Transfer/recovery convenience, not repository content |
 | Canonical cache arrays | Ignored | Rebuildable from source data |
 | Replay buffers | Ignored/disabled | Not part of the approved campaign contract |
 
@@ -71,8 +71,9 @@ aggregate CSVs in normal Git.
 Git can only stage artifacts written beneath the repository. GPU-host campaign
 commands intended for later evidence commits must place `--artifact-root` under a
 tracked repository path such as `runs/final_campaign/`. Snapshot and final bundle
-destinations remain separate durable storage locations; Git does not replace the
-verified snapshot/export workflow.
+destinations remain outside the repository and may share its filesystem. These
+exports support transfer/recovery but do not by themselves prove independent or
+off-host durability.
 
 ## Files and Index Entries
 

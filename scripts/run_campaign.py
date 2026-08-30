@@ -15,6 +15,7 @@ from src.campaign import (  # noqa: E402
     CampaignError,
     CampaignPaths,
     CampaignRunner,
+    DEFAULT_CAMPAIGN_ARTIFACT_ROOT,
     load_campaign_spec,
 )
 from src.gpu_preflight import PreflightError, verify_preflight_report  # noqa: E402
@@ -32,7 +33,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("spec", type=Path)
     parser.add_argument("--campaign-id", required=True)
-    parser.add_argument("--artifact-root", required=True, type=Path)
+    parser.add_argument(
+        "--artifact-root",
+        type=Path,
+        default=DEFAULT_CAMPAIGN_ARTIFACT_ROOT,
+        help="Repository-relative official artifact root (default: runs/final_campaign).",
+    )
     parser.add_argument("--cache-root", required=True, type=Path)
     parser.add_argument("--snapshot-root", required=True, type=Path)
     parser.add_argument("--preflight-report", required=True, type=Path)
@@ -125,6 +131,7 @@ def main(argv: list[str] | None = None) -> int:
             preflight_report=args.preflight_report,
             phase2_input=phase2_input,
             phase2_input_sha256=phase2_input_sha256,
+            repository_root=_REPO_ROOT,
         )
         runner = CampaignRunner(
             spec,
