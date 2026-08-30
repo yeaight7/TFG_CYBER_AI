@@ -516,7 +516,7 @@ Historical Phase 2 results must not be reused as results of the fresh campaign M
 
 **[SPEC]**
 - Campaign resumability is run-level.
-- Campaign state is written atomically after transition to running, completed, failed, reused, invalid, or snapshot-failed.
+- Campaign state is written atomically after run-state transitions and after each external export result.
 - A run is completed only after its required artifact set and checksums validate.
 - Resume skips only validated completed runs.
 - Completed evidence is immutable.
@@ -525,7 +525,7 @@ Historical Phase 2 results must not be reused as results of the fresh campaign M
 - The two permitted aliases are fixed by Section 2.4. No other automatic reuse is allowed.
 - A selected stage/run fails before execution if required dependencies are absent or invalid; it does not silently execute unselected dependencies.
 - An orphaned `running` state after interruption becomes an interrupted attempt, not completed evidence.
-- Snapshot failure stops the campaign before the next experiment while preserving the already completed run.
+- Per-run export failure is reported and stops the current invocation while preserving the completed run; `--resume` retries export without rerunning that physical job.
 - Existing historical directories are never adopted as writable campaign attempts.
 - Exact mid-training resume must not be advertised or inferred from model-only checkpoints.
 
@@ -605,23 +605,26 @@ Default host acceptance thresholds for the expected platform:
 
 Real campaign execution refuses a missing, failed, stale, or cache-mismatched preflight report. Threshold overrides must be explicit and recorded.
 
+Git revision and dirty-state values are traceability metadata. Execution does not require current `HEAD` to equal the SHA recorded by preflight.
+
 The preflight report must bind the Phase 2 input hash to the resolved campaign specification. A different laboratory-flow file requires a new or explicitly amended preflight report before Phase 2 execution.
 
 ---
 
-## 10. Snapshot and Export Strategy
+## 10. Per-Run Export and Optional Campaign Snapshot Strategy
 
 **[SPEC]**
-- After every validated physical execution, create or update an incremental snapshot under a configurable destination.
-- Snapshot only changed/new files by comparing manifest hashes.
-- Include campaign state, original and resolved campaign specifications, preflight report, every completed run, aliases/reuse records, manifests, and `SHA256SUMS`.
-- Include the cache manifest but not rebuildable cache arrays by default.
+- After every validated physical execution, copy the complete sealed physical run directory to a configurable filesystem destination outside the repository.
+- Include every run-local generated file, whether tracked by Git, covered by Git LFS, ignored, or untracked; the complete physical run directory is the export source of truth.
+- Create a verified per-run `.tar.gz` and SHA-256 sidecar. Archive members retain the run's full repository-relative `runs/final_campaign/...` restore path.
+- Keep campaign-wide incremental snapshot and final-bundle commands available as optional convenience exports; they do not replace the required per-physical-run export.
+- When all required runs and aliases validate, create and verify the additional compressed campaign bundle.
 - Do not require cloud credentials, provider SDKs, fixed hostnames, or account paths.
-- Verify the incremental snapshot before starting the next experiment.
-- When all required runs and aliases validate, create a compressed `.tar.gz` campaign bundle.
-- Reopen the final archive and verify all declared files and hashes.
+- Permit same-filesystem sibling directories and generic mounted filesystem destinations; do not require a different device or failure domain.
+- Reopen each per-run archive and verify its complete file inventory and checksum.
 - Keep the source campaign intact when exporting; export never moves or deletes evidence.
-- Standard later transfer mechanisms such as filesystem copy, `rsync`, or removable/mounted storage remain operational choices outside the scientific description.
+- Treat exports as manual download/recovery convenience, not proof of off-host or independent durability and not a scientific aggregation gate.
+- Standard later transfer mechanisms remain operator choices outside the scientific description.
 
 ---
 
