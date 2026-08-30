@@ -168,6 +168,49 @@ def test_preflight_report_is_hash_covered_fresh_and_bound(tmp_path: Path) -> Non
         verify_preflight_report(output, now=now)
 
 
+def test_preflight_persists_repository_relative_official_artifact_root(
+    tmp_path: Path,
+) -> None:
+    repository_root = tmp_path / "repository"
+    paths = {
+        "dataset_root": repository_root / "datasets" / "CICIDS2017",
+        "cache_root": repository_root / "cache" / "cicids2017",
+        "artifact_root": repository_root / "runs" / "final_campaign",
+        "snapshot_root": tmp_path / "external-exports",
+    }
+    for path in paths.values():
+        path.mkdir(parents=True)
+    spec = repository_root / "experiments" / "campaign.json"
+    spec.parent.mkdir(parents=True)
+    spec.write_text("{}", encoding="utf-8")
+    cache_manifest = paths["cache_root"] / "cache_manifest.json"
+    cache_manifest.write_text("{}", encoding="utf-8")
+    phase2_input = repository_root / "pcaps" / "phase2.csv"
+    phase2_input.parent.mkdir(parents=True)
+    phase2_input.write_text("truth_y\n0\n", encoding="utf-8")
+    output = paths["artifact_root"] / "preflight.json"
+    now = datetime(2026, 7, 12, 12, 0, tzinfo=timezone.utc)
+
+    report = run_preflight(
+        output_path=output,
+        campaign_spec=spec,
+        phase2_input=phase2_input,
+        now=now,
+        repo_root=repository_root,
+        collectors=_passing_collectors(cache_manifest, phase2_input),
+        **paths,
+    )
+
+    assert report["bindings"]["artifact_root"] == "runs/final_campaign"
+    verified = verify_preflight_report(
+        output,
+        expected_artifact_root=paths["artifact_root"],
+        repository_root=repository_root,
+        now=now,
+    )
+    assert verified["status"] == "passed"
+
+
 def test_preflight_threshold_failure_and_staleness_block_verification(tmp_path: Path) -> None:
     paths = _preflight_paths(tmp_path)
     spec = tmp_path / "campaign.json"
