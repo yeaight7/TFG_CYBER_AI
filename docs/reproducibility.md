@@ -65,8 +65,18 @@ declares its own required artifacts.
 
 Future per-row `runs/**/predictions*.csv` exports and downloaded `.tar.gz`
 bundles remain ignored. Existing committed prediction CSVs remain tracked. Git
-complements but does not replace verified incremental snapshots to a separate
-durable storage destination on an ephemeral GPU host.
+status, Git LFS, `.gitattributes`, and `.gitignore` determine which files are
+committed; there is no second manual import step.
+
+After each validated physical campaign run, the generic filesystem exporter
+copies the complete sealed run directory outside the repository and creates a
+verified per-run `.tar.gz` plus SHA-256 sidecar. The copy includes Git, Git LFS,
+ignored, untracked, checkpoint, TensorBoard, log, monitoring, and prediction
+outputs because the complete physical run directory is the source. This is
+manual download/recovery convenience, not proof of off-host or independent
+durability; a same-filesystem sibling destination is valid. A mounted volume,
+network share, or other mounted external destination works through the same
+filesystem-path interface.
 
 ## Historical MAIN environment and compatibility filename
 
