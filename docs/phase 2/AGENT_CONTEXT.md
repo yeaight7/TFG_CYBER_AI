@@ -35,8 +35,15 @@ The following are not part of the current Phase 2 baseline:
 
 ### Data and Repo Safety
 
-- do not commit datasets or PCAPs
-- do not commit generated large artifacts by accident
+- retain practical reproducibility and traceability evidence under the repository's
+  current artifact policy
+- use normal Git for appropriate lightweight evidence and Git LFS for approved
+  large/binary evidence covered by `.gitattributes`
+- respect `.gitignore` for intentionally excluded heavyweight, rebuildable, or
+  sensitive generated exports
+- treat `.gitattributes`, `.gitignore`, and
+  [reproducibility.md](../reproducibility.md#experimental-artifact-versioning) as
+  the authoritative Git/LFS policy; do not add arbitrary large files outside it
 - do not document unverifiable claims as facts
 
 ## Run Tracking
