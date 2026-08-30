@@ -22,6 +22,7 @@ from src.gpu_preflight import (  # noqa: E402
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_SPEC = _REPO_ROOT / "experiments" / "final_experiment_campaign.json"
+_DEFAULT_ARTIFACT_ROOT = Path("runs/final_campaign")
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -33,7 +34,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--dataset-root", required=True, type=Path)
     parser.add_argument("--cache-root", required=True, type=Path)
-    parser.add_argument("--artifact-root", required=True, type=Path)
+    parser.add_argument(
+        "--artifact-root",
+        type=Path,
+        default=_DEFAULT_ARTIFACT_ROOT,
+        help="Repository-relative official artifact root (default: runs/final_campaign).",
+    )
     parser.add_argument("--snapshot-root", required=True, type=Path)
     parser.add_argument("--campaign-spec", type=Path, default=_DEFAULT_SPEC)
     parser.add_argument("--phase2-input", type=Path)
