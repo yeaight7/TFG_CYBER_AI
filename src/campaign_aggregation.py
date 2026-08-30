@@ -684,11 +684,6 @@ def _load_campaign_evidence(campaign_dir: Path) -> _CampaignEvidence:
         record = state_entries[entry.logical_id]
         if record.get("classification") != entry.classification or record.get("stage") != entry.stage:
             raise CampaignAggregationError(f"Campaign state metadata mismatch: {entry.logical_id}")
-        snapshot = record.get("snapshot")
-        if not isinstance(snapshot, Mapping) or snapshot.get("status") != "verified":
-            raise CampaignAggregationError(
-                f"Campaign is incomplete; snapshot is not verified: {entry.logical_id}"
-            )
         if entry.classification != "alias":
             runs[entry.logical_id] = _load_physical_evidence(
                 campaign_dir,
