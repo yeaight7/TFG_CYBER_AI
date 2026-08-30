@@ -527,7 +527,6 @@ def _synthetic_campaign(
                     source_dir / "artifact_manifest.json"
                 ),
                 "artifact_dir": f"attempts/{source_id}/attempt-1",
-                "snapshot": {"status": "verified"},
             }
             continue
         attempt_dir = campaign_dir / "attempts" / entry.logical_id / "attempt-1"
@@ -547,14 +546,14 @@ def _synthetic_campaign(
                     "verified_schema_version": "3.0",
                 }
             ],
-            "snapshot": {"status": "verified"},
+            "export": {"status": "verified"},
         }
 
     if not complete:
         pending = state_entries["rf_holdout_ddos_m42"]
         pending["status"] = "pending"
         pending["attempts"] = []
-        pending.pop("snapshot", None)
+        pending.pop("export", None)
 
     atomic_write_json(
         campaign_dir / "campaign_state.json",
@@ -660,6 +659,24 @@ def test_aggregation_refuses_incomplete_campaign_without_partial_output(tmp_path
         aggregate_campaign(campaign_dir, output_dir, repo_root=tmp_path)
 
     assert not output_dir.exists()
+
+
+def test_aggregation_does_not_treat_external_export_as_durability_gate(
+    tmp_path: Path,
+) -> None:
+    campaign_dir = _synthetic_campaign(tmp_path, complete=True)
+    state_path = campaign_dir / "campaign_state.json"
+    state = _read_json(state_path)
+    state["entries"][FRESH_MAIN_ID]["export"] = {
+        "status": "failed",
+        "error": "operator will retry or download separately",
+    }
+    atomic_write_json(state_path, state)
+
+    output_dir = tmp_path / "aggregates"
+    result = aggregate_campaign(campaign_dir, output_dir, repo_root=tmp_path)
+
+    assert result["status"] == "completed"
 
 
 def test_aggregation_rejects_incompatible_matched_partition(tmp_path: Path):
