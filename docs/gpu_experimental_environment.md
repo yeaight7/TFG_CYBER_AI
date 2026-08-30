@@ -81,7 +81,7 @@ Bootstrap intervals measure fixed-test sampling precision for one trained model,
 
 ## Environment setup
 
-Use a provider-neutral Linux GPU host. The default preflight thresholds are at least 16 logical CPUs, 120 GiB RAM, one CUDA GPU with 80 GiB VRAM, and 100 GiB free at the configured artifact/snapshot capacity. These are launch gates, not claims about an unverified host.
+Use a provider-neutral Linux GPU host. The default preflight thresholds are at least 16 logical CPUs, 120 GiB RAM, one CUDA GPU with 80 GiB VRAM, and 100 GiB free at the configured artifact/export capacity. These are launch gates, not claims about an unverified host.
 
 ```bash
 git clone https://github.com/yeaight7/TFG_CYBER_AI.git
@@ -96,14 +96,15 @@ For development and unit tests, `uv sync` uses `pyproject.toml` and `uv.lock`. T
 
 Materialise the eight curated official CSVs under `datasets/CICIDS2017/` and verify their hashes against [the repository dataset table](../README.md#provenance-and-integrity). Do not commit local raw datasets, generated caches, or provider credentials.
 
-Choose durable, absolute host paths for these roots:
+Keep the official campaign artifacts beneath the clone. Dataset/cache inputs and
+the external export destination remain configurable filesystem paths:
 
 ```bash
 export DATASET_ROOT=/path/to/datasets/CICIDS2017
 export CACHE_ROOT=/path/to/cache/cicids2017
-export ARTIFACT_ROOT=/path/to/artifacts
-export SNAPSHOT_ROOT=/path/to/durable-snapshots
-export PREFLIGHT_REPORT=/path/to/preflight.json
+export ARTIFACT_ROOT=runs/final_campaign
+export SNAPSHOT_ROOT=../final-campaign-exports
+export PREFLIGHT_REPORT=runs/final_campaign/preflight_report.json
 ```
 
 ## Cache
@@ -204,7 +205,7 @@ Linux runtime allocation available to the experiment, not unallocated Windows
 host resources. The same rule applies to container-visible resources on a GPU
 provider.
 
-Real campaign execution rejects a missing, failed, stale, or cache-mismatched preflight report. A changed Phase 2 input requires a new or explicitly amended report. Actual hardware, driver, CUDA, storage, dataset, cache, monitoring, and snapshot checks remain host-only until this command succeeds on the final host.
+Real campaign execution rejects a missing, failed, stale, or cache-mismatched preflight report. A changed Phase 2 input requires a new or explicitly amended report. The report records Git revision and dirty-state metadata for traceability; campaign launch does not compare current `HEAD` with the recorded SHA. Actual hardware, driver, CUDA, storage, dataset, cache, monitoring, and export checks remain host-only until this command succeeds on the final host.
 
 ## Campaign dry-run and execution
 
@@ -240,21 +241,60 @@ python scripts/run_campaign.py experiments/final_experiment_campaign.json \
 
 The runner dispatches sequential subprocesses. It skips only checksum-validated completed runs, retains failed/interrupted attempts, and writes retries to new attempt directories.
 
-## Snapshot and final bundle
+Canonical physical runs use this on-repository layout:
 
-Campaign progression verifies an incremental snapshot after each completed physical execution. Manual export interfaces are:
-
-```bash
-python scripts/export_campaign.py snapshot \
-  --campaign-dir "$ARTIFACT_ROOT/final-experiment-v1-<timestamp>" \
-  --destination "$SNAPSHOT_ROOT"
-
-python scripts/export_campaign.py bundle \
-  --campaign-dir "$ARTIFACT_ROOT/final-experiment-v1-<timestamp>" \
-  --destination /path/to/final-bundles
+```text
+runs/final_campaign/<CAMPAIGN_ID>/attempts/<LOGICAL_RUN_ID>/attempt-<N>/...
 ```
 
-Exports copy evidence; they never move or delete source campaign data. The final archive is reopened and checksum-verified.
+## Per-run export, optional snapshot, and final bundle
+
+After every completed and validated physical run, the runner exports the complete
+run directory and creates a verified per-run archive. Logical aliases do not
+create duplicate exports. With the variables above, the external layout is:
+
+```text
+$SNAPSHOT_ROOT/
+├── runs/final_campaign/<CAMPAIGN_ID>/attempts/<LOGICAL_RUN_ID>/attempt-<N>/...
+└── tarballs/runs/final_campaign/<CAMPAIGN_ID>/attempts/<LOGICAL_RUN_ID>/
+    ├── attempt-<N>.tar.gz
+    ├── attempt-<N>.tar.gz.sha256
+    └── attempt-<N>.export.json
+```
+
+The directory copy and tarball contain every generated run-local file, including
+ignored and untracked outputs. Extracting a per-run tarball at repository root
+restores its canonical `runs/final_campaign/.../attempt-<N>/` directory:
+
+```bash
+tar -xzf "$SNAPSHOT_ROOT/tarballs/runs/final_campaign/<CAMPAIGN_ID>/attempts/<LOGICAL_RUN_ID>/attempt-<N>.tar.gz" -C .
+```
+
+The runner retries a failed export on `--resume` without rerunning the validated
+physical job. Manual per-run retry and optional campaign-wide snapshot/bundle
+interfaces are:
+
+```bash
+python scripts/export_campaign.py run \
+  --run-dir "$ARTIFACT_ROOT/<CAMPAIGN_ID>/attempts/<LOGICAL_RUN_ID>/attempt-<N>" \
+  --destination "$SNAPSHOT_ROOT" \
+  --repository-root .
+
+python scripts/export_campaign.py snapshot \
+  --campaign-dir "$ARTIFACT_ROOT/<CAMPAIGN_ID>" \
+  --destination "$SNAPSHOT_ROOT/campaign-snapshots/<CAMPAIGN_ID>"
+
+python scripts/export_campaign.py bundle \
+  --campaign-dir "$ARTIFACT_ROOT/<CAMPAIGN_ID>" \
+  --destination "$SNAPSHOT_ROOT/campaign-bundles/<CAMPAIGN_ID>.tar.gz"
+```
+
+Exports copy evidence; they never move, delete, or mutate canonical campaign data.
+Per-run archives are reopened and verified against a complete file inventory and
+SHA-256 sidecar. The destination may be a sibling directory on the same
+filesystem or any mounted filesystem path. Its existence alone does not prove
+off-host or independent durability; the operator remains responsible for manual
+download/recovery handling and Git/LFS publication.
 
 ## Aggregation and future figures
 
