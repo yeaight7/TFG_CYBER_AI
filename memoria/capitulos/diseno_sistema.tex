@@ -14,8 +14,8 @@ A grandes rasgos, la metodología comprende seis etapas encadenadas:
     \item eliminar los identificadores susceptibles de provocar fuga de información y normalizar los valores numéricos malformados;
     \item mapear las columnas específicas de cada extractor a un esquema canónico de características fijo de 76 características;
     \item añadir una máscara de presencia/ausencia de 76 dimensiones, produciendo observaciones de 152 dimensiones;
-    \item entrenar y evaluar un defensor QRDQN compatible con Gymnasium bajo protocolos de partición controlados;
-    \item comprobar la robustez mediante comprobaciones de validación, líneas base supervisadas e inferencia offline en la Fase 2.
+    \item conservar la representación canónica sin escalar en una caché validada, construir la partición y ajustar el escalador solo con entrenamiento;
+    \item entrenar y evaluar un defensor QRDQN compatible con Gymnasium bajo protocolos controlados, compararlo con una línea base supervisada y aplicar la inferencia offline de Fase~2.
 \end{enumerate}
 
 Este diseño mantiene la tesis dentro de un marco experimental offline. Las salidas \texttt{PERMIT} y \texttt{BLOCK} son predicciones del modelo sobre registros de flujo almacenados. No son órdenes de cortafuegos y no modifican ninguna ruta de red activa.
@@ -60,7 +60,7 @@ No se permite que las filas introduzcan cadenas de texto arbitrarias en el model
 \subsection{Valores inválidos, valores ausentes e imputación}
 La extracción de flujos de red puede producir valores numéricos inválidos. Las características de tasa, por ejemplo, pueden volverse infinitas o indefinidas cuando se calculan sobre una duración nula o casi nula. El pipeline sustituye los infinitos y los valores numéricos ausentes por cero antes del mapeo canónico. Esta elección es pragmática: muchos contadores de flujo, tasas y estadísticas agregadas pueden utilizar de forma segura el cero como marcador de posición neutro cuando se acompaña de una señal explícita de presencia/ausencia.
 
-La imputación por cero sola sería insegura porque el modelo no podría distinguir un cero medido real de un marcador sintético. El esquema canónico empareja por tanto la imputación con una máscara de presencia/ausencia. La máscara hace visible la disponibilidad de características tanto para el modelo como para los diagnósticos posteriores.
+La imputación por cero se acompaña de una máscara de disponibilidad de columnas. En la implementación actual, la limpieza de valores no finitos ocurre antes de construir el esquema canónico: un valor inválido de una columna existente se convierte en cero, pero no cambia su indicador de máscara. Por tanto, la máscara distingue una columna fuente ausente de una columna disponible; no distingue, fila a fila, un cero medido de un valor no finito saneado. Esta limitación se conserva de forma explícita para no atribuir a la representación una semántica que el código no implementa.
 
 \subsection{Exclusión de campos susceptibles de fuga}
 El pipeline de preprocesamiento aplica una política anti-fuga fundamentada en los riesgos de evaluación conocidos en seguridad con ML \parencite{Arp2020DosDontsMLSecurity,Kaufman2011LeakageDataMining}. Se excluyen las direcciones IP de origen y destino, los Flow IDs, las marcas temporales absolutas y los identificadores de endpoints. Los campos de puerto directo también se excluyen porque pueden actuar como indicadores del escenario en conjuntos de datos controlados por scripts. Por ejemplo, un día de ataque puede concentrar tráfico malicioso en servicios concretos, lo que permitiría al modelo memorizar un script de captura en lugar de aprender estadísticas de comportamiento de flujo.
@@ -107,11 +107,11 @@ Temporización activa/inactiva & 6 & Media, desv.\ típica y máximo de las dura
 \subsection{Máscara de presencia/ausencia}
 Diferentes extractores pueden no proporcionar todas las características canónicas, e incluso una columna fuente presente puede contener valores inválidos. El pipeline produce por tanto una máscara de presencia/ausencia de 76 dimensiones. Para cada característica canónica $x_i$, el valor de máscara correspondiente $m_i$ es:
 \begin{itemize}
-    \item $m_i = 1$ cuando la característica fuente está presente y es válida;
-    \item $m_i = 0$ cuando la característica está ausente o ha tenido que ser imputada.
+    \item $m_i = 1$ cuando existe una columna fuente mapeada para la característica;
+    \item $m_i = 0$ cuando esa columna fuente no está disponible en el extractor.
 \end{itemize}
 
-La máscara desempeña dos funciones metodológicas. En primer lugar, evita la imputación silenciosa: el modelo puede condicionar su decisión a si un valor fue observado o rellenado. En segundo lugar, facilita los diagnósticos de la Fase 2, porque un extractor de laboratorio que carece de muchas características al estilo CICIDS2017 puede detectarse mediante un patrón de máscara diferente en lugar de quedar oculto dentro de un vector numérico denso.
+La máscara desempeña dos funciones metodológicas. En primer lugar, hace visible la compatibilidad estructural entre el extractor y el contrato canónico. En segundo lugar, facilita los diagnósticos de la Fase~2: un extractor de laboratorio que carece de características disponibles en CICIDS2017 produce un patrón de máscara distinto en lugar de ocultar la ausencia dentro de un vector numérico denso.
 
 Conviene precisar la semántica exacta de la máscara en la implementación actual. La máscara se calcula \emph{después} de la limpieza que sustituye los valores no finitos por cero (\texttt{src/load\_cicids2017.py}: $\pm\infty \to$ NaN $\to 0$), de modo que $m_i = 1$ siempre que la característica canónica tiene una columna fuente mapeada. Como el mapeo CICIDS2017 $\to$ canónico cubre las 76 características, sobre los datos nativos de CICIDS2017 la máscara es \textbf{constante e igual a 1} en todas las filas: codifica la \emph{presencia de la columna fuente}, no la ausencia de valores fila a fila. La máscara solo se vuelve informativa en la inferencia entre dominios o en la Fase 2 de laboratorio, donde algunas columnas fuente no están disponibles y su valor de máscara permanece en 0; un mapeo histórico como NSL-KDD, por ejemplo, solo cubre 3 de las 76 características canónicas. Así, las 152 dimensiones de la observación se componen de 76 valores de características más 76 indicadores de presencia.
 
@@ -208,7 +208,7 @@ La Figura~\ref{fig:agente-entorno} representa el bucle agente--entorno usado en 
 \begin{figure}[htbp]
 \centering
 \resizebox{0.9\textwidth}{!}{\input{figuras/f3_agente_entorno}}
-\caption[Interacción agente--entorno]{Interacción agente--entorno y matriz de recompensa de la decisión \texttt{PERMIT}/\texttt{BLOCK}. Fuente: elaboración propia a partir de \texttt{src/rl\_defender\_env.py} y de la configuración MAIN.}
+\caption[Interacción agente--entorno]{Interacción agente--entorno y matriz de recompensa de la decisión \texttt{PERMIT}/\texttt{BLOCK}. Fuente: elaboración propia a partir de \texttt{src/rl\_defender\_env.py} y del perfil \texttt{main-v1}.}
 \label{fig:agente-entorno}
 \end{figure}
 
@@ -298,12 +298,12 @@ El DQN estándar aproxima los valores-acción con una red neuronal y selecciona 
 
 La metodología no asume que QRDQN sea inherentemente superior a los clasificadores supervisados para datos de flujo tabulares. En cambio, evalúa QRDQN como el representante principal de RL bajo el mismo preprocesamiento, las mismas particiones y las mismas métricas utilizadas por las líneas base.
 
-La arquitectura de red concreta de la ejecución MAIN se resume en la Figura~\ref{fig:arquitectura-qrdqn}: una entrada de 152 dimensiones, tres capas densas ocultas y una salida distribucional de 200 cuantiles por cada una de las dos acciones.
+La arquitectura de red del perfil \texttt{main-v1} se resume en la Figura~\ref{fig:arquitectura-qrdqn}: una entrada de 152 dimensiones, tres capas densas ocultas y una salida distribucional de 200 cuantiles por cada una de las dos acciones.
 
 \begin{figure}[htbp]
 \centering
 \resizebox{\textwidth}{!}{\input{figuras/f5_arquitectura_qrdqn}}
-\caption[Arquitectura QRDQN de la ejecución MAIN]{Arquitectura QRDQN de la ejecución MAIN: observación canónica, capas densas, cuantiles por acción y decisión final por media de cuantiles. Fuente: elaboración propia a partir de \texttt{config.json} de la ejecución MAIN.}
+\caption[Arquitectura QRDQN del perfil main-v1]{Arquitectura QRDQN del perfil congelado \texttt{main-v1}: observación canónica, capas densas, cuantiles por acción y decisión final por media de cuantiles. Fuente: elaboración propia a partir del perfil actual y del artefacto histórico coherente con esa arquitectura.}
 \label{fig:arquitectura-qrdqn}
 \end{figure}
 
@@ -381,9 +381,9 @@ El Algoritmo~\ref{alg:entrenamiento-qrdqn} formaliza este pipeline de entrenamie
 \end{algorithm}
 
 \subsection{Procedencia de los hiperparámetros}
-Los hiperparámetros de la ejecución oficial ($\gamma = 0$, arquitectura \texttt{[1024, 1024, 512]}, $200$ cuantiles, tasa de aprendizaje $5\times10^{-5}$, $20$ pasos de gradiente y $3\,000\,000$ de pasos de entrenamiento) constituyen un \emph{perfil fijo establecido manualmente}, no el resultado de una búsqueda automática. El repositorio incluye una sonda de optimización con Optuna (\texttt{src/tune\_hparams.py}) con fines exploratorios, pero su espacio de búsqueda —$\gamma \in [0{,}95,\,0{,}999]$, arquitecturas en $\{[256,128],\,[512,256],\,[256,256]\}$ y pasos de gradiente en $\{10,50,100\}$— \emph{no contiene} la configuración oficial. Por tanto, dicha configuración no pudo originarse en esa búsqueda y no debe interpretarse como un óptimo ajustado por Optuna; responde a un diseño manual coherente con la formulación de un solo paso, y queda congelada y verificada por las pruebas del proyecto.
+Los hiperparámetros ($\gamma = 0$, arquitectura \texttt{[1024, 1024, 512]}, $200$ cuantiles, tasa de aprendizaje $5\times10^{-5}$, $20$ pasos de gradiente y $3\,000\,000$ de pasos para el perfil completo) constituyen el perfil fijo \texttt{main-v1}, establecido manualmente y congelado antes de la campaña final. No proceden de una búsqueda automática. El repositorio conserva una sonda Optuna exploratoria cuyo espacio no contiene esta combinación; por tanto, el perfil no debe presentarse como un óptimo seleccionado por esa sonda.
 
-El listado completo de valores empleados en la ejecución oficial MAIN se recoge en la Tabla~\ref{tab:hiperparametros-main}.
+El listado completo de valores congelados se recoge en la Tabla~\ref{tab:hiperparametros-main}. La MAIN histórica comparte estos valores relevantes, pero no sustituye la ejecución fresca exigida por la campaña.
 
 \begin{table}[htbp]
 \centering
@@ -408,15 +408,16 @@ $\varepsilon$ final de exploración & 0.02 & decaimiento lineal \\
 Fracción de exploración & 0.1 & decaimiento lineal \\
 Norma máxima de gradiente & 10.0 & \\
 Pasos totales de entrenamiento & $3\,000\,000$ & \\
-Semilla & 42 & \\
+Semilla de partición & 42 & \texttt{split\_seed}; fija la división de datos \\
+Semilla del modelo & 42 & \texttt{model\_seed}; controla aprendizaje e inicialización \\
 \bottomrule
 \end{tabular}
-\caption[Hiperparámetros de la ejecución oficial MAIN]{Hiperparámetros de la ejecución oficial MAIN. Perfil fijado a mano, no procedente de la sonda Optuna. Fuente: elaboración propia a partir de \texttt{runs/\allowbreak cicids2017/\allowbreak MAIN\_qrdqn\_cicids2017\_canonical\_full\_random\_20260609\_193655/\allowbreak config.json}.}
+\caption[Hiperparámetros congelados del perfil main-v1]{Hiperparámetros congelados del perfil \texttt{main-v1}. Perfil fijado a mano, no procedente de la sonda Optuna. Fuente: especificación de campaña y perfil mantenido en el repositorio.}
 \label{tab:hiperparametros-main}
 \end{table}
 
 \subsection{Persistencia del modelo y el preprocesamiento}
-El entrenamiento produce un directorio de ejecución y un artefacto de modelo. El directorio de ejecución almacena la configuración, las métricas, el escalador ajustado y los límites de percentiles de entrenamiento. Persistir los artefactos de preprocesamiento es esencial porque la inferencia en la Fase 2 debe utilizar el mismo estado de normalización que el entrenamiento. Recalcular un escalador sobre el tráfico de laboratorio filtraría información de la distribución de inferencia hacia la interfaz del modelo y haría la ejecución irreproducible.
+El entrenamiento produce un directorio de ejecución conforme al esquema de artefactos~3.0. Este conserva configuración, métricas, entorno, monitorización, tiempos, resumen, modelo, escalador, percentiles de entrenamiento, nombres de características, manifiesto y sumas SHA-256. Persistir el preprocesamiento es esencial porque la Fase~2 debe reutilizar exactamente el estado de MAIN. Reajustar un escalador sobre tráfico de laboratorio filtraría información de la distribución de inferencia y rompería la trazabilidad.
 
 \section{Marco de implementación}
 El pipeline experimental está implementado en Python y se apoya en un conjunto de bibliotecas de código abierto bien establecidas. El componente de RL profundo principal utiliza la extensión \texttt{sb3-contrib} de Stable Baselines3, que proporciona una implementación contrastada de QRDQN con arquitectura de red configurable, buffer de repetición, programa de exploración y actualizaciones de la red objetivo \parencite{SB3ContribQRDQNDocs}. El envoltorio del entorno sigue la API de Gymnasium \parencite{GymnasiumDocs}, haciendo que el conjunto de datos de flujos sea compatible con cualquier bucle de entrenamiento que cumpla con Gymnasium sin cambios en la implementación del algoritmo.
@@ -425,7 +426,7 @@ El pipeline experimental está implementado en Python y se apoya en un conjunto 
 La carga y el preprocesamiento de datos se apoyan en \texttt{pandas} para la ingesta de CSV, la estandarización de columnas y la lectura fragmentada de ficheros grandes. Las matrices de características se convierten a arrays de \texttt{numpy} y se castean a \texttt{float32} antes de entrar en el entorno de Gymnasium o en la línea base supervisada. La estandarización utiliza \texttt{StandardScaler} de \texttt{scikit-learn}, elegido por su compatibilidad con el protocolo de serialización de \texttt{sklearn}, que permite persistir y recargar los escaladores ajustados sin reimplementación. La línea base de Random Forest también utiliza \texttt{scikit-learn}, consumiendo los mismos arrays de entrada que entran en el entorno de RL. Esta ruta de datos compartida garantiza que cualquier diferencia de rendimiento entre los dos modelos refleje el comportamiento algorítmico y no una discrepancia en el manejo de los datos.
 
 \subsection{Gestión de artefactos}
-Cada ejecución de entrenamiento produce un \texttt{RUN\_ID} único compuesto por una marca temporal y un sufijo aleatorio corto. El directorio de ejecución reúne la política QRDQN serializada, el escalador ajustado, los límites de percentiles, un JSON de configuración y un JSON de métricas. Las ejecuciones de validación y de inferencia de la Fase 2 producen subdirectorios independientes con sus propios registros de configuración y métricas. Este esquema de directorios plano evita dependencias de bases de datos al tiempo que hace las ejecuciones recuperables de forma independiente y comparables mediante inspección del sistema de ficheros.
+Cada ejecución produce un \texttt{RUN\_ID} único y autocontenido. Los trabajos de validación e inferencia generan artefactos independientes que enlazan la ejecución fuente y la especificación. Al cerrar la campaña, el exportador copia cada ejecución física sellada y genera un paquete comprimido con suma de comprobación; los puntos declarados como alias reutilizan la misma procedencia sin duplicar binarios. Git conserva la especificación, índices y evidencia ligera revisable, mientras que Git LFS se reserva para binarios rastreados que lo requieran.
 
 \subsection{Controles de reproducibilidad}
-Las semillas se fijan para los generadores de números aleatorios de \texttt{numpy}, \texttt{random} y \texttt{torch} al comienzo de cada ejecución. Los reinicios del entorno de Gymnasium también reciben una semilla explícita. El pipeline está preparado para que, cuando se utilicen múltiples semillas para la estimación de la varianza, cada semilla genere un directorio de ejecución independiente de modo que los resultados por semilla se preserven individualmente en lugar de promediarse en silencio; no obstante, los resultados reportados en esta tesis corresponden a una única semilla y no incluyen una estimación de varianza entre ejecuciones. Estos controles buscan reducir la varianza interna a la ejecución lo suficiente como para distinguir diferencias de rendimiento significativas del ruido, aunque no pueden eliminar todo el indeterminismo derivado del ordenamiento de los kernels de la GPU.
+\texttt{split\_seed} gobierna la selección y partición de filas; \texttt{model\_seed} se propaga a \texttt{numpy}, \texttt{random}, \texttt{torch}, el entorno y el modelo. Cada punto conserva ambos valores. El estudio de semillas mantiene fijo \texttt{split\_seed=42} y cambia \texttt{model\_seed=42--46}, con un directorio por ejecución. Estos controles reducen ambigüedad, aunque no eliminan todo el indeterminismo de kernels GPU; el entorno real y sus versiones se capturan en \texttt{environment.json}.
