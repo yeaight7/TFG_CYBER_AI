@@ -1,0 +1,32 @@
+% Figura conceptual: matriz y dependencias, sin resultados medidos.
+% Fuente: experiments/final_experiment_campaign.json.
+\begin{tikzpicture}[node distance=5mm and 5mm]
+  \node[cajaResaltada, text width=3.3cm] (main)
+    {\textbf{MAIN fresca}\\full, random\\$3\,000\,000$ pasos\\s42 / m42};
+
+  \node[cajaProceso, text width=3.3cm, right=of main] (day)
+    {\textbf{Día completo}\\Lun--Mié $\to$ Jue--Vie\\$3\,000\,000$ pasos};
+  \node[cajaProceso, text width=3.3cm, right=of day] (holdouts)
+    {\textbf{4 holdouts}\\Web, Infiltration,\\PortScan, DDoS\\$1\,000\,000$ pasos};
+
+  \node[cajaProceso, text width=3.3cm, below=8mm of main] (ladder)
+    {\textbf{Escalera}\\100k, 250k, 500k,\\1M, 2M, full};
+  \node[cajaProceso, text width=3.3cm, right=of ladder] (seeds)
+    {\textbf{Semillas}\\1M filas; $1\,324\,741$ pasos\\model 42--46};
+  \node[cajaModelo, text width=3.3cm, right=of seeds] (rf)
+    {\textbf{RF emparejado}\\full, 1M, día\\y 4 holdouts};
+
+  \node[cajaDato, text width=11.3cm, below=8mm of seeds] (aux)
+    {\textbf{Auxiliares de MAIN}\\validación directa $\cdot$ bootstrap 10k $\cdot$ duplicados $\cdot$ etiquetas barajadas 10k $\cdot$ Fase~2 fresca};
+
+  \draw[flechaAzul] (main) -- (day);
+  \draw[flechaAzul] (day) -- (holdouts);
+  \draw[flechaAzul] (main) -- (ladder);
+  \draw[flechaAzul] (ladder) -- (seeds);
+  \draw[flechaAzul] (holdouts) -- (rf);
+  \draw[flechaAzul] (day) -- (rf);
+  \draw[flechaAzul] (main) -- (aux);
+
+  \node[etiquetaTenue, text width=11.3cm, below=2mm of aux]
+    {22 ejecuciones primarias físicas $\rightarrow$ 24 puntos lógicos mediante 2 alias; 5 trabajos auxiliares.};
+\end{tikzpicture}
