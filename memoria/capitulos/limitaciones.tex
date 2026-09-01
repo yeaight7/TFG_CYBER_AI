@@ -1,59 +1,41 @@
 \chapter{Limitaciones}
 
-El capítulo del protocolo experimental ya expuso las limitaciones \emph{conceptuales} del enfoque: el entorno estático, la formulación de bandido contextual sensible al coste, el mapeo de etiquetas binarias, la fragilidad del benchmark y el alcance de un único algoritmo. Este capítulo las retoma a la luz de los resultados medidos. La finalidad no es suavizar las conclusiones, sino dejar claro qué parte de la evidencia está respaldada por artefactos y qué parte queda todavía como trabajo pendiente.
+Las limitaciones se agrupan aquí para definir el alcance de las conclusiones, no para compensar una lectura optimista de los resultados. Algunas pertenecen al diseño y permanecerán tras la campaña; otras son incertidumbres que la campaña final está diseñada para reducir.
 
-\section{Modelo y semilla únicos}
-Los resultados principales corresponden a un único modelo QRDQN entrenado con una sola semilla. La ejecución MAIN está bien documentada y sus artefactos permiten reproducir la lectura de métricas, pero no permite estimar la variabilidad propia del entrenamiento. En aprendizaje por refuerzo, incluso con la misma arquitectura y los mismos hiperparámetros, cambios de semilla pueden alterar la exploración, el orden efectivo de muestras, la inicialización de la red y la trayectoria de optimización. Esta tesis no mide esa variabilidad porque solo existe una ejecución oficial completa comprometida.
+\section{Benchmark y particiones}
 
-Los intervalos de confianza bootstrap reportados ($\pm 0.0002$ a $\pm 0.001$ al 95\%) cuantifican la precisión de muestreo del conjunto de prueba fijo, no la varianza entre ejecuciones de entrenamiento. Caracterizan cuán estable es la métrica sobre remuestreos del mismo conjunto de prueba para \emph{este} modelo, pero no cuánto variaría el rendimiento al reentrenar con semillas distintas. Las cifras deben leerse, por tanto, como el comportamiento de un punto de configuración bien caracterizado, no como una media sobre la aleatoriedad del entrenamiento.
+CICIDS2017 es un banco de pruebas reproducible, pero no representa por sí solo redes actuales ni operación independiente. Sus días combinan prevalencias y familias de ataque distintas, y la evidencia histórica muestra duplicados exactos entre entrenamiento y prueba aleatorios. Por ello la partición aleatoria sirve como evaluación intradistribución, no como estimación de despliegue. La partición por días y los cuatro escenarios retenidos mejoran la separación, pero siguen perteneciendo al mismo benchmark.
 
-\begin{table}[htbp]
-\centering
-\tableplaceholder{Varianza entre semillas de QRDQN: media, desviación e intervalo por métrica principal}
-\caption[Tabla de varianza entre semillas pendiente]{\placeholdercaption{Varianza entre semillas de QRDQN: media, desviación e intervalo por métrica principal.}}
-\label{tab:placeholder-varianza-semillas}
-\end{table}
+El análisis final de duplicados cuantificará la continuidad de la MAIN fresca. No elimina patrones casi duplicados ni sesgos de captura que una comparación exacta no detecta. Una evaluación externa más fuerte requeriría conjuntos o capturas independientes y un protocolo de armonización de características.
 
-\section{Fuga en la partición aleatoria}
-El análisis de duplicados muestra que el 22.30\% de las filas del conjunto completo son duplicados exactos y que el 24.86\% de las filas de prueba de la partición aleatoria duplican una fila de entrenamiento (40.12\% entre los ataques de prueba). Esto no significa que el modelo no aprenda nada: MAIN mantiene una matriz de confusión coherente y supera ampliamente una comprobación trivial. Sí significa, en cambio, que la partición aleatoria contiene información repetida que facilita la tarea y que sus métricas deben interpretarse como una cota optimista dentro del benchmark.
+\section{Formulación binaria y contextual}
 
-Esta limitación se mitiga metodológicamente reportando la Comprobación~C, basada en partición por día, como señal de generalización más exigente. Aun así, no se elimina por completo. La Comprobación~C no sustituye al experimento principal porque usa una red proxy \texttt{[512,256]} entrenada durante $30\,000$ pasos, no los pesos MAIN. Por tanto, la tesis conserva ambos peldaños con significados distintos: la partición aleatoria demuestra capacidad de aprendizaje bajo el protocolo principal; la partición por día muestra la fragilidad de la generalización cuando se rompe la continuidad del benchmark.
+El mapeo BENIGN/ATTACK reduce familias heterogéneas a una decisión binaria y no evalúa atribución, severidad ni ataques desconocidos. La recompensa expresa una preferencia fija entre falsos negativos y falsos positivos; no ha sido calibrada con costes de una organización real.
 
-\section{Comparación con la línea base}
-La comparación con Random Forest se ejecutó bajo el mismo protocolo: representación canónica, escalado, ponderación de clases balanceada y particiones equivalentes. Esto hace que la comparación sea mucho más fuerte que una comparación contra cifras externas de la literatura. En la partición aleatoria fija, Random Forest supera a QRDQN en F1 de ataque ($0.99676$ frente a $0.98445$), y esta ventaja debe declararse sin matices artificiales. La contribución de QRDQN no es dominar el benchmark cómodo, sino ofrecer una lectura sensible al coste bajo el cambio de partición por día.
+Con $\gamma=0$, las decisiones son contextuales y no incorporan consecuencias futuras. El entorno no modela colas, sesiones, respuesta del adversario, degradación del servicio ni cambios producidos por bloquear. Por tanto, el estudio no demuestra capacidad de defensa secuencial ni control autónomo de red.
 
-Persisten dos limitaciones. La primera es que la comparación abarca un único modelo supervisado; otros clasificadores tabulares competitivos, como los ensamblados con gradient boosting, se discuten en la revisión de la literatura pero no forman parte del protocolo ejecutado. La segunda es que el barrido leave-one-CSV-out de Random Forest (miércoles reservado, recall de ataque $0.00719$) no tiene todavía un artefacto QRDQN comprometido equivalente. En ese peldaño, la comparación es solo de la línea base consigo misma y no entre modelos. La comparación entre QRDQN y Random Forest es directa en la partición aleatoria fija y en la partición por día, pero no en el leave-one-CSV-out.
+\section{Variabilidad experimental}
 
-\begin{table}[htbp]
-\centering
-\tableplaceholder{Comparación ampliada con modelos tabulares supervisados bajo el mismo protocolo}
-\caption[Comparación ampliada de líneas base pendiente]{\placeholdercaption{Comparación ampliada con modelos tabulares supervisados bajo el mismo protocolo.}}
-\label{tab:placeholder-lineas-base-ampliadas}
-\end{table}
+El estudio aprobado cambia la semilla del modelo entre 42 y 46 sobre una única partición de $1\,000\,000$ de filas. Cinco ejecuciones permiten describir sensibilidad local, pero no estimar toda la distribución de entrenamiento. La MAIN completa no se repite con varias semillas, y la semilla de partición permanece fija. Los intervalos \emph{bootstrap} cubren precisión de muestreo sobre un test, no esta variabilidad.
 
-\section{Validez externa de la Fase 2}
-El alto rendimiento de la Fase~2 ($0.991862$ de exactitud) se obtiene sobre tráfico generado por el operador en un laboratorio doméstico cerrado y no adversarial, de un único entorno y con etiquetas de intención del generador. No es tráfico de producción, no contiene un adversario real y no procede de una fuente independiente. Su validez externa es, por tanto, limitada: un buen resultado en la Fase~2 es una comprobación controlada de que el contrato de características y el preprocesamiento robusto transfieren a una captura cercana a la distribución, no una prueba de detección en el mundo real \parencite{SommerPaxson2010ClosedWorld,Layeghy2023CrossDomainNIDS}.
+La escalera de tamaños varía conjuntamente cantidad de filas y pasos de entrenamiento proporcionales. Es adecuada para comparar presupuestos del pipeline, pero no separa de forma causal el efecto de más datos del efecto de más actualizaciones.
 
-La principal aportación de la Fase~2 es de ingeniería experimental: demuestra que el pipeline puede procesar una captura externa al CSV de entrenamiento, aplicar el escalador persistido, conservar el esquema canónico y producir diagnósticos reproducibles. Ese resultado es necesario para defender que el sistema no vive únicamente dentro del cargador de CICIDS2017. Pero no basta para afirmar robustez operativa. Para ello harían falta capturas etiquetadas de varios entornos, condiciones benignas más diversas, tráfico adversarial independiente y un análisis de deriva más amplio.
+\section{Cobertura de modelos y escenarios}
 
-\section{Experimentos planificados pero no ejecutados}
-Por honestidad metodológica, se enumeran explícitamente los análisis previstos en el diseño cuyos artefactos no se han comprometido. El protocolo de curva de aprendizaje (escala de entrenamiento a distintos presupuestos) está diseñado e implementado, pero pendiente de GPU: no existe todavía ningún artefacto de curva de aprendizaje con métricas oficiales. La validación leave-one-CSV-out está implementada en el código para QRDQN, pero no se ha comprometido un artefacto agregado de sus métricas. La evaluación con múltiples semillas para estimar la varianza entre ejecuciones tampoco se ha llevado a cabo.
+QRDQN es el único algoritmo RL evaluado y Random Forest la única familia supervisada de campaña. La comparación será más fuerte que contrastar cifras publicadas con protocolos distintos, pero no permite generalizar a todos los clasificadores tabulares ni a todo RL profundo.
 
-Ninguna de estas tres capacidades se reporta con cifras en esta tesis. Esta ausencia no es un detalle administrativo: afecta a la fuerza de las conclusiones. Sin curva de aprendizaje, no se puede cuantificar cómo cambia QRDQN al variar el presupuesto de entrenamiento; sin leave-one-CSV-out agregado, no se puede medir la estabilidad por escenario retenido; y sin múltiples semillas, no se puede separar el comportamiento del perfil MAIN de la varianza del entrenamiento. Declararlas como pendientes evita que el texto convierta un diseño experimental en evidencia ejecutada.
+Los cuatro \emph{holdouts} son dirigidos: Web Attacks, Infiltration, PortScan y DDoS. No constituyen un leave-one-CSV-out exhaustivo de los ocho ficheros. Cada conclusión deberá referirse al escenario observado y a su soporte, evitando promedios que oculten fallos específicos.
 
-\begin{figure}[htbp]
-\centering
-\figureplaceholder{Escalera futura de validación externa: varios entornos etiquetados, tráfico independiente y análisis previo a despliegue activo}
-\caption[Validación externa futura pendiente]{\placeholdercaption{Escalera futura de validación externa: varios entornos etiquetados, tráfico independiente y análisis previo a despliegue activo.}}
-\label{fig:placeholder-validacion-externa}
-\end{figure}
+\section{Fase 2 y validez externa}
 
-% F9.1 / Ch10.4 future-work stash:
-% Las limitaciones anteriores definen una agenda de trabajo futuro coherente:
-% ejecutar y comprometer la curva de aprendizaje y el leave-one-CSV-out de
-% QRDQN; reentrenar con múltiples semillas para cuantificar la varianza;
-% ampliar la comparación a otros modelos supervisados; y validar sobre tráfico
-% etiquetado independiente de múltiples entornos antes de considerar cualquier
-% paso hacia un despliegue activo, que a su vez exigiría un análisis de seguridad
-% específico. Estas extensiones refuerzan la evidencia sin alterar la
-% arquitectura experimental ya establecida.
+La captura de Fase~2 procede de un laboratorio cerrado, fue generada por el operador y no contiene un adversario independiente. Sus etiquetas describen la intención del generador y no equivalen a anotación operacional. Los diagnósticos de distribución y la inferencia fresca pueden verificar compatibilidad del contrato y revelar cambio de dominio, pero no acreditan robustez en producción.
+
+\section{Evidencia todavía pendiente}
+
+En este borrador no están disponibles la MAIN fresca, la validación directa, el \emph{bootstrap}, los duplicados, el control barajado, el día completo, la escalera de tamaños, las cinco semillas, los cuatro \emph{holdouts}, los RF nuevos ni la Fase~2 fresca. Por ello no se cierran conclusiones cuantitativas sobre esos bloques. El registro operativo de \path{docs/thesis/FINALIZATION_REGISTER.md} enumera el trabajo restante sin duplicar el plan de campaña.
+
+\evidencenote{La campaña final reducirá incertidumbre sobre reproducibilidad local, tamaño, escenario y cambio temporal. No resolverá la antigüedad de CICIDS2017, la validez de una captura independiente, la ausencia de dinámica secuencial ni la seguridad de un despliegue activo.}
+
+\section{Alcance operacional}
+
+Toda la evaluación es offline. \texttt{BLOCK} es una etiqueta experimental y nunca una orden aplicada a la red. No se han analizado integración con controles reales, latencia en línea, disponibilidad, evasión adaptativa, respuesta a incidentes, revisión humana ni impacto empresarial. Cualquier transición operativa exigiría una evaluación de seguridad nueva y queda fuera del TFG.
