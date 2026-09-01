@@ -1,147 +1,103 @@
 \chapter{Catálogo de artefactos}
 \label{cap:anexo-artefactos}
 
-Este anexo amplía el inventario resumido de la Tabla~\ref{tab:inventario-runs}. Su
-objetivo no es repetir las métricas del Capítulo~6, sino identificar qué fichero permite
-auditar cada resultado, dónde se conserva y si forma parte del historial versionado. El
-catálogo distingue las ejecuciones oficiales citadas, los análisis auxiliares que sustentan
-figuras o comprobaciones y dos ejecuciones de Fase~2 mantenidas únicamente para documentar
-la sensibilidad del pipeline a la configuración.
+El catálogo distingue evidencia histórica, contratos finales y productos agregados. Un nombre de ejecución no basta para acreditar una cifra: debe poder seguirse hasta configuración, datos, modelo, evaluación y manifiesto.
 
-\section{Convenciones de lectura}
+\section{Esquema de ejecución final}
 
-Se considera \emph{rastreado} un artefacto devuelto por \texttt{git ls-files} y, por
-tanto, recuperable desde el commit de la memoria. Un fichero \emph{local} existe en el
-entorno de trabajo, pero está excluido por \texttt{.gitignore}; su existencia no puede
-presuponerse en otro clon. La indicación \emph{histórico auditable} significa que se
-conservan la configuración y los resultados originales, aunque el código actual no
-reproduzca necesariamente la ejecución byte a byte.
+El esquema~3.0 organiza cada intento físico bajo:
 
-Los tipos de fichero tienen funciones diferenciadas:
+\begin{center}
+\path{runs/final_campaign/<CAMPAIGN_ID>/attempts/<LOGICAL_RUN_ID>/attempt-<N>/}
+\end{center}
 
-\begin{itemize}
-    \item \texttt{config.json} registra, según el tipo de ejecución, los parámetros y,
-    cuando procede, la partición, la semilla y la procedencia de las entradas;
-    \item \texttt{metrics.json} o \texttt{validation\_results.json} contiene la salida
-    cuantitativa de una ejecución;
-    \item \texttt{environment.json} fija el entorno de software observado durante MAIN;
-    \item \texttt{scaler.joblib}, \texttt{train\_percentiles.npz} y
-    \texttt{feature\_names.json} conservan el estado del preprocesamiento;
-    \item \texttt{artifact\_manifest.json} vincula los artefactos confiables mediante
-    rutas y resúmenes SHA-256;
-    \item los ficheros de predicciones permiten auditar salidas por flujo sin convertir
-    una muestra rastreada en sustituto del conjunto completo local.
-\end{itemize}
-
-\begingroup
+\begin{table}[htbp]
+\centering
 \footnotesize
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.12}
-\begin{longtable}{p{2.7cm}p{6.0cm}p{4.0cm}}
-\caption[Catálogo de artefactos de entrenamiento, validación y Fase 2]{Catálogo de
-artefactos que respaldan los resultados de la memoria. Fuente: elaboración propia a
-partir del árbol Git de la revisión documentada.}
-\label{tab:catalogo-artefactos} \\
+\begin{tabular}{p{3.7cm}p{8.3cm}}
 \toprule
-Elemento & Ruta y artefactos principales & Estado y uso en la memoria \\
+Artefacto & Función científica \\
+\midrule
+\texttt{config.json} & perfil resuelto, semillas, partición, tamaño, pasos, recompensa, hashes y dependencias \\
+\texttt{metrics.json} & matriz de confusión, soporte y métricas con nulos explícitos cuando no son definibles \\
+\texttt{environment.json} & hardware, sistema y paquetes observados \\
+\texttt{timings.json} & tiempos por fase y duración total \\
+\texttt{system\_metrics.*} & uso de CPU, memoria, GPU y almacenamiento durante la ejecución \\
+\texttt{run\_summary.json} & resumen normalizado de configuración, progreso, métricas, tiempos y escalares \\
+Modelo y preprocesamiento & política serializada, escalador, percentiles y nombres de características \\
+Predicciones/validación & evidencia para reproducir métricas y contrastar evaluación directa \\
+Manifiesto de artefactos & inventario, tamaño y SHA-256 de los ficheros producidos \\
+\bottomrule
+\end{tabular}
+\caption[Contrato de artefactos por ejecución]{Contenido científico mínimo de una ejecución primaria final. Fuente: esquema de artefactos~3.0 del repositorio.}
+\label{tab:contrato-artefactos-final}
+\end{table}
+
+El estado de campaña registra identificador lógico, ejecución física, intento, dependencias, estado, alias y exportación. Un alias conserva \texttt{reuse\_of}, el hash del manifiesto fuente y la fecha de validación; no copia el modelo.
+
+\section{Artefactos auxiliares}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{p{3.5cm}p{5.1cm}p{3.4cm}}
+\toprule
+Trabajo & Dependencia & Producto \\
+\midrule
+Validación directa & MAIN física fresca & predicciones, conteos y comparación con métricas persistidas \\
+Bootstrap MAIN & predicciones finales de MAIN & intervalos estratificados, $10\,000$ remuestreos, semilla 12345 \\
+Duplicados MAIN & partición y caché canónica de MAIN & duplicados internos y coincidencias train/test \\
+Etiquetas barajadas & perfil, caché y split fijo & control separado de $10\,000$ pasos \\
+Fase~2 fresca & modelo, escalador y percentiles de MAIN & predicciones, métricas y diagnósticos de dominio \\
+\bottomrule
+\end{tabular}
+\caption[Trabajos auxiliares de la campaña]{Dependencias y salidas de los cinco trabajos auxiliares. Ninguno puede sustituirse por un artefacto histórico. Fuente: especificación final de campaña.}
+\label{tab:auxiliares-campana}
+\end{table}
+
+Los cuatro primeros trabajos vinculados a MAIN deben referenciar la misma ejecución física y los hashes esperados. El control barajado permanece separado del agregado de rendimiento. Fase~2 añade el hash de la captura utilizada y deshabilita por defecto la exportación de metadatos sensibles.
+
+\section{Productos agregados}
+
+El agregador final produce resúmenes para MAIN, día completo, escalera de tamaños, sensibilidad a semilla, cuatro escenarios retenidos, RF emparejado y Fase~2. Conserva identificadores, semillas, soporte, prevalencia, hashes, tiempos y procedencia de alias. Las medias de holdouts se calculan solo sobre métricas definidas y reportan cuántos escenarios contribuyen; las métricas agrupadas responden a una pregunta distinta y se etiquetan como tales.
+
+La Figura~\ref{fig:trazabilidad-evidencia} representa la ruta hasta la tesis. Los generadores cuantitativos rechazan un agregado incompleto y escriben primero fuera de \path{memoria/}. Cada figura final tendrá un manifiesto de procedencia con los ficheros y valores representados.
+
+\section{Catálogo histórico previo a campaña}
+
+La Tabla~\ref{tab:catalogo-artefactos} conserva los artefactos usados para la sección histórica de Resultados. Su estado explícito impide que ocupen una celda final.
+
+\begin{longtable}{p{3.0cm}p{6.7cm}p{3.0cm}}
+\caption[Catálogo de evidencia histórica]{Artefactos previos a la campaña final citados en la memoria. Fuente: repositorio.}
+\label{tab:catalogo-artefactos}\\
+\toprule
+Objeto & Ruta o identificador & Uso permitido \\
 \midrule
 \endfirsthead
-\multicolumn{3}{l}{\small\itshape Continuación de la Tabla~\thetable} \\
 \toprule
-Elemento & Ruta y artefactos principales & Estado y uso en la memoria \\
+Objeto & Ruta o identificador & Uso permitido \\
 \midrule
 \endhead
-\midrule
-\multicolumn{3}{r}{\small\itshape Continúa en la página siguiente} \\
-\endfoot
+MAIN QRDQN histórica & \path{runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/} & Capacidad intradistribución y procedencia histórica \\
+Referencia de test & \path{runs/cicids2017/test_partition_reference_seed42.json} & Reproducción de la partición histórica \\
+Checks A/B/C & \path{runs/validation/VAL_checks_A_20260212_235443}, \path{VAL_checks_B_20260212_235736}, \path{VAL_checks_C_20260213_004847} & Controles y proxy temporal históricos \\
+Bootstrap & \path{runs/validation/bootstrap_ci_seed42.json} & Precisión de muestreo histórica \\
+Duplicados & \path{runs/validation/duplicate_analysis_seed42.json} & Continuidad de la partición histórica \\
+Random Forest & \path{runs/baselines/rf_cicids2017_canonical_20260628_024735} & Comparación histórica, no RF final \\
+Fase~2 histórica & \path{runs/phase2/P2v2_pred_20260610_161231_MAIN/} & Inferencia sobre una captura concreta con MAIN histórica \\
 \bottomrule
-\endlastfoot
-
-\multicolumn{3}{l}{\textbf{Entrenamiento principal y partición de referencia}} \\
-\addlinespace
-MAIN QRDQN &
-{\raggedright\path{runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/}: \texttt{artifact\_manifest.json}, \texttt{config.json}, \texttt{environment.json}, \texttt{feature\_names.json}, \texttt{metrics.json}, \texttt{scaler.joblib}, \texttt{train\_percentiles.npz} y escalares TensorBoard exportados. Modelo: \path{models/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655.zip}.\par} &
-Oficial y rastreado. Respalda el entrenamiento principal, la evaluación aleatoria fija, el preprocesamiento reutilizado y las curvas de entrenamiento. El evento TensorBoard bruto es local; las exportaciones CSV son la fuente durable. \\
-\addlinespace
-Referencia de prueba, semilla 42 &
-{\raggedright\path{runs/cicids2017/test_partition_reference_seed42.json}.\par} &
-Rastreado. Fija conteos y hashes de la partición usada para comprobar que los futuros presupuestos de entrenamiento conservan el mismo conjunto de prueba. \\
-
-\addlinespace
-\multicolumn{3}{l}{\textbf{Comprobaciones y análisis de validación}} \\
-\addlinespace
-VAL A &
-{\raggedright\path{runs/validation/VAL_checks_A_20260212_235443/}: \texttt{config.json} y \texttt{validation\_results.json}.\par} &
-Oficial citado, rastreado e histórico auditable. Verifica predicción directa; su configuración apunta a un modelo C01 ya retirado del árbol actual. \\
-\addlinespace
-VAL B &
-{\raggedright\path{runs/validation/VAL_checks_B_20260212_235736/}: \texttt{config.json} y \texttt{validation\_results.json}.\par} &
-Oficial citado, rastreado e histórico auditable. Registra el control con etiquetas barajadas; el modelo temporal reentrenado no se persistió. \\
-\addlinespace
-VAL C &
-{\raggedright\path{runs/validation/VAL_checks_C_20260213_004847/}: \texttt{config.json} y \texttt{validation\_results.json}.\par} &
-Oficial citado, rastreado e histórico auditable. Respalda la partición por día y corresponde a una red proxy, no a los pesos MAIN; el modelo temporal no se persistió. \\
-\addlinespace
-Bootstrap MAIN &
-{\raggedright\path{runs/validation/bootstrap_ci_seed42.json}.\par} &
-Rastreado. Contiene $10\,000$ remuestreos estratificados, los conteos de la matriz de confusión y la verificación independiente del modelo MAIN sobre la partición reproducida. \\
-\addlinespace
-Duplicados &
-{\raggedright\path{runs/validation/duplicate_analysis_seed42.json}.\par} &
-Rastreado. Cuantifica duplicados exactos y coincidencias entre entrenamiento y prueba para la partición aleatoria de semilla 42. \\
-
-\addlinespace
-\multicolumn{3}{l}{\textbf{Línea base Random Forest}} \\
-\addlinespace
-RF, partición aleatoria &
-{\raggedright\path{runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__random_split/}: \texttt{config.json} y \texttt{metrics.json}. Modelo de esta partición: \path{models/rf_cicids2017_canonical_20260628_024735.joblib}.\par} &
-Oficial y rastreado. Comparación directa con MAIN sobre la misma partición aleatoria fija; el modelo global conservado corresponde a este barrido. \\
-\addlinespace
-RF, partición por día &
-{\raggedright\path{runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__day_split/}: \texttt{config.json} y \texttt{metrics.json}.\par} &
-Oficial y rastreado. Comparación con Check C sobre entrenamiento lunes--miércoles y prueba jueves--viernes. \\
-\addlinespace
-RF, miércoles retenido &
-{\raggedright\path{runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__leave_one_out_wednesday/}: \texttt{config.json} y \texttt{metrics.json}.\par} &
-Oficial y rastreado. Resultado exclusivo de RF: no existe todavía un artefacto QRDQN equivalente. \\
-
-\addlinespace
-\multicolumn{3}{l}{\textbf{Inferencia offline de Fase 2}} \\
-\addlinespace
-P2v2 inicial &
-{\raggedright\path{runs/phase2/P2v2_pred_20260224_004121/}: \texttt{config.json}, \texttt{metrics.json}, \texttt{diagnostics.json} y \texttt{predictions.csv}.\par} &
-Rastreado como contexto histórico. Documenta una tasa de bloqueo extrema bajo una configuración anterior; no respalda el resultado oficial de Fase~2. \\
-\addlinespace
-P2v2 posterior &
-{\raggedright\path{runs/phase2/P2v2_pred_20260408_230318/}: \texttt{config.json}, \texttt{metrics.json} y \texttt{predictions.csv}.\par} &
-Rastreado como contexto histórico. Su comportamiento distinto evidencia sensibilidad a la configuración y obliga a citar cada \texttt{RUN\_ID}. \\
-\addlinespace
-P2v2 MAIN &
-{\raggedright\path{runs/phase2/P2v2_pred_20260610_161231_MAIN/}: \texttt{config.json}, \texttt{metrics.json}, \texttt{diagnostics.json} y \texttt{predictions\_head\_10000.csv}. El fichero completo \texttt{predictions.csv.gz} es local.\par} &
-Oficial. Configuración, métricas, diagnósticos y muestra de $10\,000$ predicciones rastreados; predicciones completas ignoradas por la regla \texttt{*.gz}. La evidencia se limita al laboratorio cerrado generado por el operador. \\
-
 \end{longtable}
-\endgroup
 
-\section{Proveniencia de la entrada de Fase 2}
+Los modelos exploratorios, sondas rápidas y ejecuciones fallidas no se citan como evidencia científica. Los artefactos históricos no se modifican durante la campaña ni durante la escritura de la memoria.
 
-El fichero \texttt{config.json} de \texttt{P2v2\_pred\_20260610\_161231\_MAIN}
-conserva la ruta histórica \path{pcaps/synthetic_real_traffic.csv}. Después de la
-ejecución, la entrada se renombró localmente a \path{pcaps/lab_capture_traffic.csv} para
-evitar una descripción incorrecta: son paquetes reales capturados en un laboratorio
-doméstico cerrado, cuyo tráfico y etiquetas de intención fueron generados por el operador,
-no filas de características sintetizadas algorítmicamente. La ruta de la configuración no
-se reescribe porque forma parte de la procedencia inmutable de aquella ejecución. El CSV de
-entrada y el fichero completo de predicciones permanecen ignorados por su tamaño y por la
-sensibilidad potencial de los metadatos; la muestra rastreada sirve para auditoría, no para
-reconstruir el conjunto completo.
+\section{Git, LFS y exportación}
 
-\section{Elementos excluidos del catálogo oficial}
+Los JSON, CSV agregados, resúmenes, diagnósticos y manifiestos pequeños son apropiados para revisión en Git. Los modelos, predicciones voluminosas y otros binarios rastreados utilizan Git LFS cuando la política del repositorio lo indica. Los CSV originales, cachés generadas y paquetes de recuperación no se añaden automáticamente al historial.
 
-Las sondas C01--C03, los intentos MAIN rápidos y las demás ejecuciones antiguas de Fase~2 se
-conservan bajo \path{runs/archive/} para trazabilidad histórica, pero no respaldan las
-cifras oficiales. Del mismo modo, \path{runs/cicids2017/baseline_random_forest_comparison/results_rf.txt}
-corresponde a un prototipo supersedido y no se utiliza como evidencia. Los experimentos
-QRDQN \textit{leave-one-CSV-out}, la escalera de tamaños de entrenamiento y el estudio
-multisemilla no aparecen como ejecuciones porque siguen pendientes de GPU: existen el
-código o el protocolo, pero no artefactos comprometidos ni métricas que catalogar.
+Tras cada ejecución física validada, la exportación externa contiene una copia restaurable del directorio y un \texttt{tar.gz} con SHA-256. La copia no demuestra por sí sola almacenamiento independiente duradero, pero reduce el riesgo de perder evidencia durante una campaña larga y permite reanudar una exportación sin reentrenar.
+
+\section{Estado antes de la campaña}
+
+El catálogo final no contiene todavía ninguna ejecución bajo un \texttt{CAMPAIGN\_ID} aceptado. La Tabla~\ref{tab:contrato-artefactos-final} describe el contrato, no una lista de resultados existentes.
+
+\evidencenote{Cuando aparezcan artefactos finales, este anexo deberá añadir el identificador de campaña, el índice de ejecuciones aceptadas, el hash del agregado y la localización del bundle verificado, sin copiar aquí todas las métricas del Capítulo de Resultados.}
