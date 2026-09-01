@@ -4,7 +4,7 @@
 % calendario contractual y de entregas parciales del TFG.
 \ganttset{
   time slot format=isodate,
-  x unit=0.55mm,
+  x unit=0.43mm,
   y unit chart=6mm,
   y unit title=6mm,
   bar height=0.6,
@@ -19,9 +19,9 @@
 \begin{ganttchart}[
     vgrid={draw=tesisRejilla},
     hgrid={draw=tesisRejilla},
-  ]{2025-11-01}{2026-07-15}
+  ]{2025-11-01}{2026-09-01}
   \gantttitle{2025}{61}
-  \gantttitle{2026}{196} \\
+  \gantttitle{2026}{244} \\
   \gantttitle{nov}{30}
   \gantttitle{dic}{31}
   \gantttitle{ene}{31}
@@ -30,7 +30,9 @@
   \gantttitle{abr}{30}
   \gantttitle{may}{31}
   \gantttitle{jun}{30}
-  \gantttitle{jul}{15} \\
+  \gantttitle{jul}{31}
+  \gantttitle{ago}{31}
+  \gantttitle{sep}{1} \\
   \ganttmilestone{Firma del contrato}{2025-11-11} \\
   \ganttmilestone{Reunión de inicio}{2025-11-18} \\
   \ganttbar{Desarrollo e implementación}{2025-12-11}{2026-06-09} \\
@@ -38,7 +40,9 @@
   \ganttbar{Experimentos preliminares A/B/C}{2026-02-12}{2026-02-23} \\
   \ganttbar{Fase 2: captura e inferencia en laboratorio}{2026-02-23}{2026-06-10} \\
   \ganttmilestone{Entrenamiento del modelo MAIN}{2026-06-09} \\
-  \ganttbar{Auditoría de validación y línea base RF}{2026-06-27}{2026-06-28} \\
+  \ganttbar{Auditoría histórica y RF}{2026-06-27}{2026-06-28} \\
+  \ganttbar{Preparación de campaña final}{2026-07-07}{2026-08-31} \\
+  \ganttmilestone{Borrador de supervisión}{2026-09-01} \\
   \ganttmilestone{Entregas parciales 1--5}{2025-12-15}
   \ganttmilestone{}{2026-02-02}
   \ganttmilestone{}{2026-03-17}
