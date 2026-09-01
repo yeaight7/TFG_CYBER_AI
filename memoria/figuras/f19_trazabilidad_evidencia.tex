@@ -1,0 +1,19 @@
+% Figura conceptual: cadena de evidencia, sin resultados medidos.
+% Fuente: esquema de artefactos 3.0 y agregador de campaña.
+\begin{tikzpicture}[node distance=3mm]
+  \node[cajaDato, text width=2.1cm] (spec) {Diseño congelado\\+ perfil hash};
+  \node[cajaProceso, text width=2.1cm, right=of spec] (run) {Ejecución física\\+ RUN\_ID};
+  \node[cajaProceso, text width=2.1cm, right=of run] (art) {Artefactos 3.0\\+ SHA-256};
+  \node[cajaModelo, text width=2.1cm, right=of art] (agg) {Agregado\\validado};
+  \node[cajaResaltada, text width=2.1cm, right=of agg] (thesis) {Tabla / figura /\\afirmación};
+
+  \draw[flechaAzul] (spec) -- (run);
+  \draw[flechaAzul] (run) -- (art);
+  \draw[flechaAzul] (art) -- (agg);
+  \draw[flechaAzul] (agg) -- (thesis);
+
+  \node[cajaPendiente, text width=8.6cm, below=7mm of art] (gate)
+    {\textbf{Puerta de aceptación:} campaña completa, hashes coherentes, dependencias correctas, métricas definidas o nulas y ausencia de sustitutos históricos};
+  \draw[flechaFina] (art) -- (gate);
+  \draw[flechaFina] (gate.east) -| (agg.south);
+\end{tikzpicture}
