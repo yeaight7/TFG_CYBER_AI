@@ -18,9 +18,9 @@
     {\small Esquema\\canónico: 76\\caract. + 76\\máscara = 152};
   \node[rutaFichero, below=1mm of esquema] {src/\\canonical\_schema.py};
 
-  \node[cajaProceso, text width=2.0cm, right=0.18cm of esquema] (particion)
-    {\small Partición\\80/20 (semilla\\42) + escalado\\(solo train)};
-  \node[rutaFichero, below=1mm of particion] {src/\\load\_cicids2017.py};
+  \node[cajaProceso, text width=2.15cm, right=0.18cm of esquema] (particion)
+    {\small Caché sin escalar $\to$ partición\\(semilla de split) $\to$\\scaler solo train};
+  \node[rutaFichero, below=1mm of particion] {src/cicids\_cache.py};
 
   \node[cajaProceso, text width=1.7cm, right=0.18cm of particion] (entorno)
     {\small Entorno RL\\(permitir/\\bloquear)};
@@ -31,7 +31,7 @@
   \node[rutaFichero, below=1mm of agente] {src/\\train\_rl\_defender.py};
 
   \node[cajaProceso, text width=1.7cm, right=0.18cm of agente] (evaluacion)
-    {\small Evaluación +\\artefactos por\\ejecución};
+    {\small Evaluación +\\artefactos 3.0\\sellados};
   \node[rutaFichero, below=1mm of evaluacion] {src/\\train\_rl\_defender.py};
 
   \draw[flecha] (csv) -- (limpieza);
@@ -68,10 +68,10 @@
 
   \node[etiqueta, anchor=west, below=6mm of pcap.south west] {Fase 2 (offline, inferencia)};
 
-  % Reutilización del esquema canónico y del escalador entrenado en Fase 1
+  % Reutilización del esquema canónico y de los artefactos de MAIN
   \draw[flechaFina] ([xshift=-6mm]esquema.south) .. controls +(-0.2,-1.1) and +(0,1.1) .. (flujos.north)
     node[etiquetaTenue, pos=0.82, text width=1.6cm, xshift=-1.0cm] {reutiliza\\esquema};
-  \draw[flechaFina] (particion.south east) .. controls +(0.4,-1.1) and +(-0.6,1.1) .. (inferencia.north)
-    node[etiquetaTenue, pos=0.82, text width=1.8cm, xshift=1.1cm] {reutiliza\\escalador\\entrenado};
+  \draw[flechaFina] (evaluacion.south) .. controls +(0,-1.0) and +(0.7,1.0) .. (inferencia.north east)
+    node[etiquetaTenue, pos=0.7, text width=2.0cm, xshift=1.1cm] {MAIN final:\\modelo, scaler\\y percentiles};
 
 \end{tikzpicture}

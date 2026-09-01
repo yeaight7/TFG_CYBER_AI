@@ -1,138 +1,106 @@
 \chapter{Entorno hardware y software}
 \label{cap:anexo-entorno}
 
-Este anexo documenta el entorno utilizado para obtener la ejecución principal
-\texttt{MAIN} y lo separa del entorno local de desarrollo y de la cadena de
-construcción de esta memoria. La distinción es necesaria porque las fuentes
-responden a preguntas diferentes: la confirmación del autor identifica el hardware
-contratado, \texttt{environment.json} registra el software observado por el proceso
-de entrenamiento y los manifiestos de dependencias definen instalaciones
-reproducibles, pero no acreditan por sí solos qué paquetes llegaron a cargarse en una
-ejecución concreta.
+Este anexo distingue tres objetos: el contrato de la plataforma GPU experimental, las observaciones que producirán los artefactos finales y el entorno histórico de evidencia previa. Los requisitos de lanzamiento no se presentan como hardware medido.
 
-\section{Hardware efectivamente empleado}
+\section{Contrato de la plataforma final}
 
-La ejecución
-{\small\path{MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655}}
-se entrenó en el entorno remoto de la Tabla~\ref{tab:entorno-hardware}. El ordenador
-portátil local se reservó para desarrollo, pruebas y construcción del documento; no
-se utilizó para entrenar modelos.
+La campaña se ejecutará en una plataforma Linux con GPU CUDA y recursos suficientes para la matriz aprobada. El preflight usa umbrales de CPU, RAM, VRAM y espacio como puertas de lanzamiento configurables. Estos umbrales expresan capacidad requerida; no describen una máquina concreta.
 
-\begin{table}[H]
-\centering
-\footnotesize
-\begin{tabular}{@{}p{2.2cm}p{3.3cm}p{4.5cm}p{2.6cm}@{}}
-\toprule
-\textbf{Recurso} & \textbf{Especificación} & \textbf{Uso} & \textbf{Procedencia} \\
-\midrule
-CPU remota & AMD EPYC 9005 & Entrenamiento de la ejecución \texttt{MAIN} & Confirmación del autor \\
-Memoria remota & 128 GB de RAM & Carga de datos y entrenamiento de \texttt{MAIN} & Confirmación del autor \\
-GPU remota & NVIDIA GeForce RTX 3090 Ti, 24 GB de VRAM & Entrenamiento CUDA de \texttt{MAIN} & Confirmación del autor; el artefacto corrobora el modelo de GPU \\
-Ordenador portátil local & Sin atribuirle especificaciones de entrenamiento & Desarrollo, pruebas y construcción de la memoria; ningún entrenamiento de modelos & Uso confirmado por el autor \\
-\bottomrule
-\end{tabular}
-\caption[Hardware empleado en el proyecto]{Hardware empleado y función de cada entorno. Fuente: elaboración propia a partir de la confirmación del autor y de \texttt{environment.json}.}
-\label{tab:entorno-hardware}
-\end{table}
+El entorno final se instalará desde \path{requirements-gpu-cu130.txt}. La especificación científica conserva el perfil, semillas, datos, caché y artefactos independientemente del proveedor, hostname, cuenta, método de acceso o rutas de montaje. La ejecución permanece secuencial para reducir competencia de recursos y simplificar recuperación.
 
-No se infiere un modelo más concreto del procesador ni un número de núcleos. El artefacto de ejecución tampoco contiene la capacidad de RAM o VRAM: únicamente corrobora el nombre de la GPU. Por ello, esos datos se mantienen explícitamente como información confirmada por el autor y no como campos extraídos del artefacto.
+\section{Evidencia ambiental pendiente}
 
-\section{Runtime registrado en MAIN}
+Cada ejecución aceptada generará \texttt{environment.json}. La tabla ambiental final de la tesis se poblará desde esos ficheros y deberá incluir, al menos:
 
-El fichero \texttt{environment.json} situado dentro del directorio de la ejecución
-\texttt{MAIN} constituye la fuente primaria del entorno observado durante el
-entrenamiento. La Tabla~\ref{tab:runtime-main} transcribe sus campos de plataforma y
-aceleración sin extenderlos a otros equipos.
-
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{@{}p{3.4cm}p{6.0cm}p{3.5cm}@{}}
+\begin{tabular}{p{4.2cm}p{7.8cm}}
 \toprule
-\textbf{Componente} & \textbf{Valor registrado} & \textbf{Campo del artefacto} \\
+Campo & Fuente final \\
 \midrule
-Python & 3.12.11, compilado con GCC 13.3.0 & \texttt{python\_version} \\
-Plataforma & Linux 6.8.0-110-generic, x86\_64, glibc 2.39 & \texttt{platform} \\
-Dispositivo & \texttt{cuda}; CUDA disponible para PyTorch & \texttt{device}, \texttt{torch\_\allowbreak cuda\_\allowbreak available} \\
-GPU visible & NVIDIA GeForce RTX 3090 Ti & \texttt{cuda\_\allowbreak device\_\allowbreak name} \\
-CUDA informada por PyTorch & 13.0 & \texttt{torch\_\allowbreak cuda\_\allowbreak version} \\
-cuDNN & 9.20.0 (valor entero registrado: \texttt{92000}) & \texttt{torch\_\allowbreak cudnn\_\allowbreak version} \\
+Sistema y arquitectura & \texttt{environment.json}: plataforma, kernel y arquitectura \\
+CPU y memoria & inventario observado durante la ejecución \\
+GPU y VRAM & dispositivo CUDA visible y memoria registrada \\
+Controlador, CUDA y cuDNN & runtime observado, no versión supuesta por el manifiesto \\
+Python y paquetes principales & versiones importadas durante la ejecución \\
+Commit y estado del árbol & metadatos de procedencia de la ejecución \\
+Tiempos y monitorización & \texttt{timings.json}, monitorización y \texttt{run\_summary.json} \\
 \bottomrule
 \end{tabular}
-\caption[Runtime de la ejecución principal]{Runtime observado durante la ejecución principal. Fuente: elaboración propia a partir de \texttt{environment.json} de la ejecución \texttt{MAIN}.}
+\caption[Procedencia del entorno experimental final]{Campos que se incorporarán desde los artefactos reales de campaña. En este borrador no se asignan valores. Fuente: contrato de artefactos~3.0.}
+\label{tab:entorno-final-pendiente}
+\end{table}
+
+\evidencenote{No se ha medido todavía el hardware ni el runtime de la campaña final. La versión de entrega reemplazará esta nota por una tabla consolidada y señalará cualquier diferencia relevante entre ejecuciones.}
+
+\section{Entorno histórico de la MAIN previa}
+
+La MAIN de 9 de junio de 2026 conserva un \texttt{environment.json} propio. Se reporta solo para establecer la procedencia de las métricas históricas del Capítulo~\ref{sec:evidencia-historica}; no impone ni verifica la futura plataforma.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{p{4.0cm}p{7.8cm}}
+\toprule
+Componente & Valor observado en la MAIN histórica \\
+\midrule
+Sistema & Linux 6.8.0-110-generic, x86\_64; glibc 2.39 \\
+Python & 3.12.11 \\
+GPU visible & NVIDIA GeForce RTX 3090 Ti \\
+CUDA / cuDNN & 13.0 / 9.20.0 \\
+PyTorch & 2.12.1+cu130 \\
+NumPy / pandas & 2.4.6 / 3.0.3 \\
+scikit-learn / joblib & 1.9.0 / 1.5.3 \\
+Gymnasium / SB3 / sb3-contrib & 1.2.3 / 2.8.0 / 2.8.0 \\
+\bottomrule
+\end{tabular}
+\caption[Runtime de la MAIN histórica]{Versiones observadas durante la MAIN histórica. No describen la campaña final. Fuente: \texttt{environment.json} de \path{MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655}.}
 \label{tab:runtime-main}
 \end{table}
 
-El mismo artefacto registra las versiones de paquete de la
-Tabla~\ref{tab:paquetes-main}. Estas son versiones observadas en \texttt{MAIN}, no una
-reconstrucción a partir del estado actual del entorno local.
-
-\begin{table}[H]
-\centering
-\small
-\begin{tabular}{@{}p{3.2cm}p{2.5cm}p{3.4cm}p{2.5cm}@{}}
-\toprule
-\textbf{Paquete} & \textbf{Versión} & \textbf{Paquete} & \textbf{Versión} \\
-\midrule
-\texttt{torch} & \texttt{2.12.1+cu130} & \texttt{numpy} & \texttt{2.4.6} \\
-\texttt{pandas} & \texttt{3.0.3} & \texttt{scikit-learn} & \texttt{1.9.0} \\
-\texttt{gymnasium} & \texttt{1.2.3} & {\scriptsize\path{stable-baselines3}} & \texttt{2.8.0} \\
-{\scriptsize\path{sb3-contrib}} & \texttt{2.8.0} & \texttt{joblib} & \texttt{1.5.3} \\
-\bottomrule
-\end{tabular}
-\caption[Paquetes registrados en la ejecución principal]{Versiones exactas de los paquetes registrados por \texttt{environment.json} para la ejecución \texttt{MAIN}. Fuente: elaboración propia a partir de \texttt{environment.json} de la ejecución \texttt{MAIN}.}
-\label{tab:paquetes-main}
-\end{table}
+Los datos de CPU y RAM comunicados fuera del artefacto no se usan para caracterizar el método final. Esta decisión evita mezclar confirmaciones operativas con observación persistida.
 
 \section{Contratos de dependencias}
 
-Los manifiestos del repositorio convergen en el núcleo de versiones de la
-Tabla~\ref{tab:paquetes-main}, con la salvedad de que la variante CUDA de
-\texttt{torch} se expresa de forma distinta según la ruta de instalación. Sus
-diferencias se resumen en la Tabla~\ref{tab:contratos-dependencias}.
-
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
-\footnotesize
-\begin{tabular}{@{}p{3.2cm}p{3.2cm}p{6.7cm}@{}}
+\small
+\begin{tabular}{p{4.8cm}p{7.2cm}}
 \toprule
-\textbf{Contrato} & \textbf{Ámbito} & \textbf{Contenido diferenciador} \\
+Contrato & Función \\
 \midrule
-\texttt{requirements-\allowbreak runpod-\allowbreak cu130.txt} & Runtime mínimo de entrenamiento y evaluación en RunPod & Fija \texttt{torch==2.12.1+cu130} y el índice CUDA 13.0. Añade \texttt{tensorboard==2.20.0} y \texttt{matplotlib==3.10.9}. Omite de forma deliberada los extras \texttt{dev} y \texttt{tune}; para ajustar hiperparámetros debe añadirse \texttt{optuna==4.9.0}. \\
-\texttt{requirements.txt} & Instalación directa genérica o local & Fija \texttt{torch==2.12.1} sin sufijo de plataforma. Incluye el mismo núcleo, TensorBoard, Matplotlib y \texttt{optuna==4.9.0}; no incorpora las herramientas de desarrollo \texttt{pytest} y \texttt{ruff}. \\
-\texttt{pyproject.toml} & Proyecto y resolución con \texttt{uv} & Exige Python \texttt{>=3.12,<3.13}. El núcleo usa \texttt{stable-baselines3[extra]==2.8.0}; el extra \texttt{dev} fija \texttt{pytest==9.0.3} y \texttt{ruff==0.15.12}, y \texttt{tune} fija \texttt{optuna==4.9.0}. \texttt{tool.uv.sources} dirige \texttt{torch} al índice \texttt{cu130} en Linux y al índice CPU fuera de Linux. \\
+\path{requirements-gpu-cu130.txt} & Dependencias directas de la plataforma experimental GPU \\
+\path{requirements.txt} & Ruta compatible de instalación general del proyecto \\
+\path{pyproject.toml} y \path{uv.lock} & Desarrollo, pruebas y resolución bloqueada \\
+\texttt{environment.json} & Observación real por ejecución; prevalece sobre una expectativa del manifiesto \\
 \bottomrule
 \end{tabular}
-\caption[Contratos de dependencias del proyecto]{Contratos de dependencias y diferencias entre el runtime GPU, la instalación local, el desarrollo y el ajuste de hiperparámetros. Fuente: elaboración propia a partir de \texttt{requirements-runpod-cu130.txt}, \texttt{requirements.txt} y \texttt{pyproject.toml}.}
+\caption[Contratos de dependencias]{Separación entre manifiestos de instalación y entorno observado. Fuente: repositorio actual.}
 \label{tab:contratos-dependencias}
 \end{table}
 
-Por tanto, \texttt{environment.json} acredita las versiones observadas de PyTorch,
-NumPy, pandas, scikit-learn, Gymnasium, Stable-Baselines3, sb3-contrib y joblib. Las
-versiones de TensorBoard, Matplotlib, Optuna, pytest y Ruff pertenecen a los contratos
-de instalación correspondientes; el artefacto de \texttt{MAIN} no las registra y no
-se presentan aquí como paquetes observados durante esa ejecución.
+Un manifiesto puede declarar una versión compatible sin demostrar qué importó una ejecución. Por eso las versiones finales se toman del artefacto y se contrastan con el contrato antes de aceptar el run.
 
 \section{Entorno de construcción de la memoria}
 
-La cadena de construcción del documento es independiente del runtime Linux/CUDA del
-modelo. Según el tracker de mejora de la memoria, el documento se construye en
-Windows con la pila de la Tabla~\ref{tab:entorno-memoria}. Ninguno de estos
-componentes forma parte del entrenamiento ni de la evaluación del agente.
+La memoria se construye en Windows con TeX Live~2025, \texttt{latexmk}~4.87, Biber~2.21 y Poppler para renderizado de control. Este entorno solo produce el PDF: no se utiliza para generar métricas científicas.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{@{}p{4.1cm}p{3.4cm}p{5.4cm}@{}}
+\begin{tabular}{p{3.8cm}p{8.2cm}}
 \toprule
-\textbf{Componente} & \textbf{Versión} & \textbf{Función} \\
+Componente & Uso \\
 \midrule
-Sistema anfitrión & Windows & Ejecución de la cadena de construcción documental \\
-Distribución TeX & TeX Live 2025 & Motor y paquetes LaTeX de la memoria \\
-\texttt{latexmk} & 4.87 & Orquestación de las pasadas de compilación \\
-\texttt{biber} & 2.21 & Procesamiento de la bibliografía \\
+pdfLaTeX y Biber & compilación, referencias y bibliografía \\
+latexmk & construcción limpia y repetible \\
+Poppler & metadatos, extracción de texto y rasterizado para QA visual \\
+Python/matplotlib & figuras cuantitativas deterministas desde artefactos \\
+TikZ/PGF & diagramas conceptuales vectoriales \\
 \bottomrule
 \end{tabular}
-\caption[Entorno de construcción de la memoria]{Pila de construcción de la memoria. Fuente: elaboración propia a partir de \texttt{docs/thesis/THESIS\_IMPROVEMENT\_PLAN.md}; entorno distinto del runtime empleado para \texttt{MAIN}.}
+\caption[Entorno de construcción documental]{Pila utilizada para construir y revisar la memoria, independiente de la plataforma de entrenamiento. Fuente: entorno de esta revisión.}
 \label{tab:entorno-memoria}
 \end{table}
