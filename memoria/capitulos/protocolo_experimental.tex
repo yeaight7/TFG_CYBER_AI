@@ -1,287 +1,155 @@
 \chapter{Protocolo experimental}
 \label{cap:protocolo-experimental}
 
-Este capítulo fija los protocolos con los que se obtiene y se interpreta la evidencia experimental, desde la partición interna hasta la inferencia fuera de línea de la Fase~2. La secuencia evita extender las conclusiones más allá de los artefactos disponibles.
+El protocolo distingue entre el diseño aprobado y la evidencia ya ejecutada. La especificación autoritativa de la campaña final es \path{experiments/final_experiment_campaign.json}; los artefactos históricos se conservan para contexto, pero no satisfacen una celda final por coincidencia aproximada. El perfil científico \texttt{main-v1} está congelado y la campaña no modifica arquitectura, recompensa, contrato canónico ni hiperparámetros MAIN.
 
-\section{Fases experimentales}
-La metodología experimental se divide en dos fases. La primera fase comprueba el aprendizaje y la generalización interna sobre un banco de pruebas público (\emph{benchmark}). La segunda fase comprueba si el flujo de procesamiento (\emph{pipeline}) de preprocesamiento y modelo resultante es capaz de procesar tráfico capturado por el operador en un laboratorio doméstico cerrado bajo cambio de dominio.
+\section{Preguntas experimentales}
 
-\subsection{Fase 1: benchmark interno de CICIDS2017}
-La Fase 1 utiliza CICIDS2017 como benchmark interno principal \parencite{Sharafaldin2018CICIDS2017,CICIDS2017Web}. CICIDS2017 es adecuado para esta tesis porque proporciona tráfico benigno y de ataque etiquetado, capturas de paquetes en bruto y CSVs de flujos derivados de una extracción al estilo CICFlowMeter \parencite{Lashkari2017CICFlowMeter}. También contiene múltiples escenarios de ataque en diferentes días de captura, lo que permite diseños de partición más estrictos que una única partición aleatoria entrenamiento-prueba.
+La campaña responde a siete preguntas ordenadas:
 
-La fase no se trata como un sustituto limpio de un entorno de producción. CICIDS2017 tiene problemas conocidos que incluyen flujos duplicados o inconsistentes, errores de etiquetado y de extracción, y sensibilidad a la partición \parencite{Engelen2021CICIDSIssues,Lanvin2023Errors,Liu2022ErrorPrevalenceNIDS}. Por esa razón, la Fase 1 se enmarca como un benchmark interno con controles explícitos. El pipeline elimina los campos de tipo identificador, ajusta la normalización únicamente sobre los datos de entrenamiento, registra las configuraciones de ejecución y evalúa el modelo mediante una escalera de validación. Una puntuación elevada en la partición aleatoria se interpreta como evidencia de que el modelo es capaz de aprender la tarea del benchmark; no se interpreta como preparación para el despliegue.
+\begin{enumerate}[label=\textbf{P\arabic*.},leftmargin=*]
+    \item ¿reproduce una MAIN fresca la capacidad de aprendizaje intradistribución del pipeline actual?;
+    \item ¿coinciden la evaluación persistida y una validación directa e independiente del modelo?;
+    \item ¿qué parte del resultado aleatorio puede asociarse a duplicados y cuánto cambia al separar días?;
+    \item ¿cómo varía el comportamiento al aumentar el tamaño de entrenamiento y su presupuesto proporcional?;
+    \item ¿cuánto cambia al variar solo la semilla del modelo sobre una partición fija?;
+    \item ¿qué sensibilidad aparece al retener cuatro escenarios dirigidos?;
+    \item ¿los patrones observados son específicos de QRDQN o también aparecen en Random Forest, y cómo se transfieren a la captura de laboratorio?
+\end{enumerate}
 
-La estructura por día de captura de CICIDS2017 (Tabla~\ref{tab:composicion-dia}) muestra una proporción de ataque muy desigual entre ficheros, desde el 0\% del lunes hasta más del 55\% en las capturas del viernes por la tarde. Esta heterogeneidad motiva los protocolos de partición por día, más estrictos que una partición aleatoria, que se describen más adelante en este capítulo.
-
-\begin{table}[htbp]
-\centering
-\begin{tabular}{p{5.1cm}rrrr}
-\toprule
-Día & Filas & Benigno & Ataque & Ataque (\%) \\
-\midrule
-Lunes & $529\,918$ & $529\,918$ & $0$ & 0.0\% \\
-Martes & $445\,909$ & $432\,074$ & $13\,835$ & 3.1027\% \\
-Miércoles & $692\,703$ & $440\,031$ & $252\,672$ & 36.4762\% \\
-Jueves (mañana, ataques web) & $170\,366$ & $168\,186$ & $2\,180$ & 1.2796\% \\
-Jueves (tarde, infiltración) & $288\,602$ & $288\,566$ & $36$ & 0.0125\% \\
-Viernes (mañana) & $191\,033$ & $189\,067$ & $1\,966$ & 1.0291\% \\
-Viernes (tarde, PortScan) & $286\,467$ & $127\,537$ & $158\,930$ & 55.4793\% \\
-Viernes (tarde, DDoS) & $225\,745$ & $97\,718$ & $128\,027$ & 56.7131\% \\
-\bottomrule
-\end{tabular}
-\caption[Composición por día de CICIDS2017]{Composición por día de CICIDS2017: número de filas y proporción de tráfico benigno frente a ataque por fichero oficial de captura. Fuente: elaboración propia a partir de \texttt{memoria/figuras/data\_composicion\_dia.json}.}
-\label{tab:composicion-dia}
-\end{table}
-
-La Figura~\ref{fig:composicion-dia} ofrece la misma información como comparación visual entre días. La lectura relevante para el protocolo no es solo el volumen total, sino la variación extrema de prevalencia de ataque entre capturas, que justifica no depender únicamente de una partición aleatoria por filas.
+La Figura~\ref{fig:campana-final} muestra las dependencias entre bloques. MAIN es a la vez experimento primario y fuente de los controles auxiliares; los alias reutilizan una ejecución física solo cuando la especificación declara identidad exacta.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.92\textwidth]{f6_composicion_dia.pdf}
-\caption[Composición visual por día de CICIDS2017]{Composición visual por día de CICIDS2017. Fuente: elaboración propia a partir de \texttt{memoria/figuras/data\_composicion\_dia.json}.}
+\input{figuras/f18_campana_final}
+\caption[Visión general de la campaña experimental final]{Relación entre la MAIN fresca, la partición completa por días, la escalera de tamaños, la sensibilidad a semilla, los cuatro escenarios retenidos, las comparaciones RF y las validaciones auxiliares. Las flechas indican reutilización de artefactos o comparación emparejada, no resultados. Fuente: elaboración propia a partir de \path{experiments/final_experiment_campaign.json}.}
+\label{fig:campana-final}
+\end{figure}
+
+\section{Datos, unidad de análisis y fases}
+
+La unidad es una fila de flujo. La Fase~1 emplea los ocho CSV de CICIDS2017 después de limpieza, mapeo binario y transformación al esquema canónico. La Fase~2 aplica el modelo final de forma offline a una captura etiquetada del laboratorio del autor. En ningún caso se actúa sobre una red ni se retroalimenta el entorno con la decisión.
+
+La composición por día de CICIDS2017 se mantiene como contexto del protocolo porque explica por qué una separación temporal modifica simultáneamente prevalencia y repertorio de ataques. La Figura~\ref{fig:composicion-dia} procede de conteos comprometidos, no de la futura campaña.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.94\textwidth]{f6_composicion_dia.pdf}
+\caption[Composición por día de CICIDS2017]{Filas y proporción de tráfico benigno/ataque por CSV de CICIDS2017. Fuente: conteos deterministas conservados en \texttt{memoria/figuras/data\_composicion\_dia.json}.}
 \label{fig:composicion-dia}
 \end{figure}
 
-\subsection{Fase 2: inferencia offline sobre tráfico de laboratorio}
-La Fase 2 evalúa la transferencia más allá de la distribución del benchmark. El tráfico se captura en un entorno de laboratorio privado, se convierte offline en CSVs de flujos, se mapea al mismo esquema canónico, se normaliza con los artefactos de entrenamiento persistidos y se procesa con el modelo entrenado. Esta fase es una prueba de inferencia sobre una distribución externa, no un despliegue en vivo.
+\section{Preprocesamiento y control de fuga}
 
-El propósito metodológico de la Fase 2 es exponer el cambio de dominio. Los estudios públicos sobre NIDS suelen reportar resultados sólidos dentro del mismo conjunto de datos que se degradan cuando el modelo se evalúa sobre tráfico producido por redes, herramientas de captura, periodos temporales o definiciones de características diferentes \parencite{Apruzzese2022CrossEvaluationNIDS,Layeghy2023CrossDomainNIDS}. La Fase 2 se centra por tanto en la inferencia offline reproducible, los diagnósticos y el seguimiento de artefactos. No garantiza un rendimiento estable en redes empresariales arbitrarias y no implementa bloqueo activo en tiempo real.
+El pipeline construye primero una representación canónica \emph{sin escalar}. La caché aprobada almacena esta representación y metadatos de procedencia para evitar repetir la carga y coerción de los CSV. No almacena valores normalizados: el escalador depende de la partición y debe ajustarse dentro de cada ejecución.
 
-\section{Separación entrenamiento-prueba y escalado}
-La metodología separa el ajuste y la evaluación en cada etapa de preprocesamiento que pueda aprender de los datos. Esto es necesario porque la fuga de información puede producirse no solo a través de columnas, sino también a través de estadísticas como medias globales, varianzas, percentiles y distribuciones de clases.
+Para una ejecución dada, el orden es:
 
-\subsection{Partición aleatoria estratificada}
-La partición aleatoria estratificada es el primer peldaño de validación. Preserva las proporciones de clases entre entrenamiento y prueba y es útil como comprobación de la capacidad de aprendizaje. Si el modelo no puede aprender bajo esta partición favorable, las evaluaciones más estrictas posteriores tienen pocas probabilidades de tener éxito.
-
-En la ejecución MAIN, la estratificación mantiene prácticamente idéntica la prevalencia de ataque entre entrenamiento y prueba, como muestra la Figura~\ref{fig:balance-particion}. Esto permite atribuir los cambios de rendimiento entre entrenamiento y evaluación al modelo y al protocolo, no a una variación accidental de la proporción de clases en la partición aleatoria.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.78\textwidth]{f7_balance_particion.pdf}
-\caption[Balance de clases en la partición aleatoria fija]{Balance de clases en la partición aleatoria fija de la ejecución MAIN. Fuente: elaboración propia a partir de \texttt{config.json} de la ejecución MAIN.}
-\label{fig:balance-particion}
-\end{figure}
-
-Sin embargo, la partición aleatoria por filas es la evidencia más débil de este proyecto. Los conjuntos de datos de flujos pueden contener registros correlacionados, patrones repetidos y artefactos del contexto de captura. Situar flujos adyacentes o muy similares a ambos lados de la partición puede sobreestimar la generalización \parencite{Lanvin2023Errors,Arp2020DosDontsMLSecurity}. Los resultados de la partición aleatoria se reportan por tanto únicamente como evidencia del benchmark interno.
-
-\subsection{Partición por CSV/día}
-La partición por CSV/día entrena sobre ficheros seleccionados de CICIDS2017 y evalúa sobre ficheros diferentes. Esta partición comprueba si el modelo se transfiere entre días de captura y contextos de ataque. En la implementación mantenida, la partición por día por defecto entrena sobre los patrones del lunes, martes y miércoles, y prueba sobre los patrones del jueves y viernes. Se trata de una configuración más estricta que la partición aleatoria porque ficheros enteros quedan fuera del entrenamiento.
-
-La partición por día también se alinea con la estructura conocida de CICIDS2017: diferentes días contienen diferentes cargas de trabajo benignas y escenarios de ataque. Por ello es más adecuada para revelar si el modelo ha aprendido un comportamiento de flujo general o artefactos específicos de un día.
-
-\subsection{Partición leave-one-CSV-out}
-El protocolo interno más estricto es la validación leave-one-CSV-out. Cada fold retiene un CSV oficial de CICIDS2017 como datos de prueba y entrena con los CSV restantes. El script de validación implementado agrega métricas por fold, incluyendo exactitud, exactitud balanceada, precisión de ataque, recall de ataque, F1 de ataque, precisión de benigno, recall de benigno, tasa de falsos positivos, tasa de falsos negativos, tasa de bloqueo, retorno total y costes temporales.
-
-Este protocolo es metodológicamente importante porque trata cada fichero de captura como una unidad de tipo dominio. Es más sólido que una partición por día basada en subcadenas porque utiliza los nombres de fichero CSV oficiales exactos y evita solapamientos accidentales. En el momento de redacción de este capítulo, la implementación existe, mientras que las métricas agregadas finales solo deben reportarse cuando se disponga de un artefacto de ejecución comprometido.
-
-\subsection{Estandarización ajustada sobre entrenamiento}
-El entrenamiento de redes neuronales es sensible a la escala de las características. El pipeline utiliza por tanto normalización mediante \texttt{StandardScaler}, ajustando el escalador únicamente sobre la partición de entrenamiento y aplicando la transformación ajustada a los datos de prueba. El mismo principio se aplica a los artefactos de inferencia persistidos: el escalador guardado durante el entrenamiento se reutiliza en la Fase 2, en lugar de recalcularse a partir de los flujos de laboratorio.
-
-Para la inferencia robusta en la Fase 2, el pipeline de entrenamiento también persiste los límites de percentiles sobre las características canónicas en bruto. El script de inferencia de la Fase 2 puede aplicar recorte por percentiles sobre las características en bruto y recorte por z-score después del escalado, y luego exportar diagnósticos. Estos controles no se presentan como una solución al cambio de dominio; son salvaguardas que hacen visibles y acotados los valores extremos fuera de distribución durante la inferencia offline.
-
-\section{Línea base supervisada}
-Un método de RL para NIDS a nivel de flujo debe compararse con líneas base supervisadas sólidas. Los datos de flujo tabulares son un entorno donde los modelos basados en árboles, especialmente los Random Forests y los ensamblados con gradient boosting, suelen ser competitivos \parencite{LiuLang2019IDSSurvey,Apruzzese2022CrossEvaluationNIDS}.
-
-\subsection{Línea base con Random Forest}
-La línea base supervisada principal es un clasificador Random Forest. La línea base es metodológicamente útil porque obtiene buenos resultados en datos tabulares, gestiona las interacciones no lineales entre características y requiere menos complejidad de entrenamiento que el RL profundo. También proporciona una comprobación de cordura frente a la sobreestimación del valor de la formulación de RL en una tarea que puede comportarse como una clasificación sensible al coste.
-
-\subsection{Comparación bajo el mismo protocolo}
-La línea base debe consumir la misma representación canónica de observaciones, utilizar los mismos protocolos de partición y reportar las mismas métricas que QRDQN. Esta regla de mismo protocolo evita comparaciones sesgadas. Si la línea base utiliza un preprocesamiento diferente, controles de fuga distintos o particiones más sencillas, la comparación no aísla la contribución algorítmica de QRDQN.
-
-La metodología trata por tanto la comparación con la línea base como un requisito del protocolo y no como un apéndice opcional. También evita afirmar la superioridad de QRDQN hasta que existan artefactos de línea base con la misma partición.
-
-\subsection{Desbalanceo de clases y ponderación sensible al coste}
-CICIDS2017 presenta desbalanceo de clases: los flujos benignos superan sustancialmente en número a los flujos de ataque, y dentro de los flujos de ataque las familias individuales varían en prevalencia. Un Random Forest entrenado con pesos de clase uniformes por defecto tenderá por tanto a sesgar sus predicciones hacia la clase benigna mayoritaria. Para que la comparación sea significativa bajo los supuestos de coste asimétrico de la tesis, la línea base de Random Forest utiliza ponderación de clases balanceada, donde cada clase recibe un peso inversamente proporcional a su frecuencia en la partición de entrenamiento. Esto garantiza que el modelo supervisado no sea penalizado en la misma dirección que la función de recompensa de RL por razones diferentes.
-
-La configuración de los pesos de clase se registra en el artefacto de configuración de la línea base junto al modo de partición, el esquema de características y la semilla de evaluación, de modo que el supuesto de ponderación es trazable. Si la tesis encuentra que el Random Forest con ponderación balanceada alcanza un rendimiento en falsos negativos similar o superior al de QRDQN bajo la recompensa asimétrica, esa comparación es informativa precisamente porque ambos modelos han tenido acceso a mecanismos de sensibilidad al coste comparables. Comparar un QRDQN ajustado al coste frente a un Random Forest sin corrección no aportaría esta evidencia.
-
-\section{Protocolo de escala de entrenamiento y eficiencia de datos}
-La metodología contempla un componente de escala de entrenamiento, planificado pero aún no ejecutado en esta tesis, motivado por una pregunta práctica: ¿cuántos datos de flujo etiquetados necesita cada enfoque antes de alcanzar un rendimiento estable? Esto es relevante porque el tráfico de ataque etiquetado es costoso de obtener, la abundancia de benchmarks no refleja la disponibilidad en el despliegue, y los métodos de RL profundo pueden ser sustancialmente más exigentes en cuanto a muestras que los clasificadores supervisados basados en árboles \parencite{SuttonBarto2018RL,Ring2019DatasetSurvey}.
-
-\subsection{Protocolo de curva de aprendizaje}
-El protocolo de curva de aprendizaje, planificado pero todavía no ejecutado en esta tesis (sin artefactos comprometidos), evaluaría tanto el agente QRDQN como la línea base de Random Forest con presupuestos de entrenamiento progresivamente mayores, todos extraídos de la misma partición estratificada. El conjunto de evaluación se mantendría constante en todos los presupuestos como la partición de prueba completa, de modo que los cambios en las métricas reflejarían únicamente el tamaño de los datos de entrenamiento y no las condiciones de evaluación. Las métricas se registrarían en cada nivel de presupuesto utilizando el mismo código de evaluación que las ejecuciones principales del benchmark.
-
-En este protocolo, cada presupuesto utilizaría un escalador ajustado de nuevo calculado únicamente a partir de las filas incluidas en ese subconjunto de entrenamiento. Los presupuestos más grandes se beneficiarían por tanto de una normalización más representativa sin contaminar la evaluación fija de prueba. Esto significa que los artefactos de preprocesamiento producidos en cada nivel de presupuesto serían distintos e independientemente reproducibles.
-
-\subsection{Niveles de presupuesto y comparación}
-Los niveles de presupuesto candidatos incluyen 100\,k, 250\,k, 500\,k, 1\,M y 2\,M registros de flujo. No todos los niveles son alcanzables bajo todos los modos de partición; cuando una partición no produce conjuntos de entrenamiento del tamaño objetivo, se registra el tamaño disponible más cercano. El presupuesto final es la partición de entrenamiento completa bajo la partición seleccionada.
-
-Comparar QRDQN y Random Forest en cada nivel de presupuesto revela si la formulación de RL tiene un requisito de muestras o una trayectoria de convergencia diferente. Si el Random Forest alcanza una meseta de rendimiento estable con sustancialmente menos filas, esto constituye evidencia interna de que la tarea del benchmark no requiere la complejidad de muestras adicional del RL profundo sobre el esquema de características actual. Por el contrario, si el comportamiento de RL sensible al coste mejora desproporcionadamente a medida que crece el presupuesto, los resultados de escala de entrenamiento pueden identificar a qué escala la estructura de recompensa distribucional comienza a aportar una ventaja medible. Cuando este protocolo se ejecute, todos los resultados de escala de entrenamiento se almacenarían bajo el mismo esquema de artefactos de ejecución que los experimentos principales, etiquetados por nivel de presupuesto y semilla, de modo que permanecerían recuperables de forma independiente y comparables en experimentos futuros. En el momento de redacción de este capítulo no se ha comprometido ningún artefacto de curva de aprendizaje.
-
-\begin{figure}[htbp]
-\centering
-\figureplaceholder{Curvas de aprendizaje de QRDQN y Random Forest por presupuesto de entrenamiento}
-\caption[Curvas de aprendizaje pendientes]{\placeholdercaption{Curvas de aprendizaje de QRDQN y Random Forest por presupuesto de entrenamiento.}}
-\label{fig:placeholder-curvas-aprendizaje}
-\end{figure}
-
-\section{Salidas de evaluación y reproducibilidad}
-La reproducibilidad es una restricción de diseño fundamental, especialmente porque la investigación en seguridad con ML suele adolecer de código faltante, detalles de procesamiento de datos incompletos y registros de evaluación incompletos \parencite{Olszewski2023ReproSecurityML}.
-
-\subsection{Métricas}
-Las métricas binarias principales son exactitud, precisión, recall y F1 tanto para la clase benigna como para la de ataque. El análisis también rastrea los conteos de la matriz de confusión: verdaderos positivos, falsos positivos, falsos negativos y verdaderos negativos. Estos conteos son necesarios porque dos modelos con exactitud agregada similar pueden tener implicaciones de seguridad muy diferentes.
-
-La tasa de falsos positivos y la tasa de falsos negativos son especialmente importantes. La tasa de falsos positivos mide la proporción de tráfico benigno bloqueado incorrectamente, lo que se relaciona con la disponibilidad y la carga de trabajo del analista. La tasa de falsos negativos mide la proporción de ataques permitidos incorrectamente, lo que se relaciona directamente con el riesgo de intrusiones no detectadas. El análisis de precisión y recall es particularmente relevante bajo desbalanceo de clases, donde la exactitud sola puede ser engañosa \parencite{Fawcett2006ROC,Saito2015PRROC}.
-
-\subsection{Escalera de validación}
-La escalera de evaluación está ordenada de la evidencia más débil a la más sólida:
-\begin{enumerate}
-    \item partición aleatoria estratificada, utilizada como comprobación de la capacidad de aprendizaje;
-    \item comprobación de predicción directa, que verifica las salidas del modelo frente a las etiquetas de prueba sin depender de los metadatos del entorno;
-    \item comprobación de etiquetas barajadas, que ayuda a detectar fugas de información confirmando que el rendimiento se degrada cuando las etiquetas de entrenamiento se aleatorizan;
-    \item partición por CSV/día, que retiene grupos de captura completos;
-    \item validación leave-one-CSV-out, que retiene cada CSV oficial por turnos;
-    \item inferencia sobre tráfico de laboratorio en la Fase 2, que prueba el pipeline entrenado sobre tráfico capturado por el operador en un laboratorio doméstico cerrado.
+\begin{enumerate}[leftmargin=*]
+    \item cargar o validar la caché canónica sin escalar;
+    \item seleccionar filas y construir la partición usando \texttt{split\_seed};
+    \item ajustar \texttt{StandardScaler} exclusivamente sobre entrenamiento;
+    \item transformar entrenamiento y prueba con ese estado;
+    \item entrenar con \texttt{model\_seed};
+    \item persistir modelo, escalador, percentiles, métricas y procedencia.
 \end{enumerate}
 
-En la implementación, los peldaños segundo a cuarto se corresponden con las comprobaciones \emph{Check A} (predicción directa), \emph{Check B} (etiquetas barajadas) y \emph{Check C} (partición por CSV/día) del script \texttt{src/validate\_checks.py}; el quinto peldaño se implementa en \texttt{src/validate\_leave\_one\_csv\_out.py}.
+La separación entre semillas evita que un estudio de estabilidad del modelo cambie inadvertidamente el test. Los identificadores de flujo, IP, tiempo y puertos específicos excluidos por el contrato canónico no se reintroducen desde la caché. Los controles de manifiesto y firma impiden reutilizar una caché creada con otro conjunto de fuentes o versión de esquema.
 
-La Figura~\ref{fig:escalera-validacion} sintetiza esta escalera de validación y sitúa cada peldaño junto al artefacto o resultado que lo respalda. La figura no añade métricas nuevas: reordena visualmente las cifras ya documentadas para hacer explícito el aumento progresivo de exigencia.
+\section{Perfil congelado \texttt{main-v1}}
+
+El perfil MAIN fija la representación de 152 dimensiones, la arquitectura \texttt{[1024,1024,512]}, 200 cuantiles, tasa de aprendizaje $5\times10^{-5}$, $\gamma=0$, 20 pasos de gradiente por ciclo y la recompensa \texttt{tp=1.5}, \texttt{fp=-2.0}, \texttt{fn=-5.0}, \texttt{omission=0.0}. La ejecución completa usa $3\,000\,000$ de pasos. Estos valores proceden del perfil congelado, cuya firma se registra en la especificación; no se vuelven a ajustar durante la campaña.
+
+La MAIN final \texttt{qrdqn\_main\_random\_full\_s42\_m42} usa el conjunto completo, partición aleatoria estratificada, \texttt{split\_seed=42}, \texttt{model\_seed=42} y $3\,000\,000$ de pasos. Es una ejecución fresca: la MAIN histórica de 2026 no se promueve ni se copia para ocupar esta celda.
+
+\section{Matriz primaria}
+
+\subsection{Partición aleatoria y día completo}
+
+La MAIN usa una división aleatoria estratificada 80/20. Este diseño conserva la prevalencia aproximada y ofrece el punto intradistribución común para QRDQN y RF. Su objetivo es verificar capacidad de aprendizaje, no generalización externa.
+
+El contraste temporal \texttt{qrdqn\_day\_full\_s42\_m42} entrena con lunes, martes y miércoles y prueba con jueves y viernes. Usa el perfil completo y $3\,000\,000$ de pasos. Sustituye como evidencia temporal principal a la Comprobación~C histórica, que era una red proxy de $30\,000$ pasos.
+
+\subsection{Escalera de tamaños}
+
+La escalera mantiene la partición aleatoria y fija ambas semillas en 42. Incluye $100\,000$, $250\,000$, $500\,000$, $1\,000\,000$, $2\,000\,000$ de filas de entrenamiento y el conjunto completo. Los presupuestos son, respectivamente, $132\,474$, $331\,185$, $662\,370$, $1\,324\,741$, $2\,649\,482$ y $3\,000\,000$ de pasos. El punto completo es un alias de MAIN y no requiere una segunda ejecución física.
+
+La curva permitirá describir eficiencia dentro de este protocolo. Como tamaño y pasos cambian juntos, no se interpretará como efecto causal puro del número de filas.
+
+\subsection{Sensibilidad a la semilla del modelo}
+
+El estudio fija $1\,000\,000$ de filas, $1\,324\,741$ pasos y \texttt{split\_seed=42}. Solo cambia \texttt{model\_seed} entre 42, 43, 44, 45 y 46. El punto 42 es alias del peldaño de un millón. La salida final reportará la distribución y los puntos individuales, no solo una media.
+
+\subsection{Cuatro escenarios retenidos dirigidos}
+
+El estudio retiene exactamente cuatro CSV: Web Attacks, Infiltration, PortScan y DDoS. Cada QRDQN se entrena durante $1\,000\,000$ de pasos sobre los restantes CSV, con semillas de partición y modelo fijadas en 42. El propósito es cubrir escenarios de naturaleza distinta con un coste experimental controlado. No se presenta como leave-one-CSV-out exhaustivo de los ocho ficheros.
+
+\section{Random Forest emparejado}
+
+Random Forest utiliza la misma representación canónica, filas de entrenamiento, conjunto de prueba y métricas de cada contraste. La campaña incluye RF para la MAIN aleatoria completa, el punto aleatorio de un millón, la partición completa por días y los cuatro escenarios retenidos. No recibe presupuesto de pasos, pero sí un contrato de partición y semillas explícito.
+
+Esta línea base permite separar una dificultad del dominio de un efecto específico de QRDQN. Las comparaciones se realizarán por pares; no se mezclan con puntuaciones publicadas bajo otros filtros o particiones.
+
+\section{Controles auxiliares}
+
+La MAIN fresca alimenta cinco trabajos auxiliares:
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{validación directa}: recarga modelo y preprocesamiento, reproduce la partición y verifica predicciones y conteos;
+    \item \textbf{bootstrap}: $10\,000$ remuestreos estratificados con semilla 12345 sobre el test fijo;
+    \item \textbf{duplicados}: cuantifica duplicados internos y coincidencias exactas entre entrenamiento y prueba;
+    \item \textbf{etiquetas barajadas}: control breve de $10\,000$ pasos que debe perder la señal predictiva cuando se destruye la relación con la etiqueta;
+    \item \textbf{Fase 2 fresca}: aplica MAIN, escalador y percentiles finales a la captura de laboratorio.
+\end{itemize}
+
+El \emph{bootstrap} no reentrena el modelo y no mide varianza entre semillas. El análisis de duplicados tampoco atribuye por sí mismo causalidad al rendimiento. Ambos se interpretan junto con los contrastes que cambian la distribución.
+
+\section{Jerarquía de evaluación}
+
+La Figura~\ref{fig:escalera-validacion} organiza las afirmaciones posibles. El nivel no aumenta porque una métrica sea más alta, sino porque la separación entre entrenamiento y prueba es más exigente. La Fase~2 añade una fuente distinta, aunque su captura siga siendo cerrada y generada por el autor.
 
 \begin{figure}[htbp]
 \centering
 \resizebox{\textwidth}{!}{\input{figuras/f16_escalera_validacion}}
-\caption[Escalera de validación del proyecto]{Escalera de validación del proyecto, desde la evaluación directa hasta la inferencia de Fase 2. Fuente: elaboración propia a partir de los artefactos de validación y Fase 2 bajo \texttt{runs/}.}
+\caption[Jerarquía de evaluación y generalización]{Jerarquía de evidencia: control intradistribución, separación por día, escenarios retenidos y transferencia a laboratorio. La sensibilidad a tamaño y semilla caracteriza estabilidad, pero no constituye por sí misma un nivel de validez externa. Fuente: elaboración propia.}
 \label{fig:escalera-validacion}
 \end{figure}
 
-Cada peldaño apunta a un modo de fallo diferente. La escalera no hace que ningún resultado individual sea definitivo, pero hace la evaluación más informativa que una única puntuación aleatoria de entrenamiento-prueba.
+\section{Métricas y reglas de lectura}
 
-La partición aleatoria estratificada comprueba si el modelo y la implementación pueden resolver el benchmark en absoluto. Un modelo que falla aquí tiene un problema de entrenamiento o de arquitectura, no un problema de generalización. La comprobación de etiquetas barajadas es un detector de fugas: un modelo que alcanza una exactitud muy por encima de la de la clase mayoritaria en una ejecución con etiquetas barajadas ha aprendido a partir de artefactos correlacionados con las etiquetas en las características y no a partir de estadísticas de flujo reales \parencite{Arp2020DosDontsMLSecurity}. La partición por CSV/día comprueba la generalización temporal y por escenario reteniendo grupos de captura completos; la degradación del rendimiento respecto a la partición aleatoria revela si el modelo depende del contexto específico del día. El protocolo leave-one-CSV-out va más lejos: cada fichero oficial de CICIDS2017 se retiene por turnos, y la distribución de métricas agregada muestra si algún fichero domina el benchmark o si el rendimiento es estable entre escenarios de captura. La inferencia en la Fase 2 es el peldaño final y más estricto, que comprueba si todo el pipeline puede operar sobre tráfico producido fuera del entorno del benchmark.
+Se reportan matriz de confusión, exactitud, exactitud balanceada, MCC, precisión, \emph{recall} y F1 por clase, además de tasas de falsos positivos y falsos negativos. La clase ATTACK es positiva. Para seguridad, \emph{recall} de ataque y tasa de falsos negativos reflejan ataques omitidos; para impacto, la tasa de falsos positivos refleja benignos bloqueados. La exactitud nunca se interpreta aislada.
 
-\subsection{Artefactos de ejecución}
-Toda ejecución de entrenamiento o evaluación significativa debe persistir un \texttt{RUN\_ID} único, un fichero de configuración, métricas y cualquier estado de preprocesamiento necesario para su reutilización exacta. Las ejecuciones de entrenamiento persisten los pesos del modelo y los artefactos del escalador. Las ejecuciones de validación persisten los resultados de validación. Las ejecuciones de inferencia de la Fase 2 persisten las predicciones, las métricas, la configuración y los diagnósticos opcionales.
+Las curvas de entrenamiento describen optimización, no evaluación. Los intervalos se presentan con su unidad de incertidumbre. Las comparaciones por escenario incluyen tamaño y prevalencia del test para evitar que una media oculte distribuciones distintas.
 
-Esta disciplina de artefactos evita afirmaciones ambiguas. Un resultado solo se trata como medido cuando puede vincularse a una carpeta de ejecución y una configuración específicas. Las ejecuciones históricas no se fusionan en silencio con los valores por defecto actuales; los valores de recompensa, la lógica de partición, el preprocesamiento, los límites de filas y las semillas deben leerse del artefacto.
+\section{Fase 2: inferencia offline y diagnósticos}
 
-La Tabla~\ref{tab:inventario-runs} recoge el inventario completo de las ejecuciones oficiales -- organizadas por el peldaño de la escalera de validación o el análisis que respaldan -- junto con los artefactos concretos que permiten reproducir o auditar cada cifra citada en esta memoria. El Anexo~\ref{cap:anexo-artefactos} amplía este resumen con las rutas exactas, la función de cada fichero y su condición de rastreado o local. Las ejecuciones no listadas en la tabla (variantes históricas, sondeos previos al diseño o repeticiones posteriores con configuración distinta) se consideran no oficiales y no deben citarse como respaldo de ninguna cifra reportada.
+La inferencia fresca carga el modelo, escalador, percentiles y nombres de características de MAIN. El mapeo construye la observación canónica, registra qué columnas fuente están disponibles, sanea valores no finitos de acuerdo con el contrato y aplica el escalador persistido. No vuelve a ajustar ningún estado con la captura de laboratorio.
 
-\begin{table}[htbp]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{0.94}
-\begin{tabular}{p{3.2cm}p{3.4cm}p{5.6cm}}
-\toprule
-Ejecución (\texttt{RUN\_ID}) & Propósito & Artefactos clave \\
-\midrule
-{\raggedright\texttt{MAIN\_\hspace{0pt}qrdqn\_\hspace{0pt}cicids2017\_\hspace{0pt}canonical\_\hspace{0pt}full\_\hspace{0pt}random\_\hspace{0pt}20260609\_\hspace{0pt}193655}\par} &
-Entrenamiento principal QRDQN y evaluación en la partición aleatoria estratificada fija (semilla 42). &
-{\raggedright\texttt{config.json}; \texttt{metrics.json}; modelo entrenado en \texttt{models/} (mismo \texttt{RUN\_ID}); \texttt{scaler.joblib}; \texttt{train\_\hspace{0pt}percentiles.npz}; \texttt{feature\_\hspace{0pt}names.json}; \texttt{artifact\_\hspace{0pt}manifest.json}\par} \\
-\addlinespace
-{\raggedright\texttt{VAL\_\hspace{0pt}checks\_\hspace{0pt}A\_\hspace{0pt}20260212\_\hspace{0pt}235443}\par} &
-Comprobación A: predicción directa sin depender de los metadatos del entorno. &
-{\raggedright\texttt{config.json}; \texttt{validation\_\hspace{0pt}results.json}\par} \\
-\addlinespace
-{\raggedright\texttt{VAL\_\hspace{0pt}checks\_\hspace{0pt}B\_\hspace{0pt}20260212\_\hspace{0pt}235736}\par} &
-Comprobación B: etiquetas barajadas (detección de fugas de información). &
-{\raggedright\texttt{config.json}; \texttt{validation\_\hspace{0pt}results.json}\par} \\
-\addlinespace
-{\raggedright\texttt{VAL\_\hspace{0pt}checks\_\hspace{0pt}C\_\hspace{0pt}20260213\_\hspace{0pt}004847}\par} &
-Comprobación C: partición por día. &
-{\raggedright\texttt{config.json}; \texttt{validation\_\hspace{0pt}results.json}\par} \\
-\addlinespace
-{\raggedright\texttt{bootstrap\_\hspace{0pt}ci\_\hspace{0pt}seed42.json}\par} &
-Intervalos de confianza bootstrap ($10\,000$ remuestreos estratificados) sobre las métricas de MAIN en la partición de prueba fija, sin reentrenamiento. &
-{\raggedright\texttt{bootstrap\_\hspace{0pt}ci\_\hspace{0pt}seed42.json} (incluye los conteos de la matriz de confusión y la verificación del hash SHA-256 del modelo)\par} \\
-\addlinespace
-{\raggedright\texttt{duplicate\_\hspace{0pt}analysis\_\hspace{0pt}seed42.json}\par} &
-Análisis de duplicados y de fuga cruzada entre entrenamiento y prueba sobre la partición aleatoria fija. &
-{\raggedright\texttt{duplicate\_\hspace{0pt}analysis\_\hspace{0pt}seed42.json}\par} \\
-\addlinespace
-{\raggedright\texttt{rf\_\hspace{0pt}cicids2017\_\hspace{0pt}canonical\_\hspace{0pt}20260628\_\hspace{0pt}024735}\par} &
-Línea base supervisada Random Forest (balanceada y escalada) sobre tres particiones: aleatoria, por día y leave-one-out (miércoles). &
-{\raggedright\texttt{config.json} + \texttt{metrics.json} por subejecución: \texttt{\_\_random\_\hspace{0pt}split}, \texttt{\_\_day\_\hspace{0pt}split}, \texttt{\_\_leave\_\hspace{0pt}one\_\hspace{0pt}out\_\hspace{0pt}wednesday}\par} \\
-\addlinespace
-{\raggedright\texttt{P2v2\_\hspace{0pt}pred\_\hspace{0pt}20260610\_\hspace{0pt}161231\_\hspace{0pt}MAIN}\par} &
-Inferencia de la Fase 2 sobre tráfico de laboratorio etiquetado, con el modelo MAIN. &
-{\raggedright\texttt{config.json}; \texttt{metrics.json}; \texttt{diagnostics.json}; muestra rastreada \texttt{predictions\_\hspace{0pt}head\_\hspace{0pt}10000.csv}; \texttt{predictions.csv.gz} completo, local y no rastreado\par} \\
-\bottomrule
-\end{tabular}
-\caption[Inventario de ejecuciones oficiales]{Inventario de las ejecuciones oficiales cuyos artefactos respaldan las cifras presentadas en esta memoria: entrenamiento y evaluación principal (MAIN), escalera de validación (comprobaciones A, B y C), análisis estadísticos sobre la partición fija (intervalos de confianza bootstrap y análisis de duplicados), el barrido de la línea base Random Forest sobre las tres particiones consideradas, y la inferencia oficial de la Fase~2 sobre tráfico de laboratorio etiquetado. Fuente: elaboración propia a partir de \texttt{runs/}.}
-\label{tab:inventario-runs}
-\end{table}
-
-\section{Pipeline de inferencia offline en la Fase 2}
-El punto de entrada principal de la Fase 2 mantenido es el script de inferencia offline robusta. Acepta un CSV de flujos extraído, un modelo entrenado, un escalador persistido, límites de percentiles opcionales y recorte por z-score opcional. A continuación mapea las columnas de entrada al esquema canónico, aplica la misma representación de características y máscara, escala con el escalador guardado, calcula diagnósticos, predice acciones en lotes y escribe las salidas en un nuevo directorio de ejecución de la Fase 2.
-
-La Figura~\ref{fig:pipeline-fase2} resume el recorrido operativo de esa inferencia. La clave metodológica es que el escalador de MAIN se reutiliza sin reajuste y que las salidas son ficheros de predicción, métricas y diagnósticos: no existe actuación activa sobre la red.
+Los diagnósticos incluyen presencia de características, valores no finitos, valores estandarizados extremos, recorte respecto a percentiles de entrenamiento y tasa de bloqueo. Si existen etiquetas válidas se calculan las mismas métricas binarias. La Figura~\ref{fig:pipeline-fase2} refleja que la fuente del modelo será la MAIN final y que las salidas mantienen procedencia.
 
 \begin{figure}[htbp]
 \centering
-\resizebox{0.74\textwidth}{!}{\input{figuras/f17_pipeline_fase2}}
-\caption[Pipeline de inferencia offline de la Fase 2]{Pipeline de inferencia offline de la Fase 2. Fuente: elaboración propia a partir de \texttt{scripts/predict\_real\_traffic\_v2.py}.}
+\input{figuras/f17_pipeline_fase2}
+\caption[Pipeline de inferencia offline de la Fase 2]{La MAIN final proporciona modelo, escalador, percentiles y contrato; la captura de laboratorio proporciona flujos y, cuando procede, etiquetas. La salida incluye predicciones, métricas y diagnósticos, sin actuar sobre la red. Fuente: elaboración propia a partir del pipeline actual de Fase~2.}
 \label{fig:pipeline-fase2}
 \end{figure}
 
-El Algoritmo~\ref{alg:inferencia-fase2} formaliza el orden exacto de estas etapas, indicando cuáles son opcionales y bajo qué indicador de línea de comandos se activan.
+\section{Contrato de artefactos y cierre de campaña}
 
-\begin{algorithm}[htbp]
-\caption[Inferencia offline robusta de la Fase 2]{Inferencia offline robusta de la Fase 2. Fuente: elaboración propia a partir de \texttt{scripts/predict\_real\_traffic\_v2.py}.}
-\label{alg:inferencia-fase2}
-\footnotesize
-\begin{algorithmic}[1]
-\Require CSV de flujos $D$ (\texttt{--flows}); modelo entrenado $M$; escalador persistido $S$ (omitido si \texttt{--no-scale}); límites de percentiles opcionales $(p_{low}, p_{high})$ (\texttt{--percentiles}); umbral de recorte $z$ opcional $\tau_z$ (\texttt{--clip-z})
-\Ensure Directorio de ejecución \texttt{runs/phase2/RUN\_ID} con predicciones, configuración, métricas y diagnósticos opcionales
-\State $\text{RUN\_ID} \gets$ \texttt{"P2v2\_pred\_"} + marca de tiempo actual
-\State Resolver rutas confiables de $M$, $S$ y de los percentiles frente al manifiesto de \texttt{--run-dir}, salvo que se indique \texttt{--allow-unsafe-artifacts}
-\State $D \gets$ cargar el CSV de flujos
-\State Separar de $D$ las columnas de metadatos (IP, puertos, protocolo, marca temporal) y las columnas de verdad (\texttt{truth\_y}, \texttt{truth\_label})
-\If{la mediana de \texttt{flow\_duration} en $D$ es menor que 1}
-    \State Convertir las columnas temporales de segundos a microsegundos ($\times 10^6$)
-\EndIf
-\State $(X, \text{mask}) \gets$ mapear las columnas de $D$ al esquema canónico de 76 características, imputando con 0 las ausentes
-\State $X \gets [X \,|\, \text{mask}]$ \Comment{vector combinado de 152 dimensiones}
-\If{se proporcionaron límites de percentiles (\texttt{--percentiles})}
-    \State Recortar las 76 características crudas de $X$ a $[p_{low}, p_{high}]$ (percentiles de entrenamiento p0.5 / p99.5)
-\EndIf
-\If{no se indicó \texttt{--no-scale}}
-    \State $X \gets S.\text{transform}(X)$ \Comment{escalador persistido de entrenamiento}
-\EndIf
-\If{se proporcionó $\tau_z$ (\texttt{--clip-z})}
-    \State $X \gets \text{clip}(X, -\tau_z, \tau_z)$ \Comment{recorte tras el escalado}
-\EndIf
-\State Calcular diagnósticos de cambio de distribución sobre $X$: $z$ absoluto máximo, $z$ absoluto medio, proporción con $|z|>10$ y características más desviadas
-\If{\texttt{--export-diagnostics}}
-    \State Guardar los diagnósticos en \texttt{diagnostics.json}
-\EndIf
-\State Cargar $M$ (QRDQN, con reserva a DQN solo si \texttt{sb3\_contrib} no está instalado)
-\State $y_{pred} \gets$ predecir acciones sobre $X$ en lotes de 4096 filas
-\If{$|y_{pred}| \neq |D|$}
-    \State \textbf{abortar} \Comment{las predicciones deben alinearse fila a fila con $D$}
-\EndIf
-\State Escribir \texttt{predictions.csv} con $y_{pred}$; si \texttt{--include-sensitive-metadata}, escribir también \texttt{predictions\_sensitive\_local.csv} con metadatos
-\State Calcular estadísticas de predicción: $n_{flows}$, tasa de bloqueo, tasa de permiso y diagnósticos de $z$-score
-\If{$D$ contiene \texttt{truth\_y} o \texttt{truth\_label} con valores válidos}
-    \State Añadir métricas binarias (matriz de confusión y métricas derivadas) comparando $y_{pred}$ con la verdad
-\EndIf
-\State Escribir \texttt{config.json} y \texttt{metrics.json} en \texttt{runs/phase2/RUN\_ID}
-\Return Directorio de ejecución \texttt{runs/phase2/RUN\_ID}
-\end{algorithmic}
-\end{algorithm}
+Cada ejecución primaria del esquema~3.0 persiste, como mínimo, \texttt{config.json}, \texttt{metrics.json}, \texttt{environment.json}, \texttt{run\_summary.json}, \texttt{timings.json}, monitorización, modelo, escalador, percentiles, nombres de características, manifiesto y sumas SHA-256. Los trabajos auxiliares usan contratos equivalentes adaptados a su salida. El \texttt{RUN\_ID} identifica el directorio y enlaza configuración, evidencia y agregado.
 
-\subsection{Mapeo canónico para flujos de laboratorio}
-Los extractores de flujos de laboratorio pueden utilizar nombres de columna diferentes a los de CICIDS2017. El script de la Fase 2 define por tanto un mapeo explícito de los nombres del extractor a los nombres canónicos. Las columnas de metadatos como la IP de origen, la IP de destino, los puertos, el protocolo y la marca temporal pueden preservarse en los ficheros de salida para su inspección, pero no forman parte del vector de características del modelo. Esto mantiene separadas la interpretabilidad y la entrada al modelo.
+La campaña ejecuta 22 trabajos primarios físicos que representan 24 puntos lógicos mediante dos alias, más cinco trabajos auxiliares. El cierre exige que todos estén completos, sean coherentes con \texttt{main-v1} y pasen la agregación. Los alias no duplican modelos ni exportaciones.
 
-\subsection{Diagnósticos de cambio de distribución}
-La inferencia de la Fase 2 calcula diagnósticos sobre las características canónicas escaladas. Los z-scores absolutos elevados indican que los valores de flujo de laboratorio están lejos de la distribución de entrenamiento de CICIDS2017. El script también puede exportar las características con las mayores desviaciones. Estos diagnósticos no son etiquetas y no prueban la corrección, pero ayudan a explicar los cambios en la tasa de bloqueo e identificar discrepancias entre el tráfico del benchmark y el del laboratorio.
+Los artefactos sellados se copian al destino de evidencia junto con un archivo comprimido y su suma. Git conserva especificación, índices, métricas y manifiestos adecuados para revisión; Git LFS se reserva para binarios rastreados que exceden el flujo normal. Los datos originales, cachés grandes, directorios de ejecución activos y exportaciones voluminosas no se incorporan por defecto al historial.
 
-Más allá de los z-scores por característica, la salida de diagnóstico registra la proporción de características canónicas que fueron imputadas a partir de la máscara de presencia/ausencia, la media y la varianza de los valores de características escaladas relativas a las estadísticas de entrenamiento, y cualquier característica que caiga consistentemente fuera de los límites de percentiles observados durante el entrenamiento con CICIDS2017. En conjunto, estos indicadores proporcionan un resumen estructurado de la distancia distribucional entre el tráfico de laboratorio y el benchmark, permitiendo una investigación dirigida en lugar de requerir la inspección manual de los registros brutos de predicción.
+\section{Plataforma experimental y preflight}
 
-\subsection{Métricas de verdad cuando están disponibles}
-Si un CSV de flujos de la Fase 2 incluye columnas de verdad como \texttt{truth\_y} o \texttt{truth\_label}, el script puede calcular las mismas métricas binarias utilizadas en la evaluación interna. Si no se dispone de la verdad fundamental, el script reporta estadísticas de predicción como la tasa de bloqueo, la tasa de permiso y los diagnósticos de z-score. Esta distinción es importante: una ejecución de laboratorio no etiquetada, solo benigna o mixta, no puede respaldar las mismas afirmaciones que un conjunto de validación externo etiquetado.
+La metodología final utiliza lenguaje neutral: \emph{plataforma GPU experimental}. Antes de ejecutar se comprueban commit, limpieza del árbol, disponibilidad de datos y LFS, firma del perfil, caché, espacio, memoria, CUDA, importaciones, capacidad de crear artefactos y un ensayo corto no científico. Esta verificación determina si la plataforma puede ejecutar el protocolo; no produce resultados de tesis.
 
-\section{Limitaciones metodológicas}
-La metodología realiza compromisos deliberados que definen la interpretación correcta de los resultados de la tesis. Esta sección organiza esos compromisos en cuatro categorías.
+El hardware, sistema operativo, controlador, CUDA, GPU, CPU, RAM y paquetes finales solo se describirán desde los \texttt{environment.json} de las ejecuciones aceptadas. No se anticipa un proveedor ni una GPU concreta. Los detalles de la plataforma histórica permanecen únicamente en el Anexo~\ref{cap:anexo-entorno} como procedencia de evidencia previa.
 
-\subsection{Entorno estático y toma de decisiones secuencial}
-La limitación más fundamental es que el entorno de RL es un conjunto de datos estático. Las acciones del agente no alteran las observaciones de flujo futuras, la topología de la red, el comportamiento del atacante ni el estado del sistema. La formulación se asemeja por tanto más a un problema de decisión contextual sensible al coste que a un proceso de decisión de Markov completo \parencite{SuttonBarto2018RL,Levine2020OfflineRL}. Las dependencias secuenciales, las cadenas de ataque de múltiples etapas, la adaptación del atacante y las contramedidas activas del defensor quedan todas fuera del alcance implementado. Las afirmaciones sobre autonomía secuencial, defensa cibernética adaptativa o aprendizaje por refuerzo en línea no están respaldadas por el pipeline actual.
+\section{Estado del protocolo}
 
-\subsection{Mapeo de etiquetas binarias y detalle por familia de ataque}
-El mapeo de etiquetas binarias colapsa todos los tipos de ataque en una única clase \texttt{BLOCK}. La información sobre la familia de ataque se descarta en la ruta de aprendizaje principal de RL. Este diseño está justificado por el modelo de decisión binario estudiado aquí, pero significa que el agente no puede especializar su calidad de detección para familias de ataque individuales. El análisis de errores por familia requiere etiquetas de ataque preservadas y código de evaluación independiente, y no puede inferirse a partir de las métricas de exactitud binaria reportadas por el pipeline principal.
+El diseño, la implementación y los contratos de artefactos están preparados. La ejecución científica permanece pendiente. Esta separación permite redactar el método como texto casi final y, al mismo tiempo, impide que una orden preparada, un \emph{dry-run} o un artefacto histórico se conviertan en evidencia final.
 
-\subsection{Fragilidad del benchmark y generalización}
-CICIDS2017 sigue siendo un benchmark público controlado con problemas documentados: artefactos de extracción, inconsistencias en las etiquetas, flujos duplicados y sensibilidad a la partición \parencite{Engelen2021CICIDSIssues,Lanvin2023Errors,Liu2022ErrorPrevalenceNIDS}. Incluso con preprocesamiento anti-fuga y protocolos de partición más estrictos, el rendimiento sobre CICIDS2017 no equivale al rendimiento sobre una red de producción. La inferencia de laboratorio en la Fase 2 comprueba el cambio de dominio, pero es inferencia offline sobre una captura privada y no una validación sobre un flujo de producción etiquetado de forma independiente. Una evidencia de generalización más sólida requeriría conjuntos de datos etiquetados externos, múltiples entornos de captura y, en última instancia, un análisis de seguridad para cualquier despliegue activo.
-
-\subsection{Algoritmo único y alcance de la reproducibilidad}
-El algoritmo de RL principal es una única configuración de QRDQN. Los resultados de una sola ejecución no pueden cuantificar la varianza entre ejecuciones a menos que se evalúen múltiples semillas y sus resultados se agreguen \parencite{SuttonBarto2018RL}. La línea base supervisada se limita a Random Forest en la comparación principal; otros modelos tabulares se discuten en la revisión de la literatura pero no forman parte del protocolo evaluado. Estas restricciones de alcance son prácticas: completar el pipeline central y la escalera de validación es metodológicamente más informativo que implementar parcialmente muchas comparaciones. Afirmaciones más sólidas en el futuro requerirían artefactos completos de leave-one-CSV-out, métricas de línea base supervisada con el mismo protocolo, múltiples semillas, tráfico de laboratorio etiquetado más rico y, en última instancia, un análisis de seguridad independiente para cualquier despliegue activo.
+\evidencenote{La campaña no se ha ejecutado durante esta revisión de la memoria. El Capítulo de Resultados solo podrá poblarse después de validar el conjunto completo de artefactos contra la especificación congelada.}
