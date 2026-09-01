@@ -211,36 +211,31 @@
         "runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/metrics.json",
         "runs/validation/VAL_checks_C_20260213_004847/validation_results.json",
         "runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__random_split/metrics.json",
-        "runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__day_split/metrics.json",
-        "runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__leave_one_out_wednesday/metrics.json"
+        "runs/cicids2017/baseline_random_forest_comparison/rf_cicids2017_canonical_20260628_024735__day_split/metrics.json"
       ],
       "values": {
         "recall_attack": {
           "QRDQN": [
             0.995355468084534,
-            0.5295374374439701,
-            null
+            0.5295374374439701
           ],
           "Random Forest": [
             0.9985295304360301,
-            0.08135289329152054,
-            0.0071871833839918945
+            0.08135289329152054
           ]
         },
         "f1_attack": {
           "QRDQN": [
             0.9844498933618293,
-            0.6257849253737402,
-            null
+            0.6257849253737402
           ],
           "Random Forest": [
             0.9967644202583988,
-            0.15005226646393613,
-            0.014270222697197818
+            0.15005226646393613
           ]
         }
       },
-      "notes": "QRDQN day-split = Check C proxy net; QRDQN LOO pending (deferred GPU register G.1)."
+      "notes": "Historical evidence only; QRDQN day-split is the Check C proxy network."
     },
     "f14_cm_rf_dia": {
       "id": "f14_cm_rf_dia",
@@ -276,6 +271,6 @@
       "notes": "Tráfico capturado por el operador en un laboratorio doméstico cerrado; validez externa limitada."
     }
   },
-  "generated_at": "2026-07-06T07:39:41+00:00",
+  "generated_at": "2026-09-01T15:06:35+00:00",
   "generator": "scripts/make_thesis_figures.py"
 }
