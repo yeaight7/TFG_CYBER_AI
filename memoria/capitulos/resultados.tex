@@ -1,210 +1,162 @@
 \chapter{Resultados}
 
-Este capítulo reporta únicamente cifras respaldadas por artefactos de ejecución comprometidos en el repositorio. Cada resultado se identifica mediante su \texttt{RUN\_ID} o mediante el fichero de artefacto que lo contiene, de modo que puede recuperarse e inspeccionarse de forma independiente. Siguiendo la escalera de validación descrita en el capítulo del protocolo experimental, los resultados se presentan desde el peldaño más permisivo (partición aleatoria) hasta los más exigentes (partición por día y comparación \textit{leave-one-CSV-out} cuando existe artefacto), seguidos de la línea base supervisada y de la inferencia de la Fase~2.
+Este capítulo separa el estado de la evidencia de su interpretación. En la fecha de este borrador, la campaña final definida en \path{experiments/final_experiment_campaign.json} todavía no se ha ejecutado. En consecuencia, primero se fija la estructura en la que se incorporarán sus artefactos y, después, se conserva una síntesis de resultados históricos útiles para supervisión. Estos últimos no constituyen la evaluación final del sistema y serán sustituidos o relegados cuando exista una campaña completa y validada.
 
 \section{Condiciones generales y trazabilidad}
 \label{sec:resultados-condiciones}
-La Tabla~\ref{tab:inventario-runs} actúa como tabla T-G de esta memoria: enumera las ejecuciones oficiales, su propósito y los artefactos clave que respaldan las cifras citadas. Por tanto, este capítulo no mezcla ejecuciones exploratorias con resultados finales. La ejecución principal es \texttt{MAIN\_\hspace{0pt}qrdqn\_\hspace{0pt}cicids2017\_\hspace{0pt}canonical\_\hspace{0pt}full\_\hspace{0pt}random\_\hspace{0pt}20260609\_\hspace{0pt}193655}; los controles A/B/C proceden de \texttt{VAL\_\hspace{0pt}checks\_\hspace{0pt}A\_\hspace{0pt}20260212\_\hspace{0pt}235443}, \texttt{VAL\_\hspace{0pt}checks\_\hspace{0pt}B\_\hspace{0pt}20260212\_\hspace{0pt}235736} y \texttt{VAL\_\hspace{0pt}checks\_\hspace{0pt}C\_\hspace{0pt}20260213\_\hspace{0pt}004847}; los análisis estadísticos proceden de \texttt{bootstrap\_\hspace{0pt}ci\_\hspace{0pt}seed42.json} y \texttt{duplicate\_\hspace{0pt}analysis\_\hspace{0pt}seed42.json}; la línea base supervisada procede del barrido \texttt{rf\_\hspace{0pt}cicids2017\_\hspace{0pt}canonical\_\hspace{0pt}20260628\_\hspace{0pt}024735}; y la transferencia a laboratorio procede de \texttt{P2v2\_\hspace{0pt}pred\_\hspace{0pt}20260610\_\hspace{0pt}161231\_\hspace{0pt}MAIN}.
 
-La regla de trazabilidad seguida en este capítulo es estricta: una cifra solo aparece si existe en un artefacto bajo \texttt{runs/}, en \texttt{models/} o en el manifiesto de figuras \texttt{memoria/figuras/figures\_manifest.json}. Las figuras F8--F15 ya fueron generadas desde esos artefactos y el manifiesto conserva, para cada una, la ruta de origen y los valores representados. Esta disciplina evita dos errores: convertir resultados históricos en conclusiones oficiales y completar huecos experimentales con valores no ejecutados. En particular, el \textit{leave-one-CSV-out} de QRDQN y la curva de escala de entrenamiento siguen diseñados e implementados, pero pendientes de GPU; por tanto, este capítulo los marca como pendientes y no les asigna métricas.
+Una cifra se considera evidencia final únicamente si puede trazarse desde una ejecución de la campaña aprobada hasta su \texttt{config.json}, \texttt{metrics.json} o fichero de validación, \texttt{environment.json}, resumen, manifiesto y sumas de comprobación. La Figura~\ref{fig:trazabilidad-evidencia} resume esa cadena. Esta regla evita mezclar tres objetos distintos: el perfil experimental congelado, los artefactos históricos ya existentes y los artefactos finales aún pendientes.
 
-\section{Experimento 1: ejecución MAIN sobre la partición aleatoria fija}
-\label{sec:resultados-main}
-
-\subsection{Condiciones de ejecución}
-El experimento principal y oficial de la tesis es la ejecución \texttt{MAIN\_\hspace{0pt}qrdqn\_\hspace{0pt}cicids2017\_\hspace{0pt}canonical\_\hspace{0pt}full\_\hspace{0pt}random\_\hspace{0pt}20260609\_\hspace{0pt}193655}. Se entrenó un agente QRDQN sobre el conjunto de datos completo de CICIDS2017 con la representación canónica de 152 dimensiones, una partición aleatoria estratificada con semilla~42 (entrenamiento de $2\,264\,594$ filas y prueba de $566\,149$ filas) y la configuración de recompensa \texttt{tp=1.5}, \texttt{fp=-2.0}, \texttt{fn=-5.0}, \texttt{omission=0.0}. Los hiperparámetros (factor de descuento $\gamma = 0$, arquitectura \texttt{[1024,1024,512]}, 200 cuantiles, tasa de aprendizaje \texttt{5e-5}, 20 pasos de gradiente, $3\,000\,000$ pasos de entrenamiento) constituyen un perfil fijado a mano, no el resultado de una búsqueda de Optuna.
-
-\subsection{Dinámica de entrenamiento}
-La Figura~\ref{fig:curvas-entrenamiento} muestra las curvas registradas durante la ejecución MAIN. La recompensa media de episodio pasa de $-11\,325.875$ al inicio del registro a $2\,451.735$ al final, y la pérdida de entrenamiento baja de $8.0318$ a $1.6016$ en el último paso registrado. Estas curvas sirven como evidencia descriptiva del proceso de entrenamiento, no como sustituto de la evaluación final sobre la partición de prueba fija.
-
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.92\textwidth]{f8_curvas_entrenamiento.pdf}
-\caption[Curvas de entrenamiento de MAIN]{Curvas de entrenamiento de la ejecución MAIN. Fuente: elaboración propia a partir de \texttt{plots/tensorboard\_scalars/} de MAIN.}
-\label{fig:curvas-entrenamiento}
+\resizebox{0.98\textwidth}{!}{\input{figuras/f19_trazabilidad_evidencia}}
+\caption[Trazabilidad desde el diseño hasta la tesis]{Cadena de trazabilidad exigida para incorporar una cifra final: especificación congelada, ejecución identificada, artefactos sellados, agregación validada y elemento de tesis. Una ausencia o inconsistencia detiene la incorporación. Fuente: elaboración propia a partir del esquema de artefactos de campaña.}
+\label{fig:trazabilidad-evidencia}
 \end{figure}
 
-\subsection{Resultados en prueba}
-Sobre la partición aleatoria fija, el modelo MAIN alcanza una exactitud de $0.99381$, con un recall de ataque de $0.99536$ y una puntuación F1 de ataque de $0.98445$ (Tabla~\ref{tab:main-metrics}). La matriz de confusión sobre las $566\,149$ filas de prueba es $\mathrm{TN}=451\,631$, $\mathrm{FP}=2\,989$, $\mathrm{FN}=518$, $\mathrm{TP}=111\,011$. La Figura~\ref{fig:cm-main} desagrega el resultado completo.
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lc}
-\toprule
-Métrica & Valor \\
-\midrule
-Exactitud & $0.99381$ \\
-Precisión (ataque) & $0.97378$ \\
-Recall (ataque) & $0.99536$ \\
-F1 (ataque) & $0.98445$ \\
-Precisión (benigno) & $0.99885$ \\
-Recall (benigno) & $0.99343$ \\
-F1 (benigno) & $0.99613$ \\
-\bottomrule
-\end{tabular}
-\caption[Métricas del modelo MAIN (partición aleatoria fija)]{Métricas del modelo MAIN sobre la partición aleatoria fija ($566\,149$ filas de prueba). Fuente: elaboración propia a partir de \texttt{metrics.json} de la ejecución MAIN.}
-\label{tab:main-metrics}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.68\textwidth]{f9_cm_main.pdf}
-\caption[Matriz de confusión de MAIN]{Matriz de confusión del modelo MAIN sobre la partición aleatoria fija. Fuente: elaboración propia a partir de \texttt{runs/validation/bootstrap\_ci\_seed42.json}.}
-\label{fig:cm-main}
-\end{figure}
-
-\subsection{Discusión breve}
-El resultado confirma que la arquitectura y el contrato de datos permiten aprender la tarea del benchmark bajo el peldaño más favorable de la escalera de validación. La cifra crítica para la interpretación de seguridad es el bajo número de falsos negativos en esta partición aleatoria fija. Sin embargo, esta partición no se interpreta como evidencia fuerte de generalización: CICIDS2017 contiene duplicados y patrones repetidos entre particiones, y esa fragilidad se cuantifica explícitamente en la Sección~\ref{sec:duplicados}.
-
-\section{Intervalos de confianza bootstrap}
-\label{sec:resultados-bootstrap}
-Para cuantificar la precisión de muestreo de estas métricas sobre el conjunto de prueba fijo, se aplicó un bootstrap estratificado de $10\,000$ remuestreos sobre las $566\,149$ filas de prueba, sin reentrenar el modelo (artefacto \texttt{bootstrap\_ci\_seed42.json}). Los intervalos de confianza al 95\% son estrechos (Tabla~\ref{tab:bootstrap-ci}). Es importante delimitar su alcance: estos intervalos describen la precisión de muestreo del conjunto de prueba para este \emph{único} modelo entrenado; no cuantifican la varianza asociada a la semilla de entrenamiento, que requeriría múltiples ejecuciones y queda fuera del alcance de esta tesis.
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lcc}
-\toprule
-Métrica & Valor & IC 95\% \\
-\midrule
-Exactitud & $0.99381$ & $[0.99360,\ 0.99401]$ \\
-Exactitud balanceada & $0.99439$ & $[0.99416,\ 0.99462]$ \\
-MCC & $0.98068$ & $[0.98004,\ 0.98130]$ \\
-Precisión (ataque) & $0.97378$ & $[0.97286,\ 0.97468]$ \\
-Recall (ataque) & $0.99536$ & $[0.99495,\ 0.99575]$ \\
-F1 (ataque) & $0.98445$ & $[0.98394,\ 0.98496]$ \\
-FPR & $0.00658$ & $[0.00634,\ 0.00681]$ \\
-FNR & $0.00465$ & $[0.00425,\ 0.00505]$ \\
-\bottomrule
-\end{tabular}
-\caption[Intervalos de confianza bootstrap del modelo MAIN]{Intervalos de confianza bootstrap al 95\% ($10\,000$ remuestreos estratificados) de las métricas del modelo MAIN. Fuente: elaboración propia a partir de \texttt{bootstrap\_ci\_seed42.json}.}
-\label{tab:bootstrap-ci}
-\end{table}
-
-La Figura~\ref{fig:ic-bootstrap} representa los mismos intervalos como barras de error. La lectura debe mantenerse acotada: son intervalos de precisión de muestreo sobre un único modelo entrenado, no intervalos de variabilidad entre semillas.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{f10_ic_bootstrap.pdf}
-\caption[Intervalos bootstrap de MAIN]{Intervalos bootstrap al 95\% de las métricas de MAIN. Fuente: elaboración propia a partir de \texttt{runs/validation/bootstrap\_ci\_seed42.json}.}
-\label{fig:ic-bootstrap}
-\end{figure}
-
-\section{Escalera de validación: comprobaciones A, B y C}
-\label{sec:resultados-escalera}
-Las tres comprobaciones de \texttt{validate\_checks.py} cumplen propósitos distintos. La \textbf{Comprobación~A} (\texttt{VAL\_checks\_A\_20260212\_235443}) evalúa el modelo mediante predicción directa sobre \texttt{X\_test}, sin depender de la etiqueta que informa el entorno, y obtiene una exactitud de $0.9939$ ($\mathrm{TP}=4772$, $\mathrm{FP}=60$, $\mathrm{FN}=1$, $\mathrm{TN}=5167$ sobre $10\,000$ muestras). Esta comprobación confirma que las buenas métricas no dependen de un artefacto del bucle del entorno. La \textbf{Comprobación~B} (\texttt{VAL\_checks\_B\_20260212\_235736}) reentrena con etiquetas barajadas y obtiene una exactitud de $0.4773$, por debajo de la línea base de clase mayoritaria ($0.5227$), con \texttt{leakage\_detected = false}: cuando se destruye la relación entre características y etiquetas, el rendimiento no se mantiene artificialmente alto, como es deseable en ausencia de fuga.
-
-La \textbf{Comprobación~C} (\texttt{VAL\_checks\_C\_20260213\_004847}) es la evidencia de generalización dura del proyecto. Entrenando en lunes/martes/miércoles y evaluando en jueves/viernes (entrenamiento de $1\,668\,530$ filas, prueba de $1\,162\,213$ filas), la exactitud desciende a $0.84135$ y el recall de ataque a $0.52954$ (precisión de ataque $0.76479$, F1 de ataque $0.62578$). La caída frente al rendimiento in-distribution es exactamente el tipo de evidencia que distingue un benchmark cómodo de una evaluación honesta: el pipeline aprende muy bien dentro de la distribución, pero generalizar a días y patrones de ataque distintos es sustancialmente más difícil.
-
-La matriz de confusión de la Comprobación~C se muestra en la Figura~\ref{fig:cm-check-c}. Esta comprobación usó una red proxy \texttt{[512,256]} entrenada durante $30\,000$ pasos, no los pesos del modelo MAIN; por tanto, se interpreta como peldaño de validación por día y no como evaluación directa del modelo oficial sobre la partición MAIN.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.68\textwidth]{f11_cm_check_c.pdf}
-\caption[Matriz de confusión de la Comprobación C]{Matriz de confusión de la Comprobación C sobre la partición por día. Fuente: elaboración propia a partir de \texttt{VAL\_checks\_C\_20260213\_004847/validation\_results.json}.}
-\label{fig:cm-check-c}
-\end{figure}
-
-\section{Análisis de duplicados y fuga en la partición aleatoria}
-\label{sec:duplicados}
-Para explicar por qué la partición aleatoria es el peldaño más débil, se cuantificó la duplicación de filas y la fuga entre particiones sobre la misma partición con semilla~42, sin entrenar ningún modelo (artefacto \texttt{duplicate\_analysis\_seed42.json}). El 22.30\% de las filas del conjunto completo son duplicados exactos a nivel de características. Más relevante para la evaluación: el 24.86\% de las filas de prueba son duplicados exactos de una fila de entrenamiento, proporción que asciende al 40.12\% entre las filas de ataque de prueba (frente al 21.12\% entre las benignas). Esto significa que una fracción considerable del conjunto de prueba aleatorio es, en efecto, memorizable a partir del entrenamiento, lo que infla las métricas in-distribution. Es la razón metodológica por la que la Comprobación~C ---y no la partición aleatoria--- se interpreta como la señal creíble de generalización. Estas cifras se reportan como contexto honesto del peldaño aleatorio, no como una objeción al modelo MAIN, cuyo rendimiento sobre tráfico de laboratorio se examina en la Sección~\ref{sec:fase2}.
-
-La Figura~\ref{fig:duplicados} resume visualmente estas cuatro tasas de duplicación y fuga. La barra de ataques de prueba ya presentes en entrenamiento es la más relevante para la interpretación de recall de ataque en la partición aleatoria.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.85\textwidth]{f12_duplicados.pdf}
-\caption[Duplicados y fuga entre entrenamiento y prueba]{Duplicados exactos y fuga entre entrenamiento y prueba en la partición aleatoria fija. Fuente: elaboración propia a partir de \texttt{runs/validation/duplicate\_analysis\_seed42.json}.}
-\label{fig:duplicados}
-\end{figure}
-
-\section{Línea base de Random Forest bajo el mismo protocolo}
-\label{sec:rf}
-La línea base de Random Forest se ejecutó bajo el mismo protocolo que QRDQN (representación canónica, escalado, particiones equivalentes y ponderación de clases balanceada), persistiendo \texttt{config.json} y \texttt{metrics.json} por barrido (\texttt{RUN\_ID} \texttt{rf\_cicids2017\_canonical\_20260628\_024735}). Sobre la partición aleatoria fija ---el mismo conjunto de prueba de $566\,149$ filas que MAIN--- el Random Forest alcanza una exactitud de $0.99872$ y una F1 de ataque de $0.99676$, por encima de QRDQN. Bajo la partición por día equivalente a la Comprobación~C (entrenamiento lunes/martes/miércoles, prueba jueves/viernes), su recall de ataque colapsa a $0.08135$ (F1 de ataque $0.15005$, exactitud $0.76913$), y bajo el leave-one-CSV-out con miércoles reservado el recall de ataque cae a $0.00719$. La Tabla~\ref{tab:rf-vs-qrdqn} resume la comparación con el mismo protocolo.
-
-\begin{table}[H]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{2pt}
-\begin{tabular}{p{2.1cm}p{3.25cm}cccc}
-\toprule
-Modelo & Partición & Exactitud & Prec.\ ataque & Recall ataque & F1 ataque \\
-\midrule
-QRDQN (MAIN) & Aleatoria fija & $0.99381$ & $0.97378$ & $0.99536$ & $0.98445$ \\
-Random Forest & Aleatoria fija & $0.99872$ & $0.99501$ & $0.99853$ & $0.99676$ \\
-\midrule
-QRDQN (Check C) & Día (Lun--Mié\,$\rightarrow$\,Jue--Vie) & $0.84135$ & $0.76479$ & $0.52954$ & $0.62578$ \\
-Random Forest & Día (Lun--Mié\,$\rightarrow$\,Jue--Vie) & $0.76913$ & $0.96473$ & $0.08135$ & $0.15005$ \\
-\midrule
-QRDQN & Leave-one-CSV-out (miércoles) & \multicolumn{4}{c}{Pendiente de GPU, sin artefacto comprometido} \\
-Random Forest & Leave-one-CSV-out (miércoles) & $0.63782$ & $0.98482$ & $0.00719$ & $0.01427$ \\
-\bottomrule
-\end{tabular}
-\caption[QRDQN frente a Random Forest bajo el mismo protocolo]{Comparación con el mismo protocolo entre QRDQN y la línea base de Random Forest balanceada. Las filas aleatorias comparten el conjunto de prueba de $566\,149$ filas con semilla~42; las filas por día comparten la partición lunes/martes/miércoles\,$\rightarrow$\,jueves/viernes ($1\,162\,213$ filas de prueba); la fila leave-one-CSV-out de QRDQN se mantiene pendiente porque no existe artefacto comprometido. Fuente: elaboración propia a partir de los artefactos de MAIN, \texttt{VAL\_checks\_C\_20260213\_004847} y \texttt{rf\_cicids2017\_canonical\_20260628\_024735}.}
-\label{tab:rf-vs-qrdqn}
-\end{table}
-
-La Figura~\ref{fig:qrdqn-vs-rf} hace visible la diferencia principal de esta comparación: Random Forest supera a QRDQN en la partición aleatoria, pero su recall de ataque se desploma en la partición por día. El hueco leave-one-CSV-out de QRDQN se mantiene como pendiente de GPU, sin barra fabricada.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.92\textwidth]{f13_qrdqn_vs_rf.pdf}
-\caption[QRDQN frente a Random Forest]{Comparación visual de QRDQN y Random Forest en recall y F1 de ataque bajo particiones equivalentes. Fuente: elaboración propia a partir de MAIN, \texttt{VAL\_checks\_C\_20260213\_004847} y \texttt{rf\_cicids2017\_canonical\_20260628\_024735}.}
-\label{fig:qrdqn-vs-rf}
-\end{figure}
-
-\begin{table}[H]
-\centering
-\tableplaceholder{Comparación leave-one-CSV-out entre QRDQN y Random Forest por escenario retenido}
-\caption[Comparación leave-one-CSV-out pendiente]{\placeholdercaption{Comparación leave-one-CSV-out entre QRDQN y Random Forest por escenario retenido.}}
-\label{tab:placeholder-leave-one-csv-out}
-\end{table}
-
-La matriz de confusión de Random Forest en la partición por día (Figura~\ref{fig:cm-rf-dia}) explica el bajo recall de ataque: el modelo conserva muy pocos falsos positivos, pero omite una gran mayoría de los ataques en jueves/viernes.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.68\textwidth]{f14_cm_rf_dia.pdf}
-\caption[Matriz de confusión de Random Forest por día]{Matriz de confusión de Random Forest en la partición por día. Fuente: elaboración propia a partir de \texttt{rf\_cicids2017\_canonical\_20260628\_024735\_\_day\_split/metrics.json}.}
-\label{fig:cm-rf-dia}
-\end{figure}
-
-\section{Inferencia de la Fase 2 sobre tráfico de laboratorio}
-\label{sec:fase2}
-La inferencia offline de la Fase~2 aplicó el modelo MAIN, junto con su escalador y percentiles persistidos, sobre tráfico capturado por el operador en un laboratorio doméstico cerrado y no adversarial (fichero \texttt{lab\_capture\_traffic.csv}, $2\,000\,000$ de flujos etiquetados; artefacto \texttt{P2v2\_pred\_20260610\_161231\_MAIN}). El modelo alcanza una exactitud de $0.991862$, con una precisión de ataque de $0.97919$, un recall de ataque de $0.988452$ y una F1 de ataque de $0.98380$ ($\mathrm{TP}=494\,226$, $\mathrm{TN}=1\,489\,498$, $\mathrm{FP}=10\,502$, $\mathrm{FN}=5\,774$), con una tasa de bloqueo de $0.252364$. Los diagnósticos de distribución son benignos: el valor absoluto máximo de z observado es $9.547$ y el medio $0.3417$, sin ninguna característica que supere el recorte en $|z|=10$. El modelo se comporta, por tanto, de forma razonable sobre esta captura de laboratorio concreta. No obstante, dado que se trata de tráfico generado por el operador en un único entorno cerrado y no adversarial, este resultado es una comprobación controlada de validez externa limitada y no constituye evidencia de rendimiento de detección en el mundo real.
-
-La Figura~\ref{fig:fase2-resultados} resume la matriz de confusión y la tasa de bloqueo de esta ejecución. Su función es documentar el comportamiento del pipeline sobre esta captura concreta, manteniendo explícita su validez externa limitada.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.82\textwidth]{f15_fase2.pdf}
-\caption[Resultados de la Fase 2]{Resultados de la inferencia de la Fase 2 sobre tráfico de laboratorio etiquetado. Fuente: elaboración propia a partir de \texttt{runs/phase2/P2v2\_pred\_20260610\_161231\_MAIN/metrics.json}.}
-\label{fig:fase2-resultados}
-\end{figure}
-
-\section{Síntesis y cobertura de objetivos}
-\label{sec:resultados-sintesis}
-La lectura conjunta de los resultados es deliberadamente mixta. QRDQN aprende con solidez la tarea en distribución y mantiene pocos falsos negativos en la partición aleatoria fija, pero esa evidencia está afectada por duplicados y fuga entre entrenamiento y prueba. La Comprobación~C muestra una degradación fuerte al cambiar de días, aunque conserva mucho más recall de ataque que la línea base Random Forest en la misma partición. La línea base supervisada, a su vez, gana claramente en la partición aleatoria, lo que impide presentar QRDQN como superior de forma global. La Fase~2 ofrece una comprobación positiva del pipeline sobre una captura concreta de laboratorio, siempre dentro del marco de laboratorio doméstico cerrado, generado por el operador y con validez externa limitada.
-
-La Tabla~\ref{tab:cobertura-objetivos-resultados} resume cómo las cifras de este capítulo cubren los objetivos específicos definidos en el Capítulo~2. La tabla no sustituye a la matriz de trazabilidad general (Tabla~\ref{tab:trazabilidad}); la complementa desde el punto de vista empírico, separando los objetivos ya respaldados por resultados de los que siguen pendientes por falta de artefactos de ejecución.
+La Tabla~\ref{tab:estructura-resultados-finales} fija el orden definitivo. No se crean tablas vacías para simular resultados: cada bloque se incorporará cuando el agregador haya comprobado que están presentes todas las ejecuciones físicas y alias previstos.
 
 \begin{table}[htbp]
 \centering
 \footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{p{1.6cm}p{5.2cm}p{5.6cm}}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{p{3.0cm}p{5.1cm}p{4.4cm}}
 \toprule
-Objetivo & Evidencia en este capítulo & Lectura de cobertura \\
+Bloque final & Pregunta que resuelve & Evidencia requerida \\
 \midrule
-OBJ-01 & Todas las ejecuciones oficiales operan sobre flujos mapeados al esquema canónico; MAIN usa $152$ dimensiones. & Cubierto como condición común de los experimentos. \\
-OBJ-02 & MAIN, RF y Fase~2 reutilizan la representación canónica y los artefactos persistidos. & Cubierto; las cifras son comparables porque comparten contrato de observación. \\
-OBJ-03 & Resultados MAIN con recompensa \texttt{tp=1.5}, \texttt{fp=-2.0}, \texttt{fn=-5.0}, \texttt{omission=0.0}. & Cubierto en ejecución oficial, con $\gamma = 0$ y lectura de bandido contextual. \\
-OBJ-04 & MAIN completa $3\,000\,000$ pasos y alcanza F1 de ataque $0.98445$ en prueba aleatoria fija. & Cubierto para entrenamiento y evaluación in-distribution. \\
-OBJ-05 & RF supera a QRDQN en partición aleatoria (F1 ataque $0.99676$ vs. $0.98445$), pero cae en recall por día ($0.08135$). & Cubierto con comparación honesta bajo mismo protocolo. \\
-OBJ-06 & Checks A/B/C, bootstrap y duplicados cuantifican controles de fuga y robustez de la partición. & Cubierto parcialmente: A/B/C y duplicados ejecutados; QRDQN leave-one-CSV-out pendiente. \\
-OBJ-07 & No hay métricas de curva de aprendizaje ni presupuestos de entrenamiento comprometidos. & Pendiente de GPU; no se reportan cifras. \\
-OBJ-08 & Fase~2 etiquetada alcanza exactitud $0.991862$, recall ataque $0.988452$ y tasa de bloqueo $0.252364$. & Cubierto como inferencia offline en laboratorio concreto, con validez externa limitada. \\
+MAIN y controles directos & ¿Aprende el perfil congelado en la partición aleatoria y coinciden evaluación y validación independiente? & MAIN nueva, validación directa, \emph{bootstrap}, duplicados y etiquetas barajadas \\
+Partición completa por días & ¿Persiste el comportamiento al romper la mezcla aleatoria entre días? & QRDQN y RF con lunes--miércoles para entrenamiento y jueves--viernes para prueba \\
+Escalera de tamaños & ¿Cómo cambia el resultado con la cantidad de datos y el presupuesto proporcional de pasos? & Seis puntos lógicos entre $100\,000$ filas y el conjunto completo \\
+Sensibilidad a semilla & ¿Cuánto varía el modelo al mantener fija la partición? & Cinco semillas de modelo, 42--46, sobre $1\,000\,000$ de filas \\
+Escenarios retenidos & ¿Qué ataques o capturas inducen una degradación específica? & Cuatro \emph{holdouts} dirigidos y sus RF equivalentes \\
+Comparación de modelos & ¿Qué parte del comportamiento depende de QRDQN y cuál del protocolo tabular? & Comparaciones emparejadas QRDQN--RF \\
+Fase 2 & ¿Puede el MAIN final procesar la captura de laboratorio y con qué cambio de dominio? & Inferencia fresca, métricas y diagnósticos de distribución \\
 \bottomrule
 \end{tabular}
-\caption[Cobertura de objetivos en el capítulo de resultados]{Cobertura empírica de los objetivos específicos OBJ-01--OBJ-08 a partir de los resultados reportados en este capítulo. Fuente: elaboración propia a partir de las ejecuciones oficiales y de la matriz de trazabilidad de objetivos.}
-\label{tab:cobertura-objetivos-resultados}
+\caption[Estructura de los resultados finales]{Orden de incorporación de la campaña final y contrato mínimo de evidencia para cada bloque. La tabla describe decisiones analíticas, no resultados ejecutados. Fuente: elaboración propia a partir de \path{experiments/final_experiment_campaign.json}.}
+\label{tab:estructura-resultados-finales}
 \end{table}
+
+\evidencenote{Los siete bloques de la Tabla~\ref{tab:estructura-resultados-finales} permanecen sin valores finales. La actualización posterior deberá producirse desde el agregado validado de campaña, nunca mediante transcripción estimada o reutilización silenciosa de cifras históricas.}
+
+\section{Evidencia histórica previa a la campaña final}
+\label{sec:evidencia-historica}
+
+Los siguientes resultados proceden de artefactos comprometidos antes de congelar la campaña actual. Siguen siendo útiles para comprobar el funcionamiento del pipeline, identificar amenazas y justificar el diseño de la campaña; no deben leerse como una ejecución anticipada de esta.
+
+\subsection{MAIN histórica: capacidad de aprendizaje intradistribución}
+\label{sec:resultados-main}
+
+La ejecución histórica \path{MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655} entrenó QRDQN durante $3\,000\,000$ de pasos sobre una partición aleatoria estratificada con semilla~42. Sobre $566\,149$ filas de prueba registró una exactitud de $0.99381$, \emph{recall} de ataque de $0.99536$ y F1 de ataque de $0.98445$. La matriz de confusión fue $\mathrm{TN}=451\,631$, $\mathrm{FP}=2\,989$, $\mathrm{FN}=518$ y $\mathrm{TP}=111\,011$.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lc}
+\toprule
+Métrica & MAIN histórica \\
+\midrule
+Exactitud & $0.99381$ \\
+Precisión de ataque & $0.97378$ \\
+Recall de ataque & $0.99536$ \\
+F1 de ataque & $0.98445$ \\
+Tasa de falsos positivos & $0.00658$ \\
+Tasa de falsos negativos & $0.00465$ \\
+\bottomrule
+\end{tabular}
+\caption[Métricas de la MAIN histórica]{Métricas de la ejecución MAIN histórica sobre su partición aleatoria fija. No son resultados de la campaña final. Fuente: \texttt{metrics.json} y \texttt{bootstrap\_ci\_seed42.json} históricos.}
+\label{tab:main-metrics}
+\end{table}
+
+Las curvas de la Figura~\ref{fig:curvas-entrenamiento} documentan que la ejecución completó un proceso de aprendizaje coherente; no permiten inferir por sí mismas generalización ni estabilidad entre semillas.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{f8_curvas_entrenamiento.pdf}
+\caption[Curvas de entrenamiento de la MAIN histórica]{Curvas de entrenamiento de la ejecución MAIN histórica. Fuente: escalares TensorBoard exportados del artefacto previo a campaña.}
+\label{fig:curvas-entrenamiento}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.64\textwidth]{f9_cm_main.pdf}
+\caption[Matriz de confusión de la MAIN histórica]{Matriz de confusión de la MAIN histórica sobre la partición aleatoria fija. Fuente: \texttt{bootstrap\_ci\_seed42.json}; no es la matriz de la MAIN final.}
+\label{fig:cm-main}
+\end{figure}
+
+\subsection{Precisión de muestreo y duplicados históricos}
+\label{sec:resultados-bootstrap}
+
+El \emph{bootstrap} histórico de $10\,000$ remuestreos estratificados sitúa la F1 de ataque en $[0.98394,0.98496]$, el \emph{recall} de ataque en $[0.99495,0.99575]$, la tasa de falsos positivos en $[0.00634,0.00681]$ y la tasa de falsos negativos en $[0.00425,0.00505]$. Estos intervalos cuantifican la precisión sobre un conjunto de prueba fijo y un único modelo; no estiman varianza de entrenamiento.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{f10_ic_bootstrap.pdf}
+\caption[Intervalos bootstrap históricos]{Intervalos al 95\% de la MAIN histórica sobre su test fijo. Fuente: \texttt{runs/validation/bootstrap\_ci\_seed42.json}. La campaña final regenerará este análisis.}
+\label{fig:ic-bootstrap}
+\end{figure}
+
+El análisis histórico de duplicados encontró que el $22.30\%$ de las filas completas eran duplicados exactos y que el $24.86\%$ del test aleatorio coincidía con alguna fila de entrenamiento. Entre los ataques de prueba, la coincidencia ascendía al $40.12\%$. No demuestra por sí solo una fuga de etiquetas en la implementación, pero sí que la mezcla aleatoria ofrece una evaluación optimista sobre un benchmark con observaciones repetidas.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.84\textwidth]{f12_duplicados.pdf}
+\caption[Duplicados en la partición aleatoria histórica]{Duplicados exactos y coincidencias entre entrenamiento y prueba de la partición histórica con semilla~42. Fuente: \texttt{runs/validation/duplicate\_analysis\_seed42.json}.}
+\label{fig:duplicados}
+\end{figure}
+
+\subsection{Controles A, B y proxy temporal histórico}
+\label{sec:resultados-escalera}
+
+La Comprobación~A reprodujo la predicción directa del modelo sobre $10\,000$ muestras y confirmó que las métricas no dependían del bucle del entorno. La Comprobación~B reentrenó brevemente con etiquetas barajadas y obtuvo $0.4773$ de exactitud frente a $0.5227$ de la clase mayoritaria, señal compatible con la ausencia de una vía trivial de fuga en ese control.
+
+La Comprobación~C entrenó una red proxy \texttt{[512,256]} durante $30\,000$ pasos con lunes--miércoles y evaluó jueves--viernes. Registró $0.52954$ de \emph{recall} y $0.62578$ de F1 de ataque. Esta ejecución es una señal histórica de dificultad temporal, pero no sustituye el experimento final: usa otra arquitectura, otro presupuesto y un contrato de artefactos anterior.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.64\textwidth]{f11_cm_check_c.pdf}
+\caption[Matriz histórica del proxy por días]{Matriz de confusión de la Comprobación~C histórica. Fuente: \texttt{VAL\_checks\_C\_20260213\_004847/validation\_results.json}. Se reemplazará como evidencia temporal principal por el experimento completo de $3\,000\,000$ de pasos.}
+\label{fig:cm-check-c}
+\end{figure}
+
+\subsection{Random Forest histórico como referencia interpretativa}
+\label{sec:rf}
+
+El barrido histórico de \emph{Random Forest} empleó la misma representación canónica y particiones equivalentes. En la partición aleatoria superó a QRDQN histórica en F1 de ataque ($0.99676$ frente a $0.98445$). En la partición por día, su \emph{recall} de ataque descendió a $0.08135$ y su F1 a $0.15005$, frente a $0.52954$ y $0.62578$ del proxy QRDQN. Esta comparación motiva una evaluación emparejada actual, pero no demuestra que QRDQN generalice mejor de forma global: el QRDQN temporal histórico no era MAIN y faltan escenarios repetidos.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\textwidth]{f13_qrdqn_vs_rf.pdf}
+\caption[Comparación histórica entre QRDQN y Random Forest]{Recall y F1 de ataque en las particiones histórica aleatoria y por día. La fila temporal de QRDQN corresponde a un proxy; no existe aquí una comparación final de campaña. Fuente: artefactos históricos MAIN, Check~C y RF.}
+\label{fig:qrdqn-vs-rf}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.64\textwidth]{f14_cm_rf_dia.pdf}
+\caption[Matriz histórica de Random Forest por día]{Matriz de confusión de Random Forest en la partición histórica por día. Fuente: \texttt{rf\_cicids2017\_canonical\_20260628\_024735\_\_day\_split/metrics.json}.}
+\label{fig:cm-rf-dia}
+\end{figure}
+
+\subsection{Inferencia histórica de Fase 2}
+\label{sec:fase2}
+
+La ejecución histórica \path{P2v2_pred_20260610_161231_MAIN} aplicó la MAIN histórica a $2\,000\,000$ de flujos etiquetados del laboratorio del autor. Registró $0.991862$ de exactitud, $0.988452$ de \emph{recall} de ataque, $0.98380$ de F1 de ataque y una tasa de bloqueo de $0.252364$. La captura era cerrada, generada por el operador y no adversarial; por ello el resultado solo acredita que ese pipeline procesó esa captura concreta. La inferencia fresca de campaña volverá a ejecutar el análisis con la MAIN final y sus artefactos de preprocesamiento.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.80\textwidth]{f15_fase2.pdf}
+\caption[Resultados históricos de Fase 2]{Matriz y tasa de bloqueo de la inferencia histórica sobre tráfico de laboratorio. Fuente: \texttt{runs/phase2/P2v2\_pred\_20260610\_161231\_MAIN/metrics.json}. Su validez externa es limitada.}
+\label{fig:fase2-resultados}
+\end{figure}
+
+\section{Inserción de la campaña final}
+\label{sec:resultados-finales-pendientes}
+
+La actualización final de este capítulo seguirá la Tabla~\ref{tab:estructura-resultados-finales}. La MAIN fresca se presentará junto con su validación directa, \emph{bootstrap}, duplicados y control de etiquetas; después se analizarán la partición completa por días, la curva de tamaño, la distribución entre semillas y los cuatro escenarios retenidos. Solo entonces se realizará la comparación emparejada con Random Forest y se cerrará con la inferencia fresca de Fase~2. Este orden separa capacidad intradistribución, robustez y transferencia, y evita repetir la misma métrica en varias secciones.
+
+\evidencenote{No existen todavía valores para la MAIN fresca, el día completo, la escalera de tamaños, las semillas 42--46, los cuatro holdouts, los RF nuevos, la validación directa, el bootstrap, los duplicados, el control barajado ni la Fase~2 fresca. Las figuras cuantitativas finales se generarán únicamente cuando el agregador de campaña declare el conjunto completo.}
+
+\section{Síntesis provisional}
+\label{sec:resultados-sintesis}
+
+La evidencia histórica permite afirmar que la implementación aprende la tarea definida y que el protocolo aleatorio, aun siendo útil como comprobación interna, no basta para sostener generalización. También justifica mantener Random Forest como línea base fuerte y tratar la transferencia al laboratorio como una comprobación offline de alcance limitado. No permite determinar todavía la estabilidad entre semillas, la eficiencia respecto al tamaño, la sensibilidad de los cuatro escenarios, el comportamiento del perfil completo por días ni el balance final entre QRDQN y RF. Esas son, exactamente, las preguntas reservadas a la campaña final.
