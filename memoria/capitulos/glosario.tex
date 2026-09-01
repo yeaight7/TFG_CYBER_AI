@@ -74,7 +74,7 @@
 \textbf{Falso positivo} & Error en el que tráfico benigno se clasifica como ataque o se bloquea. Afecta a disponibilidad y carga operativa. \\[2pt]
 \textbf{Flujo} & Resumen tabular de una comunicación de red, normalmente bidireccional, descrita por estadísticas agregadas de paquetes, bytes, tiempos y flags. \\[2pt]
 \textbf{Inferencia offline} & Aplicación del modelo sobre ficheros ya capturados y almacenados, sin actuar sobre la red en vivo. \\[2pt]
-\textbf{Leave-one-CSV-out} & Protocolo de validación que retiene un CSV completo como prueba y entrena con los restantes, tratando cada fichero como una unidad de dominio. \\[2pt]
+\textbf{Holdout dirigido} & Protocolo que retiene un CSV completo como prueba y entrena con los restantes. La campaña selecciona cuatro escenarios concretos y no ejecuta un leave-one-CSV-out exhaustivo. \\[2pt]
 \textbf{Línea base} & Modelo comparativo usado para contextualizar los resultados del método principal; en esta tesis, Random Forest es la línea base supervisada principal. \\[2pt]
 \textbf{Máscara de presencia} & Vector binario que indica si cada característica canónica procede de una columna fuente disponible o ha sido imputada por ausencia de columna. \\[2pt]
 \textbf{Partición aleatoria} & División entrenamiento/prueba por filas, normalmente estratificada. Es útil como comprobación de aprendizaje, pero puede sobreestimar generalización cuando hay duplicados o dependencia entre filas. \\[2pt]
@@ -85,4 +85,6 @@
 \textbf{Recorte por percentiles} & Limitación de valores crudos a rangos observados en entrenamiento, por ejemplo entre los percentiles 0.5 y 99.5. Sirve para acotar valores extremos en inferencia. \\[2pt]
 \textbf{Recorte por z-score} & Limitación de valores escalados a un umbral absoluto de desviaciones estándar. En Fase 2 ayuda a controlar valores fuera de distribución después del escalado. \\[2pt]
 \textbf{Red objetivo} & Copia estabilizadora de la red de valores usada en DQN/QRDQN para calcular objetivos temporales. Con $\gamma = 0$ no contribuye al objetivo de esta tesis. \\
+\textbf{Semilla de modelo} & Semilla que controla inicialización y aprendizaje. Se registra como \texttt{model\_seed} y puede variar sin cambiar el test. \\[2pt]
+\textbf{Semilla de partición} & Semilla que controla selección y división aleatoria de filas. Se registra como \texttt{split\_seed}. \\
 \end{longtable}
