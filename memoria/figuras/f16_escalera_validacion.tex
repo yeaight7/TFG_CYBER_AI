@@ -1,46 +1,25 @@
-% Fuentes: runs/validation/VAL_checks_A_20260212_235443/validation_results.json
-% (Comprobacion A: accuracy=0.9939, n_samples=10000);
-% runs/validation/VAL_checks_B_20260212_235736/validation_results.json
-% (Comprobacion B: shuffled_accuracy=0.4773, baseline_accuracy=0.5227,
-% leakage_detected=false); runs/validation/duplicate_analysis_seed42.json
-% (cross_split_leakage_feature_only.pct_of_test=24.8624);
-% runs/validation/VAL_checks_C_20260213_004847/validation_results.json
-% (Comprobacion C: recall_attack=0.5295374374439701, train Mon/Tue/Wed,
-% test Thu/Fri); runs/cicids2017/baseline_random_forest_comparison/
-% rf_cicids2017_canonical_20260628_024735__day_split/metrics.json
-% (recall_attack=0.08135289329152054); runs/phase2/
-% P2v2_pred_20260610_161231_MAIN/metrics.json (block_rate=0.252364,
-% accuracy=0.991862).
-\begin{tikzpicture}[every node/.style={text width=3.6cm}]
+% Figura conceptual: no codifica resultados medidos.
+% Fuente: experiments/final_experiment_campaign.json y protocolo de la memoria.
+\begin{tikzpicture}[node distance=4mm]
+  \node[cajaDato, text width=10.8cm] (random)
+    {\textbf{1. Control intradistribución}\\MAIN aleatoria + validación directa + bootstrap + duplicados + etiquetas barajadas};
+  \node[cajaProceso, text width=10.8cm, above=of random] (day)
+    {\textbf{2. Separación temporal interna}\\entrenamiento lunes--miércoles; prueba jueves--viernes};
+  \node[cajaProceso, text width=10.8cm, above=of day] (holdout)
+    {\textbf{3. Escenarios retenidos dirigidos}\\Web Attacks, Infiltration, PortScan y DDoS};
+  \node[cajaModelo, text width=10.8cm, above=of holdout] (phase2)
+    {\textbf{4. Cambio de fuente}\\inferencia offline sobre la captura cerrada de laboratorio};
 
-% --- Primer tramo (menos exigente): 1 -> 2 -> 3 ---
-\node[caja] (s1) at (0,0) {\textbf{1. Comprobación A}\\evaluación directa};
-\node[etiquetaTenue, below=1mm of s1] (s1v) {Exactitud 0.9939\\(10\,000 muestras)};
+  \draw[flechaAzul] (random) -- (day);
+  \draw[flechaAzul] (day) -- (holdout);
+  \draw[flechaAzul] (holdout) -- (phase2);
 
-\node[caja] (s2) at (4.0,0) {\textbf{2. Comprobación B}\\etiquetas barajadas};
-\node[etiquetaTenue, below=1mm of s2] (s2v) {Exactitud 0.4773 vs.\ 0.5227 base\\(sin fuga detectada)};
+  \node[etiqueta, rotate=90, text width=4.2cm, left=8mm of day]
+    {mayor separación entre entrenamiento y evaluación};
 
-\node[cajaPendiente] (s3) at (8.0,0) {\textbf{3. Duplicados}\\prueba vs.\ entrenamiento};
-\node[etiquetaTenue, below=1mm of s3] (s3v) {24.86\,\% de la prueba\\ya vista en entrenamiento};
-
-% --- Segundo tramo (más exigente), tras un descanso: 4 -> 5 -> 6 ---
-\node[caja] (s4) at (0,5.4) {\textbf{4. Comprobación C}\\partición por día};
-\node[etiquetaTenue, below=1mm of s4] (s4v) {Recall de ataque 0.5295\\(red proxy, no pesos MAIN)};
-
-\node[caja] (s5) at (4.0,5.4) {\textbf{5. Línea base RF}\\mismo protocolo};
-\node[etiquetaTenue, below=1mm of s5] (s5v) {Recall de ataque 0.0814\\(partición por día)};
-
-\node[cajaResaltada] (s6) at (8.0,5.4) {\textbf{6. Fase 2}\\tráfico de laboratorio};
-\node[etiquetaTenue, below=1mm of s6] (s6v) {Bloqueo 25.24\,\%; exactitud 99.19\,\%\\(validez externa limitada)};
-
-\draw[flechaAzul] (s1) -- (s2);
-\draw[flechaAzul] (s2) -- (s3);
-\draw[flechaAzul] (s3.north) -- ++(0,0.7) -| (s4);
-\node[etiquetaTenue, text width=1.8cm] at (4.0,2.3) {(descanso)};
-\draw[flechaAzul] (s4) -- (s5);
-\draw[flechaAzul] (s5) -- (s6);
-
-\node[etiqueta, text width=3.6cm, below=5mm of s1v] {menos exigente};
-\node[etiqueta, text width=3.6cm, above=5mm of s6] {más exigente};
-
+  \node[cajaPendiente, text width=2.7cm, right=7mm of day] (stability)
+    {\textbf{Estabilidad}\\tamaño + semilla};
+  \node[etiquetaTenue, text width=2.8cm, below=1mm of stability]
+    {caracteriza el modelo; no aumenta por sí sola la validez externa};
+  \draw[flechaFina] (stability.west) -- (day.east);
 \end{tikzpicture}
