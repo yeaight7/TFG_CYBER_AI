@@ -306,18 +306,17 @@ def fig_f13_qrdqn_vs_rf() -> dict[str, Any]:
     """F13 (star figure) — QRDQN vs Random Forest across partitions."""
     main = _load("main_metrics")
     check_c = _load("check_c")["C"]
-    rf_random, rf_day, rf_loo = _load("rf_random"), _load("rf_day"), _load("rf_loo")
+    rf_random, rf_day = _load("rf_random"), _load("rf_day")
 
-    groups = ["Aleatoria", "Por día", "LOO (miércoles)"]
+    groups = ["Aleatoria", "Por día"]
     data = {
         "recall_attack": {
-            "QRDQN": [main["recall_attack"], check_c["recall_attack"], None],
-            "Random Forest": [rf_random["recall_attack"], rf_day["recall_attack"],
-                              rf_loo["recall_attack"]],
+            "QRDQN": [main["recall_attack"], check_c["recall_attack"]],
+            "Random Forest": [rf_random["recall_attack"], rf_day["recall_attack"]],
         },
         "f1_attack": {
-            "QRDQN": [main["f1_attack"], check_c["f1_attack"], None],
-            "Random Forest": [rf_random["f1_attack"], rf_day["f1_attack"], rf_loo["f1_attack"]],
+            "QRDQN": [main["f1_attack"], check_c["f1_attack"]],
+            "Random Forest": [rf_random["f1_attack"], rf_day["f1_attack"]],
         },
     }
     panel_titles = {"recall_attack": "Recall de ataque", "f1_attack": "F1 de ataque"}
@@ -331,10 +330,6 @@ def fig_f13_qrdqn_vs_rf() -> dict[str, Any]:
         ):
             vals = data[metric][model]
             for xi, v in zip(x, vals):
-                if v is None:
-                    ax.text(xi + offset, 0.02, "pendiente de GPU", rotation=90,
-                            ha="center", va="bottom", color=MUTED, fontsize=7.5)
-                    continue
                 ax.bar(xi + offset, v, width, color=color, edgecolor="white", linewidth=0.8,
                        label=model if xi == 0 else None)
                 ax.text(xi + offset, v + 0.02, f"{v:.3f}", ha="center", va="bottom",
@@ -350,8 +345,8 @@ def fig_f13_qrdqn_vs_rf() -> dict[str, Any]:
     axes[0].legend(loc="upper right", bbox_to_anchor=(1.02, 1.02))
     fig.text(
         0.02, -0.03,
-        "QRDQN «Por día» proviene de la Comprobación C (red proxy [512, 256], 30 000 pasos), "
-        "no de los pesos MAIN. QRDQN en LOO: diseñado, ejecución pendiente de GPU.",
+        "Evidencia histórica. QRDQN «Por día» proviene de la Comprobación C "
+        "(red proxy [512, 256], 30 000 pasos), no de los pesos MAIN.",
         fontsize=7.5, color=MUTED, ha="left", va="top",
     )
     fig.tight_layout()
@@ -360,9 +355,9 @@ def fig_f13_qrdqn_vs_rf() -> dict[str, Any]:
     return {
         "id": "f13_qrdqn_vs_rf",
         **files,
-        "sources": [_rel(SRC[k]) for k in ("main_metrics", "check_c", "rf_random", "rf_day", "rf_loo")],
+        "sources": [_rel(SRC[k]) for k in ("main_metrics", "check_c", "rf_random", "rf_day")],
         "values": data,
-        "notes": "QRDQN day-split = Check C proxy net; QRDQN LOO pending (deferred GPU register G.1).",
+        "notes": "Historical evidence only; QRDQN day-split is the Check C proxy network.",
     }
 
 
