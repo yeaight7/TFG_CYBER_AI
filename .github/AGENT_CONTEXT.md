@@ -31,7 +31,7 @@ The project is organised in two major phases:
 - Canonical unscaled CICIDS2017 cache with validation and stale-data rejection
 - Complete run-artifact, monitoring, checkpoint, and checksum contracts
 - Sequential 22-execution campaign specification with five auxiliary jobs and two aliases
-- Provider-neutral preflight, runtime benchmark, verified snapshot, and final-bundle tooling
+- Provider-neutral run telemetry, optional QRDQN smoke, runtime benchmark, verified snapshot, and final-bundle tooling
 - Validated campaign aggregation and future-figure completeness gates
 
 ### Not Implemented
@@ -137,7 +137,6 @@ This dataset is kept for historical Phase 1 benchmarking.
 | Random Forest baseline | `src/baseline_random_forest.py` |
 | Campaign specification | `experiments/final_experiment_campaign.json` |
 | Sequential campaign runner | `scripts/run_campaign.py` |
-| GPU host preflight | `scripts/preflight_gpu_environment.py` |
 | Per-run export, snapshot, and bundle export | `scripts/export_campaign.py` |
 | Campaign aggregation | `scripts/aggregate_campaign.py` |
 
@@ -200,7 +199,7 @@ The approved future campaign is defined by `experiments/final_experiment_campaig
 - a targeted four-holdout generalisation study for both QRDQN and Random Forest;
 - seed sensitivity under a fixed 1M-row / 1,324,741-timestep budget for QRDQN model seeds 42–46.
 
-The seed-sensitivity block does not estimate variance of the 3M MAIN execution. Official processes run sequentially, consume validated cache/preflight inputs, and create a complete verified external copy and restore-ready tarball for each validated physical execution. These exports are recovery/download conveniences, not independent-durability proof or scientific-result gates. No final campaign result exists until complete checksum-validated artifacts are produced.
+The seed-sensitivity block does not estimate variance of the 3M MAIN execution. Official processes run sequentially, consume a validated cache, and create a complete verified external copy and restore-ready tarball for each validated physical execution. These exports are recovery/download conveniences, not independent-durability proof or scientific-result gates. No final campaign result exists until complete checksum-validated artifacts are produced.
 
 ## Phase 2 Status
 
@@ -250,7 +249,7 @@ See [../docs/results.md](../docs/results.md) for the maintained results snapshot
 ## Immediate Next Steps
 
 - Complete the separately requested read-only integration review before any host transfer.
-- On the final GPU host, build and validate the cache, run preflight, review the exact campaign dry-run, and launch only with explicit authorisation.
+- On the training host, build and validate the cache, review the exact campaign dry-run, and launch only with explicit authorisation.
 - Keep historical and fresh campaign evidence separate; update thesis-facing results only after validated campaign artifacts exist and a separate task authorises it.
 
 ## Documentation Map

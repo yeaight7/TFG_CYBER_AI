@@ -470,11 +470,6 @@ def _synthetic_campaign(
     atomic_write_json(cache_manifest, {"validation_status": "valid"})
     cache_manifest_sha256 = sha256_file(cache_manifest)
     phase2_input_sha256 = _digest("synthetic-lab-input")
-    preflight_report_sha256 = _digest("synthetic-preflight")
-    atomic_write_json(
-        campaign_dir / "preflight_report.json",
-        {"status": "passed", "report_sha256": preflight_report_sha256},
-    )
     atomic_write_json(campaign_dir / "campaign_spec_original.json", spec.raw)
     atomic_write_json(
         campaign_dir / "campaign_spec_resolved.json",
@@ -482,7 +477,6 @@ def _synthetic_campaign(
             **dict(spec.raw),
             "resolved_runtime": {
                 "cache_manifest_sha256": cache_manifest_sha256,
-                "preflight_report_sha256": preflight_report_sha256,
                 "phase2_input_sha256": phase2_input_sha256,
             },
         },
@@ -564,7 +558,6 @@ def _synthetic_campaign(
             "campaign_spec_sha256": spec.content_hash,
             "dispatch_mode": "sequential",
             "cache_manifest_sha256": cache_manifest_sha256,
-            "preflight_report_sha256": preflight_report_sha256,
             "entries": state_entries,
         },
     )

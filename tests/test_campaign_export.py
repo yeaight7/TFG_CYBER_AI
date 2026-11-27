@@ -59,7 +59,6 @@ def _campaign_dir(tmp_path: Path, *, complete: bool) -> Path:
             "campaign_id": "campaign-test",
             "campaign_spec_sha256": "a" * 64,
             "cache_manifest_sha256": "b" * 64,
-            "preflight_report_sha256": "c" * 64,
             "entries": {
                 "run-a": {
                     "classification": "primary_model_training",
@@ -77,7 +76,6 @@ def _campaign_dir(tmp_path: Path, *, complete: bool) -> Path:
     )
     atomic_write_json(campaign_dir / "campaign_spec_original.json", {"source": "locked"})
     atomic_write_json(campaign_dir / "campaign_spec_resolved.json", {"resolved": True})
-    atomic_write_json(campaign_dir / "preflight_report.json", {"status": "passed"})
     atomic_write_json(campaign_dir / "cache_manifest.json", {"validation_status": "valid"})
     return campaign_dir
 
