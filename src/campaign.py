@@ -17,7 +17,6 @@ from typing import Any, Callable, Mapping, Sequence
 from src.artifact_integrity import ArtifactTrustError, verify_artifact_manifest
 from src.campaign_export import create_final_bundle, create_run_export
 from src.cicids_cache import sha256_file, validate_cache
-from src.gpu_preflight import verify_preflight_report
 from src.run_artifacts import atomic_write_json
 
 
@@ -304,7 +303,6 @@ class CampaignPaths:
     cache_root: Path
     dataset_root: Path
     snapshot_root: Path | None = None
-    preflight_report: Path | None = None
     phase2_input: Path | None = None
     phase2_input_sha256: str | None = None
     repository_root: Path = _REPO_ROOT
@@ -316,7 +314,6 @@ class CampaignPaths:
             "cache_root",
             "dataset_root",
             "snapshot_root",
-            "preflight_report",
             "phase2_input",
         ):
             value = getattr(self, field)
@@ -506,7 +503,6 @@ def load_campaign_spec(path: Path | str) -> CampaignSpec:
 
 Dispatch = Callable[[CampaignEntry, Sequence[str], Path], subprocess.CompletedProcess[Any]]
 CacheValidator = Callable[[Path, Path], Mapping[str, Any]]
-PreflightValidator = Callable[..., Mapping[str, Any]]
 RunExporter = Callable[..., Mapping[str, Any]]
 BundleExporter = Callable[[Path, Path], Mapping[str, Any]]
 
@@ -540,7 +536,6 @@ class CampaignRunner:
         paths: CampaignPaths,
         dispatcher: Dispatch = _dispatch_subprocess,
         cache_validator: CacheValidator = validate_cache,
-        preflight_validator: PreflightValidator = verify_preflight_report,
         run_exporter: RunExporter = create_run_export,
         bundle_exporter: BundleExporter = create_final_bundle,
     ) -> None:
@@ -549,14 +544,10 @@ class CampaignRunner:
         self.paths = paths
         self.dispatcher = dispatcher
         self.cache_validator = cache_validator
-        self.preflight_validator = preflight_validator
         self.run_exporter = run_exporter
         self.bundle_exporter = bundle_exporter
         self.campaign_dir = self.paths.artifact_root / self.campaign_id
         self.state_path = self.campaign_dir / "campaign_state.json"
-        self._preflight: dict[str, Any] | None = None
-        self._preflight_report_sha256: str | None = None
-        self._validated_cache_sha256: str | None = None
 
     def attempt_dir(self, logical_id: str, attempt: int) -> Path:
         return self.campaign_dir / "attempts" / logical_id / f"attempt-{attempt}"
@@ -621,68 +612,7 @@ class CampaignRunner:
             "entries": entries,
         }
 
-    def _validate_preflight_gate(self) -> None:
-        if self.paths.preflight_report is None:
-            raise CampaignDependencyError("A successful matching preflight report is required")
-        if not self.paths.preflight_report.is_file():
-            raise CampaignDependencyError(
-                f"A successful matching preflight report is required: "
-                f"missing {self.paths.preflight_report}"
-            )
-        if self.paths.snapshot_root is None:
-            raise CampaignDependencyError("A snapshot root is required for real campaign execution")
-        try:
-            cache_result = dict(
-                self.cache_validator(self.paths.dataset_root, self.paths.cache_root)
-            )
-        except Exception as error:
-            raise CampaignDependencyError(
-                f"A successful matching preflight requires a validated cache: {error}"
-            ) from error
-        if cache_result.get("validation_status") != "valid":
-            raise CampaignDependencyError(
-                "A successful matching preflight requires a validated cache"
-            )
-        cache_manifest = self.paths.cache_root / "cache_manifest.json"
-        cache_sha256 = cache_result.get("manifest_sha256")
-        if cache_sha256 is None:
-            if not cache_manifest.is_file():
-                raise CampaignDependencyError("Validated cache manifest is missing")
-            cache_sha256 = sha256_file(cache_manifest)
-        try:
-            report = dict(
-                self.preflight_validator(
-                    self.paths.preflight_report,
-                    expected_campaign_spec_sha256=self.spec.content_hash,
-                    expected_dataset_root=self.paths.dataset_root,
-                    expected_cache_root=self.paths.cache_root,
-                    expected_artifact_root=self.paths.artifact_root,
-                    expected_snapshot_root=self.paths.snapshot_root,
-                    expected_cache_manifest_sha256=str(cache_sha256),
-                    expected_phase2_input_sha256=self.paths.phase2_input_sha256,
-                    repository_root=self.paths.repository_root,
-                )
-            )
-        except Exception as error:
-            raise CampaignDependencyError(
-                f"A successful matching preflight report is required: {error}"
-            ) from error
-        if report.get("status") != "passed":
-            raise CampaignDependencyError("A successful matching preflight report is required")
-        report_sha256 = report.get("report_sha256")
-        if not isinstance(report_sha256, str) or len(report_sha256) != 64:
-            raise CampaignDependencyError("Preflight report has no valid content hash")
-        self._preflight = report
-        self._preflight_report_sha256 = report_sha256
-        self._validated_cache_sha256 = str(cache_sha256)
-
-    def _write_campaign_inputs(self) -> None:
-        if (
-            self._preflight is None
-            or self._preflight_report_sha256 is None
-            or self._validated_cache_sha256 is None
-        ):
-            raise CampaignExecutionError("Preflight gate was not evaluated")
+    def _write_campaign_inputs(self, cache_sha256: str) -> None:
         cache_manifest = self.paths.cache_root / "cache_manifest.json"
         if not cache_manifest.is_file():
             raise CampaignExecutionError("Validated cache manifest disappeared")
@@ -699,16 +629,14 @@ class CampaignRunner:
                     else str(self.paths.phase2_input.resolve())
                 ),
                 "phase2_input_sha256": self.paths.phase2_input_sha256,
-                "preflight_report_sha256": self._preflight_report_sha256,
-                "cache_manifest_sha256": self._validated_cache_sha256,
+                "cache_manifest_sha256": cache_sha256,
             },
         }
         atomic_write_json(self.campaign_dir / "campaign_spec_original.json", self.spec.raw)
         atomic_write_json(self.campaign_dir / "campaign_spec_resolved.json", resolved_spec)
-        atomic_write_json(self.campaign_dir / "preflight_report.json", self._preflight)
         _copy_file_atomic(cache_manifest, self.campaign_dir / "cache_manifest.json")
 
-    def _state_template(self) -> dict[str, Any]:
+    def _state_template(self, cache_sha256: str) -> dict[str, Any]:
         return {
             "schema_version": CAMPAIGN_STATE_SCHEMA_VERSION,
             "campaign_id": self.campaign_id,
@@ -717,8 +645,7 @@ class CampaignRunner:
             "dispatch_mode": "sequential",
             "created_at": _utc_now(),
             "updated_at": _utc_now(),
-            "cache_manifest_sha256": self._validated_cache_sha256,
-            "preflight_report_sha256": self._preflight_report_sha256,
+            "cache_manifest_sha256": cache_sha256,
             "entries": {
                 entry.logical_id: {
                     "classification": entry.classification,
@@ -739,7 +666,7 @@ class CampaignRunner:
         state["updated_at"] = _utc_now()
         atomic_write_json(self.state_path, state)
 
-    def _load_state(self, *, resume: bool) -> dict[str, Any]:
+    def _load_state(self, *, resume: bool, cache_sha256: str) -> dict[str, Any]:
         if self.state_path.is_file():
             if not resume:
                 raise CampaignExecutionError(
@@ -755,27 +682,30 @@ class CampaignRunner:
                 or state.get("campaign_spec_sha256") != self.spec.content_hash
             ):
                 raise CampaignExecutionError("Campaign state identity does not match this run")
-            if (
-                state.get("preflight_report_sha256") != self._preflight_report_sha256
-                or state.get("cache_manifest_sha256") != self._validated_cache_sha256
-            ):
-                raise CampaignExecutionError(
-                    "Campaign state preflight/cache binding does not match this run"
-                )
+            if state.get("cache_manifest_sha256") != cache_sha256:
+                raise CampaignExecutionError("Validated cache hash changed during the campaign")
             for relative in (
                 "campaign_spec_original.json",
                 "campaign_spec_resolved.json",
-                "preflight_report.json",
                 "cache_manifest.json",
             ):
                 if not (self.campaign_dir / relative).is_file():
                     raise CampaignExecutionError(
                         f"Campaign evidence input is missing: {relative}"
                     )
+            resolved_path = self.campaign_dir / "campaign_spec_resolved.json"
+            try:
+                runtime = json.loads(resolved_path.read_text(encoding="utf-8"))["resolved_runtime"]
+            except (OSError, ValueError, KeyError, TypeError) as error:
+                raise CampaignExecutionError("Campaign runtime inputs are invalid") from error
+            if not isinstance(runtime, Mapping):
+                raise CampaignExecutionError("Campaign runtime inputs are invalid")
+            if runtime.get("phase2_input_sha256") != self.paths.phase2_input_sha256:
+                raise CampaignExecutionError("Phase 2 input hash differs from the original campaign")
             return state
         self.campaign_dir.mkdir(parents=True, exist_ok=False)
-        self._write_campaign_inputs()
-        state = self._state_template()
+        self._write_campaign_inputs(cache_sha256)
+        state = self._state_template(cache_sha256)
         self._write_state(state)
         return state
 
@@ -948,7 +878,7 @@ class CampaignRunner:
                         f"Selected {entry.logical_id} dependency is invalid: {dependency}"
                     ) from error
 
-    def _validate_cache(self, state: dict[str, Any]) -> str:
+    def _validate_cache(self) -> str:
         try:
             result = dict(self.cache_validator(self.paths.dataset_root, self.paths.cache_root))
         except Exception as error:
@@ -961,12 +891,6 @@ class CampaignRunner:
             if not manifest_path.is_file():
                 raise CampaignDependencyError("Validated cache manifest is missing")
             digest = sha256_file(manifest_path)
-        bound = state.get("cache_manifest_sha256")
-        if bound is not None and bound != digest:
-            raise CampaignDependencyError("Validated cache hash changed during the campaign")
-        if bound is None:
-            state["cache_manifest_sha256"] = digest
-            self._write_state(state)
         return str(digest)
 
     def _validate_phase2_input(self) -> Path:
@@ -1266,8 +1190,10 @@ class CampaignRunner:
         logical_run_id: str | None = None,
     ) -> dict[str, Any]:
         selected = self._selected(stage=stage, logical_run_id=logical_run_id)
-        self._validate_preflight_gate()
-        state = self._load_state(resume=resume)
+        if self.paths.snapshot_root is None:
+            raise CampaignDependencyError("A snapshot root is required for real campaign execution")
+        cache_sha256 = self._validate_cache()
+        state = self._load_state(resume=resume, cache_sha256=cache_sha256)
         dispatched: list[str] = []
         skipped: list[str] = []
         reused: list[str] = []
@@ -1310,8 +1236,11 @@ class CampaignRunner:
                 )
 
             self._assert_dependencies(entry, state)
-            if entry.config.get("requires_cache") is True:
-                self._validate_cache(state)
+            if (
+                entry.config.get("requires_cache") is True
+                and self._validate_cache() != cache_sha256
+            ):
+                raise CampaignDependencyError("Validated cache hash changed during the campaign")
             if entry.config.get("requires_phase2_input") is True:
                 self._validate_phase2_input()
 

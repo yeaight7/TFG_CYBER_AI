@@ -81,7 +81,7 @@ Bootstrap intervals measure fixed-test sampling precision for one trained model,
 
 ## Environment setup
 
-Use a provider-neutral Linux GPU host. The default preflight thresholds are at least 16 logical CPUs, 120 GiB RAM, one CUDA GPU with 80 GiB VRAM, and 100 GiB free at the configured artifact/export capacity. These are launch gates, not claims about an unverified host.
+Use the environment appropriate to the host. The example below installs the pinned Linux CUDA stack. The campaign has no hardware minimums; each run records the environment it actually uses.
 
 ```bash
 git clone https://github.com/yeaight7/TFG_CYBER_AI.git
@@ -104,7 +104,6 @@ export DATASET_ROOT=/path/to/datasets/CICIDS2017
 export CACHE_ROOT=/path/to/cache/cicids2017
 export ARTIFACT_ROOT=runs/final_campaign
 export SNAPSHOT_ROOT=../final-campaign-exports
-export PREFLIGHT_REPORT=runs/final_campaign/preflight_report.json
 ```
 
 ## Cache
@@ -134,34 +133,13 @@ python scripts/benchmark_experimental_runtime.py \
   --thread-config 1:1 4:1 8:1 16:1
 ```
 
-## Preflight
+## Optional QRDQN smoke and run telemetry
 
-Run preflight in the same isolated environment and against the exact campaign inputs:
+The standalone synthetic smoke exercises 50,200 timesteps with one-second
+resource sampling and exports the learning rate and loss. Run it when
+diagnosing a training environment.
 
-```bash
-python scripts/preflight_gpu_environment.py \
-  --dataset-root "$DATASET_ROOT" \
-  --cache-root "$CACHE_ROOT" \
-  --artifact-root "$ARTIFACT_ROOT" \
-  --snapshot-root "$SNAPSHOT_ROOT" \
-  --campaign-spec experiments/final_experiment_campaign.json \
-  --phase2-input pcaps/lab_capture_traffic.csv \
-  --expect-phase2-labels \
-  --runtime-benchmark /path/to/runtime-benchmark.json \
-  --output "$PREFLIGHT_REPORT"
-```
-
-The preflight includes a non-scientific synthetic QRDQN smoke. Its default
-workload is 50,200 timesteps with one-second resource sampling. This crosses
-the frozen `main-v1` profile's 50,000-step `learning_starts` boundary and
-allows a real update plus a later TensorBoard flush. A successful smoke must
-export both `train/learning_rate` and `train/loss`. Runtime is hardware
-dependent; it is intended to finish within a few minutes on the WSL2
-development host and materially faster on the final GPU host. The CLI records
-explicit `--smoke-timesteps` and `--smoke-monitor-interval` overrides, but it
-rejects a workload below the scalar-production floor.
-
-To run only this real synthetic smoke in WSL2 and print its complete summary:
+To run the smoke and print its summary:
 
 ```bash
 uv run python - <<'PY'
@@ -205,8 +183,6 @@ Linux runtime allocation available to the experiment, not unallocated Windows
 host resources. The same rule applies to container-visible resources on a GPU
 provider.
 
-Real campaign execution rejects a missing, failed, stale, or cache-mismatched preflight report. A changed Phase 2 input requires a new or explicitly amended report. The report records Git revision and dirty-state metadata for traceability; campaign launch does not compare current `HEAD` with the recorded SHA. Actual hardware, driver, CUDA, storage, dataset, cache, monitoring, and export checks remain host-only until this command succeeds on the final host.
-
 ## Campaign dry-run and execution
 
 Dry-run first; it creates no campaign artifacts:
@@ -218,13 +194,15 @@ python scripts/run_campaign.py experiments/final_experiment_campaign.json \
   --cache-root "$CACHE_ROOT" \
   --artifact-root "$ARTIFACT_ROOT" \
   --snapshot-root "$SNAPSHOT_ROOT" \
-  --preflight-report "$PREFLIGHT_REPORT" \
   --phase2-input pcaps/lab_capture_traffic.csv \
   --phase2-input-sha256 <SHA256> \
   --dry-run
 ```
 
-After successful preflight and reviewed dry-run, use the same resolved inputs with `--resume`. Optional `--stage <STAGE_ID>` or `--run <LOGICAL_RUN_ID>` selection never executes missing dependencies automatically.
+Use the same inputs for execution and resume. Supply the Phase 2 path and hash
+when starting a campaign that will include Phase 2. The runner binds the cache
+and Phase 2 hashes to that campaign. Optional `--stage <STAGE_ID>` or
+`--run <LOGICAL_RUN_ID>` selection never executes missing dependencies automatically.
 
 ```bash
 python scripts/run_campaign.py experiments/final_experiment_campaign.json \
@@ -233,7 +211,6 @@ python scripts/run_campaign.py experiments/final_experiment_campaign.json \
   --cache-root "$CACHE_ROOT" \
   --artifact-root "$ARTIFACT_ROOT" \
   --snapshot-root "$SNAPSHOT_ROOT" \
-  --preflight-report "$PREFLIGHT_REPORT" \
   --phase2-input pcaps/lab_capture_traffic.csv \
   --phase2-input-sha256 <SHA256> \
   --resume

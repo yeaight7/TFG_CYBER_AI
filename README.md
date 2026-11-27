@@ -29,7 +29,7 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 - [docs/results.md](docs/results.md): artifact-backed results snapshot
 - [docs/phase 2/AGENT_CONTEXT.md](docs/phase%202/AGENT_CONTEXT.md): Phase 2 scope and guardrails
 - [docs/phase 2/phase2_plan.md](docs/phase%202/phase2_plan.md): execution plan for the lab workflow
-- [docs/gpu_experimental_environment.md](docs/gpu_experimental_environment.md): maintained GPU setup, preflight, campaign, snapshot, and aggregation guide
+- [docs/gpu_experimental_environment.md](docs/gpu_experimental_environment.md): maintained environment setup, campaign, snapshot, and aggregation guide
 - [docs/runpod_main_experiment.md](docs/runpod_main_experiment.md): historical compatibility pointer for the committed historical MAIN procedure
 - [docs/reproducibility.md](docs/reproducibility.md): current dependency strategy plus labelled historical environment record
 - [experiments/final_experiment_campaign.json](experiments/final_experiment_campaign.json): locked final campaign matrix

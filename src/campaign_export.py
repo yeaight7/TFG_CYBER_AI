@@ -25,7 +25,6 @@ _REQUIRED_CAMPAIGN_FILES = (
     "campaign_state.json",
     "campaign_spec_original.json",
     "campaign_spec_resolved.json",
-    "preflight_report.json",
     "cache_manifest.json",
 )
 
@@ -281,7 +280,6 @@ def create_incremental_snapshot(
         "campaign_id": state.get("campaign_id"),
         "campaign_spec_sha256": state.get("campaign_spec_sha256"),
         "cache_manifest_sha256": state.get("cache_manifest_sha256"),
-        "preflight_report_sha256": state.get("preflight_report_sha256"),
         "files": inventory,
     }
     if previous != manifest:
@@ -512,7 +510,6 @@ def _bundle_manifest(state: Mapping[str, Any], files: Mapping[str, Any]) -> dict
         "campaign_id": state.get("campaign_id"),
         "campaign_spec_sha256": state.get("campaign_spec_sha256"),
         "cache_manifest_sha256": state.get("cache_manifest_sha256"),
-        "preflight_report_sha256": state.get("preflight_report_sha256"),
         "files": dict(files),
     }
 

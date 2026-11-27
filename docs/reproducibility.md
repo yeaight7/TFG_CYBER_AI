@@ -4,7 +4,7 @@
 
 The final campaign uses a provider-neutral Linux GPU environment. The maintained pinned direct dependency set is `requirements-gpu-cu130.txt`; `pyproject.toml` and `uv.lock` define the development/test environment. Host identity, remote access, account details, and mount paths are operational inputs, not scientific configuration.
 
-Setup, preflight, cache, campaign, snapshot, and aggregation commands live in [gpu_experimental_environment.md](gpu_experimental_environment.md). Actual CPU, RAM, GPU, driver, CUDA, cuDNN, storage, dataset, cache, and snapshot readiness remain unverified until a successful preflight report is produced on the final host.
+Setup, cache, campaign, snapshot, and aggregation commands live in [gpu_experimental_environment.md](gpu_experimental_environment.md). Per-run environments and monitoring record the runtime-visible hardware, software, and storage alongside the run's input and artifact hashes.
 
 ## Dependency Files
 

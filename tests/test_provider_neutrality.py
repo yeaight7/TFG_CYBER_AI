@@ -80,7 +80,6 @@ def test_documentation_paths_and_compatibility_pointer_are_valid() -> None:
         REPO_ROOT / "requirements-gpu-cu130.txt",
         REPO_ROOT / "requirements-runpod-cu130.txt",
         REPO_ROOT / "scripts" / "build_cicids_cache.py",
-        REPO_ROOT / "scripts" / "preflight_gpu_environment.py",
         REPO_ROOT / "scripts" / "run_campaign.py",
         REPO_ROOT / "scripts" / "export_campaign.py",
         REPO_ROOT / "scripts" / "aggregate_campaign.py",

@@ -26,7 +26,7 @@ Prepare the repository for a final, artifact-backed experimental campaign on a p
 - one experiment at a time;
 - an ephemeral host requiring verified incremental snapshots.
 
-The preparation work must deliver deterministic data contracts, explicit seed ownership, reusable unscaled canonical data, complete run evidence, safe run-level recovery, host preflight, future aggregation, and provider-neutral operating instructions. Implementation tasks may run unit tests, static checks, synthetic-data tests, and very small smoke runs only. They must not execute a full CICIDS2017 training campaign.
+The preparation work must deliver deterministic data contracts, explicit seed ownership, reusable unscaled canonical data, complete run evidence, safe run-level recovery, host telemetry, future aggregation, and provider-neutral operating instructions. Implementation tasks may run unit tests, static checks, synthetic-data tests, and very small smoke runs only. They must not execute a full CICIDS2017 training campaign.
 
 **[SPEC]**
 Scientific invariants:
@@ -301,7 +301,7 @@ python scripts/run_campaign.py experiments/final_experiment_campaign.json \
   --artifact-root <ARTIFACT_ROOT> \
   --cache-root <CACHE_ROOT> \
   --snapshot-root <SNAPSHOT_ROOT> \
-  --preflight-report <PREFLIGHT_JSON> \
+  --phase2-input <PATH> --phase2-input-sha256 <SHA256> \
   --dry-run
 
 python scripts/run_campaign.py experiments/final_experiment_campaign.json \
@@ -309,17 +309,16 @@ python scripts/run_campaign.py experiments/final_experiment_campaign.json \
   --artifact-root <ARTIFACT_ROOT> \
   --cache-root <CACHE_ROOT> \
   --snapshot-root <SNAPSHOT_ROOT> \
-  --preflight-report <PREFLIGHT_JSON> \
+  --phase2-input <PATH> --phase2-input-sha256 <SHA256> \
   --resume
 ```
 
-Selection flags: `--stage <STAGE_ID>` and `--run <LOGICAL_RUN_ID>`. Real execution requires a valid preflight report; dry-run does not.
+Selection flags: `--stage <STAGE_ID>` and `--run <LOGICAL_RUN_ID>`. Execution validates the canonical cache and binds its hash to campaign state.
 
-### 5.6 Runtime benchmark, preflight, export, aggregation, figures
+### 5.6 Runtime benchmark, export, aggregation, figures
 
 ```bash
 python scripts/benchmark_experimental_runtime.py --output <JSON> --thread-config 1:1 4:1 8:1 16:1
-python scripts/preflight_gpu_environment.py --dataset-root <PATH> --cache-root <PATH> --artifact-root <PATH> --snapshot-root <PATH>
 python scripts/export_campaign.py snapshot --campaign-dir <PATH> --destination <PATH>
 python scripts/export_campaign.py bundle --campaign-dir <PATH> --destination <PATH>
 python scripts/aggregate_campaign.py --campaign-dir <PATH> --output-dir <PATH>
@@ -571,43 +570,16 @@ Dependency rules:
 
 ---
 
-## 9. GPU Environment Preflight
+## 9. Runtime Environment and Inputs
 
 **[SPEC]**
-Preflight must use the repository's isolated Python environment and produce a hash-covered report containing:
+Campaign runs collect hardware, software, storage, and Git traceability
+information in their run artifacts. Resource sizes are telemetry. The optional
+synthetic QRDQN smoke and runtime benchmark are separate commands.
 
-- CPU model, sockets, physical cores, logical CPUs;
-- total RAM;
-- GPU count, name, VRAM;
-- NVIDIA driver;
-- CUDA visible to PyTorch;
-- cuDNN version;
-- Python and installed package versions;
-- filesystem free space for dataset, cache, artifacts, snapshots, and final archive;
-- Git commit/dirty state;
-- Git LFS availability and materialisation of all eight dataset CSVs;
-- source dataset SHA-256 values;
-- availability, readability, size, and SHA-256 of the required Phase 2 laboratory-flow input; presence and validity of truth-label columns when Phase 2 metrics are expected; confirmation that sensitive metadata export is disabled by default;
-- cache validation and cache-manifest hash;
-- minimal CUDA tensor operation;
-- tiny synthetic end-to-end QRDQN artifact run;
-- artifact-manifest verification;
-- incremental snapshot creation and verification;
-- optional lightweight runtime benchmark results.
-
-Default host acceptance thresholds for the expected platform:
-
-- at least 16 logical CPUs;
-- at least 120 GiB RAM;
-- at least one CUDA GPU;
-- at least 80 GiB VRAM on the selected GPU;
-- at least 100 GiB free in the configured artifact/snapshot capacity, or a larger value derived from measured checkpoint/model sizes.
-
-Real campaign execution refuses a missing, failed, stale, or cache-mismatched preflight report. Threshold overrides must be explicit and recorded.
-
-Git revision and dirty-state values are traceability metadata. Execution does not require current `HEAD` to equal the SHA recorded by preflight.
-
-The preflight report must bind the Phase 2 input hash to the resolved campaign specification. A different laboratory-flow file requires a new or explicitly amended preflight report before Phase 2 execution.
+The resolved campaign binds the canonical cache and Phase 2 input hashes.
+Phase 2 checks the actual file against the supplied hash before consuming it,
+and sensitive metadata export remains disabled by default.
 
 ---
 
@@ -906,7 +878,7 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 
 **Dependencies:** Phases 1–5.
 
-**Non-goals:** real campaign execution, host preflight implementation, snapshots, aggregation, automatic dependency execution outside selection, mid-training resume.
+**Non-goals:** real campaign execution, runtime diagnostics, snapshots, aggregation, automatic dependency execution outside selection, mid-training resume.
 
 **Tests and validation:**
 - schema rejection;
@@ -931,25 +903,24 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 
 **Expected deliverables:** committed campaign spec, runner, state schema, resume tests.
 
-**Stopping point:** report Phase 6 only. Do not implement preflight, benchmarks, or export.
+**Stopping point:** report Phase 6 only. Benchmarks and export belong to Phase 7.
 
-### Phase 7 — Preflight, runtime benchmarking, and snapshots
+### Phase 7 — Runtime diagnostics, benchmarking, and snapshots
 
 **[SPEC]**
-**Objective:** prove host readiness cheaply and protect every completed run on an ephemeral platform.
+**Objective:** record the execution environment and protect every completed run on an ephemeral platform.
 
-**Scope:** neutral GPU requirements/setup inputs, thread benchmark, hardware/software/data/cache/CUDA preflight, synthetic smoke, incremental verified snapshot, final verified bundle, campaign integration gates.
+**Scope:** neutral GPU requirements/setup inputs, thread benchmark, per-run telemetry, optional synthetic smoke, verified per-run exports, incremental snapshots, and final bundles.
 
 **Files likely affected:**
 
 - create `requirements-gpu-cu130.txt`;
 - create `scripts/benchmark_experimental_runtime.py`;
-- create `scripts/preflight_gpu_environment.py`;
 - create `src/campaign_export.py`;
 - create `scripts/export_campaign.py`;
 - create `tests/test_preflight.py`;
 - create `tests/test_campaign_export.py`;
-- modify `src/campaign.py` and `scripts/run_campaign.py` to require preflight and post-run snapshot validation;
+- modify `src/campaign.py` and `scripts/run_campaign.py` to integrate verified run exports;
 - modify `requirements-runpod-cu130.txt` only as a compatibility include/pointer;
 - modify `pyproject.toml`, `requirements.txt`, and `uv.lock` if dependency alignment remains necessary.
 
@@ -957,11 +928,11 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 
 **Non-goals:** paid/full experiments, automatic scientific config selection from benchmark results, cloud upload, provider credentials, multiple QRDQN environments.
 
-**Tests and validation:** mocked hardware/tool outputs; failed thresholds; cache/preflight binding; tiny synthetic artifact/export; incremental no-op on unchanged files; corruption detection; final archive verification; monitor absence; suite, lock check, Ruff.
+**Tests and validation:** telemetry collection, standalone synthetic artifact smoke, incremental no-op on unchanged files, corruption detection, final archive verification, and missing telemetry.
 
-**Acceptance criteria:** real campaign cannot start without matching successful preflight; every completed run must have a verified snapshot before progression; final bundle verification is deterministic.
+**Acceptance criteria:** run artifacts record the environment, every completed physical run has a verified export, and final bundle verification is deterministic.
 
-**Expected deliverables:** preflight report contract, benchmark, snapshot/bundle tools, campaign safety integration.
+**Expected deliverables:** run telemetry, optional diagnostics, benchmark, and snapshot/bundle tools.
 
 **Stopping point:** report Phase 7 only. Do not aggregate or generate figures.
 
@@ -1010,7 +981,7 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 **[SPEC]**
 **Objective:** document the prepared workflow and scientific caveats without rewriting historical evidence or thesis results.
 
-**Scope:** neutral setup/run/cache/preflight/export/aggregation guidance, CLI examples, campaign matrix, historical-versus-fresh MAIN distinction, compatibility pointers, terminology checks.
+**Scope:** neutral setup/run/cache/export/aggregation guidance, CLI examples, campaign matrix, historical-versus-fresh MAIN distinction, compatibility pointers, terminology checks.
 
 **Files likely affected:**
 
@@ -1042,7 +1013,7 @@ Figure/table generators may later produce size-ladder curves, seed-sensitivity d
 **[SPEC]**
 **Objective:** decide whether the repository is ready to transfer to the GPU host without making changes.
 
-**Scope:** read-only diff/status review, campaign-spec count, CLI consistency, dependency lock, unit/lint suite, synthetic dry-run, artifact/cache/preflight/export contract review, scope-exclusion check.
+**Scope:** read-only diff/status review, campaign-spec count, CLI consistency, dependency lock, unit/lint suite, synthetic dry-run, artifact/cache/export contract review, scope-exclusion check.
 
 **Files likely affected:** none. This phase is strictly read-only.
 
@@ -1140,7 +1111,7 @@ Campaign preparation is complete only when all ten phases have been requested an
 - complete artifact/monitoring/checkpoint foundation;
 - single-run QRDQN, targeted holdout, and scoped RF runners;
 - exact sequential campaign specification covering 22 primary model-training executions, five auxiliary jobs, two aliases, and a safe state machine;
-- provider-neutral preflight, benchmark, snapshot, and bundle tooling;
+- provider-neutral run telemetry, benchmark, snapshot, and bundle tooling;
 - artifact-driven aggregation/future-rendering code;
 - provider-neutral maintained documentation;
 - full passing unit/lint suite using only cheap/synthetic validation;
@@ -1151,4 +1122,4 @@ Campaign preparation is complete only when all ten phases have been requested an
 - implemented and synthetic-tested lightweight shuffled-label anti-leakage workflow;
 - implemented and synthetic-tested fresh-MAIN Phase 2 inference workflow, including validation of the laboratory input contract;
 
-Campaign execution itself is a separate activity and requires explicit authorisation after host preflight succeeds.
+Campaign execution itself is a separate activity and requires explicit authorisation.
