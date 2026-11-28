@@ -456,6 +456,32 @@ def _package_version(package_name: str) -> str | None:
         return None
 
 
+def configure_torch_runtime(
+    torch_threads: int | None,
+    torch_inter_op_threads: int | None,
+) -> dict[str, int | str | None]:
+    import torch
+
+    if torch_threads is not None:
+        if torch_threads <= 0:
+            raise ValueError("torch_threads must be greater than zero")
+        torch.set_num_threads(torch_threads)
+    if torch_inter_op_threads is not None:
+        if torch_inter_op_threads <= 0:
+            raise ValueError("torch_inter_op_threads must be greater than zero")
+        try:
+            torch.set_num_interop_threads(torch_inter_op_threads)
+        except RuntimeError:
+            pass
+    return {
+        "requested_torch_threads": torch_threads,
+        "requested_torch_inter_op_threads": torch_inter_op_threads,
+        "torch_num_threads": int(torch.get_num_threads()),
+        "torch_num_interop_threads": int(torch.get_num_interop_threads()),
+        "float32_matmul_precision": torch.get_float32_matmul_precision(),
+    }
+
+
 def collect_environment_metadata(
     *,
     repo_root: Path,

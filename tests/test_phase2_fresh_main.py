@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from scripts.predict_real_traffic_v2 import run_phase2_inference
@@ -50,3 +51,26 @@ def test_phase2_inference_records_fresh_main_and_input_provenance(
     assert config["sensitive_metadata_exported"] is False
     assert (output_dir / "diagnostics.json").is_file()
     assert (output_dir / "predictions.npz").is_file()
+
+    smaller_batch_dir = tmp_path / "phase2-single-row-batches"
+    run_phase2_inference(
+        source_run_dir=fresh_main_run,
+        flows_path=flows_path,
+        output_dir=smaller_batch_dir,
+        clip_z=10.0,
+        monitor_interval=0.01,
+        batch_size=1,
+        model_loader=lambda _path: (
+            fake_model_factory(None, None, smaller_batch_dir / "unused", "cpu"),
+            "FakeQRDQN",
+        ),
+    )
+    assert verify_artifact_manifest(smaller_batch_dir)["status"] == "completed"
+    smaller_config = json.loads((smaller_batch_dir / "config.json").read_text(encoding="utf-8"))
+    assert smaller_config["batch_size"] == 1
+    with np.load(output_dir / "predictions.npz") as baseline, np.load(
+        smaller_batch_dir / "predictions.npz"
+    ) as candidate:
+        for key in ("y_true", "y_pred"):
+            np.testing.assert_array_equal(candidate[key], baseline[key])
+    assert (smaller_batch_dir / "metrics.json").read_bytes() == (output_dir / "metrics.json").read_bytes()

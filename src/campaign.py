@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import sys
 import uuid
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
@@ -298,6 +298,33 @@ class CampaignSpec:
 
 
 @dataclass(frozen=True)
+class CampaignRuntimeOptions:
+    eval_batch_size: int = 8_192
+    phase2_batch_size: int = 4_096
+    torch_threads: int | None = None
+    torch_inter_op_threads: int | None = None
+
+    def __post_init__(self) -> None:
+        for name, value in asdict(self).items():
+            if value is not None and value <= 0:
+                raise ValueError(f"{name} must be greater than zero")
+
+    def command_flags(self, *, phase2: bool = False) -> list[str]:
+        options = {
+            "--batch-size" if phase2 else "--eval-batch-size": (
+                self.phase2_batch_size if phase2 else self.eval_batch_size
+            ),
+            "--torch-threads": self.torch_threads,
+            "--torch-inter-op-threads": self.torch_inter_op_threads,
+        }
+        arguments = []
+        for flag, value in options.items():
+            if value is not None:
+                arguments.extend([flag, str(value)])
+        return arguments
+
+
+@dataclass(frozen=True)
 class CampaignPaths:
     artifact_root: Path
     cache_root: Path
@@ -534,6 +561,7 @@ class CampaignRunner:
         *,
         campaign_id: str,
         paths: CampaignPaths,
+        runtime: CampaignRuntimeOptions = CampaignRuntimeOptions(),
         dispatcher: Dispatch = _dispatch_subprocess,
         cache_validator: CacheValidator = validate_cache,
         run_exporter: RunExporter = create_run_export,
@@ -542,6 +570,7 @@ class CampaignRunner:
         self.spec = spec
         self.campaign_id = _safe_component(campaign_id, "campaign_id")
         self.paths = paths
+        self.runtime = runtime
         self.dispatcher = dispatcher
         self.cache_validator = cache_validator
         self.run_exporter = run_exporter
@@ -604,6 +633,7 @@ class CampaignRunner:
             "campaign_id": self.campaign_id,
             "campaign_spec_sha256": self.spec.content_hash,
             "dispatch_mode": "sequential",
+            "runtime_options": asdict(self.runtime),
             "selection": {"stage": stage, "logical_run_id": logical_run_id},
             "primary_model_training_executions": self.spec.primary_execution_count,
             "primary_training_logical_result_points": self.spec.primary_logical_count,
@@ -630,6 +660,7 @@ class CampaignRunner:
                 ),
                 "phase2_input_sha256": self.paths.phase2_input_sha256,
                 "cache_manifest_sha256": cache_sha256,
+                "torch_options": asdict(self.runtime),
             },
         }
         atomic_write_json(self.campaign_dir / "campaign_spec_original.json", self.spec.raw)
@@ -702,6 +733,9 @@ class CampaignRunner:
                 raise CampaignExecutionError("Campaign runtime inputs are invalid")
             if runtime.get("phase2_input_sha256") != self.paths.phase2_input_sha256:
                 raise CampaignExecutionError("Phase 2 input hash differs from the original campaign")
+            original_options = runtime.get("torch_options", asdict(CampaignRuntimeOptions()))
+            if original_options != asdict(self.runtime):
+                raise CampaignExecutionError("Torch runtime options differ from the original campaign")
             return state
         self.campaign_dir.mkdir(parents=True, exist_ok=False)
         self._write_campaign_inputs(cache_sha256)
@@ -964,7 +998,7 @@ class CampaignRunner:
                 command += ["--train-max-rows", str(entry.config["train_max_rows"])]
             if entry.config.get("holdout_csv") is not None:
                 command += ["--holdout-csv", str(entry.config["holdout_csv"])]
-            return command
+            return [*command, *self.runtime.command_flags()]
         if entry.runner == "random_forest":
             command = [
                 sys.executable,
@@ -1007,6 +1041,7 @@ class CampaignRunner:
                 "--job-id",
                 attempt_dir.name,
                 *common_identity,
+                *self.runtime.command_flags(),
             ]
         if entry.runner == "bootstrap_ci":
             return [
@@ -1057,6 +1092,7 @@ class CampaignRunner:
                 "--shuffled-label-seed",
                 str(entry.config["shuffled_label_seed"]),
                 *common_identity,
+                *self.runtime.command_flags(),
             ]
         if entry.runner == "phase2_inference":
             flows = (
@@ -1077,6 +1113,7 @@ class CampaignRunner:
                 attempt_dir.name,
                 "--export-diagnostics",
                 *common_identity,
+                *self.runtime.command_flags(phase2=True),
             ]
         raise CampaignSpecError(f"Unsupported runner for {logical_id}: {entry.runner}")
 

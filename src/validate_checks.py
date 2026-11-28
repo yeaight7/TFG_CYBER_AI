@@ -76,6 +76,7 @@ try:
         atomic_write_json,
         atomic_write_text,
         collect_environment_metadata,
+        configure_torch_runtime,
         tee_output,
     )
 except ModuleNotFoundError:  # pragma: no cover - direct ``python src/...`` execution
@@ -100,6 +101,7 @@ except ModuleNotFoundError:  # pragma: no cover - direct ``python src/...`` exec
         atomic_write_json,
         atomic_write_text,
         collect_environment_metadata,
+        configure_torch_runtime,
         tee_output,
     )
 
@@ -128,6 +130,8 @@ class ShuffledLabelRunConfig:
     attempt: int = 1
     campaign_id: str | None = None
     logical_run_id: str = "shuffled_label_validation_s42_m42"
+    torch_threads: int | None = None
+    torch_inter_op_threads: int | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "artifact_root", Path(self.artifact_root))
@@ -283,9 +287,17 @@ def run_shuffled_label_validation(
     try:
         with tee_output(run_dir / "stdout.log", run_dir / "stderr.log"):
             seed_model_rngs(config.model_seed)
+            torch_runtime = configure_torch_runtime(
+                config.torch_threads, config.torch_inter_op_threads
+            )
+            requested["torch_runtime"] = torch_runtime
             atomic_write_json(
                 run_dir / "environment.json",
-                collect_environment_metadata(repo_root=_REPO_ROOT),
+                collect_environment_metadata(
+                    repo_root=_REPO_ROOT,
+                    requested_torch_threads=config.torch_threads,
+                    requested_torch_interop_threads=config.torch_inter_op_threads,
+                ),
             )
             monitor = monitor_factory(run_dir, interval_seconds=config.monitor_interval)
             monitor.start()
@@ -846,6 +858,9 @@ def parse_args() -> argparse.Namespace:
         "--allow-unsafe-artifacts", action="store_true",
         help="Allow direct model paths without manifest hash verification.",
     )
+    parser.add_argument("--eval-batch-size", type=int, default=8_192)
+    parser.add_argument("--torch-threads", type=int)
+    parser.add_argument("--torch-inter-op-threads", type=int)
     parser.add_argument("--campaign-id", default=None)
     parser.add_argument("--logical-run-id", default=None)
     parser.add_argument("--attempt", type=int, default=1)
@@ -889,6 +904,9 @@ def main() -> None:
                 model_seed=args.model_seed,
                 shuffled_label_seed=args.shuffled_label_seed,
                 timesteps=args.timesteps_b,
+                eval_batch_size=args.eval_batch_size,
+                torch_threads=args.torch_threads,
+                torch_inter_op_threads=args.torch_inter_op_threads,
                 campaign_id=args.campaign_id,
                 logical_run_id=args.logical_run_id,
                 attempt=args.attempt,
