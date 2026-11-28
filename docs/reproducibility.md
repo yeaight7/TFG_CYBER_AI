@@ -41,6 +41,20 @@ uv pip install -r requirements-gpu-cu130.txt --index-strategy unsafe-best-match
 
 The project-mode `uv sync` path does not need that flag because `pyproject.toml` uses per-package `tool.uv.sources` for torch.
 
+## CUDA 13.2 comparison environment
+
+The campaign reference is Python 3.12, PyTorch 2.12.1+cu130, and SB3/sb3-contrib 2.8.0. The optional comparison uses the same Python and Gymnasium versions with PyTorch 2.15.0+cu132 and SB3/sb3-contrib 2.9.2. On the RTX 5090 Laptop GPU under WSL, both stacks completed real QRDQN smoke updates and matched actions from the same checkpoint. Short throughput measurements overlapped between stacks. Keep the CUDA 13.0 lock for the campaign unless matched native measurements show a repeatable gain with prediction parity.
+
+Use separate Python 3.12 environments on the same Ubuntu 24.04 host. The template image identifies the base system. Check the active interpreter, `torch.__version__`, `torch.version.cuda`, the driver, and effective FP32 matmul precision for each comparison.
+
+```bash
+python3.12 -m venv /workspace/.venv-tfg-cu132
+/workspace/.venv-tfg-cu132/bin/python -m pip install -r requirements-gpu-cu132.txt
+/workspace/.venv-tfg-cu132/bin/python -m pip check
+```
+
+The official PyTorch build targets CUDA 13.2 and publishes Linux wheels for Python 3.12. Review the host driver using NVIDIA's CUDA 13.2 compatibility guidance. [PyTorch release notes](https://github.com/pytorch/pytorch/releases/tag/v2.15.0) · [PyTorch wheel index](https://download.pytorch.org/whl/cu132/torch/) · [NVIDIA CUDA 13.2.2 release notes](https://docs.nvidia.com/cuda/archive/13.2.2/cuda-toolkit-release-notes/index.html)
+
 ## Experimental artifact versioning
 
 Campaign artifact roots intended for later evidence commits must be placed under the repository, for example `runs/final_campaign/`. Final models, retained checkpoints, TensorBoard events, joblib files, source datasets, PCAPs, existing prediction CSV evidence, and TensorBoard scalar CSVs use Git LFS. Small configs, metrics, environment metadata, manifests, checksums, logs, monitoring, timings, system metrics, run summaries, feature importances, and aggregate CSVs use normal Git.
