@@ -5,7 +5,7 @@ This directory contains the maintained project documentation used for developmen
 ## Document Roles
 
 | Document | Audience | Purpose | Status |
-|----------|----------|---------|--------|
+|---|---|---|---|
 | [../README.md](../README.md) | Evaluators, contributors, reviewers | Public project overview and quickstart | Maintained |
 | [../.github/AGENT_CONTEXT.md](../.github/AGENT_CONTEXT.md) | Contributors and agents | Project-wide technical source of truth | Maintained |
 | [phase 2/AGENT_CONTEXT.md](phase%202/AGENT_CONTEXT.md) | Contributors working on Phase 2 | Phase 2 scope, guardrails, and run conventions | Maintained |

@@ -96,8 +96,7 @@ For development and unit tests, `uv sync` uses `pyproject.toml` and `uv.lock`. T
 
 Materialise the eight curated official CSVs under `datasets/CICIDS2017/` and verify their hashes against [the repository dataset table](../README.md#provenance-and-integrity). Do not commit local raw datasets, generated caches, or provider credentials.
 
-Keep the official campaign artifacts beneath the clone. Dataset/cache inputs and
-the external export destination remain configurable filesystem paths:
+Keep the official campaign artifacts beneath the clone. Dataset/cache inputs and the external export destination remain configurable filesystem paths:
 
 ```bash
 export DATASET_ROOT=/path/to/datasets/CICIDS2017
@@ -135,9 +134,7 @@ python scripts/benchmark_experimental_runtime.py \
 
 ## Optional QRDQN smoke and run telemetry
 
-The standalone synthetic smoke exercises 50,200 timesteps with one-second
-resource sampling and exports the learning rate and loss. Run it when
-diagnosing a training environment.
+The standalone synthetic smoke exercises 50,200 timesteps with one-second resource sampling and exports the learning rate and loss. Run it when diagnosing a training environment.
 
 To run the smoke and print its summary:
 
@@ -165,11 +162,7 @@ Each new QRDQN attempt contains these complementary evidence files:
 | `config.json` | Authoritative resolved run request, frozen profile, seeds, split metadata, and artifact paths |
 | `artifact_manifest.json` / `SHA256SUMS` | Required-file contract, inventory, sizes, and integrity hashes |
 
-The returned smoke JSON embeds `run_summary.json`, so learning rate and other
-resolved hyperparameters and scalar values appear directly in the terminal.
-The smoke suppresses per-rollout SB3 tables; normal campaign runs retain their
-existing verbosity.
-To inspect the newest saved smoke without copying its generated identifier:
+The returned smoke JSON embeds `run_summary.json`, so learning rate and other resolved hyperparameters and scalar values appear directly in the terminal. The smoke suppresses per-rollout SB3 tables; normal campaign runs retain their existing verbosity. To inspect the newest saved smoke without copying its generated identifier:
 
 ```bash
 RUN_DIR="$(find "$HOME/tfg-qrdqn-test-artifacts/preflight-smoke" -type f -name run_summary.json -printf '%T@ %h\n' | sort -nr | head -n1 | cut -d' ' -f2-)"
@@ -178,10 +171,7 @@ python -m json.tool "$RUN_DIR/run_summary.json"
 column -s, -t < <(head -n 6 "$RUN_DIR/system_metrics.csv")
 ```
 
-On WSL2, CPU counts, RAM, cgroup limits, and filesystem capacity describe the
-Linux runtime allocation available to the experiment, not unallocated Windows
-host resources. The same rule applies to container-visible resources on a GPU
-provider.
+On WSL2, CPU counts, RAM, cgroup limits, and filesystem capacity describe the Linux runtime allocation available to the experiment, not unallocated Windows host resources. The same rule applies to container-visible resources on a GPU provider.
 
 ## Campaign dry-run and execution
 
@@ -199,10 +189,7 @@ python scripts/run_campaign.py experiments/final_experiment_campaign.json \
   --dry-run
 ```
 
-Use the same inputs for execution and resume. Supply the Phase 2 path and hash
-when starting a campaign that will include Phase 2. The runner binds the cache
-and Phase 2 hashes to that campaign. Optional `--stage <STAGE_ID>` or
-`--run <LOGICAL_RUN_ID>` selection never executes missing dependencies automatically.
+Use the same inputs for execution and resume. Supply the Phase 2 path and hash when starting a campaign that will include Phase 2. The runner binds the cache and Phase 2 hashes to that campaign. Optional `--stage <STAGE_ID>` or `--run <LOGICAL_RUN_ID>` selection never executes missing dependencies automatically.
 
 ```bash
 python scripts/run_campaign.py experiments/final_experiment_campaign.json \
@@ -226,9 +213,7 @@ runs/final_campaign/<CAMPAIGN_ID>/attempts/<LOGICAL_RUN_ID>/attempt-<N>/...
 
 ## Per-run export, optional snapshot, and final bundle
 
-After every completed and validated physical run, the runner exports the complete
-run directory and creates a verified per-run archive. Logical aliases do not
-create duplicate exports. With the variables above, the external layout is:
+After every completed and validated physical run, the runner exports the complete run directory and creates a verified per-run archive. Logical aliases do not create duplicate exports. With the variables above, the external layout is:
 
 ```text
 $SNAPSHOT_ROOT/
@@ -239,17 +224,13 @@ $SNAPSHOT_ROOT/
     └── attempt-<N>.export.json
 ```
 
-The directory copy and tarball contain every generated run-local file, including
-ignored and untracked outputs. Extracting a per-run tarball at repository root
-restores its canonical `runs/final_campaign/.../attempt-<N>/` directory:
+The directory copy and tarball contain every generated run-local file, including ignored and untracked outputs. Extracting a per-run tarball at repository root restores its canonical `runs/final_campaign/.../attempt-<N>/` directory:
 
 ```bash
 tar -xzf "$SNAPSHOT_ROOT/tarballs/runs/final_campaign/<CAMPAIGN_ID>/attempts/<LOGICAL_RUN_ID>/attempt-<N>.tar.gz" -C .
 ```
 
-The runner retries a failed export on `--resume` without rerunning the validated
-physical job. Manual per-run retry and optional campaign-wide snapshot/bundle
-interfaces are:
+The runner retries a failed export on `--resume` without rerunning the validated physical job. Manual per-run retry and optional campaign-wide snapshot/bundle interfaces are:
 
 ```bash
 python scripts/export_campaign.py run \
@@ -266,12 +247,7 @@ python scripts/export_campaign.py bundle \
   --destination "$SNAPSHOT_ROOT/campaign-bundles/<CAMPAIGN_ID>.tar.gz"
 ```
 
-Exports copy evidence; they never move, delete, or mutate canonical campaign data.
-Per-run archives are reopened and verified against a complete file inventory and
-SHA-256 sidecar. The destination may be a sibling directory on the same
-filesystem or any mounted filesystem path. Its existence alone does not prove
-off-host or independent durability; the operator remains responsible for manual
-download/recovery handling and Git/LFS publication.
+Exports copy evidence; they never move, delete, or mutate canonical campaign data. Per-run archives are reopened and verified against a complete file inventory and SHA-256 sidecar. The destination may be a sibling directory on the same filesystem or any mounted filesystem path. Its existence alone does not prove off-host or independent durability; the operator remains responsible for manual download/recovery handling and Git/LFS publication.
 
 ## Aggregation and future figures
 
@@ -294,4 +270,3 @@ Aggregation rejects incomplete, corrupt, failed, historical-substitute, or prove
 - [runpod_main_experiment.md](runpod_main_experiment.md) is retained only as a historical compatibility pointer for the committed historical MAIN.
 - `requirements-runpod-cu130.txt` is a historical compatibility filename that includes `requirements-gpu-cu130.txt`.
 - Historical artifacts keep their original environment and hardware metadata unchanged.
-

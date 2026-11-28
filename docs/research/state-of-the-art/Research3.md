@@ -1,3 +1,5 @@
+# Research 3
+
 ## 1. Executive summary
 
 - ML/DL‑based NIDS evaluations often use **single public datasets with random train/test splits**, which can leak near‑identical flows across splits and greatly inflate accuracy and F1.[^1][^2][^3][^4]
@@ -11,12 +13,11 @@
 
 For your thesis, you can credibly position a **flow‑based RL PERMIT/BLOCK agent trained on CICIDS2017 and externally validated on lab traffic** as more rigorous than the typical single‑dataset, random‑split ML/DL NIDS.
 
-***
+---
 
 ## 2. Dataset comparison matrix
 
 (High‑level, focusing on NIDS evaluation aspects.)
-
 
 | Dataset | Year | Traffic type | Feature type | Attack families | Size (order of magnitude) | Strengths | Weaknesses | Known evaluation risks | Relevance to my thesis | Primary citation |
 | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
@@ -27,8 +28,7 @@ For your thesis, you can credibly position a **flow‑based RL PERMIT/BLOCK agen
 | Bot‑IoT | 2018/2019 | IoT‑centric network in UNSW Cyber Range; botnet traffic vs normal | Flow/argus features (NetFlow‑like) + labels | DDoS, DoS, OS \& service scan, keylogging, data exfiltration[^8] | ≈72M flows (16.7 GB CSV full; 3M in 5% subset)[^8] | Modern IoT botnet dataset; very large; realistic lab environment; multiple attack types.[^8] | Extremely imbalanced; some attacks oversampled; lab‑specific; focus on IoT botnet, not general enterprise traffic.[^8][^10] | Random sampling and using 5% subset can hide imbalance; if sampling by row, flows from same bot attacks can be in both train and test; risk of learning IP/port patterns.[^8][^11] | Useful for future work or as example of IoT dataset; secondary relevance unless you expand beyond CICIDS2017. | Koroniotis et al., “Bot‑IoT dataset” description.[^8] |
 | ToN_IoT | 2020 | Distributed IoT/IIoT/OS/network testbed (edge–fog–cloud) | Heterogeneous: network flows, telemetry, logs, OS traces[^9] | IoT‑focused intrusions and anomalies | Millions of records across multiple modalities[^9] | Heterogeneous, multi‑layer dataset; realistic IoT/IIoT testbed; good for federated/distributed IDS research.[^9] | Complex; not purely flow‑based; mapping to simple NIDS tasks is non‑trivial; lab environment. | Evaluation papers show that models trained on UNSW/Bot‑IoT struggle on ToN_IoT and vice versa, highlighting poor cross‑dataset generalization.[^9][^11] | Mainly for discussion of generalizability and future directions; not central to your current flow‑based prototype. | Moustafa et al., “Data analytics‑enabled intrusion detection: Evaluations of ToN_IoT linux datasets.”[^9] |
 
-
-***
+---
 
 ## 3. CICIDS2017 deep dive
 
@@ -68,14 +68,12 @@ Benign traffic includes web browsing, email, VoIP, and other common enterprise a
 - **Public pcaps and flows**, enabling researchers to re‑extract features or design alternative feature sets (e.g., Zeek‑based).[^1]
 - Widely adopted, with many ML/DL studies and a growing ecosystem of tools and partial fixes, making it a de facto modern benchmark.[^14][^10][^17][^1]
 
-
 ### Limitations and known problems
 
 - **Class imbalance**: Some attack types (e.g., infiltration) are rare, while benign and volumetric DoS flows dominate; this can hide poor minority‑class performance when only global accuracy is reported.[^10][^19][^1]
 - **Scenario and temporal correlation**: Attacks are scheduled in blocks (per day/scenario), so flows within a scenario are highly correlated in time, ports, and IP addresses. Random row‑wise splitting ignores this and leaks scenario information into both train and test.[^3][^2][^1]
 - **Data quality issues**: A recent case study reports **inconsistencies, corrupted records, and the need for a “fixed” version** (e.g., corrected labels, cleaned flows) to get reliable results.[^15]
 - **High apparent difficulty under proper splits**: When evaluated with scenario‑/time‑aware splits and robust metrics, models perform notably worse than under random splits, highlighting over‑optimism in much of the literature.[^11][^15]
-
 
 ### Preprocessing concerns
 
@@ -91,13 +89,11 @@ Risks:
 - Different papers drop different subsets of features, making results incomparable.[^4][^13][^10]
 - Some include fields like **source/destination IP, port, or timestamp‑derived identifiers**, which can act as shortcuts for scenario IDs rather than true attack indicators, creating **feature leakage**.[^15][^13][^4]
 
-
 ### Evaluation concerns
 
 - **Random splits**: Many ML/DL‑NIDS studies report F1 ≥ 0.99 on CICIDS2017 using random splits and tree‑based methods (RF, J48, PART), showing that the dataset is trivially separable when correlation is ignored.[^14][^10][^1]
 - **Scenario/temporal leakage**: If flows from the same attack campaign appear in both train and test, models can learn superficial patterns (e.g., fixed IPs/ports) instead of general attack behaviour, leading to inflated performance.[^15][^2][^3][^1]
 - **Lack of external validation**: Very few works train on CICIDS2017 and test on independent datasets or real‑world traffic.[^18][^12][^4]
-
 
 ### How to describe CICIDS2017 cautiously in a thesis
 
@@ -109,7 +105,7 @@ You can describe CICIDS2017 as:
 
 This framing is honest and aligns with recent evaluation and generalizability studies.
 
-***
+---
 
 ## 4. Leakage and evaluation risk matrix
 
@@ -126,8 +122,7 @@ This framing is honest and aligns with recent evaluation and generalizability st
 | Lack of reproducibility | Incomplete reporting of splits, preprocessing, seeds | Paper says “we used 70/30 split and normalised features” with no further detail | Hard to replicate and compare; cherry‑picked splits can overstate performance | Fix and publish splits, preprocessing code, seeds; use standard folds when available | Clearly document feature set, splitting strategy, and RL environment design; ideally share code/splits | [^4][^16][^13][^26] |
 | Unrealistic 99%+ metrics | Extremely high accuracy/F1, especially on legacy datasets or under random split | 99.9% accuracy on NSL‑KDD or CICIDS2017 with simple models | Often symptom of leakage, duplicates, or unbalanced metrics; misleads about deployment readiness | Use more realistic splits; emphasise per‑class metrics and cross‑dataset tests; treat extreme scores skeptically | Interpret any very high results in your own work cautiously; emphasise evaluation design over headline numbers | [^6][^5][^1][^10][^18][^24] |
 
-
-***
+---
 
 ## 5. Recommended evaluation protocol for my thesis
 
@@ -175,11 +170,11 @@ A rigorous but feasible protocol for your RL PERMIT/BLOCK agent and baselines:
 If collecting sufficient lab‑captured traffic is not feasible:
 
 - Use **strict public splits** such as:
-    - Train on CICIDS2017, test on a subset of CSE‑CIC‑IDS2018 with compatible features, or vice versa.[^22][^23][^11]
-    - Train on UNSW‑NB15, test on CICIDS2017 or a subset; interpret results cautiously due to feature mismatch.[^20][^12]
+  - Train on CICIDS2017, test on a subset of CSE‑CIC‑IDS2018 with compatible features, or vice versa.[^22][^23][^11]
+  - Train on UNSW‑NB15, test on CICIDS2017 or a subset; interpret results cautiously due to feature mismatch.[^20][^12]
 - At minimum, ensure that **no flows or scenarios overlap** between train and test, and discuss the remaining limitations honestly.
 
-***
+---
 
 ## 6. Claims I can safely make
 
@@ -200,26 +195,26 @@ You can use these claim templates in your thesis, with appropriate citations.
 7. **Claim:** In this thesis, CICIDS2017 is used as a realistic yet imperfect training and internal validation dataset for a flow‑based RL defender, and a second evaluation stage on private lab traffic is introduced to partially address the lack of external validation.
     - **Sources:** CICIDS2017 paper, cyber‑range/testbed literature, generalizability and dataset reviews.[^28][^25][^17][^11][^3][^12][^2]
 
-***
+---
 
 ## 7. Claims I must avoid
 
 Avoid overclaiming; examples:
 
 - “CICIDS2017 fully represents modern real‑world network traffic.”
-    - In reality, it is a controlled lab dataset with specific services, clients, and scripted attacks.[^17][^3][^2]
+  - In reality, it is a controlled lab dataset with specific services, clients, and scripted attacks.[^17][^3][^2]
 - “Our model works in the real world.”
-    - You have offline evaluation on public datasets and lab traffic, not evidence from live production deployment.
+  - You have offline evaluation on public datasets and lab traffic, not evidence from live production deployment.
 - “99% accuracy proves the model is ready for deployment.”
-    - High overall accuracy can hide poor performance on minority attack classes and may be driven by leakage or unbalanced data.[^4][^18][^1]
+  - High overall accuracy can hide poor performance on minority attack classes and may be driven by leakage or unbalanced data.[^4][^18][^1]
 - “Our evaluation is leakage‑free.”
-    - You can reduce leakage risk via careful splits and feature selection, but cannot guarantee absence of all hidden correlations; phrase as “we adopt split strategies designed to reduce leakage”.
+  - You can reduce leakage risk via careful splits and feature selection, but cannot guarantee absence of all hidden correlations; phrase as “we adopt split strategies designed to reduce leakage”.
 - “CICIDS2017 has no known problems.”
-    - There is documented evidence of label inconsistencies, corrupted flows, and the need for fixed versions.[^15]
+  - There is documented evidence of label inconsistencies, corrupted flows, and the need for fixed versions.[^15]
 - “The external lab dataset is fully realistic.”
-    - Acknowledge that your lab traffic is still a controlled environment and only one possible external validation source.[^25][^28]
+  - Acknowledge that your lab traffic is still a controlled environment and only one possible external validation source.[^25][^28]
 
-***
+---
 
 ## 8. BibTeX candidates
 
@@ -339,7 +334,7 @@ Avoid overclaiming; examples:
 
 You can add BibTeX for more recent CICIDS2017 robustness/fix papers (e.g. the case study in ACM) once you extract the full bibliographic details.[^15]
 
-***
+---
 
 ## 9. Codex handoff
 
@@ -357,7 +352,6 @@ Key points for Codex:
 - Present **Bot‑IoT y ToN\_IoT** como datasets orientados a IoT/IIoT, generados en bancos de pruebas complejos (edge–fog–cloud).[^8][^9]
 - Subrayar que estos datasets son útiles para entrenar y comparar modelos, pero **no representan totalmente el tráfico de Internet**, y deben usarse con protocolos de evaluación cuidadosos.[^11][^17]
 
-
 ### Section: “Limitaciones metodológicas en la evaluación de NIDS”
 
 Goal: critically discuss the evaluation pitfalls and motivate your protocol.
@@ -369,7 +363,6 @@ Key points:
 - Explicar el impacto del **desequilibrio de clases** y por qué métricas como exactitud no son suficientes; insistir en per‑class recall, F1, FPR/FNR.[^19][^4][^1]
 - Mencionar la **falta de código y detalles de preprocesado** en muchos trabajos, lo que dificulta la reproducibilidad.[^16][^13][^4]
 - Introducir buenas prácticas: particiones temporales o por escenario, validación cruzada por archivos de captura, uso de varios datasets y semillas, y publicación de detalles de preprocesamiento.[^12][^17][^18][^1]
-
 
 ### Section: “Justificación de la validación externa”
 
@@ -472,4 +465,3 @@ Style instructions:
 [^40]: https://ouci.dntb.gov.ua/en/works/lD13LMg9/
 
 [^41]: https://jisem-journal.com/index.php/journal/article/download/1665/653/2705
-
