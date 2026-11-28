@@ -1,2 +1,0 @@
-# Historical compatibility filename. New GPU setup uses the provider-neutral file.
--r requirements-gpu-cu130.txt
