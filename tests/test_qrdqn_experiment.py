@@ -97,6 +97,10 @@ def test_tiny_run_is_artifact_complete_and_scaler_is_train_only(
     np.testing.assert_allclose(scaler.mean_, synthetic_split.X_train.mean(axis=0))
     assert not np.isclose(scaler.mean_[0], np.vstack([synthetic_split.X_train, synthetic_split.X_test])[:, 0].mean())
     np.testing.assert_array_equal(predictions["y_true"], synthetic_split.y_test)
+    with np.load(run_dir / "train_percentiles.npz") as percentiles:
+        for key, q in (("p_low", 0.5), ("p_high", 99.5)):
+            expected = np.percentile(synthetic_split.X_train[:, :76], q, axis=0)
+            assert expected.tobytes() == percentiles[key].tobytes()
     assert len(list((run_dir / "checkpoints").glob("*.zip"))) == 2
     assert (run_dir / "tensorboard_scalars" / "tensorboard_scalar_export_manifest.json").is_file()
     assert (run_dir / "run_summary.json").is_file()
