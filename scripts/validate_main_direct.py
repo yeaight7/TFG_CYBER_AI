@@ -38,6 +38,7 @@ from src.run_artifacts import (  # noqa: E402
     atomic_write_json,
     atomic_write_text,
     collect_environment_metadata,
+    configure_torch_runtime,
     tee_output,
 )
 
@@ -73,6 +74,8 @@ def run_main_direct_validation(
     split_provider: SplitProvider = _default_split_provider,
     model_loader: ModelLoader = _default_model_loader,
     eval_batch_size: int = 8_192,
+    torch_threads: int | None = None,
+    torch_inter_op_threads: int | None = None,
     campaign_id: str | None = None,
     logical_run_id: str | None = None,
     attempt: int = 1,
@@ -113,13 +116,15 @@ def run_main_direct_validation(
     timing = TimingRecorder()
     try:
         with tee_output(output_dir / "stdout.log", output_dir / "stderr.log"):
+            torch_runtime = configure_torch_runtime(torch_threads, torch_inter_op_threads)
             model_path = resolve_trusted_artifact(
                 source_run_dir, "model", repo_root=_REPO_ROOT
             )
             scaler_path = resolve_trusted_artifact(
                 source_run_dir, "scaler", repo_root=_REPO_ROOT
             )
-            split = split_provider(source_config)
+            with timing.measure("split_reconstruction"):
+                split = split_provider(source_config)
             expected_hashes = source_config["split_metadata"]
             actual_hashes = {
                 "test_set_sha256": sha256_array(split.X_test),
@@ -176,11 +181,16 @@ def run_main_direct_validation(
                     "split_seed": source_config["split_seed"],
                     "model_seed": source_config["model_seed"],
                     "eval_batch_size": eval_batch_size,
+                    "torch_runtime": torch_runtime,
                 },
             )
             atomic_write_json(
                 output_dir / "environment.json",
-                collect_environment_metadata(repo_root=_REPO_ROOT),
+                collect_environment_metadata(
+                    repo_root=_REPO_ROOT,
+                    requested_torch_threads=torch_threads,
+                    requested_torch_interop_threads=torch_inter_op_threads,
+                ),
             )
             timing.write(output_dir / "timing.json")
         writer.complete()
@@ -202,6 +212,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--artifact-root", required=True, type=Path)
     parser.add_argument("--job-id", required=True)
     parser.add_argument("--eval-batch-size", type=int, default=8_192)
+    parser.add_argument("--torch-threads", type=int)
+    parser.add_argument("--torch-inter-op-threads", type=int)
     parser.add_argument("--campaign-id", default=None)
     parser.add_argument("--logical-run-id", default=None)
     parser.add_argument("--attempt", type=int, default=1)
@@ -214,6 +226,8 @@ def main() -> None:
         source_run_dir=args.run_dir,
         output_dir=args.artifact_root / args.job_id,
         eval_batch_size=args.eval_batch_size,
+        torch_threads=args.torch_threads,
+        torch_inter_op_threads=args.torch_inter_op_threads,
         campaign_id=args.campaign_id,
         logical_run_id=args.logical_run_id,
         attempt=args.attempt,

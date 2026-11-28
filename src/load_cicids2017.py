@@ -14,16 +14,12 @@ try:
         CacheValidationError,
         load_cached_csvs,
         sha256_array,
-        sha256_file,
-        validate_cache,
     )
 except ModuleNotFoundError:
     from cicids_cache import (
         CacheValidationError,
         load_cached_csvs,
         sha256_array,
-        sha256_file,
-        validate_cache,
     )
 
 try:
@@ -100,6 +96,9 @@ class CICIDSLoadConfig:
     # ``prefer`` falls back without consuming invalid data; ``require`` fails.
     cache_root: Optional[Path] = None
     cache_policy: str = "off"
+
+
+_SplitArrays = Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]
 
 
 def _list_csv_files(root: Path) -> List[Path]:
@@ -359,7 +358,7 @@ def _load_and_process_csv_paths(
     csv_paths: List[Path],
     cfg: CICIDSLoadConfig,
     max_rows_per_csv: Optional[int] = None,
-) -> Tuple[np.ndarray, np.ndarray, List[str]]:
+) -> Tuple[np.ndarray, np.ndarray, List[str], str | None]:
     """Carga una lista de CSVs, aplica preprocesado y devuelve X, y y features."""
     if not csv_paths:
         raise ValueError(
@@ -393,7 +392,7 @@ def _load_and_process_csv_paths(
     if cfg.cache_policy != "off" and not cache_incompatibilities:
         assert cfg.cache_root is not None
         try:
-            observations, labels, feature_names, _manifest_hash = load_cached_csvs(
+            observations, labels, feature_names, manifest_hash = load_cached_csvs(
                 dataset_root=cfg.local_dir,
                 cache_root=cfg.cache_root,
                 csv_paths=csv_paths,
@@ -402,7 +401,7 @@ def _load_and_process_csv_paths(
                 sample_frac=cfg.sample_frac,
                 sample_seed=cfg.random_state,
             )
-            return observations, labels, feature_names
+            return observations, labels, feature_names, manifest_hash
         except CacheValidationError:
             if cfg.cache_policy == "require":
                 raise
@@ -422,7 +421,7 @@ def _load_and_process_csv_paths(
         ]
         df = pd.concat(frames, ignore_index=True)
 
-    return _prepare_cicids_features(df, cfg)
+    return (*_prepare_cicids_features(df, cfg), None)
 
 
 def _resolve_exact_csv_names(csv_names: List[str], all_csvs: List[Path]) -> List[Path]:
@@ -445,9 +444,14 @@ def _resolve_exact_csv_names(csv_names: List[str], all_csvs: List[Path]) -> List
     return resolved
 
 
-def load_cicids2017_binary(
-    cfg: Optional[CICIDSLoadConfig] = None,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
+def load_cicids2017_binary(cfg: Optional[CICIDSLoadConfig] = None) -> _SplitArrays:
+    """Load a stratified train/test split of CICIDS2017."""
+    return _load_cicids2017_binary(cfg)[0]
+
+
+def _load_cicids2017_binary(
+    cfg: Optional[CICIDSLoadConfig],
+) -> tuple[_SplitArrays, str | None]:
     """
     Carga CICIDS2017 desde directorio local y lo adapta al esquema canónico.
 
@@ -471,7 +475,7 @@ def load_cicids2017_binary(
     csvs = _select_csv_files(local_dir, cfg)
     print(f"[CICIDS2017] Cargando {len(csvs)} archivos CSV desde {local_dir}")
 
-    X_clean, y_clean, feature_names = _load_and_process_csv_paths(csvs, cfg)
+    X_clean, y_clean, feature_names, manifest_hash = _load_and_process_csv_paths(csvs, cfg)
 
     # Split estratificado
     X_train, X_test, y_train, y_test = train_test_split(
@@ -488,14 +492,23 @@ def load_cicids2017_binary(
         X_train = scaler.fit_transform(X_train).astype(np.float32)
         X_test = scaler.transform(X_test).astype(np.float32)
 
-    return X_train, y_train, X_test, y_test, scaler, feature_names
+    return (X_train, y_train, X_test, y_test, scaler, feature_names), manifest_hash
 
 
 def load_cicids2017_csv_split(
     train_csvs: List[str],
     test_csvs: List[str],
     cfg: Optional[CICIDSLoadConfig] = None,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
+) -> _SplitArrays:
+    """Load train/test partitions selected by day aliases or official CSV names."""
+    return _load_cicids2017_csv_split(train_csvs, test_csvs, cfg)[0]
+
+
+def _load_cicids2017_csv_split(
+    train_csvs: List[str],
+    test_csvs: List[str],
+    cfg: Optional[CICIDSLoadConfig],
+) -> tuple[_SplitArrays, str | None]:
     """
     Carga CICIDS2017 separando por archivos CSV (train vs test).
 
@@ -544,8 +557,10 @@ def load_cicids2017_csv_split(
 
     print(f"[CSV-split] Train CSVs ({len(train_paths)}): {[p.name for p in train_paths]}")
     print(f"[CSV-split] Test  CSVs ({len(test_paths)}): {[p.name for p in test_paths]}")
-    X_train, y_train, feature_names = _load_and_process_csv_paths(train_paths, cfg)
-    X_test, y_test, _ = _load_and_process_csv_paths(test_paths, cfg)
+    X_train, y_train, feature_names, manifest_hash = _load_and_process_csv_paths(train_paths, cfg)
+    X_test, y_test, _, test_hash = _load_and_process_csv_paths(test_paths, cfg)
+    if manifest_hash != test_hash:
+        raise CacheValidationError("Cache identity changed between train and test loading")
 
     scaler: Optional[StandardScaler] = None
     if cfg.scale:
@@ -556,7 +571,7 @@ def load_cicids2017_csv_split(
     print(f"[CSV-split] Train: {X_train.shape} (benign={int((y_train==0).sum())}, attack={int((y_train==1).sum())})")
     print(f"[CSV-split] Test:  {X_test.shape} (benign={int((y_test==0).sum())}, attack={int((y_test==1).sum())})")
 
-    return X_train, y_train, X_test, y_test, scaler, feature_names
+    return (X_train, y_train, X_test, y_test, scaler, feature_names), manifest_hash
 
 
 def load_cicids2017_exact_csv_split(
@@ -564,7 +579,17 @@ def load_cicids2017_exact_csv_split(
     test_csv_names: List[str],
     cfg: Optional[CICIDSLoadConfig] = None,
     max_rows_per_csv: Optional[int] = None,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Optional[StandardScaler], List[str]]:
+) -> _SplitArrays:
+    """Load train/test partitions selected by exact CSV names."""
+    return _load_cicids2017_exact_csv_split(train_csv_names, test_csv_names, cfg, max_rows_per_csv)[0]
+
+
+def _load_cicids2017_exact_csv_split(
+    train_csv_names: List[str],
+    test_csv_names: List[str],
+    cfg: Optional[CICIDSLoadConfig],
+    max_rows_per_csv: Optional[int] = None,
+) -> tuple[_SplitArrays, str | None]:
     """
     Carga CICIDS2017 separando por nombres exactos de archivo CSV.
 
@@ -615,16 +640,18 @@ def load_cicids2017_exact_csv_split(
     if max_rows_per_csv is not None:
         print(f"[Exact-CSV-split] Max rows per CSV: {max_rows_per_csv}")
 
-    X_train, y_train, feature_names = _load_and_process_csv_paths(
+    X_train, y_train, feature_names, manifest_hash = _load_and_process_csv_paths(
         train_paths,
         effective_cfg,
         max_rows_per_csv=max_rows_per_csv,
     )
-    X_test, y_test, _ = _load_and_process_csv_paths(
+    X_test, y_test, _, test_hash = _load_and_process_csv_paths(
         test_paths,
         effective_cfg,
         max_rows_per_csv=max_rows_per_csv,
     )
+    if manifest_hash != test_hash:
+        raise CacheValidationError("Cache identity changed between train and test loading")
 
     scaler: Optional[StandardScaler] = None
     if cfg.scale:
@@ -641,7 +668,7 @@ def load_cicids2017_exact_csv_split(
         f"(benign={int((y_test==0).sum())}, attack={int((y_test==1).sum())})"
     )
 
-    return X_train, y_train, X_test, y_test, scaler, feature_names
+    return (X_train, y_train, X_test, y_test, scaler, feature_names), manifest_hash
 
 
 # ──────────────────────────────────────────────────────────────
@@ -660,26 +687,6 @@ _PRESET_MAX_ROWS: Dict[str, Dict[str, Optional[int]]] = {
 # Versioned identifier for the train-only subsampling strategy used by
 # ``train_max_rows`` (recorded in split metadata for auditability).
 SUBSAMPLE_METHOD_STRATIFIED_NESTED_PREFIX = "stratified_nested_prefix_v1"
-
-
-def _cache_manifest_hash_if_used(cfg: CICIDSLoadConfig) -> Optional[str]:
-    if cfg.cache_policy == "off" or cfg.cache_root is None:
-        return None
-    if (
-        not cfg.use_canonical
-        or not cfg.drop_identifier_cols
-        or cfg.label_col.strip().lower() != "label"
-        or cfg.benign_value.strip().upper() != "BENIGN"
-        or cfg.allow_non_official_csvs
-    ):
-        return None
-    try:
-        validate_cache(cfg.local_dir, cfg.cache_root)
-    except CacheValidationError:
-        if cfg.cache_policy == "require":
-            raise
-        return None
-    return sha256_file(Path(cfg.cache_root) / "cache_manifest.json")
 
 
 def _sha256_of_array(arr: np.ndarray) -> str:
@@ -831,7 +838,7 @@ def load_cicids2017_split(
 
     if split_mode == "random":
         csv_files = [path.name for path in _select_csv_files(Path(cfg.local_dir), cfg)]
-        X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_binary(cfg)
+        split, manifest_hash = _load_cicids2017_binary(cfg)
         day_info: Dict[str, Any] = {"csv_files": csv_files}
     else:
         effective_train_days = train_days or DEFAULT_TRAIN_DAYS
@@ -843,7 +850,7 @@ def load_cicids2017_split(
         else:
             train_paths = _resolve_official_csv_selectors(effective_train_days, all_csvs)
             test_paths = _resolve_official_csv_selectors(effective_test_days, all_csvs)
-        X_train, y_train, X_test, y_test, scaler, feature_names = load_cicids2017_csv_split(
+        split, manifest_hash = _load_cicids2017_csv_split(
             train_csvs=effective_train_days,
             test_csvs=effective_test_days,
             cfg=cfg,
@@ -854,6 +861,8 @@ def load_cicids2017_split(
             "train_csv_files": [path.name for path in train_paths],
             "test_csv_files": [path.name for path in test_paths],
         }
+
+    X_train, y_train, X_test, y_test, scaler, feature_names = split
 
     # Train-only subsample (benchmark mode): test partition untouched.
     n_train_full = int(len(y_train))
@@ -890,7 +899,7 @@ def load_cicids2017_split(
         ),
         "allow_non_official_csvs": bool(allow_non_official_csvs),
         "cache_policy": cache_policy,
-        "cache_manifest_sha256": _cache_manifest_hash_if_used(cfg),
+        "cache_manifest_sha256": manifest_hash,
         "csv_selection_policy": "legacy_all_csvs" if allow_non_official_csvs else "official_cicids2017_8_csvs",
         "test_set_sha256": raw_test_hash,
         "y_test_sha256": test_label_hash,

@@ -81,18 +81,16 @@ Bootstrap intervals measure fixed-test sampling precision for one trained model,
 
 ## Environment setup
 
-Use the environment appropriate to the host. The example below installs the pinned Linux CUDA stack. The campaign has no hardware minimums; each run records the environment it actually uses.
+The locked Linux campaign environment uses Python 3.12, PyTorch 2.15.0+cu132, and SB3/sb3-contrib 2.9.2. Use a CUDA 13.2-compatible host and install the project environment from the lock.
 
 ```bash
 git clone https://github.com/yeaight7/TFG_CYBER_AI.git
 cd TFG_CYBER_AI
-python -m venv .venv
+uv sync --locked --python 3.12
 source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements-gpu-cu130.txt
 ```
 
-For development and unit tests, `uv sync` uses `pyproject.toml` and `uv.lock`. The compatibility requirements filename is documented in [reproducibility.md](reproducibility.md).
+Each run records the environment it actually uses. See [reproducibility.md](reproducibility.md) for dev extras and the earlier CUDA 13.0 comparison stack.
 
 Materialise the eight curated official CSVs under `datasets/CICIDS2017/` and verify their hashes against [the repository dataset table](../README.md#provenance-and-integrity). Do not commit local raw datasets, generated caches, or provider credentials.
 
@@ -131,6 +129,20 @@ python scripts/benchmark_experimental_runtime.py \
   --output /path/to/runtime-benchmark.json \
   --thread-config 1:1 4:1 8:1 16:1
 ```
+
+Run the probe with the locked campaign environment to measure the real training path. To compare stacks, repeat it in the CUDA 13.0 reference environment on the same allocation:
+
+```bash
+python scripts/benchmark_experimental_runtime.py --campaign-qrdqn --device auto \
+  --thread-config 1:1 4:1 8:1 16:1 \
+  --batch-sizes 2048 4096 8192 16384 32768
+```
+
+This uses a seeded synthetic dataset, the frozen MAIN QRDQN profile, and 50,400 timesteps. It measures warm-up rollout, learned-policy rollout, and optimizer updates separately. Inference includes NumPy-to-device input and device-to-NumPy action transfers. Each batch size gets a warm-up and three timed predictions with exact action comparisons against the 4,096 and 8,192 defaults. Each configuration runs in its own process. The probe writes `config.json` and `metrics.json` under a unique `runs/runtime-probes/` ID. These files are runtime evidence.
+
+For a fixed trained model, append `--inference-run-dir <verified-model-run-dir>`. Add `--inference-observations <prepared-float32.npy>` to reuse an evaluation or Phase 2 input after its normal preprocessing. Use the same model and observation hashes for both stacks. Consider only parity-passing batch sizes and keep the default when the timing spread obscures the difference.
+
+The 15 primary QRDQN runs request 20,399,216 timesteps. SB3 rounds these to 20,399,600 steps across the runs, including 750,000 steps before learning begins, and makes 3,929,920 optimizer updates. Estimate the QRDQN loop time from the sum of warm-up steps, learned-policy steps, and updates divided by their respective measured rates. Then add preprocessing, evaluation, checkpointing, exports, the seven Random Forest runs, and five auxiliary jobs. Use native host timings for disk- and CPU-heavy work. The 200-quantile loss alone has 81,920,000 pairwise elements per update, so VRAM size and advertised FLOPS give limited information about campaign wall time.
 
 ## Optional QRDQN smoke and run telemetry
 
@@ -203,6 +215,8 @@ python scripts/run_campaign.py experiments/final_experiment_campaign.json \
   --resume
 ```
 
+After comparing parity and throughput, set `--eval-batch-size` for QRDQN evaluation, shuffled-label validation, and direct MAIN validation. Set `--phase2-batch-size` for Phase 2. The defaults are 8,192 and 4,096 respectively. `--torch-threads` and `--torch-inter-op-threads` configure the PyTorch subprocesses when supplied. Repeat the same options on resume. The dry-run lists the resolved settings and the affected commands.
+
 The runner dispatches sequential subprocesses. It skips only checksum-validated completed runs, retains failed/interrupted attempts, and writes retries to new attempt directories.
 
 Canonical physical runs use this on-repository layout:
@@ -268,5 +282,4 @@ Aggregation rejects incomplete, corrupt, failed, historical-substitute, or prove
 ## Compatibility and historical records
 
 - [runpod_main_experiment.md](runpod_main_experiment.md) is retained only as a historical compatibility pointer for the committed historical MAIN.
-- `requirements-runpod-cu130.txt` is a historical compatibility filename that includes `requirements-gpu-cu130.txt`.
 - Historical artifacts keep their original environment and hardware metadata unchanged.

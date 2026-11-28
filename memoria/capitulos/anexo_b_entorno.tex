@@ -5,9 +5,9 @@ Este anexo distingue tres objetos: el contrato de la plataforma GPU experimental
 
 \section{Contrato de la plataforma final}
 
-La campaña se ejecutará en una plataforma Linux con GPU CUDA y recursos suficientes para la matriz aprobada. El preflight usa umbrales de CPU, RAM, VRAM y espacio como puertas de lanzamiento configurables. Estos umbrales expresan capacidad requerida; no describen una máquina concreta.
+La campaña se ejecutará en una plataforma Linux con GPU CUDA. El benchmark opcional mide el rendimiento y el consumo de recursos en el equipo elegido.
 
-El entorno final se instalará desde \path{requirements-gpu-cu130.txt}. La especificación científica conserva el perfil, semillas, datos, caché y artefactos independientemente del proveedor, hostname, cuenta, método de acceso o rutas de montaje. La ejecución permanece secuencial para reducir competencia de recursos y simplificar recuperación.
+El entorno final se instalará con \texttt{uv} a partir de \path{pyproject.toml} y \path{uv.lock}, con Python~3.12 y PyTorch~2.15.0 para CUDA~13.2. La especificación científica conserva el perfil, semillas, datos, caché y artefactos independientemente del proveedor, hostname, cuenta, método de acceso o rutas de montaje. La ejecución permanece secuencial para reducir competencia de recursos y simplificar recuperación.
 
 \section{Evidencia ambiental pendiente}
 
@@ -71,9 +71,8 @@ Los datos de CPU y RAM comunicados fuera del artefacto no se usan para caracteri
 \toprule
 Contrato & Función \\
 \midrule
-\path{requirements-gpu-cu130.txt} & Dependencias directas de la plataforma experimental GPU \\
-\path{requirements.txt} & Ruta compatible de instalación general del proyecto \\
-\path{pyproject.toml} y \path{uv.lock} & Desarrollo, pruebas y resolución bloqueada \\
+\path{pyproject.toml} & Dependencias directas, extras y fuentes de paquetes \\
+\path{uv.lock} & Resolución fijada para campaña, desarrollo y pruebas \\
 \texttt{environment.json} & Observación real por ejecución; prevalece sobre una expectativa del manifiesto \\
 \bottomrule
 \end{tabular}

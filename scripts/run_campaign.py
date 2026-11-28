@@ -14,6 +14,7 @@ from src.campaign import (  # noqa: E402
     CampaignError,
     CampaignPaths,
     CampaignRunner,
+    CampaignRuntimeOptions,
     DEFAULT_CAMPAIGN_ARTIFACT_ROOT,
     load_campaign_spec,
 )
@@ -47,6 +48,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--phase2-input", type=Path, default=None)
     parser.add_argument("--phase2-input-sha256", default=None)
+    runtime = CampaignRuntimeOptions()
+    parser.add_argument(
+        "--eval-batch-size", type=int, default=runtime.eval_batch_size,
+        help="Rows per prediction batch in QRDQN evaluation and validation (default: 8192).",
+    )
+    parser.add_argument(
+        "--phase2-batch-size", type=int, default=runtime.phase2_batch_size,
+        help="Rows per Phase 2 prediction batch (default: 4096).",
+    )
+    parser.add_argument("--torch-threads", type=int)
+    parser.add_argument("--torch-inter-op-threads", type=int)
     selection = parser.add_mutually_exclusive_group()
     selection.add_argument("--stage")
     selection.add_argument("--run", dest="logical_run_id")
@@ -76,6 +88,12 @@ def main(argv: list[str] | None = None) -> int:
             spec,
             campaign_id=args.campaign_id,
             paths=paths,
+            runtime=CampaignRuntimeOptions(
+                eval_batch_size=args.eval_batch_size,
+                phase2_batch_size=args.phase2_batch_size,
+                torch_threads=args.torch_threads,
+                torch_inter_op_threads=args.torch_inter_op_threads,
+            ),
         )
         if args.dry_run:
             result = runner.dry_run(

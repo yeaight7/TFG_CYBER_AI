@@ -9,9 +9,9 @@ dependencies = [
     "pandas==3.0.3",
     "scikit-learn==1.9.0",
     "gymnasium==1.2.3",
-    "stable-baselines3[extra]==2.8.0",
-    "sb3-contrib==2.8.0",
-    "torch==2.12.1",
+    "stable-baselines3[extra]==2.9.2",
+    "sb3-contrib==2.9.2",
+    "torch==2.15.0",
     "joblib==1.5.3",
     "psutil==7.2.2",
 ]
@@ -29,7 +29,7 @@ tune = [
 [tool.uv.sources]
 torch = [
     { index = "pytorch-cpu", marker = "sys_platform != 'linux'" },
-    { index = "pytorch-cu130", marker = "sys_platform == 'linux'" },
+    { index = "pytorch-cu132", marker = "sys_platform == 'linux'" },
 ]
 
 [[tool.uv.index]]
@@ -38,8 +38,8 @@ url = "https://download.pytorch.org/whl/cpu"
 explicit = true
 
 [[tool.uv.index]]
-name = "pytorch-cu130"
-url = "https://download.pytorch.org/whl/cu130"
+name = "pytorch-cu132"
+url = "https://download.pytorch.org/whl/cu132"
 explicit = true
 
 [tool.setuptools.packages.find]

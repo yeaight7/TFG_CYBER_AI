@@ -2,44 +2,28 @@
 
 ## GPU experimental environment
 
-The final campaign uses a provider-neutral Linux GPU environment. The maintained pinned direct dependency set is `requirements-gpu-cu130.txt`; `pyproject.toml` and `uv.lock` define the development/test environment. Host identity, remote access, account details, and mount paths are operational inputs, not scientific configuration.
-
-Setup, cache, campaign, snapshot, and aggregation commands live in [gpu_experimental_environment.md](gpu_experimental_environment.md). Per-run environments and monitoring record the runtime-visible hardware, software, and storage alongside the run's input and artifact hashes.
-
-## Dependency Files
-
-- `requirements-gpu-cu130.txt` is the direct Linux GPU environment file for the QRDQN campaign stack.
-- `requirements.txt` is the generic local/dev install file. It pins the same core ML stack but uses `torch==2.12.1` without a CUDA local-version suffix so pip can select the platform-appropriate wheel.
-- `pyproject.toml` pins the same core project dependencies. For uv, `tool.uv.sources` sends Linux torch resolution to the PyTorch CUDA 13.0 index and non-Linux torch resolution to the CPU index.
-
-GPU host setup:
+The final campaign uses Python 3.12, PyTorch 2.15.0+cu132, and SB3/sb3-contrib 2.9.2. `pyproject.toml` declares the dependencies and `uv.lock` pins their resolution. Linux uses the PyTorch CUDA 13.2 wheel index. Other platforms use the CPU index.
 
 ```bash
-python -m venv venv
-source venv/bin/activate
-pip install -U pip
-pip install -r requirements-gpu-cu130.txt
+uv sync --locked --python 3.12
 ```
 
-uv setup:
+Use `uv sync --locked --all-extras` for development and tuning tools. The [GPU environment guide](gpu_experimental_environment.md) covers the campaign and artifact workflow. Per-run environment metadata records the installed packages, hardware, host driver, CUDA runtime, and storage alongside the input and artifact hashes.
+
+For pip-only installations, run `python -m pip install -r requirements.txt` with Python 3.12. The file lists locked runtime dependencies. Regenerate it after updating `uv.lock`:
 
 ```bash
-uv sync
+uv export --locked --format requirements-txt --no-emit-project --no-default-groups \
+  --no-annotate --no-hashes --emit-index-url --output-file requirements.txt
 ```
 
-On Linux, uv resolves torch through:
+## CUDA 13.0 reference environment
 
-```text
-https://download.pytorch.org/whl/cu130
-```
+For a same-host comparison, create an isolated environment from the `pyproject.toml` and `uv.lock` at commit `baa7257`. That revision pins Python 3.12, PyTorch 2.12.1+cu130, and SB3/sb3-contrib 2.8.0. Use its Python interpreter to run the benchmark from the current checkout. Keep the checkpoint, prepared observations, runtime options, and FP32 matmul precision consistent across comparisons.
 
-If using `uv pip install` directly against `requirements-gpu-cu130.txt`, include uv's multi-index strategy flag:
+Both stacks completed QRDQN smoke updates on the RTX 5090 Laptop GPU under WSL and produced identical actions from the fixed checkpoint. Short throughput measurements overlapped between stacks. Measure throughput on the selected native GPU for the allocation estimate.
 
-```bash
-uv pip install -r requirements-gpu-cu130.txt --index-strategy unsafe-best-match
-```
-
-The project-mode `uv sync` path does not need that flag because `pyproject.toml` uses per-package `tool.uv.sources` for torch.
+PyTorch 2.15 publishes CUDA 13.2 wheels for Python 3.12. Use NVIDIA's CUDA compatibility guidance when checking the actual host driver. [PyTorch release notes](https://github.com/pytorch/pytorch/releases/tag/v2.15.0) · [PyTorch wheel index](https://download.pytorch.org/whl/cu132/torch/) · [NVIDIA CUDA 13.2.2 release notes](https://docs.nvidia.com/cuda/archive/13.2.2/cuda-toolkit-release-notes/index.html)
 
 ## Experimental artifact versioning
 
@@ -51,7 +35,7 @@ Future per-row `runs/**/predictions*.csv` exports and downloaded `.tar.gz` bundl
 
 After each validated physical campaign run, the generic filesystem exporter copies the complete sealed run directory outside the repository and creates a verified per-run `.tar.gz` plus SHA-256 sidecar. The copy includes Git, Git LFS, ignored, untracked, checkpoint, TensorBoard, log, monitoring, and prediction outputs because the complete physical run directory is the source. This is manual download/recovery convenience, not proof of off-host or independent durability; a same-filesystem sibling destination is valid. A mounted volume, network share, or other mounted external destination works through the same filesystem-path interface.
 
-## Historical MAIN environment and compatibility filename
+## Historical MAIN environment
 
 The committed historical MAIN environment remains recorded in:
 
@@ -59,7 +43,7 @@ The committed historical MAIN environment remains recorded in:
 runs/cicids2017/MAIN_qrdqn_cicids2017_canonical_full_random_20260609_193655/environment.json
 ```
 
-That artifact records the original RunPod execution and its measured hardware/software metadata. It is evidence for the historical MAIN only; it does not verify or constrain the future campaign host. `requirements-runpod-cu130.txt` is retained as a compatibility filename and includes the provider-neutral `requirements-gpu-cu130.txt` file.
+That artifact records the original RunPod execution and its measured hardware/software metadata. It is evidence for the historical MAIN only; it does not verify or constrain the future campaign host.
 
 ## PyTorch Advisory Handling
 
@@ -92,7 +76,7 @@ Commits **before 2026-06-27** were authored with an institutional email (`…@al
 
 ## Continuous integration: what CI does and does not verify
 
-CI (`.github/workflows/ci.yml`) runs on Python **3.12** (matching the MAIN training environment, `environment.json` 3.12.11), installs the locked dependencies with `uv sync --all-extras`, and runs the unit tests, the canonical-schema dimension check, and Ruff. The uv download/build store is cached (`enable-cache: true`) so the large `cu130` torch wheel (~2.5 GB) is fetched only once.
+CI (`.github/workflows/ci.yml`) runs on Python **3.12** (matching the MAIN training environment, `environment.json` 3.12.11), installs the locked dependencies with `uv sync --locked --all-extras`, and runs the unit tests, the canonical-schema dimension check, and Ruff. The uv download/build store is cached (`enable-cache: true`) to reuse PyTorch and CUDA wheels across runs.
 
 **What CI cannot verify:** the byte-identical **SHA-256 of the fixed seed-42 test partition** (`runs/cicids2017/test_partition_reference_seed42.json`) can only be checked against the real CICIDS2017 CSVs, which live in **git LFS and are not pulled in CI** (large, and gated by dataset terms). So the reproducibility hash is a **local** check.
 

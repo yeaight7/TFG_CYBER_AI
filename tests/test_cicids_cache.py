@@ -248,9 +248,25 @@ def test_worker_default_and_validation_are_safely_capped(monkeypatch: pytest.Mon
 def test_unified_loader_records_validated_cache_identity(
     synthetic_dataset: Path,
     tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     cache_root = tmp_path / "cache"
     cache.build_cache(synthetic_dataset, cache_root, workers=1)
+    original_validate = cache._validate_cache
+    original_load = np.load
+    validations = []
+    shard_reads = []
+
+    def record_validation(dataset_root, validated_cache_root, selected=frozenset()):
+        validations.append(validated_cache_root)
+        return original_validate(dataset_root, validated_cache_root, selected)
+
+    def record_shard_read(path, *args, **kwargs):
+        shard_reads.append(path)
+        return original_load(path, *args, **kwargs)
+
+    monkeypatch.setattr(cache, "_validate_cache", record_validation)
+    monkeypatch.setattr(cache.np, "load", record_shard_read)
 
     uncached = load_cicids2017_split(
         preset="full",
@@ -270,7 +286,10 @@ def test_unified_loader_records_validated_cache_identity(
 
     _assert_loader_results_equal(uncached, cached)
     assert uncached[6]["cache_manifest_sha256"] is None
-    assert len(cached[6]["cache_manifest_sha256"]) == 64
+    assert validations == [cache_root]
+    assert len(shard_reads) == 2 * len(cache._official_names())
+    assert len(set(shard_reads)) == len(shard_reads)
+    assert cached[6]["cache_manifest_sha256"] == cache.sha256_file(cache_root / "cache_manifest.json")
     for key in ("train_set_sha256", "test_set_sha256", "y_train_sha256", "y_test_sha256"):
         assert uncached[6][key] == cached[6][key]
 

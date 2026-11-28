@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -85,12 +86,14 @@ def test_runtime_benchmark_rejects_invalid_thread_config(value: str) -> None:
         parse_thread_config(value)
 
 
-def test_gpu_requirements_are_neutral_and_legacy_file_is_only_a_pointer() -> None:
+def test_project_lock_uses_cuda_on_linux_and_keeps_cpu_wheels() -> None:
     repo_root = Path(__file__).resolve().parents[1]
-    neutral = (repo_root / "requirements-gpu-cu130.txt").read_text(encoding="utf-8")
-    legacy = (repo_root / "requirements-runpod-cu130.txt").read_text(encoding="utf-8")
+    project = tomllib.loads((repo_root / "pyproject.toml").read_text(encoding="utf-8"))
+    lock = tomllib.loads((repo_root / "uv.lock").read_text(encoding="utf-8"))
 
-    assert "torch==2.12.1+cu130" in neutral
-    assert "psutil==7.2.2" in neutral
-    assert "RunPod" not in neutral
-    assert legacy.strip().endswith("-r requirements-gpu-cu130.txt")
+    assert "torch==2.15.0" in project["project"]["dependencies"]
+    sources = project["tool"]["uv"]["sources"]["torch"]
+    assert {"index": "pytorch-cu132", "marker": "sys_platform == 'linux'"} in sources
+    assert {"index": "pytorch-cpu", "marker": "sys_platform != 'linux'"} in sources
+    torch_wheels = {pkg["version"] for pkg in lock["package"] if pkg["name"] == "torch"}
+    assert {"2.15.0+cu132", "2.15.0+cpu"} <= torch_wheels

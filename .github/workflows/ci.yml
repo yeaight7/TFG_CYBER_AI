@@ -19,8 +19,7 @@ jobs:
         uses: astral-sh/setup-uv@8d55fbecc275b1c35dbe060458839f8d30439ccf
         with:
           version: "0.11.25"
-          # Cache the uv download/build store across runs (the cu130 torch wheel
-          # is ~2.5 GB; caching avoids re-downloading it every run).
+          # Cache the uv download/build store to reuse PyTorch and CUDA wheels.
           enable-cache: true
 
       - name: Set up Python
@@ -29,7 +28,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: uv sync --all-extras
+        run: uv sync --locked --all-extras
 
       - name: Check Canonical Schema Dimension
         run: |

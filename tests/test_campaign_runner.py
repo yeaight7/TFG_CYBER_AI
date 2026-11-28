@@ -304,6 +304,10 @@ def test_resume_skips_valid_completion_and_retries_failed_or_interrupted(
         cache_validator=_valid_cache,
     )
     runner.execute(logical_run_id=FRESH_MAIN_ID)
+    resolved_path = runner.campaign_dir / "campaign_spec_resolved.json"
+    resolved = json.loads(resolved_path.read_text(encoding="utf-8"))
+    del resolved["resolved_runtime"]["torch_options"]
+    atomic_write_json(resolved_path, resolved)
     runner.execute(logical_run_id=FRESH_MAIN_ID, resume=True)
     assert calls == [FRESH_MAIN_ID]
 
@@ -807,3 +811,55 @@ def test_spec_and_commands_use_provider_neutral_paths(tmp_path: Path) -> None:
     )
     command = runner.command_for(FRESH_MAIN_ID, attempt=1)
     assert str(tmp_path) in " ".join(command)
+
+
+def test_runtime_overrides_dispatch_to_torch_jobs_and_bind_resume(tmp_path: Path) -> None:
+    from scripts.run_campaign import parse_args
+    from src.campaign import CampaignRuntimeOptions
+
+    args = parse_args([
+        str(SPEC_PATH), "--campaign-id", "runtime-test",
+        "--cache-root", str(tmp_path / "cache"),
+        "--snapshot-root", str(tmp_path / "snapshots"),
+        "--eval-batch-size", "16384", "--phase2-batch-size", "2048",
+        "--torch-threads", "4", "--torch-inter-op-threads", "1",
+    ])
+    runtime = CampaignRuntimeOptions(
+        args.eval_batch_size, args.phase2_batch_size,
+        args.torch_threads, args.torch_inter_op_threads,
+    )
+    calls = []
+    kwargs = {
+        "campaign_id": "runtime-test", "paths": _paths(tmp_path),
+        "cache_validator": _valid_cache,
+        "dispatcher": _successful_dispatch(calls, "runtime-test"),
+    }
+    spec = load_campaign_spec(SPEC_PATH)
+    runner = CampaignRunner(spec, runtime=runtime, **kwargs)
+    commands = {
+        entry["runner"]: entry["command"]
+        for entry in runner.dry_run()["entries"]
+        if "command" in entry
+    }
+    for kind in ("qrdqn", "shuffled_label_validation", "main_direct_validation"):
+        assert commands[kind][-6:] == [
+            "--eval-batch-size", "16384",
+            "--torch-threads", "4", "--torch-inter-op-threads", "1",
+        ]
+    assert commands["phase2_inference"][-6:] == [
+        "--batch-size", "2048",
+        "--torch-threads", "4", "--torch-inter-op-threads", "1",
+    ]
+    for kind in ("random_forest", "bootstrap_ci", "duplicate_analysis"):
+        assert "--torch-threads" not in commands[kind]
+        assert "--eval-batch-size" not in commands[kind]
+
+    runner.execute(logical_run_id=FRESH_MAIN_ID)
+    runner.execute(logical_run_id=FRESH_MAIN_ID, resume=True)
+    assert calls == [FRESH_MAIN_ID]
+    resolved = json.loads((runner.campaign_dir / "campaign_spec_resolved.json").read_text())
+    assert resolved["resolved_runtime"]["torch_options"] == runner.dry_run()["runtime_options"]
+    with pytest.raises(CampaignExecutionError, match="runtime options"):
+        CampaignRunner(spec, **kwargs).execute(logical_run_id=FRESH_MAIN_ID, resume=True)
+    with pytest.raises(ValueError, match="eval_batch_size"):
+        CampaignRuntimeOptions(eval_batch_size=0)

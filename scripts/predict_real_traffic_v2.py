@@ -53,6 +53,7 @@ from src.run_artifacts import (  # noqa: E402
     atomic_write_json,
     atomic_write_text,
     collect_environment_metadata,
+    configure_torch_runtime,
     tee_output,
 )
 
@@ -370,8 +371,13 @@ def run_phase2_inference(
     campaign_id: str | None = None,
     logical_run_id: str | None = None,
     attempt: int = 1,
+    batch_size: int = 4_096,
+    torch_threads: int | None = None,
+    torch_inter_op_threads: int | None = None,
 ) -> Path:
     """Run fresh-MAIN Phase 2 inference with schema-3 provenance and artifacts."""
+    if batch_size <= 0:
+        raise ValueError("batch_size must be greater than zero")
     source_run_dir = Path(source_run_dir)
     flows_path = Path(flows_path)
     output_dir = Path(output_dir)
@@ -427,9 +433,14 @@ def run_phase2_inference(
     monitor_stopped = False
     try:
         with tee_output(output_dir / "stdout.log", output_dir / "stderr.log"):
+            torch_runtime = configure_torch_runtime(torch_threads, torch_inter_op_threads)
             atomic_write_json(
                 output_dir / "environment.json",
-                collect_environment_metadata(repo_root=_REPO),
+                collect_environment_metadata(
+                    repo_root=_REPO,
+                    requested_torch_threads=torch_threads,
+                    requested_torch_interop_threads=torch_inter_op_threads,
+                ),
             )
             monitor = ResourceMonitor(output_dir, interval_seconds=monitor_interval)
             monitor.start()
@@ -457,7 +468,7 @@ def run_phase2_inference(
             diagnostics = compute_diagnostics(X, feature_names)
             model, model_class = model_loader(artifact_paths["model"])
             with timing.measure("inference") as measurement:
-                y_pred = batched_predict(model, X, batch_size=4_096).astype(np.int64)
+                y_pred = batched_predict(model, X, batch_size=batch_size).astype(np.int64)
                 measurement.set_units(len(y_pred), "rows")
             if len(y_pred) != len(df):
                 raise ValueError("Prediction count does not match Phase 2 input row count")
@@ -492,6 +503,8 @@ def run_phase2_inference(
                     "scaler": "fresh_main_train_only_standard_scaler",
                 },
                 "model_class": model_class,
+                "batch_size": batch_size,
+                "torch_runtime": torch_runtime,
                 "sensitive_metadata_exported": False,
                 "truth_labels_available": y_true is not None,
             }
@@ -580,6 +593,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--allow-unsafe-artifacts", action="store_true",
         help="Allow direct model/scaler/percentile paths without manifest hash verification.",
     )
+    parser.add_argument("--batch-size", type=int, default=4_096)
+    parser.add_argument("--torch-threads", type=int)
+    parser.add_argument("--torch-inter-op-threads", type=int)
     parser.add_argument("--campaign-id", default=None)
     parser.add_argument("--logical-run-id", default=None)
     parser.add_argument("--attempt", type=int, default=1)
@@ -592,6 +608,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    if args.batch_size <= 0:
+        raise ValueError("--batch-size must be greater than zero")
 
     run_id = "P2v2_pred_" + datetime.now().strftime("%Y%m%d_%H%M%S")
     if args.run_id is not None:
@@ -616,8 +634,13 @@ def main() -> None:
                     campaign_id=args.campaign_id,
                     logical_run_id=args.logical_run_id,
                     attempt=args.attempt,
+                    batch_size=args.batch_size,
+                    torch_threads=args.torch_threads,
+                    torch_inter_op_threads=args.torch_inter_op_threads,
                 )
                 return
+    if args.torch_threads is not None or args.torch_inter_op_threads is not None:
+        configure_torch_runtime(args.torch_threads, args.torch_inter_op_threads)
     out_dir = _REPO / "runs" / "phase2" / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -711,7 +734,7 @@ def main() -> None:
 
     # ── Step 9: Load model + predict ────────────────────────────────────
     model, model_class = load_model(model_path)
-    y_pred = batched_predict(model, X, batch_size=4096)
+    y_pred = batched_predict(model, X, batch_size=args.batch_size)
 
     # Guard: predictions must align 1:1 with the input flows before y_pred is
     # sliced by a df-derived mask (truth metrics) or concatenated with df
