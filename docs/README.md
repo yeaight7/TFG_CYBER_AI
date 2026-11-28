@@ -5,13 +5,13 @@ This directory contains the maintained project documentation used for developmen
 ## Document Roles
 
 | Document | Audience | Purpose | Status |
-|----------|----------|---------|--------|
+|---|---|---|---|
 | [../README.md](../README.md) | Evaluators, contributors, reviewers | Public project overview and quickstart | Maintained |
 | [../.github/AGENT_CONTEXT.md](../.github/AGENT_CONTEXT.md) | Contributors and agents | Project-wide technical source of truth | Maintained |
 | [phase 2/AGENT_CONTEXT.md](phase%202/AGENT_CONTEXT.md) | Contributors working on Phase 2 | Phase 2 scope, guardrails, and run conventions | Maintained |
 | [results.md](results.md) | Evaluators, author, reviewers | Artifact-backed results snapshot | Maintained |
 | [phase 2/phase2_plan.md](phase%202/phase2_plan.md) | Author, contributors | Execution plan for the Phase 2 workflow | Maintained |
-| [gpu_experimental_environment.md](gpu_experimental_environment.md) | Experiment operators, contributors | Provider-neutral GPU setup, preflight, campaign, snapshot, and aggregation guide | Maintained |
+| [gpu_experimental_environment.md](gpu_experimental_environment.md) | Experiment operators, contributors | Provider-neutral environment setup, campaign, snapshot, and aggregation guide | Maintained |
 | [runpod_main_experiment.md](runpod_main_experiment.md) | Historical readers | Compatibility pointer for the committed historical MAIN procedure | Historical pointer |
 | [reproducibility.md](reproducibility.md) | Author, contributors | Dependency and environment reproduction notes | Maintained |
 | [plans/FINAL_EXPERIMENT_CAMPAIGN_PREPARATION.md](plans/FINAL_EXPERIMENT_CAMPAIGN_PREPARATION.md) | Contributors, reviewers | Approved phase-gated preparation plan | Maintained specification |

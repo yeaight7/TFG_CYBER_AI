@@ -75,7 +75,6 @@ _REQUIRED_CAMPAIGN_FILES = (
     "campaign_state.json",
     "campaign_spec_original.json",
     "campaign_spec_resolved.json",
-    "preflight_report.json",
     "cache_manifest.json",
 )
 _HASH_FIELDS = (
@@ -668,16 +667,13 @@ def _load_campaign_evidence(campaign_dir: Path) -> _CampaignEvidence:
         )
 
     cache_sha256 = sha256_file(campaign_dir / "cache_manifest.json")
-    preflight = _read_json(campaign_dir / "preflight_report.json", label="preflight report")
     runtime = resolved_spec.get("resolved_runtime")
     if (
         state.get("cache_manifest_sha256") != cache_sha256
-        or preflight.get("report_sha256") != state.get("preflight_report_sha256")
         or not isinstance(runtime, Mapping)
         or runtime.get("cache_manifest_sha256") != cache_sha256
-        or runtime.get("preflight_report_sha256") != state.get("preflight_report_sha256")
     ):
-        raise CampaignAggregationError("Campaign cache/preflight binding is incompatible")
+        raise CampaignAggregationError("Campaign cache binding is incompatible")
 
     runs: dict[str, _RunEvidence] = {}
     for entry in spec.entries:
@@ -1080,7 +1076,6 @@ def _write_aggregate_directory(
             campaign.campaign_dir / "campaign_state.json"
         ),
         "cache_manifest_sha256": campaign.state.get("cache_manifest_sha256"),
-        "preflight_report_sha256": campaign.state.get("preflight_report_sha256"),
         "counts": {
             "primary_physical_executions": campaign.spec.primary_execution_count,
             "primary_logical_result_points": campaign.spec.primary_logical_count,

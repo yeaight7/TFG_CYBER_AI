@@ -14,8 +14,7 @@
 3. Run `git status` and `git log --oneline -15`. Note the current branch.
 4. Read that phase's block in "Execution log" (bottom): last-green commit + WIP notes.
 5. Build sanity: run BUILD (below). If it fails → "Recovery" section.
-6. Resume at the first open task, on that phase's branch (`chore/yeaight7/thesis-f<N>-<slug>`).
-   Never start a new phase with a dirty tree. Never edit `memoria.tex`/`memoria.bib` in parallel branches.
+6. Resume at the first open task, on that phase's branch (`chore/yeaight7/thesis-f<N>-<slug>`). Never start a new phase with a dirty tree. Never edit `memoria.tex`/`memoria.bib` in parallel branches.
 
 ## Environment (verified 2026-07-05)
 
@@ -96,8 +95,8 @@ duplicate-leakage 22.30/24.86/40.12% cited ·
 
 | Work | Model |
 |---|---|
-| Mechanical LaTeX edits, wiring, tracker upkeep | sonnet/5.5/5.6-Luna (cheap) |
-| Figure scripts, TikZ, TB export | sonnet/5.5/5.6-Luna |
+| Mechanical LaTeX edits, wiring, tracker upkeep | sonnet-5.5/GPT-6-Luna/GPT-6.1-Terra (cheap) |
+| Figure scripts, TikZ, TB export | sonnet-5.5/GPT-6-Luna/GPT-6.1-Terra |
 | Spanish academic prose (resumen, results, discusión, conclusiones, style pass) | high tier model (top model) |
 | Adversarial verification (G5/G7, citation context, EN fidelity) — separate agent from the writer | high tier model (top model) |
 
@@ -382,7 +381,6 @@ No thesis claim or figure may depend on these until they are actually run and th
 - F6.5 authored by sonnet agent (per model policy) with strict no-repo-writes rule (lesson from F5 incident); isolated compile clean; caveats: local-machine specs undocumented (listed as "CPU, sin GPU dedicada"); GPU model taken from runpod doc's "Preferred: RTX 3090 Ti" — confirm the actually-rented pod.
 - F6.V run by Codex 2026-07-09: `latexmk -pdf -cd memoria/memoria.tex` exit 0 with TeX Live 2025 and mandatory TEMP redirect; `pdfinfo` pages=162; G3 log grep clean; G4 all manifest pdf/png files exist; G5 counts 8/5/3/5/3/9/3/1/5; G6 typography lint clean. G7 checked Ch2 numeric claims against `config.json`, `environment.json`, `requirements*.txt`, `pyproject.toml`, `f1_gantt.tex`, `figures_manifest.json`, and reward source; no repo-backed numeric mismatches found. Repo gates also green: `uv run ruff check .`, `uv run pytest` (45 passed), and PR #48 GitHub checks passing.
 - Noted in passing: user PR #47 added `fig:placeholder-*`/`tab:placeholder-*` labels (currently unreferenced) — presumably intentional placeholders for deferred GPU experiments.
-
 
 ### F4 — 2026-07-06 — DONE except G1–G3 (user compiles manually)
 

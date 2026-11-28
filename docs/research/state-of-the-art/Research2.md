@@ -1,3 +1,5 @@
+# Research 2
+
 ## 1. Short verdict
 
 - Most RL/DRL‑IDS work treats **intrusion detection as supervised classification implemented via RL**, using static datasets (NSL‑KDD, UNSW‑NB15, CICIDS2017, CSE‑CIC‑IDS2018) rather than live traffic.[^1][^2][^3][^4]
@@ -9,12 +11,11 @@
 - Reward design is often **simple (±1 for correct/incorrect)** or embedded in a loss function; a few recent works introduce **multi‑objective or imbalance‑aware rewards**, but these are exceptions.[^7][^12][^4][^15][^2]
 - Methodological issues from supervised ML‑NIDS carry over: **random splits, no temporal validation, no cross‑dataset tests, limited discussion of class imbalance, and lack of released code**, so your thesis can make a strong point by being more rigorous on these aspects.[^4][^8][^9][^17][^10][^6][^1][^2]
 
-***
+---
 
 ## 2. Paper matrix
 
 *(Focus on core RL/DRL‑IDS works and those most relevant to a dataset‑as‑environment, binary PERMIT/BLOCK formulation.)*
-
 
 | ID | Citation key | Paper title | Year | RL algorithm | Dataset | State / observation | Action space | Reward design | Binary or multiclass? | Baselines used | Metrics | Main results | Evaluation split | External validation? | Code? | Methodological concerns | Direct relevance to my project | Link / DOI |
 | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
@@ -35,279 +36,265 @@
 
 *(You can add Caminero’s AE‑RL and AE‑SAC as additional rows; they were covered in the previous answer and are conceptually very close for dataset‑as‑environment DRL, but not all bibliographic details are in this query.)*[^25][^26][^27]
 
-***
+---
 
 ## 3. Closest works to my thesis
 
-### 1) López‑Martín 2021 – Extended RBFNN with offline RL (P2/P4)[^13][^4]
+### 1. López‑Martín 2021 – Extended RBFNN with offline RL (P2/P4)[^13][^4]
 
 - **Why close**: Uses offline RL to train a classifier over flow‑like features, using multiple datasets including CICIDS2017 and UNSW‑NB15; dataset‑as‑environment with emphasis on imbalance.[^4]
 - **Similarity**:
-    - Treats each flow/connection vector as state and class label as the “action”.
-    - Focuses on offline training on public datasets, including CICIDS2017.
+  - Treats each flow/connection vector as state and class label as the “action”.
+  - Focuses on offline training on public datasets, including CICIDS2017.
 - **Differences**:
-    - RL is used as an optimization framework for an RBF policy network, not as a Q‑learning agent; no explicit online environment interaction or value function.
-    - Task is multi‑class classification, not binary PERMIT/BLOCK.
-    - No external validation on lab traffic; evaluation uses random splits.
+  - RL is used as an optimization framework for an RBF policy network, not as a Q‑learning agent; no explicit online environment interaction or value function.
+  - Task is multi‑class classification, not binary PERMIT/BLOCK.
+  - No external validation on lab traffic; evaluation uses random splits.
 - **Should you cite as direct precedent?** Yes – this is probably your most important precedent for “offline RL‑style” NIDS, multi‑dataset, flow‑based.
 
-
-### 2) López‑Martín 2020 – DRL for supervised intrusion detection (P1/P3)[^5][^1]
+### 2. López‑Martín 2020 – DRL for supervised intrusion detection (P1/P3)[^5][^1]
 
 - **Why close**: Explicitly formulates a **dataset‑as‑environment** DRL classifier, implementing DQN, DDQN, Policy Gradient, and Actor–Critic on NSL‑KDD and AWID.[^1][^5]
 - **Similarity**:
-    - Each record is a state; action is class prediction; reward is based on correctness.
-    - Offline training, RL used to optimise classification behaviour.
+  - Each record is a state; action is class prediction; reward is based on correctness.
+  - Offline training, RL used to optimise classification behaviour.
 - **Differences**:
-    - Uses legacy datasets and multi‑class classification; not flow‑based CICIDS2017.
-    - No distributional RL; no external validation.
+  - Uses legacy datasets and multi‑class classification; not flow‑based CICIDS2017.
+  - No distributional RL; no external validation.
 - **Direct precedent?** Yes – it justifies your dataset‑as‑environment Gymnasium design and your use of Q‑learning‑family methods.
 
-
-### 3) Ren 2022 – ID‑RDRL on CSE‑CIC‑IDS2018 (P5/P11)[^3][^2]
+### 3. Ren 2022 – ID‑RDRL on CSE‑CIC‑IDS2018 (P5/P11)[^3][^2]
 
 - **Why close**: DRL‑based IDS on **CSE‑CIC‑IDS2018**, combining feature selection and classification with DRL.[^2]
 - **Similarity**:
-    - Uses a modern CIC dataset with flow‑based features.
-    - Embeds reward in classification performance over recorded traffic.
+  - Uses a modern CIC dataset with flow‑based features.
+  - Embeds reward in classification performance over recorded traffic.
 - **Differences**:
-    - Focuses on feature selection (RFE + DRL) and classification, not explicit PERMIT/BLOCK decisions.
-    - Only one public dataset; no external lab validation; reward not clearly cost‑sensitive.
+  - Focuses on feature selection (RFE + DRL) and classification, not explicit PERMIT/BLOCK decisions.
+  - Only one public dataset; no external lab validation; reward not clearly cost‑sensitive.
 - **Direct precedent?** Yes – especially for connecting DRL to CSE‑CIC‑IDS2018 and discussing feature selection vs your “fixed canonical feature vector” approach.
 
-
-### 4) RL Techniques 2023 – NIDS Using RL Techniques (P8)[^10]
+### 4. RL Techniques 2023 – NIDS Using RL Techniques (P8)[^10]
 
 - **Why close**: Multi‑agent DQN‑based IDS evaluated on **NSL‑KDD and CICIDS2017**, with emphasis on distributed agents and attention mechanisms.[^10]
 - **Similarity**:
-    - Uses DQN‑family method; combines flow‑like features with RL.
-    - Involves CICIDS2017, which is also your main dataset.
+  - Uses DQN‑family method; combines flow‑like features with RL.
+  - Involves CICIDS2017, which is also your main dataset.
 - **Differences**:
-    - Multi‑class classification and multi‑agent architecture rather than a single binary agent.
-    - Focus on adversarial robustness and attention; no distributional RL; no external validation.
+  - Multi‑class classification and multi‑agent architecture rather than a single binary agent.
+  - Focus on adversarial robustness and attention; no distributional RL; no external validation.
 - **Direct precedent?** Yes – strong “DQN + CICIDS2017” baseline to position your QRDQN defender against.
 
-
-### 5) AE‑DQN 2020 – Adversarial RL with DQN (P6)[^6]
+### 5. AE‑DQN 2020 – Adversarial RL with DQN (P6)[^6]
 
 - **Why close**: Uses AE‑DQN to perform 5‑class classification on NSL‑KDD with training on KDDTrain+ and evaluation on KDDTest+.[^6]
 - **Similarity**:
-    - DQN‑based agent with correct/incorrect reward.
-    - Focus on anomaly‑based IDS with RL classification.
+  - DQN‑based agent with correct/incorrect reward.
+  - Focus on anomaly‑based IDS with RL classification.
 - **Differences**:
-    - NSL‑KDD only; not flow‑based; multi‑class; adversarial agent modifies environment.
-    - No multi‑dataset or external validation.
+  - NSL‑KDD only; not flow‑based; multi‑class; adversarial agent modifies environment.
+  - No multi‑dataset or external validation.
 - **Direct precedent?** Yes – as a characteristic DQN‑IDS, and for discussion of macro‑F1 vs accuracy.
 
-
-### 6) DQ‑IDS 2025 – Deep Q‑learning IDS (P10)[^23][^15]
+### 6. DQ‑IDS 2025 – Deep Q‑learning IDS (P10)[^23][^15]
 
 - **Why close**: Presents a generic DQN‑based IDS (DQ‑IDS) with experience replay and adaptive exploration; conceptually similar to your QRDQN agent but without distributional value functions.[^15]
 - **Similarity**:
-    - DQN environment where actions are IDS decisions; reward is correct/incorrect classification (aimed at reducing FP/FN).[^15]
-    - Emphasis on adaptivity and self‑learning.
+  - DQN environment where actions are IDS decisions; reward is correct/incorrect classification (aimed at reducing FP/FN).[^15]
+  - Emphasis on adaptivity and self‑learning.
 - **Differences**:
-    - Dataset choice is underspecified; apparently multiple “real‑world” datasets, but not clearly mapped to CIC/UNSW.
-    - No mention of temporal splits or external validation; metrics are high but may suffer from same pitfalls.
+  - Dataset choice is underspecified; apparently multiple “real‑world” datasets, but not clearly mapped to CIC/UNSW.
+  - No mention of temporal splits or external validation; metrics are high but may suffer from same pitfalls.
 - **Direct precedent?** Yes – as a modern DQN‑IDS reference; useful when motivating why you choose a more expressive QRDQN.
 
-
-### 7) Sanusi 2023 – DQN‑based NIDS (P9)[^16]
+### 7. Sanusi 2023 – DQN‑based NIDS (P9)[^16]
 
 - **Why close**: DQN‑based IDS implementing binary classification on NSL‑KDD.[^16]
 - **Similarity**:
-    - Binary action space (“attack” vs “normal”), similar to PERMIT/BLOCK.
-    - Dataset‑as‑environment view, though not formally emphasised.
+  - Binary action space (“attack” vs “normal”), similar to PERMIT/BLOCK.
+  - Dataset‑as‑environment view, though not formally emphasised.
 - **Differences**:
-    - NSL‑KDD only; no flow‑based CIC datasets; random split; no external validation.
+  - NSL‑KDD only; no flow‑based CIC datasets; random split; no external validation.
 - **Direct precedent?** Yes – good to cite as an example of binary DQN‑IDS on legacy data.
 
-
-### 8) ID‑RDRL–Feature Selection (Sci Rep 2022, P11)[^3][^2]
+### 8. ID‑RDRL–Feature Selection (Sci Rep 2022, P11)[^3][^2]
 
 - **Why close**: DRL‑based classifier on CSE‑CIC‑IDS2018 with strong feature‑selection component; uses DRL reward to balance accuracy and feature count.[^2]
 - **Similarity**:
-    - Uses modern CIC dataset; trains DRL classifier on flow‑like data.
-    - Discusses redundant features and dataset imbalance.
+  - Uses modern CIC dataset; trains DRL classifier on flow‑like data.
+  - Discusses redundant features and dataset imbalance.
 - **Differences**:
-    - Focuses on feature selection (RFE + DRL), whereas you fix a canonical feature vector.
-    - Multi‑class classification; no explicit PERMIT/BLOCK.
+  - Focuses on feature selection (RFE + DRL), whereas you fix a canonical feature vector.
+  - Multi‑class classification; no explicit PERMIT/BLOCK.
 - **Direct precedent?** Yes – especially for CSE‑CIC‑IDS2018 and DRL feature selection vs your fixed feature map.
 
-
-### 9) DDPG 2025 – Optimized attack detection (P12)[^7]
+### 9. DDPG 2025 – Optimized attack detection (P12)[^7]
 
 - **Why close**: DDPG‑based IDS with multi‑objective reward balancing detection precision and latency, using NSL‑KDD and UNSW‑NB15.[^7]
 - **Similarity**:
-    - RL policy that optimizes a cost‑sensitive reward (precision/latency) – relevant for reward design.
-    - Includes UNSW‑NB15.
+  - RL policy that optimizes a cost‑sensitive reward (precision/latency) – relevant for reward design.
+  - Includes UNSW‑NB15.
 - **Differences**:
-    - Continuous action space; abstract “detection strategy” rather than discrete PERMIT/BLOCK.
-    - Complex multi‑objective reward; not flow‑specific and no external validation.
+  - Continuous action space; abstract “detection strategy” rather than discrete PERMIT/BLOCK.
+  - Complex multi‑objective reward; not flow‑specific and no external validation.
 - **Direct precedent?** Indirect – good for reward‑design discussion and actor–critic methods, but less directly comparable.
 
-
-### 10) HCLR‑IDS 2025 \& DRL‑IDS SDN 2025 (P13/P14)[^11][^12]
+### 10. HCLR‑IDS 2025 \& DRL‑IDS SDN 2025 (P13/P14)[^11][^12]
 
 - **Why close**: Both use DRL (DQN/PPO or DRL + RNN) to build IDS/defense mechanisms for SDN or IoMT.[^12][^11]
 - **Similarity**:
-    - RL agent making security decisions over network traffic.
-    - Some use multi‑objective rewards (detection vs latency vs routing).
+  - RL agent making security decisions over network traffic.
+  - Some use multi‑objective rewards (detection vs latency vs routing).
 - **Differences**:
-    - Domain‑specific datasets (IoMT, SDN) rather than general flow datasets; architectures are large hybrids with RL only in some components.
-    - No CICIDS2017; no external validation.
+  - Domain‑specific datasets (IoMT, SDN) rather than general flow datasets; architectures are large hybrids with RL only in some components.
+  - No CICIDS2017; no external validation.
 - **Direct precedent?** Cite as broader DRL‑IDS examples and for dynamic reward ideas, but they are not your closest technical matches.
 
-***
+---
 
 ## 4. Reward design patterns
 
 ### Simple correct/incorrect reward
 
 - Many works use a **binary reward**: +1 for correct classification, −1 (or 0) for incorrect classification, with the environment sampling labeled records.[^19][^16][^1][^15]
-    - López‑Martín 2020: reward defined by classification error, effectively encouraging correct labels over the dataset.[^19][^5][^1]
-    - AE‑DQN, NIDS‑RL 2023: although not fully formalised, the description indicates reward based on overall classification performance on NSL‑KDD (accuracy/F1).[^21][^6]
-    - Sanusi 2023: explicitly describes positive reward for correct class and negative for wrong class in DQN on NSL‑KDD.[^16]
-    - DQ‑IDS 2025: “reward‑driven training mechanism reinforces correct classifications and penalizes errors,” again matching this simple pattern.[^15]
-
+  - López‑Martín 2020: reward defined by classification error, effectively encouraging correct labels over the dataset.[^19][^5][^1]
+  - AE‑DQN, NIDS‑RL 2023: although not fully formalised, the description indicates reward based on overall classification performance on NSL‑KDD (accuracy/F1).[^21][^6]
+  - Sanusi 2023: explicitly describes positive reward for correct class and negative for wrong class in DQN on NSL‑KDD.[^16]
+  - DQ‑IDS 2025: “reward‑driven training mechanism reinforces correct classifications and penalizes errors,” again matching this simple pattern.[^15]
 
 ### Cost‑sensitive reward
 
 - A smaller set incorporates **cost‑sensitivity**, often indirectly:
-    - DQ‑IDS 2025 aims to reduce both FP and FN rates through reward shaping (though exact weights are not fully detailed).[^15]
-    - DDPG‑based optimized attack detection uses a **multi‑objective reward** balancing detection precision and latency; misclassifications and high latency incur higher penalties.[^7]
-    - IoMT and SDN DRL‑IDS (HCLR‑IDS, DRL‑IDS‑SDN) incorporate performance and QoS terms (e.g., response time) into reward alongside detection metrics.[^11][^12]
-
+  - DQ‑IDS 2025 aims to reduce both FP and FN rates through reward shaping (though exact weights are not fully detailed).[^15]
+  - DDPG‑based optimized attack detection uses a **multi‑objective reward** balancing detection precision and latency; misclassifications and high latency incur higher penalties.[^7]
+  - IoMT and SDN DRL‑IDS (HCLR‑IDS, DRL‑IDS‑SDN) incorporate performance and QoS terms (e.g., response time) into reward alongside detection metrics.[^11][^12]
 
 ### Class‑imbalance‑aware reward
 
 - Some RL approaches **acknowledge imbalance** explicitly:
-    - Extended RBFNN with offline RL (López‑Martín 2021) analyses class imbalance and suggests that the RL‑optimised RBF policy is particularly suitable for unbalanced datasets; reward/loss implicitly emphasises minority classes but exact weighting is not fully specified.[^4]
-    - ID‑RDRL discusses removing 80% of redundant features and improving detection, especially in complex network environments; class imbalance is a motivation, though the reward is still mainly accuracy‑based.[^2]
-    - DDPG‑based IDS uses prioritized experience replay “to address class imbalance”, which effectively reweights experiences rather than the scalar reward itself.[^7]
-
+  - Extended RBFNN with offline RL (López‑Martín 2021) analyses class imbalance and suggests that the RL‑optimised RBF policy is particularly suitable for unbalanced datasets; reward/loss implicitly emphasises minority classes but exact weighting is not fully specified.[^4]
+  - ID‑RDRL discusses removing 80% of redundant features and improving detection, especially in complex network environments; class imbalance is a motivation, though the reward is still mainly accuracy‑based.[^2]
+  - DDPG‑based IDS uses prioritized experience replay “to address class imbalance”, which effectively reweights experiences rather than the scalar reward itself.[^7]
 
 ### False‑negative‑heavy penalty
 
 - Some papers informally claim to “reduce false negatives” but only a few clearly state **higher penalties for FN than FP**:
-    - DQ‑IDS 2025 emphasises reducing both FP and FN; the text suggests reward discourages especially FN, but numeric weights are not given.[^15]
-    - DDPG‑based IDS hints at prioritising detection precision (which is more about FP) and latency; explicit FN‑heavy penalty is not clearly described.[^7]
+  - DQ‑IDS 2025 emphasises reducing both FP and FN; the text suggests reward discourages especially FN, but numeric weights are not given.[^15]
+  - DDPG‑based IDS hints at prioritising detection precision (which is more about FP) and latency; explicit FN‑heavy penalty is not clearly described.[^7]
 
 For your thesis you can introduce an explicitly **FN‑heavy reward** (e.g., higher negative reward for PERMIT+attack vs BLOCK+benign), arguing that most prior work does not formally specify or calibrate this.
 
 ### Dynamic/adaptive reward
 
 - Truly **dynamic rewards** (changing over time based on environment feedback) are rare:
-    - DDPG‑based IDS uses a multi‑objective reward that might be tuned for latency vs detection during training; however, not clearly adaptive over time.[^7]
-    - Hybrid IoMT/SDN works use DRL to adapt policies to evolving traffic, but reward functions themselves are mostly static linear combinations of metrics.[^12][^11]
-
+  - DDPG‑based IDS uses a multi‑objective reward that might be tuned for latency vs detection during training; however, not clearly adaptive over time.[^7]
+  - Hybrid IoMT/SDN works use DRL to adapt policies to evolving traffic, but reward functions themselves are mostly static linear combinations of metrics.[^12][^11]
 
 ### Unclear/underspecified reward
 
 - Many RL/DRL‑IDS papers **do not fully specify the reward function**; they only state that RL “maximises detection accuracy” or “reduces misclassification” without giving an explicit formula.[^14][^21][^10][^6]
 - This is a methodological weakness you can highlight: RL results cannot be reproduced or interpreted without knowing reward shape and magnitude.
 
-***
+---
 
 ## 5. Baselines used in the literature
 
 Across the RL/DRL‑IDS works and surveys:
 
 - **Classical ML baselines**
-    - **Random Forest**: commonly used on NSL‑KDD, UNSW‑NB15, CICIDS2017 as a strong tabular baseline.[^8][^1][^4][^2]
-    - **SVM**: frequent baseline in NSL‑KDD and UNSW‑NB15 experiments.[^1][^2][^7]
-    - **Decision Tree / C4.5**: used as simple, interpretable baseline.[^1][^2]
-    - **Logistic Regression, Naïve Bayes, k‑NN**: used in some works and comparative studies.[^28][^1][^2]
+  - **Random Forest**: commonly used on NSL‑KDD, UNSW‑NB15, CICIDS2017 as a strong tabular baseline.[^8][^1][^4][^2]
+  - **SVM**: frequent baseline in NSL‑KDD and UNSW‑NB15 experiments.[^1][^2][^7]
+  - **Decision Tree / C4.5**: used as simple, interpretable baseline.[^1][^2]
+  - **Logistic Regression, Naïve Bayes, k‑NN**: used in some works and comparative studies.[^28][^1][^2]
 - **Neural‑network baselines**
-    - **MLP / fully connected DNN**: most common deep baseline.[^28][^4][^1][^2]
-    - **CNN, RNN/LSTM, GRU**: widely used for NSL‑KDD, CICIDS2017, UNSW‑NB15; RL works often compare against at least one DL baseline (e.g., RNN‑IDS, CNN‑IDS).[^11][^12][^10][^6]
-    - **Autoencoders**: sometimes used as anomaly‑detection baselines or as feature extractors before classical classifiers.[^28][^1][^2]
+  - **MLP / fully connected DNN**: most common deep baseline.[^28][^4][^1][^2]
+  - **CNN, RNN/LSTM, GRU**: widely used for NSL‑KDD, CICIDS2017, UNSW‑NB15; RL works often compare against at least one DL baseline (e.g., RNN‑IDS, CNN‑IDS).[^11][^12][^10][^6]
+  - **Autoencoders**: sometimes used as anomaly‑detection baselines or as feature extractors before classical classifiers.[^28][^1][^2]
 - **Other baselines**
-    - **Ensembles** (XGBoost, gradient boosting, voting classifiers) appear in some DRL‑IDS and feature‑selection works as strong supervised baselines.[^8][^2]
-    - **Previous RL methods**: Some works compare a new DRL model against earlier DQN/DRL architectures.[^6][^1][^7]
-
+  - **Ensembles** (XGBoost, gradient boosting, voting classifiers) appear in some DRL‑IDS and feature‑selection works as strong supervised baselines.[^8][^2]
+  - **Previous RL methods**: Some works compare a new DRL model against earlier DQN/DRL architectures.[^6][^1][^7]
 
 ### Minimum defensible baselines for your thesis
 
 For a bachelor thesis that aims to be methodologically serious:
 
 - At minimum, for **binary PERMIT/BLOCK** on CICIDS2017 (and possibly other datasets), you should have:
-    - One **strong classical ML baseline**: e.g., Random Forest or Gradient Boosting on your canonical feature vector.[^28][^1]
-    - One **deep supervised baseline**: e.g., a well‑tuned MLP (and optionally a simple CNN if you reshape flows) trained with cross‑entropy.[^29][^28]
+  - One **strong classical ML baseline**: e.g., Random Forest or Gradient Boosting on your canonical feature vector.[^28][^1]
+  - One **deep supervised baseline**: e.g., a well‑tuned MLP (and optionally a simple CNN if you reshape flows) trained with cross‑entropy.[^29][^28]
 - Preferably add:
-    - A simpler **logistic regression** baseline as a “sanity check” (especially useful when discussing class imbalance and AUC).[^28]
-    - If time allows, one **unsupervised/anomaly baseline** (e.g., autoencoder) to highlight differences in detection philosophy.[^29][^2]
+  - A simpler **logistic regression** baseline as a “sanity check” (especially useful when discussing class imbalance and AUC).[^28]
+  - If time allows, one **unsupervised/anomaly baseline** (e.g., autoencoder) to highlight differences in detection philosophy.[^29][^2]
 
 You can then argue that your QRDQN defender is compared against both a classical and a deep supervised baseline, which is common practice in RL‑IDS literature and satisfies basic fairness.[^8][^4][^1][^2]
 
-***
+---
 
 ## 6. Weaknesses in the RL/DRL‑IDS literature
 
 These mirror the general ML‑NIDS issues, with RL‑specific twists.
 
 - **Random split problems**
-    - Most RL‑IDS works use **random train/test splits** on NSL‑KDD, UNSW‑NB15, CICIDS2017 or CSE‑CIC‑IDS2018, ignoring temporal structure and correlations between flows within the same attack scenario.[^10][^16][^4][^1][^2][^15]
-    - This can leak nearly identical flows into both train and test, inflating reported performance; CICIDS2017 and CSE‑CIC‑IDS2018 are especially sensitive to this because of scenario‑based captures.[^30][^31][^32]
+  - Most RL‑IDS works use **random train/test splits** on NSL‑KDD, UNSW‑NB15, CICIDS2017 or CSE‑CIC‑IDS2018, ignoring temporal structure and correlations between flows within the same attack scenario.[^10][^16][^4][^1][^2][^15]
+  - This can leak nearly identical flows into both train and test, inflating reported performance; CICIDS2017 and CSE‑CIC‑IDS2018 are especially sensitive to this because of scenario‑based captures.[^30][^31][^32]
 - **Lack of external validation**
-    - None of the surveyed RL‑IDS papers evaluate on **lab‑captured or real operational traffic** beyond existing public datasets; at best they use multiple public datasets from the same family.[^4][^10][^6][^1][^2]
-    - Cross‑dataset generalization (e.g., training on CICIDS2017, testing on UNSW‑NB15 or lab traffic) is absent, despite evidence that ML models generalize poorly across datasets.[^17][^33][^8]
+  - None of the surveyed RL‑IDS papers evaluate on **lab‑captured or real operational traffic** beyond existing public datasets; at best they use multiple public datasets from the same family.[^4][^10][^6][^1][^2]
+  - Cross‑dataset generalization (e.g., training on CICIDS2017, testing on UNSW‑NB15 or lab traffic) is absent, despite evidence that ML models generalize poorly across datasets.[^17][^33][^8]
 - **Unrealistic or underspecified reward**
-    - Many papers define reward only implicitly (“maximise detection accuracy”) without explicit weighting for different errors or operational costs.[^21][^14][^10][^6]
-    - Only a few consider latency or resource cost (e.g., DDPG multi‑objective reward in SDN/attack detection).[^11][^7]
+  - Many papers define reward only implicitly (“maximise detection accuracy”) without explicit weighting for different errors or operational costs.[^21][^14][^10][^6]
+  - Only a few consider latency or resource cost (e.g., DDPG multi‑objective reward in SDN/attack detection).[^11][^7]
 - **No temporal validation**
-    - RL is almost always applied to static datasets; **no RL‑IDS paper validates in a temporally ordered setting**, e.g., training on earlier days of CICIDS2017 and testing on later days.[^10][^1][^2][^4]
-    - This undermines claims about adaptivity to evolving attacks, since the agent never faces “future” distributions during evaluation.
+  - RL is almost always applied to static datasets; **no RL‑IDS paper validates in a temporally ordered setting**, e.g., training on earlier days of CICIDS2017 and testing on later days.[^10][^1][^2][^4]
+  - This undermines claims about adaptivity to evolving attacks, since the agent never faces “future” distributions during evaluation.
 - **No reproducibility / no code**
-    - Code is rarely released; a few GitHub projects re‑implement López‑Martín or DRL‑IDS models, but official repositories are uncommon.[^34][^5]
-    - Reward definitions, preprocessing pipelines, and train/test splits are often under‑documented, making independent replication difficult.[^1][^2][^4][^15]
+  - Code is rarely released; a few GitHub projects re‑implement López‑Martín or DRL‑IDS models, but official repositories are uncommon.[^34][^5]
+  - Reward definitions, preprocessing pipelines, and train/test splits are often under‑documented, making independent replication difficult.[^1][^2][^4][^15]
 - **Inflated metrics and legacy datasets**
-    - Some DRL‑IDS works report very high metrics (e.g., >99% accuracy or F1) on NSL‑KDD or KDDCup99, datasets known to be biased and redundant.[^35][^36][^12][^11]
-    - Surveys on DRL‑IDS emphasize that many reported gains may be due to dataset peculiarities and random splits.[^9][^17][^8]
+  - Some DRL‑IDS works report very high metrics (e.g., >99% accuracy or F1) on NSL‑KDD or KDDCup99, datasets known to be biased and redundant.[^35][^36][^12][^11]
+  - Surveys on DRL‑IDS emphasize that many reported gains may be due to dataset peculiarities and random splits.[^9][^17][^8]
 - **Class imbalance ignored or superficially treated**
-    - Although imbalance is mentioned, many RL‑IDS papers still optimize unweighted accuracy; minority attack detection (e.g., U2R, R2L) remains weak but is not central to evaluation.[^21][^6][^2][^4][^1]
-    - DDPG‑based IDS and some hybrid models attempt to address imbalance via prioritized replay or oversampling, but this is not systematic.[^15][^7]
+  - Although imbalance is mentioned, many RL‑IDS papers still optimize unweighted accuracy; minority attack detection (e.g., U2R, R2L) remains weak but is not central to evaluation.[^21][^6][^2][^4][^1]
+  - DDPG‑based IDS and some hybrid models attempt to address imbalance via prioritized replay or oversampling, but this is not systematic.[^15][^7]
 - **No cost‑sensitive evaluation**
-    - Very few works report cost‑based metrics (e.g., weighting FN much more heavily than FP) or operational metrics such as number of alerts per minute or analyst workload.[^9][^17][^8][^1]
+  - Very few works report cost‑based metrics (e.g., weighting FN much more heavily than FP) or operational metrics such as number of alerts per minute or analyst workload.[^9][^17][^8][^1]
 
 These weaknesses give you a clear angle: you can design **explicitly cost‑sensitive rewards, temporal or scenario‑based splits, and external validation on lab traffic**, and argue that this is uncommon or missing for RL‑IDS.
 
-***
+---
 
 ## 7. Claims I can safely make
 
 Use these as building blocks in your thesis; each should be accompanied by the citation keys and [web:x] citations when you write.
 
 1. **Claim:** Most DRL‑based NIDS treat intrusion detection as a supervised classification problem embedded in an RL framework, often with each dataset record acting as a state and the predicted class as an action.
-    - **Supporting sources:** LopezMartin2020‑DRL‑IDS, LopezMartin2021‑RBF‑OfflineRL, Ren2022‑IDRDRL, AE‑DQN2020, NIDS‑RL‑2023.[^21][^6][^2][^4][^1]
-    - **Strength of evidence:** Strong; multiple independent papers explicitly describe dataset‑as‑environment formulations.
-    - **Caveat:** Some works use RL only for feature selection or as part of larger hybrid models rather than as the main classifier.
+  - **Supporting sources:** LopezMartin2020‑DRL‑IDS, LopezMartin2021‑RBF‑OfflineRL, Ren2022‑IDRDRL, AE‑DQN2020, NIDS‑RL‑2023.[^21][^6][^2][^4][^1]
+  - **Strength of evidence:** Strong; multiple independent papers explicitly describe dataset‑as‑environment formulations.
+  - **Caveat:** Some works use RL only for feature selection or as part of larger hybrid models rather than as the main classifier.
 2. **Claim:** DQN and its variants (e.g., DDQN, AE‑DQN) are the most frequently used DRL algorithms for NIDS, while distributional RL methods such as QRDQN or C51 have not yet been applied to NIDS in mainstream literature.
-    - **Supporting sources:** LopezMartin2020‑DRL‑IDS, AE‑DQN2020, NIDS‑RL‑2023, DQ‑IDS 2025, DRL‑IDS surveys.[^9][^8][^21][^6][^1][^15]
-    - **Strength:** Moderate–strong; surveys and key method papers list DQN, DDQN, PPO, A2C, SAC, DDPG but not QRDQN/C51.
-    - **Caveat:** There may be unpublished or niche works using distributional RL; state this as “we did not find any clear application of QRDQN to NIDS” rather than “none exist”.
+  - **Supporting sources:** LopezMartin2020‑DRL‑IDS, AE‑DQN2020, NIDS‑RL‑2023, DQ‑IDS 2025, DRL‑IDS surveys.[^9][^8][^21][^6][^1][^15]
+  - **Strength:** Moderate–strong; surveys and key method papers list DQN, DDQN, PPO, A2C, SAC, DDPG but not QRDQN/C51.
+  - **Caveat:** There may be unpublished or niche works using distributional RL; state this as “we did not find any clear application of QRDQN to NIDS” rather than “none exist”.
 3. **Claim:** RL‑based NIDS have been evaluated primarily on NSL‑KDD and other legacy datasets, with more recent work extending to UNSW‑NB15, CICIDS2017, CICDDoS2019, and CSE‑CIC‑IDS2018, but still almost always in an offline setting.
-    - **Supporting sources:** LopezMartin2020‑DRL‑IDS, LopezMartin2021‑RBF‑OfflineRL, Ren2022‑IDRDRL, AE‑DQN2020, RLTechniques2023.[^6][^2][^4][^10][^1]
-    - **Strength:** Strong.
-    - **Caveat:** New datasets (IoMT, SDN) are emerging; you should mention them for completeness.
+  - **Supporting sources:** LopezMartin2020‑DRL‑IDS, LopezMartin2021‑RBF‑OfflineRL, Ren2022‑IDRDRL, AE‑DQN2020, RLTechniques2023.[^6][^2][^4][^10][^1]
+  - **Strength:** Strong.
+  - **Caveat:** New datasets (IoMT, SDN) are emerging; you should mention them for completeness.
 4. **Claim:** Evaluation of RL‑based NIDS typically relies on random train/test splits on a single dataset, with little attention to temporal splits, cross‑dataset generalization, or external validation on lab traffic.
-    - **Supporting sources:** LopezMartin2020‑DRL‑IDS, LopezMartin2021‑RBF‑OfflineRL, Ren2022‑IDRDRL, AE‑DQN2020, Sanusi2023‑DRLThesis, DRL‑IDS surveys.[^17][^16][^8][^9][^2][^4][^6][^1]
-    - **Strength:** Strong; consistent pattern across many papers.
-    - **Caveat:** Some works evaluate on more than one public dataset, which is a weak form of external validation; acknowledge this.
+  - **Supporting sources:** LopezMartin2020‑DRL‑IDS, LopezMartin2021‑RBF‑OfflineRL, Ren2022‑IDRDRL, AE‑DQN2020, Sanusi2023‑DRLThesis, DRL‑IDS surveys.[^17][^16][^8][^9][^2][^4][^6][^1]
+  - **Strength:** Strong; consistent pattern across many papers.
+  - **Caveat:** Some works evaluate on more than one public dataset, which is a weak form of external validation; acknowledge this.
 5. **Claim:** Detailed reward design (including cost sensitivity and explicit penalties for false negatives) and class‑imbalance handling are under‑reported in RL‑based NIDS papers, even though class imbalance is a central issue in IDS datasets.
-    - **Supporting sources:** LopezMartin2021‑RBF‑OfflineRL, Ren2022‑IDRDRL, DDPG‑IDS 2025, DQ‑IDS 2025, DRL‑IDS surveys.[^17][^8][^2][^4][^7][^15]
-    - **Strength:** Moderate; some papers mention imbalance, but few give full reward formulas.
-    - **Caveat:** For a few recent works (DDPG‑IDS, HCLR‑IDS), the full paper may specify rewards in more detail than accessible snippets.
+  - **Supporting sources:** LopezMartin2021‑RBF‑OfflineRL, Ren2022‑IDRDRL, DDPG‑IDS 2025, DQ‑IDS 2025, DRL‑IDS surveys.[^17][^8][^2][^4][^7][^15]
+  - **Strength:** Moderate; some papers mention imbalance, but few give full reward formulas.
+  - **Caveat:** For a few recent works (DDPG‑IDS, HCLR‑IDS), the full paper may specify rewards in more detail than accessible snippets.
 6. **Claim:** Multi‑dataset DRL‑IDS evaluations that include several public datasets (e.g., NSL‑KDD, UNSW‑NB15, CICIDS2017, CICDDoS2019) exist, but they are still conducted in offline settings without evaluation on independent lab‑captured traffic.
-    - **Supporting sources:** LopezMartin2021‑RBF‑OfflineRL (5 datasets), DRL‑IDS surveys, ID‑RDRL 2022.[^8][^9][^2][^4]
-    - **Strength:** Strong.
-    - **Caveat:** Some cyber‑range works evaluate ML‑NIDS in labs, but not with RL agents.
+  - **Supporting sources:** LopezMartin2021‑RBF‑OfflineRL (5 datasets), DRL‑IDS surveys, ID‑RDRL 2022.[^8][^9][^2][^4]
+  - **Strength:** Strong.
+  - **Caveat:** Some cyber‑range works evaluate ML‑NIDS in labs, but not with RL agents.
 7. **Claim:** Given the current literature, a QRDQN‑based flow‑level defender trained on CICIDS2017 and evaluated both within‑dataset (with careful splits) and on lab‑captured traffic would constitute a novel and methodologically stronger contribution, especially if reward design reflects cost asymmetry between false positives and false negatives.
-    - **Supporting sources:** All of the above plus general ML‑NIDS dataset and evaluation critiques (e.g., Tavallaee2009, Generalizability2025, DL‑IDS surveys).[^33][^37][^38][^35][^9][^17][^2][^4][^8][^10][^1]
-    - **Strength:** Moderate–strong; no existing RL‑IDS uses distributional RL with such an evaluation pipeline (as far as the search reveals).
-    - **Caveat:** Phrase as “to the best of our knowledge, we did not find…” and emphasise methodological improvements rather than uniqueness.
+  - **Supporting sources:** All of the above plus general ML‑NIDS dataset and evaluation critiques (e.g., Tavallaee2009, Generalizability2025, DL‑IDS surveys).[^33][^37][^38][^35][^9][^17][^2][^4][^8][^10][^1]
+  - **Strength:** Moderate–strong; no existing RL‑IDS uses distributional RL with such an evaluation pipeline (as far as the search reveals).
+  - **Caveat:** Phrase as “to the best of our knowledge, we did not find…” and emphasise methodological improvements rather than uniqueness.
 
-***
+---
 
 ## 8. BibTeX candidates
 
@@ -412,7 +399,7 @@ Use these as building blocks in your thesis; each should be accompanied by the c
 
 You can refine author lists and venues once you download the full PDFs; the keys here (LopezMartin2020DRLIDS, LopezMartin2021RBFOfflineRL, Ren2022IDRDRL, etc.) are suitable to reference in your text.
 
-***
+---
 
 ## 9. Codex handoff
 
@@ -424,39 +411,39 @@ Write a Spanish subsection of the State of the Art chapter that explains how RL/
 **Recommended structure (subsection outline):**
 
 1. **Introducción al uso de RL en NIDS**
-    - Explicar brevemente por qué el aprendizaje por refuerzo es atractivo para ciberseguridad (capacidad de adaptación, formulación secuencial).
-    - Introducir la idea general de “clasificación mediante RL”: el agente observa un vector de características de flujo y decide una etiqueta (normal/ataque).[^2][^4][^1]
+  - Explicar brevemente por qué el aprendizaje por refuerzo es atractivo para ciberseguridad (capacidad de adaptación, formulación secuencial).
+  - Introducir la idea general de “clasificación mediante RL”: el agente observa un vector de características de flujo y decide una etiqueta (normal/ataque).[^2][^4][^1]
 2. **Formulación dataset‑as‑environment**
-    - Describir la contribución conceptual de López‑Martín: modificación del paradigma clásico de DRL donde el “entorno” es una función de muestreo sobre registros etiquetados.[^5][^1]
-    - Explicar que cada muestra o flujo es un estado, la etiqueta predicha es la acción y el entorno devuelve una recompensa basada en la corrección de la clasificación.
-    - Destacar que esta formulación es la base de muchos trabajos DRL‑IDS posteriores y que tu entorno Gymnasium sigue esta idea, pero aplicado a flujos de CICIDS2017 con una acción binaria PERMIT/BLOCK.
+  - Describir la contribución conceptual de López‑Martín: modificación del paradigma clásico de DRL donde el “entorno” es una función de muestreo sobre registros etiquetados.[^5][^1]
+  - Explicar que cada muestra o flujo es un estado, la etiqueta predicha es la acción y el entorno devuelve una recompensa basada en la corrección de la clasificación.
+  - Destacar que esta formulación es la base de muchos trabajos DRL‑IDS posteriores y que tu entorno Gymnasium sigue esta idea, pero aplicado a flujos de CICIDS2017 con una acción binaria PERMIT/BLOCK.
 3. **Algoritmos DRL empleados en la literatura**
-    - Resumir que la mayoría de los trabajos se basan en DQN y variantes (DDQN, AE‑DQN), además de enfoques actor‑critic (AC, DDPG) y algunos Policy Gradient.[^9][^21][^8][^6][^1][^7]
-    - Señalar que no se han encontrado aplicaciones claras de métodos distribucionales (p.ej. QRDQN, C51) a NIDS; tu trabajo introduce esta familia de algoritmos en este contexto.
+  - Resumir que la mayoría de los trabajos se basan en DQN y variantes (DDQN, AE‑DQN), además de enfoques actor‑critic (AC, DDPG) y algunos Policy Gradient.[^9][^21][^8][^6][^1][^7]
+  - Señalar que no se han encontrado aplicaciones claras de métodos distribucionales (p.ej. QRDQN, C51) a NIDS; tu trabajo introduce esta familia de algoritmos en este contexto.
 4. **Trabajos representativos y datasets utilizados**
-    - Describir sintéticamente:
-        - López‑Martín 2020 (DRL para NSL‑KDD y AWID; DQN, DDQN, PG, AC).[^5][^1]
-        - López‑Martín 2021 (RBFNN con RL offline sobre NSL‑KDD, UNSW‑NB15, AWID, CICIDS2017 y CICDDoS2019).[^13][^4]
-        - ID‑RDRL 2022 (DRL con selección de características sobre CSE‑CIC‑IDS2018).[^2]
-        - AE‑DQN y extensiones (AE‑DQN, NIDS‑RL) sobre NSL‑KDD.[^21][^6]
-        - NIDS con RL en NSL‑KDD y CICIDS2017 mediante DQN multi‑agente (RLTechniques2023).[^10]
-        - Trabajos recientes con DQ‑IDS, DDPG‑IDS, IoMT/SDN (sólo como ejemplos breves).[^12][^11][^7][^15]
-    - Resaltar qué datasets se usan (NSL‑KDD, UNSW‑NB15, CICIDS2017, CSE‑CIC‑IDS2018, CICDDoS2019).
+  - Describir sintéticamente:
+    - López‑Martín 2020 (DRL para NSL‑KDD y AWID; DQN, DDQN, PG, AC).[^5][^1]
+    - López‑Martín 2021 (RBFNN con RL offline sobre NSL‑KDD, UNSW‑NB15, AWID, CICIDS2017 y CICDDoS2019).[^13][^4]
+    - ID‑RDRL 2022 (DRL con selección de características sobre CSE‑CIC‑IDS2018).[^2]
+    - AE‑DQN y extensiones (AE‑DQN, NIDS‑RL) sobre NSL‑KDD.[^21][^6]
+    - NIDS con RL en NSL‑KDD y CICIDS2017 mediante DQN multi‑agente (RLTechniques2023).[^10]
+    - Trabajos recientes con DQ‑IDS, DDPG‑IDS, IoMT/SDN (sólo como ejemplos breves).[^12][^11][^7][^15]
+  - Resaltar qué datasets se usan (NSL‑KDD, UNSW‑NB15, CICIDS2017, CSE‑CIC‑IDS2018, CICDDoS2019).
 5. **Diseño de la recompensa y manejo del desequilibrio de clases**
-    - Clasificar las funciones de recompensa:
-        - Simple (correcto/incorrecto).[^16][^1][^15]
-        - Coste‑sensible / multi‑objetivo (p.ej., precisión frente a latencia en DDPG‑IDS).[^11][^7]
-        - Intentos de tratar el desequilibrio de clases mediante re‑muestreo o priorización (RBF‑RL, ID‑RDRL, prioridad de experiencias en DDPG).[^4][^2][^7]
-    - Indicar que en general el diseño de recompensa está poco detallado y rara vez se calibra explícitamente el coste relativo de falsos positivos y falsos negativos.
+  - Clasificar las funciones de recompensa:
+    - Simple (correcto/incorrecto).[^16][^1][^15]
+    - Coste‑sensible / multi‑objetivo (p.ej., precisión frente a latencia en DDPG‑IDS).[^11][^7]
+    - Intentos de tratar el desequilibrio de clases mediante re‑muestreo o priorización (RBF‑RL, ID‑RDRL, prioridad de experiencias en DDPG).[^4][^2][^7]
+  - Indicar que en general el diseño de recompensa está poco detallado y rara vez se calibra explícitamente el coste relativo de falsos positivos y falsos negativos.
 6. **Comparación con modelos supervisados clásicos**
-    - Explicar que la mayoría de trabajos comparan sus agentes RL/DRL con baselines supervisados (Random Forest, SVM, MLP, CNN/LSTM).[^6][^1][^4][^10][^2]
-    - Mencionar que tu tesis seguirá esta práctica incluyendo al menos un baseline de ML clásico (p.ej. Random Forest) y uno profundo (MLP) sobre los mismos vectores de características.
+  - Explicar que la mayoría de trabajos comparan sus agentes RL/DRL con baselines supervisados (Random Forest, SVM, MLP, CNN/LSTM).[^6][^1][^4][^10][^2]
+  - Mencionar que tu tesis seguirá esta práctica incluyendo al menos un baseline de ML clásico (p.ej. Random Forest) y uno profundo (MLP) sobre los mismos vectores de características.
 7. **Limitaciones metodológicas de los trabajos RL‑NIDS**
-    - Subrayar problemas comunes: divisiones aleatorias en datasets con fuerte estructura temporal, ausencia de validación externa en tráfico real o de laboratorio, poca atención a desequilibrios de clases y coste de errores, ausencia de código y especificación incompleta de la recompensa.[^17][^8][^9][^21][^1][^4][^10][^6][^2]
-    - Utilizar estas críticas para motivar decisiones metodológicas de tu prototipo: particiones temporales o por escenarios en CICIDS2017, evaluación offline sobre tráfico capturado en un laboratorio privado, recompensas coste‑sensibles y publicación de detalles de preprocesado y divisiones.
+  - Subrayar problemas comunes: divisiones aleatorias en datasets con fuerte estructura temporal, ausencia de validación externa en tráfico real o de laboratorio, poca atención a desequilibrios de clases y coste de errores, ausencia de código y especificación incompleta de la recompensa.[^17][^8][^9][^21][^1][^4][^10][^6][^2]
+  - Utilizar estas críticas para motivar decisiones metodológicas de tu prototipo: particiones temporales o por escenarios en CICIDS2017, evaluación offline sobre tráfico capturado en un laboratorio privado, recompensas coste‑sensibles y publicación de detalles de preprocesado y divisiones.
 8. **Posicionamiento de tu trabajo**
-    - Explicar que tu prototipo extiende la familia de trabajos dataset‑as‑environment a un agente de defensa binario sobre flujos de red, entrenado con QRDQN y evaluado tanto en CICIDS2017 como en tráfico de laboratorio.
-    - Destacar que la contribución principal no es únicamente el algoritmo (QRDQN), sino la combinación de: representación basada en flujos, formulación RL explícita PERMIT/BLOCK, diseño de recompensa coste‑sensible y validación externa.
+  - Explicar que tu prototipo extiende la familia de trabajos dataset‑as‑environment a un agente de defensa binario sobre flujos de red, entrenado con QRDQN y evaluado tanto en CICIDS2017 como en tráfico de laboratorio.
+  - Destacar que la contribución principal no es únicamente el algoritmo (QRDQN), sino la combinación de: representación basada en flujos, formulación RL explícita PERMIT/BLOCK, diseño de recompensa coste‑sensible y validación externa.
 
 **Style instructions for Codex:**
 
