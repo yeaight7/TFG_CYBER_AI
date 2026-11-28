@@ -123,7 +123,7 @@ uv sync --locked --python 3.12
 source .venv/bin/activate
 ```
 
-On PowerShell, activate with `.venv\Scripts\Activate.ps1`. See [docs/gpu_experimental_environment.md](docs/gpu_experimental_environment.md) for the maintained campaign setup.
+On PowerShell, activate with `.venv\Scripts\Activate.ps1`. For pip-only setup with Python 3.12, use `python -m pip install -r requirements.txt`. See [docs/gpu_experimental_environment.md](docs/gpu_experimental_environment.md) for the maintained campaign setup.
 
 Train the RL model on CICIDS2017:
 

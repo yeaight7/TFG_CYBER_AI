@@ -10,6 +10,13 @@ uv sync --locked --python 3.12
 
 Use `uv sync --locked --all-extras` for development and tuning tools. The [GPU environment guide](gpu_experimental_environment.md) covers the campaign and artifact workflow. Per-run environment metadata records the installed packages, hardware, host driver, CUDA runtime, and storage alongside the input and artifact hashes.
 
+For pip-only installations, run `python -m pip install -r requirements.txt` with Python 3.12. The file lists locked runtime dependencies. Regenerate it after updating `uv.lock`:
+
+```bash
+uv export --locked --format requirements-txt --no-emit-project --no-default-groups \
+  --no-annotate --no-hashes --emit-index-url --output-file requirements.txt
+```
+
 ## CUDA 13.0 reference environment
 
 For a same-host comparison, create an isolated environment from the `pyproject.toml` and `uv.lock` at commit `baa7257`. That revision pins Python 3.12, PyTorch 2.12.1+cu130, and SB3/sb3-contrib 2.8.0. Use its Python interpreter to run the benchmark from the current checkout. Keep the checkpoint, prepared observations, runtime options, and FP32 matmul precision consistent across comparisons.
@@ -69,7 +76,7 @@ Commits **before 2026-06-27** were authored with an institutional email (`…@al
 
 ## Continuous integration: what CI does and does not verify
 
-CI (`.github/workflows/ci.yml`) runs on Python **3.12** (matching the MAIN training environment, `environment.json` 3.12.11), installs the locked dependencies with `uv sync --all-extras`, and runs the unit tests, the canonical-schema dimension check, and Ruff. The uv download/build store is cached (`enable-cache: true`) to reuse PyTorch and CUDA wheels across runs.
+CI (`.github/workflows/ci.yml`) runs on Python **3.12** (matching the MAIN training environment, `environment.json` 3.12.11), installs the locked dependencies with `uv sync --locked --all-extras`, and runs the unit tests, the canonical-schema dimension check, and Ruff. The uv download/build store is cached (`enable-cache: true`) to reuse PyTorch and CUDA wheels across runs.
 
 **What CI cannot verify:** the byte-identical **SHA-256 of the fixed seed-42 test partition** (`runs/cicids2017/test_partition_reference_seed42.json`) can only be checked against the real CICIDS2017 CSVs, which live in **git LFS and are not pulled in CI** (large, and gated by dataset terms). So the reproducibility hash is a **local** check.
 
