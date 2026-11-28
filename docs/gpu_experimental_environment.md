@@ -132,6 +132,20 @@ python scripts/benchmark_experimental_runtime.py \
   --thread-config 1:1 4:1 8:1 16:1
 ```
 
+For measurements on the real campaign training path, run the probe with each stack in turn on the same allocation:
+
+```bash
+python scripts/benchmark_experimental_runtime.py --campaign-qrdqn --device auto \
+  --thread-config 1:1 4:1 8:1 16:1 \
+  --batch-sizes 2048 4096 8192 16384 32768
+```
+
+This uses a seeded synthetic dataset, the frozen MAIN QRDQN profile, and 50,400 timesteps. It measures warm-up rollout, learned-policy rollout, and optimizer updates separately. Inference includes NumPy-to-device input and device-to-NumPy action transfers. Each batch size gets a warm-up and three timed predictions with exact action comparisons against the 4,096 and 8,192 defaults. Each configuration runs in its own process. The probe writes `config.json` and `metrics.json` under a unique `runs/runtime-probes/` ID. These files are runtime evidence.
+
+For a fixed trained model, append `--inference-run-dir <verified-model-run-dir>`. Add `--inference-observations <prepared-float32.npy>` to reuse an evaluation or Phase 2 input after its normal preprocessing. Use the same model and observation hashes for both stacks. Consider only parity-passing batch sizes and keep the default when the timing spread obscures the difference.
+
+The 15 primary QRDQN runs request 20,399,216 timesteps. SB3 rounds these to 20,399,600 steps across the runs, including 750,000 steps before learning begins, and makes 3,929,920 optimizer updates. Estimate the QRDQN loop time from the sum of warm-up steps, learned-policy steps, and updates divided by their respective measured rates. Then add preprocessing, evaluation, checkpointing, exports, the seven Random Forest runs, and five auxiliary jobs. Use native host timings for disk- and CPU-heavy work. The 200-quantile loss alone has 81,920,000 pairwise elements per update, so VRAM size and advertised FLOPS give limited information about campaign wall time.
+
 ## Optional QRDQN smoke and run telemetry
 
 The standalone synthetic smoke exercises 50,200 timesteps with one-second resource sampling and exports the learning rate and loss. Run it when diagnosing a training environment.
@@ -202,6 +216,8 @@ python scripts/run_campaign.py experiments/final_experiment_campaign.json \
   --phase2-input-sha256 <SHA256> \
   --resume
 ```
+
+After comparing parity and throughput, set `--eval-batch-size` for QRDQN evaluation, shuffled-label validation, and direct MAIN validation. Set `--phase2-batch-size` for Phase 2. The defaults are 8,192 and 4,096 respectively. `--torch-threads` and `--torch-inter-op-threads` configure the PyTorch subprocesses when supplied. Repeat the same options on resume. The dry-run lists the resolved settings and the affected commands.
 
 The runner dispatches sequential subprocesses. It skips only checksum-validated completed runs, retains failed/interrupted attempts, and writes retries to new attempt directories.
 
