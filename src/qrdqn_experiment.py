@@ -294,9 +294,12 @@ def create_qrdqn_model(
     environment: DummyVecEnv,
     tensorboard_dir: Path,
     device: str,
+    *,
+    model_class: type[QRDQN] | None = None,
 ) -> QRDQN:
     hyperparameters = MAIN_V1_PROFILE.qrdqn_hyperparams()
-    return QRDQN(
+    model_class = model_class or QRDQN
+    return model_class(
         hyperparameters["policy"],
         environment,
         seed=config.model_seed,

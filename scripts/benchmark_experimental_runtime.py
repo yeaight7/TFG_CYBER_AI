@@ -1,4 +1,4 @@
-"""Isolated synthetic runtime benchmark for GPU-host thread configurations."""
+"""Isolated thread and QRDQN campaign runtime benchmarks."""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Sequence
+from uuid import uuid4
 
 if __package__ in {None, ""}:  # pragma: no cover - direct script execution
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -144,6 +145,7 @@ def run_runtime_benchmark(
     *,
     output_path: Path | str,
     thread_configs: Sequence[str],
+    worker_args: Sequence[str] = (),
     command_runner: CommandRunner = subprocess.run,
 ) -> dict[str, Any]:
     parsed = [parse_thread_config(value) for value in thread_configs]
@@ -153,13 +155,13 @@ def run_runtime_benchmark(
     script_path = Path(__file__).resolve()
     for original, (torch_threads, interop_threads) in zip(thread_configs, parsed, strict=True):
         normalised = f"{torch_threads}:{interop_threads}"
-        command = [sys.executable, str(script_path), "--worker-config", normalised]
+        command = [sys.executable, str(script_path), "--worker-config", normalised, *worker_args]
         completed = command_runner(
             command,
             capture_output=True,
             text=True,
             check=False,
-            timeout=300,
+            timeout=600 if worker_args else 300,
         )
         if completed.returncode != 0:
             raise RuntimeError(
@@ -197,28 +199,114 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output", type=Path)
     parser.add_argument("--thread-config", nargs="+", default=["1:1", "4:1", "8:1", "16:1"])
     parser.add_argument("--worker-config", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--campaign-qrdqn", action="store_true", help="Use the real campaign QRDQN path"
+    )
+    parser.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
+    parser.add_argument(
+        "--batch-sizes", type=int, nargs="+", default=[2048, 4096, 8192, 16384, 32768]
+    )
+    parser.add_argument("--inference-rows", type=int, default=65_537)
+    parser.add_argument(
+        "--inference-run-dir", type=Path, help="Use a hash-verified model from this run"
+    )
+    parser.add_argument("--inference-observations", type=Path, help="Prepared float32 .npy input")
+    parser.add_argument("--run-root", type=Path, default=Path("runs/runtime-probes"))
     args = parser.parse_args(argv)
-    if args.worker_config is None and args.output is None:
-        parser.error("--output is required")
+    if not args.campaign_qrdqn and args.worker_config is None and args.output is None:
+        parser.error("--output is required for the synthetic thread benchmark")
+    if args.campaign_qrdqn:
+        if min(args.batch_sizes) <= 0 or args.inference_rows <= 0:
+            parser.error("Batch sizes and inference row count must be positive")
+        if args.inference_observations is not None and args.inference_run_dir is None:
+            parser.error("--inference-observations requires --inference-run-dir")
     return args
+
+
+def _campaign_report(args: argparse.Namespace) -> dict[str, Any]:
+    created_at = datetime.now(timezone.utc)
+    run_id = f"qrdqn-runtime-{created_at:%Y%m%dT%H%M%SZ}-{uuid4().hex[:8]}"
+    run_dir = args.run_root.resolve() / run_id
+    run_dir.mkdir(parents=True)
+    config = {
+        "run_id": run_id,
+        "created_at": created_at.isoformat(),
+        "scientific_result": False,
+        "thread_configs": args.thread_config,
+        "device_request": args.device,
+        "batch_sizes": args.batch_sizes,
+        "inference_rows_requested": args.inference_rows,
+        "inference_run_dir": str(args.inference_run_dir) if args.inference_run_dir else None,
+        "inference_observations": str(args.inference_observations)
+        if args.inference_observations
+        else None,
+    }
+    atomic_write_json(run_dir / "config.json", config)
+    worker_args = [
+        "--campaign-qrdqn",
+        "--device",
+        args.device,
+        "--run-root",
+        str(run_dir),
+        "--inference-rows",
+        str(args.inference_rows),
+        "--batch-sizes",
+        *map(str, args.batch_sizes),
+    ]
+    if args.inference_run_dir is not None:
+        worker_args.extend(["--inference-run-dir", str(args.inference_run_dir.resolve())])
+    if args.inference_observations is not None:
+        worker_args.extend(["--inference-observations", str(args.inference_observations.resolve())])
+    try:
+        report = run_runtime_benchmark(
+            output_path=run_dir / "metrics.json",
+            thread_configs=args.thread_config,
+            worker_args=worker_args,
+        )
+    except (RuntimeError, ValueError, subprocess.TimeoutExpired) as error:
+        atomic_write_json(
+            run_dir / "metrics.json", {"run_id": run_id, "status": "failed", "error": str(error)}
+        )
+        raise
+    report.update(run_id=run_id, run_dir=str(run_dir))
+    atomic_write_json(run_dir / "metrics.json", report)
+    if args.output is not None:
+        atomic_write_json(args.output, report)
+    return report
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.worker_config is not None:
         try:
-            result = run_worker(args.worker_config)
+            if args.campaign_qrdqn:
+                from src.campaign_runtime_benchmark import run_campaign_worker
+
+                torch_threads, interop_threads = parse_thread_config(args.worker_config)
+                result = run_campaign_worker(
+                    torch_threads=torch_threads,
+                    interop_threads=interop_threads,
+                    device_request=args.device,
+                    batch_sizes=args.batch_sizes,
+                    inference_rows=args.inference_rows,
+                    inference_run_dir=args.inference_run_dir,
+                    observations_path=args.inference_observations,
+                    run_dir=args.run_root,
+                )
+            else:
+                result = run_worker(args.worker_config)
         except (RuntimeError, ValueError) as error:
             print(f"error: {error}", file=sys.stderr)
             return 2
         print(json.dumps(result, sort_keys=True))
         return 0
     try:
-        report = run_runtime_benchmark(
-            output_path=args.output,
-            thread_configs=args.thread_config,
+        report = (
+            _campaign_report(args)
+            if args.campaign_qrdqn
+            else run_runtime_benchmark(output_path=args.output, thread_configs=args.thread_config)
         )
-    except (RuntimeError, ValueError) as error:
+    except (RuntimeError, ValueError, subprocess.TimeoutExpired) as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
     print(json.dumps(report, indent=2, sort_keys=True))
