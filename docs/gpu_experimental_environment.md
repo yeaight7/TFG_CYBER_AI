@@ -81,18 +81,16 @@ Bootstrap intervals measure fixed-test sampling precision for one trained model,
 
 ## Environment setup
 
-Use the environment appropriate to the host. The example below installs the pinned Linux CUDA stack. The campaign has no hardware minimums; each run records the environment it actually uses.
+The locked Linux campaign environment uses Python 3.12, PyTorch 2.15.0+cu132, and SB3/sb3-contrib 2.9.2. Use a CUDA 13.2-compatible host and install the project environment from the lock.
 
 ```bash
 git clone https://github.com/yeaight7/TFG_CYBER_AI.git
 cd TFG_CYBER_AI
-python -m venv .venv
+uv sync --locked --python 3.12
 source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements-gpu-cu130.txt
 ```
 
-For development and unit tests, `uv sync` uses `pyproject.toml` and `uv.lock`. The compatibility requirements filename is documented in [reproducibility.md](reproducibility.md).
+Each run records the environment it actually uses. See [reproducibility.md](reproducibility.md) for dev extras and the earlier CUDA 13.0 comparison stack.
 
 Materialise the eight curated official CSVs under `datasets/CICIDS2017/` and verify their hashes against [the repository dataset table](../README.md#provenance-and-integrity). Do not commit local raw datasets, generated caches, or provider credentials.
 
@@ -132,7 +130,7 @@ python scripts/benchmark_experimental_runtime.py \
   --thread-config 1:1 4:1 8:1 16:1
 ```
 
-For measurements on the real campaign training path, run the probe with each stack in turn on the same allocation:
+Run the probe with the locked campaign environment to measure the real training path. To compare stacks, repeat it in the CUDA 13.0 reference environment on the same allocation:
 
 ```bash
 python scripts/benchmark_experimental_runtime.py --campaign-qrdqn --device auto \
@@ -284,5 +282,4 @@ Aggregation rejects incomplete, corrupt, failed, historical-substitute, or prove
 ## Compatibility and historical records
 
 - [runpod_main_experiment.md](runpod_main_experiment.md) is retained only as a historical compatibility pointer for the committed historical MAIN.
-- `requirements-runpod-cu130.txt` is a historical compatibility filename that includes `requirements-gpu-cu130.txt`.
 - Historical artifacts keep their original environment and hardware metadata unchanged.

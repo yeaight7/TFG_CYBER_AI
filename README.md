@@ -116,19 +116,14 @@ Verify locally with `sha256sum datasets/CICIDS2017/*.csv` (or `Get-FileHash -Alg
 
 ## Quickstart
 
-Install dependencies:
+Install the locked Python 3.12 environment, then activate the generated virtual environment. Linux uses the PyTorch CUDA 13.2 wheel. Other platforms use the PyTorch CPU index.
 
 ```bash
-pip install -r requirements.txt
+uv sync --locked --python 3.12
+source .venv/bin/activate
 ```
 
-For the pinned Linux CUDA 13.0 GPU experimental environment, use:
-
-```bash
-pip install -r requirements-gpu-cu130.txt
-```
-
-See [docs/gpu_experimental_environment.md](docs/gpu_experimental_environment.md) for maintained setup and campaign instructions. The historical compatibility dependency filename remains documented in [docs/reproducibility.md](docs/reproducibility.md).
+On PowerShell, activate with `.venv\Scripts\Activate.ps1`. See [docs/gpu_experimental_environment.md](docs/gpu_experimental_environment.md) for the maintained campaign setup.
 
 Train the RL model on CICIDS2017:
 

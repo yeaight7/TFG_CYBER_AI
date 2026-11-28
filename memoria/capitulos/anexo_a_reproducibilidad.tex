@@ -31,12 +31,13 @@ Los datos originales, credenciales, cachés generadas y exportaciones voluminosa
 
 \section{Entorno de software}
 
-La plataforma final utiliza Linux, Python~3.12 y un runtime CUDA compatible con el manifiesto GPU mantenido. Las dependencias directas de campaña se instalan desde \path{requirements-gpu-cu130.txt}; \path{pyproject.toml} y \path{uv.lock} definen desarrollo y pruebas. El fichero histórico de compatibilidad con nombre de proveedor no forma parte de la descripción científica final.
+La plataforma final utiliza Linux, Python~3.12 y PyTorch~2.15.0 con CUDA~13.2. Las dependencias se declaran en \path{pyproject.toml}, se fijan en \path{uv.lock} y se instalan mediante \reprocmd{uv sync --locked --python 3.12}.
 
 Las comprobaciones ligeras incluyen importaciones, pruebas unitarias, firma del perfil y dimensiones del esquema:
 
 \begin{quote}\small
-\reprocmd{python -m pytest -q}\\
+\reprocmd{uv sync --locked --all-extras}\\
+\reprocmd{uv run --locked pytest -q}\\
 Comprobación programática: \texttt{len(FEATURES\_CANON) == 76}.
 \end{quote}
 
