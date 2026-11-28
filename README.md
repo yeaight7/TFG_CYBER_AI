@@ -12,7 +12,7 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 ## Current Status
 
 | Area | Status |
-|------|--------|
+|---|---|
 | Canonical schema | Implemented and frozen at 76 features |
 | CICIDS2017 adapter | Implemented |
 | NSL-KDD adapter | Legacy — data/model dropped from the repo (see [experiments/nslkdd_experiments.md](experiments/nslkdd_experiments.md)); code kept for history only |
@@ -45,25 +45,25 @@ The current repository uses **CICIDS2017** as the main dataset, a **fixed canoni
 
 ```text
 TFG_CYBER_AI/
-├── .github/                   # AGENT_CONTEXT.md (technical source of truth) + CI workflows
-├── datasets/                  # Curated CICIDS2017 CSVs (git LFS); Raw_dataset/ is local-only
-├── docs/                      # Maintained documentation
-│   ├── defensa/               # Spanish defense-prep material (grouped 2026-07)
-│   ├── research/              # Consolidated research notes (not a source of truth)
+├── .github/                             # AGENT_CONTEXT.md (technical source of truth) + CI workflows
+├── datasets/                            # Curated CICIDS2017 CSVs (git LFS); Raw_dataset/ is local-only
+├── docs/                                # Maintained documentation
+│   ├── defensa/                         # Spanish defense-prep material (grouped 2026-07)
+│   ├── research/                        # Consolidated research notes (not a source of truth)
 │   │   ├── state-of-the-art/            # Normalized literature base feeding report/ chapters
 │   │   ├── state-of-the-art-raw-dumps/  # Raw ChatGPT/Perplexity exports (as received)
 │   │   └── personal/                    # Personal notes (incl. deep-defense-research/)
-│   ├── audits/                # Dated read-only repository audits + remediation plan
-│   └── archive/               # Obsolete docs kept for history (informe.*, design board)
-├── experiments/               # Experiment archive notes: historical and maintained timelines
-├── lab/                       # Lab assets (deprecated Docker traffic generator, kept for reference)
-├── memoria/                   # Canonical thesis (Spanish) — official source
-├── models/                    # Official trained models (tracked); archive/ binaries local-only since 2026-07
-├── pcaps/                     # Phase 2 flows/captures; archive/ binaries local-only since 2026-07
-├── report/                    # English thesis mirror — synced with memoria/ (2026-06-29)
-├── runs/                      # Run artifacts: config.json, metrics.json, validation_results.json, etc. (tracked)
-├── scripts/                   # Phase 2 and utility scripts
-└── src/                       # Training, validation, adapters, environment, utilities
+│   ├── audits/                          # Dated read-only repository audits + remediation plan
+│   └── archive/                         # Obsolete docs kept for history (informe.*, design board)
+├── experiments/                         # Experiment archive notes: historical and maintained timelines
+├── lab/                                 # Lab assets (deprecated Docker traffic generator, kept for reference)
+├── memoria/                             # Canonical thesis (Spanish) — official source
+├── models/                              # Official trained models (tracked); archive/ binaries local-only since 2026-07
+├── pcaps/                               # Phase 2 flows/captures; archive/ binaries local-only since 2026-07
+├── report/                              # English thesis mirror — synced with memoria/ (2026-06-29)
+├── runs/                                # Run artifacts: config.json, metrics.json, validation_results.json, etc. (tracked)
+├── scripts/                             # Phase 2 and utility scripts
+└── src/                                 # Training, validation, adapters, environment, utilities
 ```
 
 ## Core Technical Invariants
@@ -89,7 +89,7 @@ TFG_CYBER_AI/
 Two versions of the CICIDS2017 data exist locally:
 
 | Version | Path | Tracked | Description |
-|---------|------|---------|-------------|
+|---|---|---|---|
 | Curated | `datasets/CICIDS2017/*.csv` | Yes | Leakage-prone and redundant columns removed pre-ingestion. What the adapter loads. |
 | Raw | `datasets/CICIDS2017/Raw_dataset/` | No (gitignored) | Original CICFlowMeter CSV exports. All columns preserved. Local reference only. |
 
@@ -102,7 +102,7 @@ The adapter (`src/load_cicids2017.py`) applies further cleaning at load time reg
 - The hashes below are SHA-256 of the **curated** CSVs actually used by the adapter (`datasets/CICIDS2017/*.csv`), i.e. this repository's derivative after pre-ingestion column removal — **not** the upstream file hashes. They let you confirm you are working from the exact curated copy used for the committed results. The `Raw_dataset/` originals are gitignored and not hashed here.
 
 | File | Bytes | SHA-256 |
-|------|-------|---------|
+|---|---|---|
 | `Monday-WorkingHours.pcap_ISCX.csv` | 176,927,918 | `852c4beb34eda186f32561fa79df7a0747e92e1a6535b01270820dd9ffe17f34` |
 | `Tuesday-WorkingHours.pcap_ISCX.csv` | 135,078,995 | `52b8692ae8c7d2ed04671fe2b98335693c0a92c7ab157d8c8b534d6523080851` |
 | `Wednesday-workingHours.pcap_ISCX.csv` | 225,166,395 | `893c27dc968bf7a8adef1689f90be55ca4a4dc3088fb63d6ff247ac56856df2a` |
@@ -171,7 +171,7 @@ python scripts/predict_real_traffic_v2.py \
 The repository currently includes four validation workflows:
 
 | Validation | Purpose |
-|------------|---------|
+|---|---|
 | Check A | Direct prediction on `X_test` vs `y_test` without relying on the environment |
 | Check B | Shuffled-label anti-leakage test |
 | Check C | Hard CSV/day split generalisation test |

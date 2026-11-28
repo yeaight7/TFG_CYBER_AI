@@ -33,50 +33,23 @@ On Linux, uv resolves torch through:
 https://download.pytorch.org/whl/cu130
 ```
 
-If using `uv pip install` directly against `requirements-gpu-cu130.txt`,
-include uv's multi-index strategy flag:
+If using `uv pip install` directly against `requirements-gpu-cu130.txt`, include uv's multi-index strategy flag:
 
 ```bash
 uv pip install -r requirements-gpu-cu130.txt --index-strategy unsafe-best-match
 ```
 
-The project-mode `uv sync` path does not need that flag because `pyproject.toml`
-uses per-package `tool.uv.sources` for torch.
+The project-mode `uv sync` path does not need that flag because `pyproject.toml` uses per-package `tool.uv.sources` for torch.
 
 ## Experimental artifact versioning
 
-Campaign artifact roots intended for later evidence commits must be placed under
-the repository, for example `runs/final_campaign/`. Final models, retained
-checkpoints, TensorBoard events, joblib files, source datasets, PCAPs, existing
-prediction CSV evidence, and TensorBoard scalar CSVs use Git LFS. Small configs,
-metrics, environment metadata, manifests, checksums, logs, monitoring, timings,
-system metrics, run summaries, feature importances, and aggregate CSVs use
-normal Git.
+Campaign artifact roots intended for later evidence commits must be placed under the repository, for example `runs/final_campaign/`. Final models, retained checkpoints, TensorBoard events, joblib files, source datasets, PCAPs, existing prediction CSV evidence, and TensorBoard scalar CSVs use Git LFS. Small configs, metrics, environment metadata, manifests, checksums, logs, monitoring, timings, system metrics, run summaries, feature importances, and aggregate CSVs use normal Git.
 
-New QRDQN runs keep static and dynamic execution evidence separate but
-cross-referenced. `environment.json` captures the runtime-visible hardware and
-software inventory at startup. `system_metrics.csv` records timestamped
-process/system/GPU samples, while `monitoring.json` records collection errors,
-field coverage, and numeric aggregates. `run_summary.json` is a generated,
-checksum-backed discovery view of the authoritative config, hardware, actual
-timestep count, metrics, timings, monitoring, and every exported TensorBoard
-scalar's latest value. Historical manifests remain valid because each manifest
-declares its own required artifacts.
+New QRDQN runs keep static and dynamic execution evidence separate but cross-referenced. `environment.json` captures the runtime-visible hardware and software inventory at startup. `system_metrics.csv` records timestamped process/system/GPU samples, while `monitoring.json` records collection errors, field coverage, and numeric aggregates. `run_summary.json` is a generated, checksum-backed discovery view of the authoritative config, hardware, actual timestep count, metrics, timings, monitoring, and every exported TensorBoard scalar's latest value. Historical manifests remain valid because each manifest declares its own required artifacts.
 
-Future per-row `runs/**/predictions*.csv` exports and downloaded `.tar.gz`
-bundles remain ignored. Existing committed prediction CSVs remain tracked. Git
-status, Git LFS, `.gitattributes`, and `.gitignore` determine which files are
-committed; there is no second manual import step.
+Future per-row `runs/**/predictions*.csv` exports and downloaded `.tar.gz` bundles remain ignored. Existing committed prediction CSVs remain tracked. Git status, Git LFS, `.gitattributes`, and `.gitignore` determine which files are committed; there is no second manual import step.
 
-After each validated physical campaign run, the generic filesystem exporter
-copies the complete sealed run directory outside the repository and creates a
-verified per-run `.tar.gz` plus SHA-256 sidecar. The copy includes Git, Git LFS,
-ignored, untracked, checkpoint, TensorBoard, log, monitoring, and prediction
-outputs because the complete physical run directory is the source. This is
-manual download/recovery convenience, not proof of off-host or independent
-durability; a same-filesystem sibling destination is valid. A mounted volume,
-network share, or other mounted external destination works through the same
-filesystem-path interface.
+After each validated physical campaign run, the generic filesystem exporter copies the complete sealed run directory outside the repository and creates a verified per-run `.tar.gz` plus SHA-256 sidecar. The copy includes Git, Git LFS, ignored, untracked, checkpoint, TensorBoard, log, monitoring, and prediction outputs because the complete physical run directory is the source. This is manual download/recovery convenience, not proof of off-host or independent durability; a same-filesystem sibling destination is valid. A mounted volume, network share, or other mounted external destination works through the same filesystem-path interface.
 
 ## Historical MAIN environment and compatibility filename
 

@@ -5,29 +5,19 @@
 
 ## Objective
 
-Make fresh clones clean and make reproducibility-critical experiment artifacts
-committable without rewriting Git history. Large opaque artifacts use Git LFS;
-small human-readable evidence stays in normal Git; future per-row prediction CSV
-exports and downloaded bundles remain outside version control.
+Make fresh clones clean and make reproducibility-critical experiment artifacts committable without rewriting Git history. Large opaque artifacts use Git LFS; small human-readable evidence stays in normal Git; future per-row prediction CSV exports and downloaded bundles remain outside version control.
 
 ## Current Problem
 
-The repository declares all ZIP and joblib files as LFS-managed, but eight
-currently tracked files are raw Git blobs. Git LFS clean filters therefore make
-fresh WSL clones report those files as modified even when no user edit occurred.
+The repository declares all ZIP and joblib files as LFS-managed, but eight currently tracked files are raw Git blobs. Git LFS clean filters therefore make fresh WSL clones report those files as modified even when no user edit occurred.
 
-Separately, `.gitignore` excludes run-local `model.zip`, TensorBoard event files,
-and checkpoint directories. Those exclusions prevent complete future campaign
-evidence from being staged normally.
+Separately, `.gitignore` excludes run-local `model.zip`, TensorBoard event files, and checkpoint directories. Those exclusions prevent complete future campaign evidence from being staged normally.
 
 ## Decisions
 
 ### Forward-only normalization
 
-Normalize the eight raw ZIP/joblib files in the current tree into LFS pointers in
-a new commit. Preserve their materialized bytes and SHA-256 values. Do not use
-`git lfs migrate import`, rewrite history, delete historical blobs, or change old
-commit IDs.
+Normalize the eight raw ZIP/joblib files in the current tree into LFS pointers in a new commit. Preserve their materialized bytes and SHA-256 values. Do not use `git lfs migrate import`, rewrite history, delete historical blobs, or change old commit IDs.
 
 ### Artifact policy
 
@@ -50,30 +40,22 @@ commit IDs.
 | Canonical cache arrays | Ignored | Rebuildable from source data |
 | Replay buffers | Ignored/disabled | Not part of the approved campaign contract |
 
-An ignore rule does not untrack an already committed file. Existing prediction
-CSVs therefore remain in the index while new matching exports stay untracked.
+An ignore rule does not untrack an already committed file. Existing prediction CSVs therefore remain in the index while new matching exports stay untracked.
 
 ### CSV attribute scope
 
-Replace the global `*.csv` LFS rule with path-scoped rules that continue to cover
-all currently LFS-managed CSVs:
+Replace the global `*.csv` LFS rule with path-scoped rules that continue to cover all currently LFS-managed CSVs:
 
 - official CICIDS2017 dataset CSVs;
 - PCAP-derived CSV evidence;
 - existing committed prediction CSVs;
 - TensorBoard scalar CSVs.
 
-This keeps `system_metrics.csv`, RF feature importance CSVs, and campaign
-aggregate CSVs in normal Git.
+This keeps `system_metrics.csv`, RF feature importance CSVs, and campaign aggregate CSVs in normal Git.
 
 ### Run output location
 
-Git can only stage artifacts written beneath the repository. GPU-host campaign
-commands intended for later evidence commits must place `--artifact-root` under a
-tracked repository path such as `runs/final_campaign/`. Snapshot and final bundle
-destinations remain outside the repository and may share its filesystem. These
-exports support transfer/recovery but do not by themselves prove independent or
-off-host durability.
+Git can only stage artifacts written beneath the repository. GPU-host campaign commands intended for later evidence commits must place `--artifact-root` under a tracked repository path such as `runs/final_campaign/`. Snapshot and final bundle destinations remain outside the repository and may share its filesystem. These exports support transfer/recovery but do not by themselves prove independent or off-host durability.
 
 ## Files and Index Entries
 
@@ -96,22 +78,17 @@ The working-tree bytes of those eight files must not change.
 1. Record SHA-256 values for the eight inconsistent files before normalization.
 2. Apply attributes and normalize only the named files.
 3. Recompute SHA-256 values and require exact equality.
-4. Verify representative paths with `git check-attr` and `git check-ignore`:
-   final models, checkpoints, TensorBoard events, logs, system metrics, prediction
-   CSVs, bundles, dataset CSVs, and cache paths.
+4. Verify representative paths with `git check-attr` and `git check-ignore`: final models, checkpoints, TensorBoard events, logs, system metrics, prediction CSVs, bundles, dataset CSVs, and cache paths.
 5. Run `git lfs status`, `git lfs ls-files`, and `git lfs fsck`.
-6. Run the focused artifact-policy test, complete unit suite, Ruff, and
-   `git diff --check`.
-7. Verify a fresh checkout/clone is clean and materializes the normalized files
-   through LFS.
+6. Run the focused artifact-policy test, complete unit suite, Ruff, and `git diff --check`.
+7. Verify a fresh checkout/clone is clean and materializes the normalized files through LFS.
 
 ## Failure Handling
 
 - Abort if any normalized working-file hash changes.
 - Abort if existing committed prediction CSVs disappear from the index.
 - Abort if important run evidence remains ignored.
-- Abort if a representative generated prediction CSV becomes stageable without
-  force.
+- Abort if a representative generated prediction CSV becomes stageable without force.
 - Do not push if any required LFS object is missing or corrupt.
 
 ## Non-goals

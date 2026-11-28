@@ -1,7 +1,7 @@
 # Thesis supervision near-final design
 
-Date: 2026-09-01  
-Status: approved for implementation  
+Date: 2026-09-01
+Status: approved for implementation
 Scope: manuscript, thesis figures, figure tooling, bibliography, and thesis-supporting documentation only
 
 ## Goal
