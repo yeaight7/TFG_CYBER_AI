@@ -166,7 +166,8 @@ def _process_source_csv(source_path: Path) -> tuple[np.ndarray, np.ndarray, list
         allow_non_official_csvs=False,
         cache_policy="off",
     )
-    return _load_and_process_csv_paths([source_path], config)
+    observations, labels, features, _ = _load_and_process_csv_paths([source_path], config)
+    return observations, labels, features
 
 
 def _write_json_atomic(path: Path, value: dict[str, Any]) -> None:
@@ -264,7 +265,9 @@ def _read_json(path: Path) -> dict[str, Any]:
     return value
 
 
-def _validate_shard(source_path: Path, shard_dir: Path) -> dict[str, Any]:
+def _validate_shard(
+    source_path: Path, shard_dir: Path
+) -> tuple[dict[str, Any], np.ndarray, np.ndarray]:
     metadata = _read_json(shard_dir / "metadata.json")
     expected_scalars = {
         "cache_schema_version": CACHE_SCHEMA_VERSION,
@@ -303,7 +306,7 @@ def _validate_shard(source_path: Path, shard_dir: Path) -> dict[str, Any]:
         raise CacheValidationError(f"cache shard is corrupt: {source_path.name} (observations hash)")
     if metadata.get("labels_sha256") != sha256_array(labels):
         raise CacheValidationError(f"cache shard is corrupt: {source_path.name} (labels hash)")
-    return metadata
+    return metadata, observations, labels
 
 
 def _manifest_from_shards(shards: Iterable[dict[str, Any]]) -> dict[str, Any]:
@@ -343,7 +346,7 @@ def build_cache(
             sources_to_build.append(source)
             continue
         try:
-            metadata_by_name[source.name] = _validate_shard(source, shard_dir)
+            metadata_by_name[source.name] = _validate_shard(source, shard_dir)[0]
         except CacheValidationError as exc:
             if not rebuild_stale:
                 raise CacheValidationError(
@@ -368,8 +371,15 @@ def build_cache(
 
 def validate_cache(dataset_root: Path | str, cache_root: Path | str) -> dict[str, Any]:
     """Fully validate source identity, manifest compatibility, arrays, and hashes."""
-    dataset_root = Path(dataset_root)
-    cache_root = Path(cache_root)
+    manifest, _ = _validate_cache(Path(dataset_root), Path(cache_root))
+    return manifest
+
+
+def _validate_cache(
+    dataset_root: Path,
+    cache_root: Path,
+    selected: frozenset[str] = frozenset(),
+) -> tuple[dict[str, Any], dict[str, tuple[np.ndarray, np.ndarray]]]:
     manifest = _read_json(cache_root / "cache_manifest.json")
     expected_manifest_fields = {
         "cache_schema_version": CACHE_SCHEMA_VERSION,
@@ -391,13 +401,18 @@ def validate_cache(dataset_root: Path | str, cache_root: Path | str) -> dict[str
     if [item.get("source_filename") for item in manifest_shards] != [p.name for p in sources]:
         raise CacheValidationError("cache manifest is corrupt (official shard order)")
 
+    selected_arrays = {}
     for source, declared_metadata in zip(sources, manifest_shards, strict=True):
-        actual_metadata = _validate_shard(source, cache_root / "shards" / source.name)
+        actual_metadata, observations, labels = _validate_shard(
+            source, cache_root / "shards" / source.name
+        )
         if actual_metadata != declared_metadata:
             raise CacheValidationError(
                 f"cache manifest is stale or corrupt (metadata mismatch: {source.name})"
             )
-    return manifest
+        if source.name in selected:
+            selected_arrays[source.name] = observations, labels
+    return manifest, selected_arrays
 
 
 def load_cached_csvs(
@@ -413,19 +428,21 @@ def load_cached_csvs(
     """Validate and assemble selected cached shards without scaling or split state."""
     dataset_root = Path(dataset_root)
     cache_root = Path(cache_root)
-    validate_cache(dataset_root, cache_root)
+    manifest_path = cache_root / "cache_manifest.json"
+    try:
+        manifest_hash = sha256_file(manifest_path)
+    except OSError as exc:
+        raise CacheValidationError(f"Cannot read cache manifest: {manifest_path}") from exc
+    filenames = [path.name for path in csv_paths]
+    selected = frozenset(filenames)
+    _, verified_arrays = _validate_cache(dataset_root, cache_root, selected)
+    if missing := selected.difference(verified_arrays):
+        raise CacheValidationError(f"Requested shards are not in the validated cache: {sorted(missing)}")
 
     observations_parts: list[np.ndarray] = []
     label_parts: list[np.ndarray] = []
-    for csv_path in csv_paths:
-        observations = np.load(
-            cache_root / "shards" / csv_path.name / "observations.npy",
-            allow_pickle=False,
-        )
-        labels = np.load(
-            cache_root / "shards" / csv_path.name / "labels.npy",
-            allow_pickle=False,
-        )
+    for filename in filenames:
+        observations, labels = verified_arrays[filename]
         if max_rows_per_csv is not None:
             observations = observations[:max_rows_per_csv]
             labels = labels[:max_rows_per_csv]
@@ -448,5 +465,10 @@ def load_cached_csvs(
         observations = observations[indices]
         labels = labels[indices]
 
-    manifest_hash = sha256_file(cache_root / "cache_manifest.json")
+    try:
+        unchanged = sha256_file(manifest_path) == manifest_hash
+    except OSError as exc:
+        raise CacheValidationError(f"Cannot reread cache manifest: {manifest_path}") from exc
+    if not unchanged:
+        raise CacheValidationError("Cache manifest changed while loading shards")
     return observations, labels, get_observation_feature_names(), manifest_hash

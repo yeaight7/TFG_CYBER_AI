@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import random
 import sys
@@ -21,14 +22,13 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv
 
 from src.canonical_schema import FEATURES_CANON
-from src.cicids_cache import sha256_array, sha256_file as cache_sha256_file
+from src.cicids_cache import CacheValidationError, sha256_array
 from src.experiment_profiles import MAIN_V1_PROFILE, get_experiment_profile
 from src.load_cicids2017 import (
     CICIDSLoadConfig,
-    _cache_manifest_hash_if_used,
+    _load_cicids2017_exact_csv_split,
     _stratified_nested_prefix_indices,
     list_cicids2017_csv_files,
-    load_cicids2017_exact_csv_split,
     load_cicids2017_split,
 )
 from src.metrics_utils import confusion_to_metrics
@@ -202,20 +202,21 @@ def _split_metadata(config: QRDQNRunConfig, split: PreparedSplit) -> dict[str, A
     return metadata
 
 
-def _cache_source_provenance(config: QRDQNRunConfig) -> dict[str, Any]:
-    if config.cache_root is None or config.cache_policy == "off":
+def _cache_source_provenance(
+    config: QRDQNRunConfig, manifest_hash: str | None
+) -> dict[str, Any]:
+    if manifest_hash is None or config.cache_root is None:
         return {}
     manifest_path = config.cache_root / "cache_manifest.json"
-    if not manifest_path.is_file():
-        return {}
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    source_hashes = {
-        str(shard["source_filename"]): str(shard["source_sha256"])
-        for shard in manifest.get("shards", [])
-    }
+    manifest_bytes = manifest_path.read_bytes()
+    if hashlib.sha256(manifest_bytes).hexdigest() != manifest_hash:
+        raise CacheValidationError("Cache manifest changed before recording source provenance")
+    manifest = json.loads(manifest_bytes)
     return {
-        "cache_manifest_sha256": cache_sha256_file(manifest_path),
-        "source_csv_sha256": source_hashes,
+        "source_csv_sha256": {
+            str(shard["source_filename"]): str(shard["source_sha256"])
+            for shard in manifest["shards"]
+        },
     }
 
 
@@ -240,7 +241,7 @@ def load_experiment_split(config: QRDQNRunConfig) -> PreparedSplit:
                 **common,
             )
         )
-        metadata.update(_cache_source_provenance(config))
+        metadata.update(_cache_source_provenance(config, metadata.get("cache_manifest_sha256")))
         return PreparedSplit(X_train, y_train, X_test, y_test, feature_names, metadata)
 
     official_paths = list_cicids2017_csv_files(config.dataset_root)
@@ -258,13 +259,12 @@ def load_experiment_split(config: QRDQNRunConfig) -> PreparedSplit:
         cache_root=config.cache_root,
         cache_policy=config.cache_policy,
     )
-    X_train, y_train, X_test, y_test, _scaler, feature_names = (
-        load_cicids2017_exact_csv_split(
-            train_csv_names=train_names,
-            test_csv_names=[config.holdout_csv],
-            cfg=loader_config,
-        )
+    split, manifest_hash = _load_cicids2017_exact_csv_split(
+        train_csv_names=train_names,
+        test_csv_names=[config.holdout_csv],
+        cfg=loader_config,
     )
+    X_train, y_train, X_test, y_test, _scaler, feature_names = split
     n_train_full = int(len(y_train))
     subsample_method = None
     if config.train_max_rows is not None:
@@ -281,9 +281,9 @@ def load_experiment_split(config: QRDQNRunConfig) -> PreparedSplit:
         "n_train_full": n_train_full,
         "train_max_rows": config.train_max_rows,
         "subsample_method": subsample_method,
-        "cache_manifest_sha256": _cache_manifest_hash_if_used(loader_config),
+        "cache_manifest_sha256": manifest_hash,
         "csv_selection_policy": "official_cicids2017_exact_holdout",
-        **_cache_source_provenance(config),
+        **_cache_source_provenance(config, manifest_hash),
     }
     return PreparedSplit(X_train, y_train, X_test, y_test, feature_names, metadata)
 
